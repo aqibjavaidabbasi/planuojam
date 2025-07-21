@@ -1,18 +1,51 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337';
+const REVALIDATION_TIME = 3600; // 1 hour
+import QueryString from "qs";
 
-export const fetchAPI = async (
-    { path, options = {} }: { path: string; options?: RequestInit }
-) => {
-  const res = await fetch(`${API_URL}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
+
+// Reusable fetch options
+const FETCH_OPTIONS = {
+  next: { revalidate: REVALIDATION_TIME },
+  cache: "force-cache",
+} as const;
+
+/**
+ * Build query string for Strapi populate and filters
+ */
+export function createQuery(
+  populate: object,
+  additionalParams: object = {}
+): string {
+  return QueryString.stringify(
+    {
+      populate,
+      ...additionalParams,
     },
-    ...options,
-  });
+    { encodeValuesOnly: true }
+  );
+}
 
-  if (!res.ok) {
-    throw new Error(`API error: ${res.status}`);
+/**
+ * Fetch from Strapi API
+ */
+export async function fetchAPI(
+  endpoint: string,
+  query: string,
+  filters?: Record<string, unknown>
+) {
+  const url = filters
+    ? `${API_URL}/api/${endpoint}?${query}&${QueryString.stringify(filters, {
+        encodeValuesOnly: true,
+      })}`
+    : `${API_URL}/api/${endpoint}?${query}`;
+
+  const response = await fetch(url, FETCH_OPTIONS);
+  if (!response.ok) {
+    console.warn('DEBUG LOGGG:::', await response.json() )
+    throw new Error(`Strapi API error! status: ${response.status}`);
   }
 
-  return {message:'data fetched', data: res.json()};
-};
+  const data = await response.json();
+  return data.data;
+}
+
