@@ -6,12 +6,13 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react'
 import Search from '../custom/Search';
 import { User2 } from 'lucide-react';
+import { getCompleteImageUrl } from '@/utils/helpers';
 
 
 
 function Header({ logo }: { logo: strapiImage }) {
     const [headerData, setHeaderData] = useState<HeaderType>();
-    const imageUrl = `${process.env.NEXT_PUBLIC_API_URL}${logo.url}`;
+    const imageUrl = getCompleteImageUrl(logo.url)
 
     useEffect(function () {
         fetchHeader().then(data => setHeaderData(data));
@@ -19,7 +20,7 @@ function Header({ logo }: { logo: strapiImage }) {
 
     if (!headerData) return <div>loading...</div>
     return (
-        <header className='w-screen p-3 flex items-center justify-between'>
+        <header className='w-screen max-w-screen p-3 flex items-center justify-between'>
             <div className='flex items-center gap-2.5'>
                 <Image
                     src={imageUrl}

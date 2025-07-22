@@ -12,7 +12,7 @@ function Footer() {
     if (!footerData) return <div>footer loading</div>
 
     return (
-        <div className='bg-footer w-screen text-primary p-5' >
+        <div className='bg-footer w-screen max-w-screen text-primary p-5' >
             <div className='flex justify-between'>
                 {footerData.footerlinkSection.map(section => (<div key={section.id}>
                     <p className='text-white font-semibold mb-2 capitalize'>{section.title}</p>

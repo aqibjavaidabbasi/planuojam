@@ -1,0 +1,161 @@
+export const PAGES_DYNAMIC_ZONE = {
+    blocks: {
+        on: {
+            'dynamic-blocks.hero-banner': {
+                populate: {
+                    'heroImage': true,
+                    'callToAction': {
+                        populate: '*'
+                    },
+                    'heading': {
+                        populate: {
+                            'headingPiece': {
+                                populate: '*'
+                            }
+                        }
+                    }
+                }
+            },
+            'general.location': {
+                populate: '*'
+            },
+            'dynamic-blocks.video-embed': {
+                populate: '*'
+            },
+            'dynamic-blocks.text-image-block': {
+                populate: {
+                    'image': true,
+                    'cta': {
+                        populate: '*'
+                    }
+                }
+            },
+            'dynamic-blocks.testimonials': {
+                populate: {
+                    'items': {
+                        populate: '*'
+                    }
+                }
+            },
+            'dynamic-blocks.pricing-table': {
+                populate: {
+                    'plans': {
+                        populate: {
+                            'cta': {
+                                populate: '*'
+                            },
+                            'featuresList': {
+                                populate: '*'
+                            }
+                        }
+                    },
+                    'optionalAddons': {
+                        populate: '*'
+                    }
+                }
+            },
+            'dynamic-blocks.html-block': {
+                populate: '*'
+            },
+            'dynamic-blocks.faqs': {
+                populate: {
+                    'items': {
+                        populate: '*'
+                    }
+                }
+            },
+            'dynamic-blocks.call-to-action': {
+                populate: '*'
+            },
+            'dynamic-blocks.image-blocks-group': {
+                populate: {
+                    'imageBlocks': {
+                        populate: {
+                            'image': true,
+                            'cta': {
+                                populate: '*'
+                            }
+                        }
+                    },
+                    'title': {
+                        populate: {
+                            'heading': {
+                                populate: {
+                                    'headingPiece': {
+                                        populate: '*'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            'general.city-list': {
+                populate: {
+                    'Cities': {
+                        populate: {
+                            'cities' :{
+                                populate:'*'
+                            }
+                        }
+                    }
+                }
+            },
+            'typography.heading': {
+                populate: '*'
+            },
+            'dynamic-blocks.image-block': {
+                populate: {
+                    'backgroundImage': true,
+                    'optionalButton': {
+                        populate: '*'
+                    }
+                }
+            },
+            'dynamic-blocks.block-groups': {
+                populate: {
+                    'block': {
+                        populate: {
+                            'backgroundImage': true,
+                            'optionalButton': {
+                                populate: '*'
+                            }
+                        }
+                    },
+                    'title': {
+                        populate: {
+                            'heading': {
+                                populate: {
+                                    'headingPiece': {
+                                        populate: '*'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            'general.title-description': {
+                populate: {
+                    'heading': {
+                        populate: {
+                            'headingPiece': {
+                                populate: '*'
+                            }
+                        }
+                    }
+                }
+            },
+            'general.social-links-component': {
+                populate: {
+                    'socialLink': {
+                        populate: {
+                            'icon': true,
+                        }
+                    }
+                }
+            }
+        }
+    },
+    seoSettings: { populate: '*' },
+};

@@ -39,6 +39,8 @@ export async function fetchAPI(
       })}`
     : `${API_URL}/api/${endpoint}?${query}`;
 
+    console.log("fetching from :: ",url)
+
   const response = await fetch(url, FETCH_OPTIONS);
   if (!response.ok) {
     console.warn('DEBUG LOGGG:::', await response.json() )

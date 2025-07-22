@@ -1,22 +1,9 @@
+import { PAGES_DYNAMIC_ZONE } from "@/utils/dynamicZoneStructure";
 import { fetchAPI, createQuery } from "./api";
 
-export async function fetchHomePage() {
-    const populate = {
-        blocks: {
-          populate: {
-            // This tells Strapi to populate ALL fields of ALL components in the dynamic zone
-            '*': {
-              populate: {
-                '*': {
-                  populate: '*'
-                }
-              }
-            }
-          }
-        },
-        seoSettings: { populate: '*' }
-      };
-    const filters = { slug: { $eq: "home" } };
+export async function fetchHomePage(pageSlug: string) {
+    const populate = PAGES_DYNAMIC_ZONE;
+    const filters = { slug: { $eq: pageSlug } };
     const query = createQuery(populate);
     const res = await fetchAPI("pages", query, filters);
     return res[0];

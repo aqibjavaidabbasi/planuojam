@@ -10,7 +10,7 @@ export default async function RootLayout({ children }: Readonly<{
 
   return (
     <html lang="en">
-      <body>
+      <body className="max-w-screen">
         <Header logo={siteSettingsData.siteLogo} />
         <main>{children}</main>
         <Footer />
