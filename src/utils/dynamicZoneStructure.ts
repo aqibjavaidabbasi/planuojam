@@ -94,8 +94,8 @@ export const PAGES_DYNAMIC_ZONE = {
                 populate: {
                     'Cities': {
                         populate: {
-                            'cities' :{
-                                populate:'*'
+                            'city': {
+                                populate: true,
                             }
                         }
                     }
@@ -149,8 +149,51 @@ export const PAGES_DYNAMIC_ZONE = {
             'general.social-links-component': {
                 populate: {
                     'socialLink': {
+                        populate: true,
+                    }
+                }
+            },
+            'general.top-listing-items': {
+                populate: {
+                    'sectionheader': {
                         populate: {
-                            'icon': true,
+                            'heading': {
+                                populate: {
+                                    'headingPiece': {
+                                        populate: '*'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    'topListings': {
+                        populate: {
+                            'listingsComponent': { 
+                                populate: {
+                                    'listingItem': {
+                                        populate: {
+                                            'images':{
+                                                populate: '*'
+                                            },
+                                            'listingItem': {
+                                                populate: '*'
+                                            },
+                                            'contact': {
+                                                populate: '*'
+                                            },
+                                            'socialLinks':{
+                                                populate: '*'
+                                            },
+                                            'pricingPackages':{
+                                                populate: '*'
+                                            },
+                                            'FAQs':{
+                                                populate: '*'
+                                            }
+                                        }
+                                    } 
+                                }
+                            }
                         }
                     }
                 }

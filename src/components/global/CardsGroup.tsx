@@ -6,12 +6,12 @@ import { getCompleteImageUrl } from '@/utils/helpers'
 
 function CardsGroup({ data }: { data: ImageBlocksGroupBlock }) {
     return (
-        <div className='w-screen py-10 px-6 max-w-screen'>
+        <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen'>
             <div className='flex flex-col items-center justify-center gap-2'>
                 <Heading headingPiece={data.title.heading.headingPiece} title={data.title.sectionTitle} />
                 <p>{data.title.sectionDescription}</p>
             </div>
-            <div className='flex items-center justify-center gap-3 mt-10'>
+            <div className='flex items-center justify-center gap-3 mt-10 flex-wrap'>
                 {data.imageBlocks.map(block => {
                     const imageUrl = getCompleteImageUrl(block.image.url);
                     return (

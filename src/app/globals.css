@@ -11,6 +11,7 @@ body {
   --border-color: #dfddddab;
   --footer-background: #111111;
   --secondary-color: #6b6064;
+  --background-color: #f5f5f5;
 }
 
 @layer utilities {
@@ -37,5 +38,8 @@ body {
   }
   .text-secondary {
     color: var(--secondary-color);
+  }
+  .bg-normal {
+    background-color: var(--background-color);
   }
 }

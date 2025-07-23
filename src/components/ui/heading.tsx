@@ -12,9 +12,9 @@ function Heading({ headingPiece, title, extraStyles, as = 'h2' }: HeadingProps) 
   const Tag = as;
   return (
     <>
-      {headingPiece.length > 0
+      {headingPiece?.length > 0
         ? (
-          <Tag className='text-4xl font-bold' style={extraStyles}>
+          <Tag className='text-2xl md:text-4xl font-bold flex flex-wrap md:block' style={extraStyles}>
             {headingPiece.map((piece, i) => (
               <span key={i} className='mr-2' style={{ color: piece.color }}>
                 {piece.text}
@@ -23,7 +23,7 @@ function Heading({ headingPiece, title, extraStyles, as = 'h2' }: HeadingProps) 
           </Tag>
         )
         : (
-          <Tag className='text-4xl font-bold text-black' style={extraStyles}>
+          <Tag className='text-2xl md:text-4xl font-bold text-black' style={extraStyles}>
             {title}
           </Tag>
         )

@@ -10,11 +10,25 @@ export interface homePage {
 }
 export interface header {
   id: number;
+  locale: string;
   nav: {
     id: number;
     item: navObj[]
   };
+  eventTypes: {
+    id: number;
+    eventType: eventType;
+  }[]
 }
+
+export interface eventType {
+  documentId: string;
+  id: number;
+  locale: string;
+  eventName: string;
+}
+
+
 export interface footer {
   id: number;
   copyRightText: string;
@@ -50,7 +64,8 @@ export type DynamicBlocks =
   | FAQComponentBlock
   | CallToActionComponentBlock
   | HeadingTypographyBlock
-  | ImageBlockBackgroundBlock;
+  | ImageBlockBackgroundBlock
+  | topListingItemsBlock;
 
 export interface HeroBannerBlock {
   __component: 'dynamic-blocks.hero-banner';
@@ -126,14 +141,28 @@ export interface headingPiece {
 export interface CityListBlock {
   __component: 'general.city-list';
   id: number;
-  Cities: unknown[];
+  Cities: city[]
+}
+
+export interface city {
+  id: number;
+  city: {
+  documentId: string;
+  locale: string;
+  name: string;
+}
 }
 
 export interface SocialLinksComponentBlock {
   __component: 'general.social-links-component';
   id: number;
   optionalSectionTitle: string;
-  socialLink: unknown[];
+  socialLink: {
+    id: number;
+    link: string;
+    platform: string;
+    visible: boolean;
+  }[];
 }
 export interface LocationComponentBlock {
   __component: 'general.location';
@@ -168,4 +197,51 @@ export interface HeadingTypographyBlock {
 }
 export interface ImageBlockBackgroundBlock {
   __component: 'dynamic-blocks.image-block';
+}
+export interface topListingItemsBlock {
+  __component: 'general.top-listing-items';
+  id: number;
+  listingType: string;
+  sectionheader: TitleDescriptionBlock;
+  topListings: {
+    id: number;
+    listingsComponent: {
+      id: number;
+      listingItem: listingItem;
+    }[]
+  }
+}
+export interface listingItem{
+  description: string;
+  documentId: string;
+  id: number;
+  featured: boolean;
+  images: strapiImage[];
+  listingStatus: string;
+  locale: string;
+  price: number;
+  slug: string;
+  title: string;
+  type: string;
+  listingItem: Venue | Vendor;
+  averageRating: number;
+  ratingsCount: number;
+}
+
+export interface Venue {
+  __component: 'dynamic-blocks.venue'
+  amneties: [];
+  bookingDurationType: string;
+  bookingDuration: number;
+  capacity: number;
+  id: number;
+  location: string
+}
+export interface Vendor {
+  __component: 'dynamic-blocks.vendor'
+  id: number;
+  about: string;
+  experienceYears: number;
+  serviceArea: unknown;
+  location: string; //location is not in vendor yet
 }

@@ -5,20 +5,20 @@ import { getCompleteImageUrl } from '@/utils/helpers'
 
 function BackgroundImageBlock({data} : {data: BlockGroupsBlock}) {
   return (
-    <div className='w-screen max-w-screen py-10 px-6'>
+    <div className='w-screen max-w-screen py-5 md:py-10 px-3 md:px-6'>
         <div className='flex flex-col items-center justify-center gap-2'>
             <Heading headingPiece={data.title.heading.headingPiece} title={data.title.sectionTitle} />
             <p>{data.title.sectionDescription}</p>
         </div>
         <div className="w-full flex justify-center mt-10">
-            <div className='grid grid-cols-3 gap-5'>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
                 {data.block.map(imgBlock=>{
                     const imageUrl = getCompleteImageUrl(imgBlock.backgroundImage.url)
                     return (
                         <div
                             key={imgBlock.id}
                             className={`
-                                w-[430px] h-72 rounded-xl flex p-4 overflow-hidden relative
+                               md:w-[400px] h-52 md:h-72 rounded-xl flex p-4 overflow-hidden relative
                                 ${
                                     imgBlock.contentPlacement === 'center'
                                         ? 'items-center justify-center'

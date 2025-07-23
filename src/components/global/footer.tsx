@@ -13,8 +13,9 @@ function Footer() {
 
     return (
         <div className='bg-footer w-screen max-w-screen text-primary p-5' >
-            <div className='flex justify-between'>
-                {footerData.footerlinkSection.map(section => (<div key={section.id}>
+            <div className='flex justify-start md:justify-between flex-col md:flex-row'>
+                {footerData.footerlinkSection.map(section => (
+                    <div key={section.id} className='py-3'>
                     <p className='text-white font-semibold mb-2 capitalize'>{section.title}</p>
                     <div className='flex flex-col gap-1'>
                         {section.navItem.map(item => (<a className='hover:underline capitalize' href={item.relativeUrl} key={item.id}>
@@ -23,9 +24,10 @@ function Footer() {
                     </div>
                 </div>))}
             </div>
-            <div className='flex items-center justify-between mt-4 pt-3 border-t-[0.5px] custom-border-color'>
+            <div className='flex items-center justify-between mt-4 pt-3 border-t-[0.5px] custom-border-color flex-col md:flex-row'>
                 <div className='flex items-center gap-2.5'>
-                    {footerData.extraLinks.map(link => (<a className='hover:underline capitalize' href={link.relativeUrl} key={link.id}>
+                    {footerData.extraLinks.map(link => (
+                    <a className='hover:underline capitalize' href={link.relativeUrl} key={link.id}>
                         {link.label}
                     </a>))}
                 </div>

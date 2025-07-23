@@ -10,7 +10,18 @@ export async function fetchHomePage(pageSlug: string) {
 }
 
 export async function fetchHeader() {
-    const populate = { nav: { populate: "*" } };
+    const populate = { 
+        nav: { 
+            populate: "*" 
+        } ,
+        'eventTypes': {
+            populate: {
+                'eventType': {
+                    populate: true,
+                }
+            }
+        }
+    };
     const query = createQuery(populate);
     const res = await fetchAPI("header", query);
     return res;

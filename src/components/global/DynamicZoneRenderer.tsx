@@ -4,6 +4,8 @@ import HeroBanner from '../Dynamic/HeroBanner'
 import CardsGroup from './CardsGroup';
 import BackgroundImageBlock from './BackgroundImageBlock';
 import CityList from './CityList';
+import SubscriptionForm from './SubscriptionForm';
+import TopListingItem from '../Dynamic/TopListingItem';
 
 function DynamicZoneRenderer({ blocks }: { blocks: DynamicBlocks[] }) {
 
@@ -59,7 +61,10 @@ function DynamicZoneRenderer({ blocks }: { blocks: DynamicBlocks[] }) {
                             return <div key={key}>title with description</div>
                         }
                         case 'general.social-links-component': {
-                            return <div key={key}>social links component</div>
+                            return <SubscriptionForm key={key} data={singleBlock} />
+                        }
+                        case 'general.top-listing-items': {
+                            return <TopListingItem key={key} data={singleBlock} />
                         }
                         default: {
                             return null;
