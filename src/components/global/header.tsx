@@ -1,30 +1,23 @@
 'use client'
-import { fetchHeader } from '@/services/pagesApi'
 import { header as HeaderType } from '@/types/pagesTypes';
 import { strapiImage } from '@/types/common';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Search from '../custom/Search';
 import { getCompleteImageUrl } from '@/utils/helpers';
 import { FaRegUser, FaBars } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
+import { usePathname, useRouter } from 'next/navigation';
 
-function Header({ logo }: { logo: strapiImage }) {
-    const [headerData, setHeaderData] = useState<HeaderType>();
+function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderType }) {
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
     const imageUrl = getCompleteImageUrl(logo.url);
-
-    useEffect(() => {
-        fetchHeader().then(data => setHeaderData(data));
-    }, []);
-
-    if (!headerData) return <div>loading...</div>
-
-    console.log(headerData)
+    const router = useRouter();
+    const pathname = usePathname();
 
     return (
-        <>
-            <header className="w-full bg-white shadow-sm px-4 py-3 flex items-center justify-between sticky top-0 z-30">
+        <header className='sticky top-0 z-30'>
+            <div className="w-full bg-white shadow-sm px-4 py-2 flex items-center justify-between">
                 {/* Left: Logo and Nav */}
                 <div className="flex items-center gap-3 w-full md:w-auto">
                     <Image
@@ -32,20 +25,35 @@ function Header({ logo }: { logo: strapiImage }) {
                         alt="Planuojam Logo"
                         width={100}
                         height={100}
-                        className="w-10 h-10 md:w-[80px] md:h-[80px] object-contain"
+                        className="w-10 h-10 md:w-[95px] md:h-[60px] object-contain"
                         priority
                     />
 
                     {/* Desktop Nav */}
-                    <nav className="hidden md:flex items-center gap-3">
-                        {headerData.nav.item.map(navItem => (
-                            <div
-                                className="cursor-pointer text-primary bg-white hover:bg-primary hover:text-white px-3 py-2 rounded-sm transition-colors text-sm md:text-base"
-                                key={navItem.id}
-                            >
-                                {navItem.label}
-                            </div>
-                        ))}
+                    <nav className="hidden md:flex items-center gap-3 md:ml-10">
+                        {headerData?.nav.item.map((navItem) => {
+                            const openInNewTab = navItem.target?.toLowerCase().includes("_blank");
+                            const isActive = pathname === navItem.relativeUrl;
+
+                            const handleClick = () => {
+                                if (openInNewTab) {
+                                    window.open(navItem.relativeUrl, "_blank");
+                                } else {
+                                    router.push(navItem.relativeUrl);
+                                }
+                            };
+
+                            return (
+                                <div
+                                    key={navItem.id}
+                                    className={`cursor-pointer px-3 py-2 rounded-sm transition-colors text-sm md:text-base capitalize 
+                                        ${isActive ? "bg-primary text-white" : "text-primary bg-white hover:bg-primary hover:text-white"}`}
+                                    onClick={handleClick}
+                                >
+                                    {navItem.label}
+                                </div>
+                            );
+                        })}
                     </nav>
                 </div>
 
@@ -99,7 +107,7 @@ function Header({ logo }: { logo: strapiImage }) {
                             </div>
                             <nav className="flex flex-col gap-2">
                                 {/* Main Navigation */}
-                                {headerData.nav.item.map(navItem => (
+                                {headerData?.nav.item.map(navItem => (
                                     <div
                                         className="cursor-pointer text-primary bg-white hover:bg-primary hover:text-white p-2.5 rounded-sm transition-colors"
                                         key={navItem.id}
@@ -110,7 +118,7 @@ function Header({ logo }: { logo: strapiImage }) {
                                 ))}
 
                                 {/* Event Types Section */}
-                                {headerData.eventTypes.length > 0 && (
+                                {Array.isArray(headerData?.eventTypes) && headerData.eventTypes.length > 0 && (
                                     <>
                                         <hr className="my-3 border-gray-300" />
                                         <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide mb-1">
@@ -152,9 +160,9 @@ function Header({ logo }: { logo: strapiImage }) {
                     animation: slide-in-left 0.2s ease;
                 }
             `}</style>
-            </header>
+            </div>
             {/* Subnav Bar: Desktop only */}
-            {headerData.eventTypes.length > 0 && (
+            {Array.isArray(headerData?.eventTypes) && headerData.eventTypes.length > 0 && (
                 <div className="hidden md:flex w-full bg-gray-50 border-t border-b custom-border-color px-4 py-2 gap-2 z-20">
                     {headerData.eventTypes.map(({ id, eventType }) => (
                         <div
@@ -166,7 +174,7 @@ function Header({ logo }: { logo: strapiImage }) {
                     ))}
                 </div>
             )}
-        </>
+        </header>
     );
 }
 

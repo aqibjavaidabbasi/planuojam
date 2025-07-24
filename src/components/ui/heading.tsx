@@ -3,32 +3,20 @@ import React, { JSX } from 'react'
 
 interface HeadingProps {
   headingPiece: headingPiece[];
-  title: string;
-  extraStyles?: React.CSSProperties;
+  extraStyles?: string;
   as?: keyof JSX.IntrinsicElements; // Allow tag choice
 }
 
-function Heading({ headingPiece, title, extraStyles, as = 'h2' }: HeadingProps) {
+function Heading({ headingPiece, extraStyles, as = 'h2' }: HeadingProps) {
   const Tag = as;
   return (
-    <>
-      {headingPiece?.length > 0
-        ? (
-          <Tag className='text-2xl md:text-4xl font-bold flex flex-wrap md:block' style={extraStyles}>
-            {headingPiece.map((piece, i) => (
-              <span key={i} className='mr-2' style={{ color: piece.color }}>
-                {piece.text}
-              </span>
-            ))}
-          </Tag>
-        )
-        : (
-          <Tag className='text-2xl md:text-4xl font-bold text-black' style={extraStyles}>
-            {title}
-          </Tag>
-        )
-      }
-    </>
+    <Tag className={`text-2xl md:text-4xl font-bold flex flex-wrap items-center justify-center ${extraStyles}`}>
+      {headingPiece.map((piece, i) => (
+        <span key={i} className='mr-2' style={{ color: piece.color }}>
+          {piece.text}
+        </span>
+      ))}
+    </Tag>
   );
 }
 

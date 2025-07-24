@@ -1,11 +1,14 @@
 import { DynamicBlocks } from '@/types/pagesTypes'
 import React from 'react'
-import HeroBanner from '../Dynamic/HeroBanner'
-import CardsGroup from './CardsGroup';
-import BackgroundImageBlock from './BackgroundImageBlock';
-import CityList from './CityList';
-import SubscriptionForm from './SubscriptionForm';
-import TopListingItem from '../Dynamic/TopListingItem';
+import dynamic from 'next/dynamic'
+import SelectedCategories from '../Dynamic/SelectedCategories';
+
+const HeroBanner = dynamic(() => import('../Dynamic/HeroBanner'));
+const CardsGroup = dynamic(() => import('./CardsGroup'));
+const BackgroundImageBlock = dynamic(() => import('./BackgroundImageBlock'));
+const CityList = dynamic(() => import('./CityList'));
+const SubscriptionForm = dynamic(() => import('./SubscriptionForm'));
+const TopListingItem = dynamic(() => import('../Dynamic/TopListingItem'));
 
 function DynamicZoneRenderer({ blocks }: { blocks: DynamicBlocks[] }) {
 
@@ -65,6 +68,9 @@ function DynamicZoneRenderer({ blocks }: { blocks: DynamicBlocks[] }) {
                         }
                         case 'general.top-listing-items': {
                             return <TopListingItem key={key} data={singleBlock} />
+                        }
+                        case 'dynamic-blocks.category-list': {
+                            return <SelectedCategories key={key} data={singleBlock} />
                         }
                         default: {
                             return null;

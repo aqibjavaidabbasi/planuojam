@@ -10,17 +10,22 @@ function HeroBanner({ data }: { data: HeroBannerBlock }) {
   return (
     <section className="grid md:grid-cols-2 w-screen max-w-screen">
       {/* Image comes first on mobile, second on md+ */}
-      <div className="w-full order-1 md:order-2">
+      <div className="w-full h-60 md:h-[400px] order-1 md:order-2 relative">
         <Image
           src={heroImage}
           alt="Hero Image"
-          width={2000}
-          height={2000}
+          fill
+          style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+          sizes="(max-width: 768px) 100vw, 50vw"
         />
       </div>
-      <div className="flex flex-col gap-2.5 p-5 items-start justify-center bg-normal order-2 md:order-1">
-        <Heading headingPiece={data.heading.headingPiece} title={data.title} as="h1" />
-        <p className="text-secondary text-base font-normal">{data.subTitle}</p>
+      <div className="flex flex-col gap-2.5 p-5 md:p-10 items-center md:items-start justify-center bg-normal order-2 md:order-1">
+        <Heading
+          headingPiece={data.heading.headingPiece}
+          as="h1"
+          extraStyles='lg:!items-start lg:!justify-start'
+        />
+        <p className="text-secondary text-base font-normal text-center md:text-left">{data.subTitle}</p>
         <Button style={data.callToAction.style}>
           {data.callToAction.bodyText}
         </Button>

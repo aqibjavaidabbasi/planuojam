@@ -197,6 +197,28 @@ export const PAGES_DYNAMIC_ZONE = {
                         }
                     }
                 }
+            },
+            'dynamic-blocks.category-list': {
+                populate: {
+                    'categoryListItem': {
+                        populate: {
+                            'category': {
+                                populate: '*',
+                            }
+                        }
+                    },
+                    'sectionTitle': {
+                        populate: {
+                            'heading': {
+                                populate: {
+                                    'headingPiece': {
+                                        populate: '*'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     },

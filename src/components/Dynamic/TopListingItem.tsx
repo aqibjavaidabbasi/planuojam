@@ -20,18 +20,17 @@ function TopListingItem({ data }: { data: topListingItemsBlock }) {
         return true;
     });
 
-
     return (
         <div className='w-screen py-5 md:py-10 px-3 md:px-6'>
-            <div className='mb-5'>
-                <Heading headingPiece={data.sectionheader.heading} title={data.sectionheader.sectionTitle}  />
+            <div className='mb-5 flex w-full flex-col items-center justify-center'>
+                <Heading headingPiece={data.sectionheader.heading.headingPiece} />
                 <p>{data.sectionheader.sectionDescription}</p>
             </div>
             <div className='flex items-center justify-center'>
                 {filteredListings.length === 0 ? (
-                    <div>No {data.listingType} found.</div>
+                    <div className='flex items-center justify-center'>No {data.listingType} found.</div>
                 ) : (
-                    <div className='grid grid-cols-1 md:grid-cols-4 items-center justify-evenly gap-4'>
+                    <div className='flex flex-wrap items-center justify-center gap-4'>
                         {filteredListings.map(item => (
                             <ListingCard key={item.listingItem.documentId} item={item.listingItem} />
                         ))}

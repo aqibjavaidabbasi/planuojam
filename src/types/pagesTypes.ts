@@ -65,7 +65,8 @@ export type DynamicBlocks =
   | CallToActionComponentBlock
   | HeadingTypographyBlock
   | ImageBlockBackgroundBlock
-  | topListingItemsBlock;
+  | topListingItemsBlock
+  | SelectedCategoriesList;
 
 export interface HeroBannerBlock {
   __component: 'dynamic-blocks.hero-banner';
@@ -92,15 +93,7 @@ export interface ImageBlocksGroupBlock {
     url: string;
     image: strapiImage;
   }[];
-  title: {
-    id: number;
-    sectionTitle: string;
-    sectionDescription: string;
-    heading: {
-      id: number;
-      headingPiece: headingPiece[]
-    }
-  };
+  title: TitleDescriptionBlock
 }
 
 // Block Groups
@@ -114,22 +107,17 @@ export interface BlockGroupsBlock {
     optionalButton: CallToActionComponentBlock;
     backgroundImage: strapiImage;
   }[];
-  title: {
-    heading: {
-      headingPiece: headingPiece[];
-    }
-    id: number;
-    sectionDescription: string;
-    sectionTitle: string;
-  };
+  title: TitleDescriptionBlock
 }
 
 export interface TitleDescriptionBlock {
   __component: 'general.title-description';
   id: number;
-  sectionTitle: string;
   sectionDescription: string;
-  heading: headingPiece[];
+  heading: {
+    id: number;
+    headingPiece: headingPiece[];
+  };
 }
 
 export interface headingPiece {
@@ -244,4 +232,25 @@ export interface Vendor {
   experienceYears: number;
   serviceArea: unknown;
   location: string; //location is not in vendor yet
+}
+
+export interface SelectedCategoriesList {
+  __component: 'dynamic-blocks.category-list';
+  id: number;
+  categoryListItem: {
+    id: number;
+    category: category;
+  }[];
+  sectionTitle: TitleDescriptionBlock;
+}
+export interface category {
+  id: number;
+  documentId: string;
+  externalUrl?: string;
+  childCategories: category[];
+  image: strapiImage;
+  locale: string;
+  name: string;
+  parentCategory: category;
+  slug: string;
 }

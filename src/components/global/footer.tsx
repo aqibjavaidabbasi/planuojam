@@ -1,20 +1,12 @@
-'use client'
-import { fetchFooter } from '@/services/pagesApi'
+'use client' //for interactivity that might be added later
 import { footer } from '@/types/pagesTypes';
-import React, { useEffect, useState } from 'react'
 
-function Footer() {
-    const [footerData, setFooterData] = useState<footer>();
-    useEffect(function () {
-        fetchFooter().then(data => setFooterData(data))
-    }, []);
-
-    if (!footerData) return <div>footer loading</div>
+function Footer({footerData}: {footerData: footer}) {
 
     return (
         <div className='bg-footer w-screen max-w-screen text-primary p-5' >
             <div className='flex justify-start md:justify-between flex-col md:flex-row'>
-                {footerData.footerlinkSection.map(section => (
+                {footerData?.footerlinkSection.map(section => (
                     <div key={section.id} className='py-3'>
                     <p className='text-white font-semibold mb-2 capitalize'>{section.title}</p>
                     <div className='flex flex-col gap-1'>
@@ -26,12 +18,18 @@ function Footer() {
             </div>
             <div className='flex items-center justify-between mt-4 pt-3 border-t-[0.5px] custom-border-color flex-col md:flex-row'>
                 <div className='flex items-center gap-2.5'>
-                    {footerData.extraLinks.map(link => (
-                    <a className='hover:underline capitalize' href={link.relativeUrl} key={link.id}>
-                        {link.label}
-                    </a>))}
+                    {footerData?.extraLinks.map((link, idx, arr) => (
+                        <span key={link.id} className='flex items-center gap-2'>
+                            <a className='hover:underline capitalize' href={link.relativeUrl}>
+                                {link.label}
+                            </a>
+                            {idx < arr.length - 1 && (
+                                <span className="mx-2 text-white select-none">|</span>
+                            )}
+                        </span>
+                    ))}
                 </div>
-                <p className='text-white'>&copy; {footerData.copyRightText}</p>
+                <p className='text-white'>&copy; {footerData?.copyRightText}</p>
             </div>
         </div>
     )

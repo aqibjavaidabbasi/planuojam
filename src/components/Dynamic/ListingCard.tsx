@@ -23,7 +23,7 @@ function ListingCard({ item }: { item: listingItem }) {
     if (!isClient) return null;
 
     return (
-        <div className='rounded-sm bg-white relative'
+        <div className='rounded-sm bg-white relative  max-w-[250px]'
             style={{
                 boxShadow: '0px 0px 4px rgba(0,0,0,0.2)'
             }}

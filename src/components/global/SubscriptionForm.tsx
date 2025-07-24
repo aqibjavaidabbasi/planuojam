@@ -14,10 +14,10 @@ function SubscriptionForm({ data }: { data: SocialLinksComponentBlock }) {
                     Subscribe
                 </Button>
             </div>
-            <div className='flex flex-col gap-1 items-center md:items-start'>
+            <div className='flex flex-col gap-1 items-center lg:items-start'>
                 {data.optionalSectionTitle && <h3 className='font-semibold text-xl'>{data.optionalSectionTitle}</h3>}
                 {
-                    data.socialLink.length > 0 && <div className='flex items-center gap-2.5 md:gap-1.5  flex-wrap md:items-start justify-center md:justify-start'>
+                    data.socialLink.length > 0 && <div className='flex items-center gap-2.5 md:gap-1.5  flex-wrap lg:items-start justify-center lg:justify-start'>
                         {data.socialLink.map(link => (
                             <span key={link.id} className='bg-white p-2 rounded-full cursor-pointer hover:bg-primary hover:text-white'>
                                 {link.platform.toLowerCase() === 'facebook' && <FaFacebook size={20} />}

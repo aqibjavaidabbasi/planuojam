@@ -6,6 +6,7 @@ export async function fetchHomePage(pageSlug: string) {
     const filters = { slug: { $eq: pageSlug } };
     const query = createQuery(populate);
     const res = await fetchAPI("pages", query, filters);
+    console.log(res[0].blocks)
     return res[0];
 }
 

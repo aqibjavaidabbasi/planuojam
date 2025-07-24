@@ -6,9 +6,9 @@ import { getCompleteImageUrl } from '@/utils/helpers'
 
 function CardsGroup({ data }: { data: ImageBlocksGroupBlock }) {
     return (
-        <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen'>
+        <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1400px]'>
             <div className='flex flex-col items-center justify-center gap-2'>
-                <Heading headingPiece={data.title.heading.headingPiece} title={data.title.sectionTitle} />
+                <Heading headingPiece={data.title.heading.headingPiece} />
                 <p>{data.title.sectionDescription}</p>
             </div>
             <div className='flex items-center justify-center gap-3 mt-10 flex-wrap'>
@@ -31,7 +31,7 @@ function CardsGroup({ data }: { data: ImageBlocksGroupBlock }) {
                             />
                             <div className='m-2.5'>
                                 <h3 className='text-primary font-medium text-lg'>{block.heading}</h3>
-                                <p className='bg-black' >{block.blockContent}</p>
+                                <p className='' >{block.blockContent}</p>
                             </div>
                         </div>
                     )
