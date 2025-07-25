@@ -25,7 +25,8 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
                         alt="Planuojam Logo"
                         width={100}
                         height={100}
-                        className="w-10 h-10 md:w-[95px] md:h-[60px] object-contain"
+                        onClick={()=>router.push('/home')}
+                        className="w-10 h-10 md:w-[95px] md:h-[60px] object-contain cursor-pointer"
                         priority
                     />
 

@@ -217,6 +217,35 @@ export const PAGES_DYNAMIC_ZONE = {
                                 }
                             }
                         }
+                    },
+                    'parentCategory':{
+                        populate: {
+                            'parent': {
+                                populate: '*'
+                            }
+                        }
+                    }
+                }
+            },
+            'dynamic-blocks.event-types-list': {
+                populate: {
+                    'sectionheader': {
+                        populate: {
+                            'heading': {
+                                populate: {
+                                    'headingPiece': {
+                                        populate: '*'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    'eventTypeItem': {
+                        populate: {
+                            'eventType': {
+                                populate: '*'
+                            }
+                        }
                     }
                 }
             }

@@ -66,7 +66,8 @@ export type DynamicBlocks =
   | HeadingTypographyBlock
   | ImageBlockBackgroundBlock
   | topListingItemsBlock
-  | SelectedCategoriesList;
+  | SelectedCategoriesList
+  | EventTypesBlock;
 
 export interface HeroBannerBlock {
   __component: 'dynamic-blocks.hero-banner';
@@ -242,6 +243,10 @@ export interface SelectedCategoriesList {
     category: category;
   }[];
   sectionTitle: TitleDescriptionBlock;
+  parentCategory: {
+    id: number;
+    parent: category;
+  }
 }
 export interface category {
   id: number;
@@ -253,4 +258,24 @@ export interface category {
   name: string;
   parentCategory: category;
   slug: string;
+}
+
+export interface EventTypesBlock {
+  __component: 'dynamic-blocks.event-types-list',
+  id: number;
+  sectionheader: TitleDescriptionBlock;
+  eventTypeItem: {
+    id: number;
+    eventType: eventType;
+    contentPlacement: string;
+  }[]
+}
+
+export interface eventType {
+  documentId: string;
+  id: number;
+  eventName: string;
+  image: strapiImage;
+  externalUrl?: string;
+
 }

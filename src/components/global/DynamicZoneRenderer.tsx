@@ -1,7 +1,6 @@
 import { DynamicBlocks } from '@/types/pagesTypes'
 import React from 'react'
 import dynamic from 'next/dynamic'
-import SelectedCategories from '../Dynamic/SelectedCategories';
 
 const HeroBanner = dynamic(() => import('../Dynamic/HeroBanner'));
 const CardsGroup = dynamic(() => import('./CardsGroup'));
@@ -9,6 +8,8 @@ const BackgroundImageBlock = dynamic(() => import('./BackgroundImageBlock'));
 const CityList = dynamic(() => import('./CityList'));
 const SubscriptionForm = dynamic(() => import('./SubscriptionForm'));
 const TopListingItem = dynamic(() => import('../Dynamic/TopListingItem'));
+const SelectedCategories = dynamic(()=>import('../Dynamic/SelectedCategories'));
+const EventTypesList = dynamic(()=>import('../Dynamic/EventTypesList'));
 
 function DynamicZoneRenderer({ blocks }: { blocks: DynamicBlocks[] }) {
 
@@ -71,6 +72,9 @@ function DynamicZoneRenderer({ blocks }: { blocks: DynamicBlocks[] }) {
                         }
                         case 'dynamic-blocks.category-list': {
                             return <SelectedCategories key={key} data={singleBlock} />
+                        }
+                        case 'dynamic-blocks.event-types-list': {
+                            return <EventTypesList key={key} data={singleBlock} />
                         }
                         default: {
                             return null;

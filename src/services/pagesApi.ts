@@ -3,18 +3,21 @@ import { fetchAPI, createQuery } from "./api";
 
 export async function fetchHomePage(pageSlug: string) {
     const populate = PAGES_DYNAMIC_ZONE;
-    const filters = { slug: { $eq: pageSlug } };
+    const filters = {
+        filters: {
+            slug: { $eq: pageSlug }
+        }
+    };
     const query = createQuery(populate);
     const res = await fetchAPI("pages", query, filters);
-    console.log(res[0].blocks)
     return res[0];
 }
 
 export async function fetchHeader() {
-    const populate = { 
-        nav: { 
-            populate: "*" 
-        } ,
+    const populate = {
+        nav: {
+            populate: "*"
+        },
         'eventTypes': {
             populate: {
                 'eventType': {
