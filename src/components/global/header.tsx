@@ -129,7 +129,10 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
                                             <div
                                                 className="cursor-pointer text-primary bg-gray-100 hover:bg-primary hover:text-white p-2.5 rounded-sm transition-colors"
                                                 key={id}
-                                                onClick={() => setMobileNavOpen(false)}
+                                                onClick={() => {
+                                                    router.push(`/event-types/${eventType.slug}`)
+                                                    setMobileNavOpen(false)
+                                                }}
                                             >
                                                 {eventType.eventName}
                                             </div>
@@ -169,6 +172,10 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
                         <div
                             key={id}
                             className="cursor-pointer text-sm text-primary hover:bg-primary hover:text-white px-3 py-1 rounded-sm transition-colors"
+                            onClick={() => {
+                                router.push(`/event-types/${eventType.slug}`)
+                                setMobileNavOpen(false)
+                            }}
                         >
                             {eventType.eventName}
                         </div>

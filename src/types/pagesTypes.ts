@@ -26,6 +26,10 @@ export interface eventType {
   id: number;
   locale: string;
   eventName: string;
+  slug: string;
+  page: {
+    slug: string;
+  }
 }
 
 

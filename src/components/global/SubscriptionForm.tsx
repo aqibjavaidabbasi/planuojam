@@ -1,3 +1,4 @@
+'use client'
 import { SocialLinksComponentBlock } from '@/types/pagesTypes'
 import React from 'react'
 import Button from '../ui/Button'

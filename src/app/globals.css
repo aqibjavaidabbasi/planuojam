@@ -46,3 +46,14 @@ body {
     background-color: var(--background-color);
   }
 }
+
+/* Add this to your global CSS */
+.custom-swiper .swiper-button-next,
+.custom-swiper .swiper-button-prev {
+  @apply text-white bg-black/40 p-3 rounded-full hover:bg-black/60;
+}
+
+.custom-swiper .swiper-button-next::after,
+.custom-swiper .swiper-button-prev::after {
+  @apply text-lg;
+}

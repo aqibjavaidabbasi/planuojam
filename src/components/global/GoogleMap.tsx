@@ -1,17 +1,20 @@
 // app/components/GoogleMap.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, CSSProperties } from 'react';
 import {
   GoogleMap,
   Marker,
   InfoWindow,
 } from '@react-google-maps/api';
 
-const mapContainerStyle = {
-  width: '100%',
-  height: '400px',
-};
+const mapContainerStyle: CSSProperties = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+}
 
 const LATITUDE = 55.1694;
 const LONGITUDE = 23.8813;
@@ -64,33 +67,35 @@ const Map = ({ selectedPlace }: MapProps) => {
   }, [selectedPlace, map]);
 
   return (
-    <GoogleMap
-      mapContainerStyle={mapContainerStyle}
-      center={defaultCenter}
-      zoom={6}
-      onLoad={onLoad}
-    >
-      {dummyLocations.map((location) => (
-        <Marker
-          key={location.id}
-          position={location.position}
-          title={location.name}
-          onClick={() => setSelectedLocation(location)}
-        />
-      ))}
+    <div className="relative w-full h-0 pb-[56.25%]">
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        center={defaultCenter}
+        zoom={6}
+        onLoad={onLoad}
+      >
+        {dummyLocations.map((location) => (
+          <Marker
+            key={location.id}
+            position={location.position}
+            title={location.name}
+            onClick={() => setSelectedLocation(location)}
+          />
+        ))}
 
-      {selectedLocation && (
-        <InfoWindow
-          position={selectedLocation.position}
-          onCloseClick={() => setSelectedLocation(null)}
-        >
-          <div className="p-2">
-            <h3 className="font-bold">{selectedLocation.name}</h3>
-            <p>{selectedLocation.description}</p>
-          </div>
-        </InfoWindow>
-      )}
-    </GoogleMap>
+        {selectedLocation && (
+          <InfoWindow
+            position={selectedLocation.position}
+            onCloseClick={() => setSelectedLocation(null)}
+          >
+            <div className="p-2">
+              <h3 className="font-bold">{selectedLocation.name}</h3>
+              <p>{selectedLocation.description}</p>
+            </div>
+          </InfoWindow>
+        )}
+      </GoogleMap>
+    </div>
   );
 };
 

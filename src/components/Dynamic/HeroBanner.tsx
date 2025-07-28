@@ -1,3 +1,4 @@
+'use client'
 import { HeroBannerBlock } from '@/types/pagesTypes'
 import { getCompleteImageUrl } from '@/utils/helpers'
 import Image from 'next/image';
@@ -26,7 +27,9 @@ function HeroBanner({ data }: { data: HeroBannerBlock }) {
           extraStyles='lg:!items-start lg:!justify-start'
         />
         <p className="text-secondary text-base font-normal text-center md:text-left">{data.subTitle}</p>
-        <Button style={data.callToAction.style}>
+        <Button style={data.callToAction.style === 'primary' || data.callToAction.style === 'secondary' ? data.callToAction.style : 'primary'}
+        size='large'
+        >
           {data.callToAction.bodyText}
         </Button>
       </div>

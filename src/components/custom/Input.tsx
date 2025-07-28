@@ -10,7 +10,7 @@ function Input({ type, ...props }: InputProps) {
       <input
         type={type}
         {...props}
-        className='w-full py-2 md:py-3.5 px-3 md:px-7 border custom-border-color rounded-md text-base font-normal bg-white focus:outline-none focus:ring-2 focus:ring-primary'
+        className='w-full py-1.5 md:py-2.5 px-2.5 md:px-5 border custom-border-color rounded-md text-base font-normal bg-white focus:outline-none focus:ring-2 focus:ring-primary'
       />
     </div>
   )

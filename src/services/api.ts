@@ -1,12 +1,12 @@
+import QueryString from "qs";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337';
 const REVALIDATION_TIME = 3600; // 1 hour
-import QueryString from "qs";
 
 
 // Reusable fetch options
 const FETCH_OPTIONS = {
   next: { revalidate: REVALIDATION_TIME },
-  cache: "force-cache",
 } as const;
 
 /**

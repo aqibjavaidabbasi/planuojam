@@ -1,27 +1,45 @@
 import React from 'react'
 
 interface ButtonProps {
-    style: 'primary' | 'secondary';
-    children: React.ReactNode;
-    extraStyles?: string;
-    onClick?: React.MouseEventHandler<HTMLButtonElement>;
-    type?: 'button' | 'submit' | 'reset';
+  style: 'primary' | 'secondary' | 'ghost';
+  size?: 'default' | 'small' | 'large';
+  children: React.ReactNode;
+  extraStyles?: string;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
 }
 
 function Button({
-    style,
-    children,
-    extraStyles = '',
-    onClick = () => {},
-    type = 'button'
+  style,
+  size = 'default',
+  children,
+  extraStyles = '',
+  onClick = () => { },
+  type = 'button',
+  disabled = false
 }: ButtonProps) {
-    const styles = {
-        primary: 'rounded-full bg-primary text-white py-2 md:py-3.5 px-3 md:px-7 cursor-pointer font-medium hover:bg-black',
-        secondary: 'rounded-md bg-black text-white py-2 md:py-3.5 px-3 md:px-7 cursor-pointer font-medium hover:bg-primary'
-    } as const;
+  const styles = {
+    primary: 'rounded-full bg-primary text-white hover:bg-black',
+    secondary: 'rounded-md bg-black text-white hover:bg-primary',
+    ghost: 'rounded-md bg-transparent hover:bg-gray-100 text-black border border-transparent hover:border-gray-200 shadow-none'
+  } as const;
+
+  const sizes = {
+    default: 'py-1.5 md:py-2.5 px-2.5 md:px-5 text-base',
+    small: 'py-1 px-3 text-sm',
+    large: 'py-2 md:py-3 px-4 md:px-8 text-lg'
+  } as const;
+
   return (
-    <button onClick={onClick} type={type} className={`${styles[style as keyof typeof styles]} ${extraStyles}`} >{children}</button>
+    <button
+      onClick={onClick}
+      type={type}
+      disabled={disabled}
+      className={`flex items-center justify-center gap-1.5 font-medium ${styles[style]} ${sizes[size]} ${extraStyles} ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : 'cursor-pointer'}`}
+    >
+      {children}
+    </button>
   )
 }
-
 export default Button

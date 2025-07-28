@@ -1,7 +1,7 @@
 import { PAGES_DYNAMIC_ZONE } from "@/utils/dynamicZoneStructure";
 import { fetchAPI, createQuery } from "./api";
 
-export async function fetchHomePage(pageSlug: string) {
+export async function fetchPage(pageSlug: string) {
     const populate = PAGES_DYNAMIC_ZONE;
     const filters = {
         filters: {
@@ -21,7 +21,9 @@ export async function fetchHeader() {
         'eventTypes': {
             populate: {
                 'eventType': {
-                    populate: true,
+                    populate: {
+                        'page': true,
+                    },
                 }
             }
         }
