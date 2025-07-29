@@ -22,7 +22,7 @@ function Button({
   const styles = {
     primary: 'rounded-full bg-primary text-white hover:bg-black',
     secondary: 'rounded-md bg-black text-white hover:bg-primary',
-    ghost: 'rounded-md bg-transparent hover:bg-gray-100 text-black border border-transparent hover:border-gray-200 shadow-none'
+    ghost: 'rounded-md bg-transparent hover:bg-gray-100 text-black border border-transparent hover:border-gray-400 shadow-none'
   } as const;
 
   const sizes = {

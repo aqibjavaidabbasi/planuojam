@@ -55,8 +55,28 @@ export async function fetchListings(type: 'venue' | 'vendor', appliedFilters={})
             ...appliedFilters
         }
     }
-    console.log('listing filter object finl: ', filters)
     const query = createQuery(populate);
     const res = await fetchAPI('listings',query,filters);
+    return res;
+}
+
+export async function fetchListingsPerEvents(passedEvent: string){
+    const populate = {
+        eventTypes: {
+            populate: '*'
+        },
+        category: {
+            populate: '*'
+        }
+    }
+    const filters = {
+        filters: {
+            eventTypes: {
+                eventName: passedEvent
+            }
+        }
+    }
+    const query = createQuery(populate)
+    const res = await fetchAPI('listings', query, filters);
     return res;
 }

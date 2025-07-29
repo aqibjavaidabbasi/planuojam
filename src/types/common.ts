@@ -1,4 +1,18 @@
 export interface strapiImage{
     url: string;
-    width: 800;
+    width: number;
+    formats: {
+        small: {
+            url: string;
+            width: number;
+        },
+        medium: {
+            url: string;
+            width: number;
+        },
+        thumbnail: {
+            url: string;
+            width: number;
+        }
+    }
 }

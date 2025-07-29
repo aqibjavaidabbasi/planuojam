@@ -1,10 +1,10 @@
 import DynamicZoneRenderer from '@/components/global/DynamicZoneRenderer';
 import { fetchPage } from '@/services/pagesApi'
-import { homePage } from '@/types/pagesTypes';
+import { page } from '@/types/pagesTypes';
 import React from 'react'
 
 export default async function HomePage() {
-    const homePageData: homePage = await fetchPage('home');
+    const homePageData: page = await fetchPage('home');
 
 
     return (

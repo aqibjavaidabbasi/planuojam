@@ -248,6 +248,9 @@ export const PAGES_DYNAMIC_ZONE = {
                         }
                     }
                 }
+            },
+            'dynamic-blocks.rich-text-area':{
+                populate: '*'
             }
         }
     },

@@ -12,7 +12,7 @@ function CardsGroup({ data }: { data: ImageBlocksGroupBlock }) {
                 <p>{data.title.sectionDescription}</p>
             </div>
             <div className='flex items-center justify-center gap-3 mt-10 flex-wrap'>
-                {data.imageBlocks.map(block => {
+                {data.imageBlock.map(block => {
                     const imageUrl = getCompleteImageUrl(block.image.url);
                     return (
                         <div key={block.id} className='flex gap-1.5'

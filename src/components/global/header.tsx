@@ -15,6 +15,12 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
     const router = useRouter();
     const pathname = usePathname();
 
+    // Helper for nav isActive
+    const isNavActive = (url: string) => pathname === url;
+
+    // Helper for eventType isActive
+    const isEventTypeActive = (slug: string) => pathname === `/event-types/${slug}`;
+
     return (
         <header className='sticky top-0 z-30'>
             <div className="w-full bg-white shadow-sm px-4 py-2 flex items-center justify-between">
@@ -34,7 +40,7 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
                     <nav className="hidden md:flex items-center gap-3 md:ml-10">
                         {headerData?.nav.item.map((navItem) => {
                             const openInNewTab = navItem.target?.toLowerCase().includes("_blank");
-                            const isActive = pathname === navItem.relativeUrl;
+                            const isActive = isNavActive(navItem.relativeUrl);
 
                             const handleClick = () => {
                                 if (openInNewTab) {
@@ -108,15 +114,26 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
                             </div>
                             <nav className="flex flex-col gap-2">
                                 {/* Main Navigation */}
-                                {headerData?.nav.item.map(navItem => (
-                                    <div
-                                        className="cursor-pointer text-primary bg-white hover:bg-primary hover:text-white p-2.5 rounded-sm transition-colors"
-                                        key={navItem.id}
-                                        onClick={() => setMobileNavOpen(false)}
-                                    >
-                                        {navItem.label}
-                                    </div>
-                                ))}
+                                {headerData?.nav.item.map(navItem => {
+                                    const isActive = isNavActive(navItem.relativeUrl);
+                                    return (
+                                        <div
+                                            className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-white hover:bg-primary hover:text-white
+                                                ${isActive ? "bg-primary text-white" : ""}`}
+                                            key={navItem.id}
+                                            onClick={() => {
+                                                if (navItem.target?.toLowerCase().includes("_blank")) {
+                                                    window.open(navItem.relativeUrl, "_blank");
+                                                } else {
+                                                    router.push(navItem.relativeUrl);
+                                                }
+                                                setMobileNavOpen(false);
+                                            }}
+                                        >
+                                            {navItem.label}
+                                        </div>
+                                    );
+                                })}
 
                                 {/* Event Types Section */}
                                 {Array.isArray(headerData?.eventTypes) && headerData.eventTypes.length > 0 && (
@@ -125,18 +142,22 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
                                         <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide mb-1">
                                             Event Types
                                         </p>
-                                        {headerData.eventTypes.map(({ id, eventType }) => (
-                                            <div
-                                                className="cursor-pointer text-primary bg-gray-100 hover:bg-primary hover:text-white p-2.5 rounded-sm transition-colors"
-                                                key={id}
-                                                onClick={() => {
-                                                    router.push(`/event-types/${eventType.slug}`)
-                                                    setMobileNavOpen(false)
-                                                }}
-                                            >
-                                                {eventType.eventName}
-                                            </div>
-                                        ))}
+                                        {headerData.eventTypes.map(({ id, eventType }) => {
+                                            const isActive = isEventTypeActive(eventType.slug);
+                                            return (
+                                                <div
+                                                    className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white
+                                                        ${isActive ? "bg-primary text-white" : ""}`}
+                                                    key={id}
+                                                    onClick={() => {
+                                                        router.push(`/event-types/${eventType.slug}`)
+                                                        setMobileNavOpen(false)
+                                                    }}
+                                                >
+                                                    {eventType.eventName}
+                                                </div>
+                                            );
+                                        })}
                                     </>
                                 )}
                             </nav>
@@ -168,18 +189,22 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
             {/* Subnav Bar: Desktop only */}
             {Array.isArray(headerData?.eventTypes) && headerData.eventTypes.length > 0 && (
                 <div className="hidden md:flex w-full bg-gray-50 border-t border-b custom-border-color px-4 py-2 gap-2 z-20">
-                    {headerData.eventTypes.map(({ id, eventType }) => (
-                        <div
-                            key={id}
-                            className="cursor-pointer text-sm text-primary hover:bg-primary hover:text-white px-3 py-1 rounded-sm transition-colors"
-                            onClick={() => {
-                                router.push(`/event-types/${eventType.slug}`)
-                                setMobileNavOpen(false)
-                            }}
-                        >
-                            {eventType.eventName}
-                        </div>
-                    ))}
+                    {headerData.eventTypes.map(({ id, eventType }) => {
+                        const isActive = isEventTypeActive(eventType.slug);
+                        return (
+                            <div
+                                key={id}
+                                className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors
+                                    ${isActive ? "bg-primary text-white" : "text-primary hover:bg-primary hover:text-white"}`}
+                                onClick={() => {
+                                    router.push(`/event-types/${eventType.slug}`)
+                                    setMobileNavOpen(false)
+                                }}
+                            >
+                                {eventType.eventName}
+                            </div>
+                        );
+                    })}
                 </div>
             )}
         </header>

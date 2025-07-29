@@ -1,6 +1,10 @@
 import { DynamicBlocks } from '@/types/pagesTypes'
 import React from 'react'
 import dynamic from 'next/dynamic'
+import FaqBlock from '../Dynamic/FaqBlock';
+import TitleDescription from '../Dynamic/TitleDescription';
+import CardComponent from './Card';
+import RichTextRenderer, { RichTextNode } from './RichTextEditor';
 
 const HeroBanner = dynamic(() => import('../Dynamic/HeroBanner'));
 const CardsGroup = dynamic(() => import('./CardsGroup'));
@@ -29,7 +33,7 @@ function DynamicZoneRenderer({ blocks }: { blocks: DynamicBlocks[] }) {
                             return <div key={key}>video embed component</div>
                         }
                         case 'dynamic-blocks.text-image-block': {
-                            return <div key={key}>Text Image block</div>
+                            return <CardComponent key={key} card={singleBlock} />
                         }
                         case 'dynamic-blocks.testimonials': {
                             return <div key={key}>Testimonials component</div>
@@ -41,7 +45,7 @@ function DynamicZoneRenderer({ blocks }: { blocks: DynamicBlocks[] }) {
                             return <div key={key}>HTML BLOCK component</div>
                         }
                         case 'dynamic-blocks.faqs': {
-                            return <div key={key}>FAQ Block</div>
+                            return <FaqBlock key={key} data={singleBlock} />
                         }
                         case 'dynamic-blocks.call-to-action': {
                             return <div key={key}>call to action</div>
@@ -62,7 +66,7 @@ function DynamicZoneRenderer({ blocks }: { blocks: DynamicBlocks[] }) {
                             return <BackgroundImageBlock key={key} data={singleBlock} />
                         }
                         case 'general.title-description': {
-                            return <div key={key}>title with description</div>
+                            return <TitleDescription key={key} data={singleBlock} />
                         }
                         case 'general.social-links-component': {
                             return <SubscriptionForm key={key} data={singleBlock} />
@@ -75,6 +79,15 @@ function DynamicZoneRenderer({ blocks }: { blocks: DynamicBlocks[] }) {
                         }
                         case 'dynamic-blocks.event-types-list': {
                             return <EventTypesList key={key} data={singleBlock} />
+                        }
+                        case "dynamic-blocks.rich-text-area": {
+                            const content: RichTextNode[] = Array.isArray(singleBlock.content)
+                                ? singleBlock.content.filter(
+                                    (node): node is RichTextNode =>
+                                        !!node && typeof node.type === 'string'
+                                )
+                                : [];
+                            return <RichTextRenderer key={key} content={content} />
                         }
                         default: {
                             return null;

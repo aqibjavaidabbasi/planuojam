@@ -1,8 +1,9 @@
 import { SelectedCategoriesList } from '@/types/pagesTypes'
-import { filterUniqueCategoriesByParent, getCompleteImageUrl } from '@/utils/helpers';
-import Image from 'next/image';
+import { filterUniqueCategoriesByParent } from '@/utils/helpers';
 import React from 'react'
 import Heading from '../ui/heading';
+import CategoryCard from './CategoryCard';
+import NoDataCard from '../custom/NoDataCard';
 
 
 function SelectedCategories({ data }: { data: SelectedCategoriesList }) {
@@ -19,32 +20,11 @@ function SelectedCategories({ data }: { data: SelectedCategoriesList }) {
                 {
                     updatedData.length > 0 ?
                         updatedData.map(item => {
-                            const imageUrl = item.category.image?.url ? getCompleteImageUrl(item.category.image.url) : '/placeholder.png'
-                            return (
-                                <div
-                                    key={item.id}
-                                    className='flex flex-col gap-1.5 w-[300px]'
-                                    style={{
-                                        backgroundColor: '#fff',
-                                        boxShadow: '0px 0px 4px rgba(0,0,0,0.2)',
-                                    }}
-                                >
-                                    <div className='relative w-[300px] h-[250px]'>
-                                        <Image
-                                            src={imageUrl}
-                                            alt={`Category image for ${item.category.name}`}
-                                            layout='fill'
-                                            objectFit='cover'
-                                        />
-                                    </div>
-                                    <div className='m-2.5 flex-1 overflow-hidden'>
-                                        <h3 className='text-primary font-medium text-lg truncate'>{item.category.name}</h3>
-                                    </div>
-                                </div>
-                            )
+                            const category = item.category;
+                            return ( <CategoryCard key={category.documentId} category={category} />)
                         })
                         :
-                        <div>No Data Found!</div>
+                        <NoDataCard>No Data Found</NoDataCard>
                 }
             </div>
         </div>

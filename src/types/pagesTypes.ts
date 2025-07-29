@@ -1,6 +1,6 @@
 import { strapiImage } from "./common";
 
-export interface homePage {
+export interface page {
   id: number;
   title: string;
   description: string;
@@ -71,7 +71,8 @@ export type DynamicBlocks =
   | ImageBlockBackgroundBlock
   | topListingItemsBlock
   | SelectedCategoriesList
-  | EventTypesBlock;
+  | EventTypesBlock
+  | RichTextAreaBlock;
 
 export interface HeroBannerBlock {
   __component: 'dynamic-blocks.hero-banner';
@@ -80,6 +81,8 @@ export interface HeroBannerBlock {
   subTitle: string;
   heroImage: strapiImage;
   callToAction: CallToActionComponentBlock;
+  imagePosition: string;
+  variant: string;
   heading: {
     id: number;
     headingPiece: headingPiece[]
@@ -89,7 +92,7 @@ export interface HeroBannerBlock {
 export interface ImageBlocksGroupBlock {
   __component: 'dynamic-blocks.image-blocks-group';
   id: number;
-  imageBlocks: {
+  imageBlock: {
     backgroundColor: string;
     blockContent: string;
     heading: string;
@@ -100,6 +103,7 @@ export interface ImageBlocksGroupBlock {
   }[];
   title: TitleDescriptionBlock
 }
+
 
 // Block Groups
 export interface BlockGroupsBlock {
@@ -165,6 +169,11 @@ export interface VideoEmbedComponentBlock {
 }
 export interface CardComponentBlock {
   __component: 'dynamic-blocks.text-image-block';
+  image: strapiImage;
+  backgroundColor?: string;
+  imagePositon?: 'top' | 'left' | 'right';
+  heading: string;
+  blockContent: string;
 }
 export interface testimonialsComponentBlock {
   __component: 'dynamic-blocks.testimonials';
@@ -177,13 +186,21 @@ export interface HTMLBlockComponentBlock {
 }
 export interface FAQComponentBlock {
   __component: 'dynamic-blocks.faqs';
+  sectionTitle: string;
+  id: number;
+  numberOfColumns: 'one' | 'two';
+  items: {
+    id: number;
+    question: string;
+    answer: string;
+  }[]
 }
 export interface CallToActionComponentBlock {
   __component: 'dynamic-blocks.call-to-action';
   id: number;
   bodyText: string;
   buttonUrl: string;
-  style: string;
+  style: 'primary' | 'secondary' | 'ghost';
 }
 export interface HeadingTypographyBlock {
   __component: 'typography.heading';
@@ -281,5 +298,12 @@ export interface eventType {
   eventName: string;
   image: strapiImage;
   externalUrl?: string;
-
 }
+  export interface RichTextAreaBlock {
+    __component: "dynamic-blocks.rich-text-area";
+    id: number;
+    content: {
+      level?: number;
+      type?: string;
+    }[]
+  }
