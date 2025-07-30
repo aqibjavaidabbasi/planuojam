@@ -1,13 +1,16 @@
+'use client'
 import React from 'react'
 import ClientEventTypeWrapper from './ClientEventTypeWrapper';
+import { useParams } from 'next/navigation';
 
-async function EventTypesPage({ params }: { params: { slug: string } }) {
-    const {slug} = await params;
-  return (
-    <div>
-       <ClientEventTypeWrapper slug={slug} />
-    </div>
-  )
+function EventTypesPage() {
+  const params = useParams<{slug: string}>();
+    const { slug } = params;
+    return (
+        <div>
+            <ClientEventTypeWrapper slug={slug} />
+        </div>
+    );
 }
 
 export default EventTypesPage

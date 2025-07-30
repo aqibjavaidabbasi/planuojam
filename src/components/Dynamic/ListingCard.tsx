@@ -96,9 +96,20 @@ function ListingCard({ item }: { item: listingItem }) {
 
         {/* Location */}
         <ul className="ml-4 list-disc text-sm text-gray-600">
-          <li>{item?.listingItem?.location ?? 'No Location Provided.'}</li>
-        </ul>
-
+          {
+            item.listingItem.filter(item=>item.__component === 'dynamic-blocks.vendor')
+             &&
+             item.listingItem.map(item => (
+               <li key={item.id}>
+                 {'location' in item && item.location
+                   ? typeof item.location === 'string'
+                     ? item.location
+                     : item.location.address
+                   : 'No Location Provided.'}
+               </li>
+             ))
+            }
+            </ul>
         {/* Pricing and Button */}
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2 text-sm">
