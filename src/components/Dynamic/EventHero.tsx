@@ -4,9 +4,11 @@ import Button from '../ui/Button'
 import Image from 'next/image'
 import { HeroBannerBlock } from '@/types/pagesTypes'
 import { getCompleteImageUrl } from '@/utils/helpers'
+import { useRouter } from 'next/navigation'
 
 function EventHero({data}: {data: HeroBannerBlock}) {
     const heroImage = getCompleteImageUrl(data.heroImage.formats.medium.url);
+    const router = useRouter();
 
   return (
     <section className="relative w-screen max-w-screen h-80 md:h-[450px] flex items-center justify-start overflow-hidden">
@@ -29,7 +31,7 @@ function EventHero({data}: {data: HeroBannerBlock}) {
             px-5 py-5 md:px-8 md:py-8
             ml-0 md:ml-10
             bg-white/30
-            backdrop-blur-md
+            backdrop-blur-3xl
             border border-white/30
           "
           style={{
@@ -44,10 +46,11 @@ function EventHero({data}: {data: HeroBannerBlock}) {
             as="h1"
             extraStyles='lg:!items-start lg:!justify-start'
           />
-          <p className="text-gray-300 text-base font-normal text-left">{data.subTitle}</p>
+          <p className="text-gray-700 text-base font-normal text-left">{data.subTitle}</p>
           <Button
             style={data.callToAction.style}
             size='large'
+            onClick={()=>router.push(data.callToAction.buttonUrl)}
           >
             {data.callToAction.bodyText}
           </Button>

@@ -15,10 +15,8 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
     const router = useRouter();
     const pathname = usePathname();
 
-    // Helper for nav isActive
     const isNavActive = (url: string) => pathname === url;
-
-    // Helper for eventType isActive
+    const isHotDealActive = () => pathname === '/hot-deal';
     const isEventTypeActive = (slug: string) => pathname === `/event-types/${slug}`;
 
     return (
@@ -31,7 +29,7 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
                         alt="Planuojam Logo"
                         width={100}
                         height={100}
-                        onClick={()=>router.push('/home')}
+                        onClick={() => router.push('/home')}
                         className="w-10 h-10 md:w-[95px] md:h-[60px] object-contain cursor-pointer"
                         priority
                     />
@@ -158,6 +156,12 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
                                                 </div>
                                             );
                                         })}
+                                        <div
+                                            className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors not-only:${isHotDealActive() ? "bg-primary text-white" : "text-primary hover:bg-primary hover:text-white"}`}
+                                            onClick={() => router.push('/hot-deal')}
+                                        >
+                                            Hot Deal
+                                        </div>
                                     </>
                                 )}
                             </nav>
@@ -205,8 +209,15 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
                             </div>
                         );
                     })}
+                    <div
+                        className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${isHotDealActive() ? "bg-primary text-white" : "text-primary hover:bg-primary hover:text-white"}`}
+                        onClick={() => router.push('/hot-deal')}
+                    >
+                        Hot Deal
+                    </div>
                 </div>
             )}
+
         </header>
     );
 }

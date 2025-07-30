@@ -20,7 +20,20 @@ export async function fetchChildCategories(slug: string) {
     const res = await fetchAPI(`categories`, query, filter);
     return res;
 }
-export async function fetchEventTypes(){
+export async function fetchParentCategories() {
+    const filter = {
+        filters: {
+            parentCategory: {
+                $null: true,
+            }
+        }
+    }
+    const populate = {}
+    const query = createQuery(populate);
+    const res = await fetchAPI(`categories`, query, filter);
+    return res;
+}
+export async function fetchEventTypes() {
     const populate = {
         image: {
             populate: '*'
@@ -30,17 +43,38 @@ export async function fetchEventTypes(){
         }
     }
     const query = createQuery(populate);
-    const res = await fetchAPI('event-types',query);
+    const res = await fetchAPI('event-types', query);
     return res;
 }
 
-export async function fetchListings(type: 'venue' | 'vendor', appliedFilters={}){
+export async function fetchListings(type: 'venue' | 'vendor', appliedFilters = {}) {
     const populate = {
         images: {
             populate: '*'
         },
         listingItem: {
-            populate: '*'
+            on: {
+                'dynamic-blocks.vendor': {
+                    populate: {
+                        'serviceArea': {
+                            populate: {
+                                'countries': {
+                                    populate: true,
+                                },
+                                'cities': {
+                                    populate: true,
+                                },
+                                'states': {
+                                    populate: true,
+                                }
+                            }
+                        }
+                    }
+                },
+                'dynamic-blocks.venue': {
+                    populate: '*'
+                }
+            }
         },
         eventTypes: {
             populate: '*'
@@ -56,11 +90,11 @@ export async function fetchListings(type: 'venue' | 'vendor', appliedFilters={})
         }
     }
     const query = createQuery(populate);
-    const res = await fetchAPI('listings',query,filters);
+    const res = await fetchAPI('listings', query, filters);
     return res;
 }
 
-export async function fetchListingsPerEvents(passedEvent: string){
+export async function fetchListingsPerEvents(passedEvent: string) {
     const populate = {
         eventTypes: {
             populate: '*'
@@ -77,6 +111,34 @@ export async function fetchListingsPerEvents(passedEvent: string){
         }
     }
     const query = createQuery(populate)
+    const res = await fetchAPI('listings', query, filters);
+    return res;
+}
+
+export async function fetchHotDealListings(filter = {}) {
+    const populate = {
+        images: {
+            populate: '*'
+        },
+        listingItem: {
+            populate: '*'
+        },
+        eventTypes: {
+            populate: '*'
+        },
+        category: {
+            populate: '*'
+        }
+    }
+    const filters = {
+        filters: {
+            hotDeal: {
+                enableHotDeal: true,
+            },
+            ...filter,
+        }
+    }
+    const query = createQuery(populate);
     const res = await fetchAPI('listings', query, filters);
     return res;
 }

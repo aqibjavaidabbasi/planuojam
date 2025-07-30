@@ -1,0 +1,63 @@
+'use client'
+import NoDataCard from '@/components/custom/NoDataCard'
+import ListingCard from '@/components/Dynamic/ListingCard'
+import HotDealFilter from '@/components/global/HotDealFilter'
+import Heading from '@/components/ui/heading'
+import { fetchHotDealListings, fetchParentCategories } from '@/services/common'
+import { category, listingItem, TitleDescriptionBlock } from '@/types/pagesTypes'
+import React, { useEffect, useState } from 'react'
+
+function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: TitleDescriptionBlock[]}) {
+    const [parentCategories,setParentCategories] = useState<category[]>();
+    const [hotDealListings, setHotDealListings] = useState<listingItem[]>()
+
+    useEffect(function(){
+        async function fetchCategories(){
+            const res = await fetchParentCategories();
+            setParentCategories(res);
+        }
+        fetchCategories();
+    },[])
+    useEffect(function(){
+        async function fetchListings(){
+            const res = await fetchHotDealListings();
+            setHotDealListings(res);
+        }
+        fetchListings();
+    },[])
+
+    const parentCategoriesFilter = {
+        name: 'category',
+        options: parentCategories?.map(cat => cat.name) || [],
+        placeholder: 'Choose a vendor',
+    }
+
+  return (
+    <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1400px]'>
+        <div className='flex flex-col items-center justify-center gap-2'>
+            {titleDescriptionBlock[0]?.heading?.headingPiece && (
+                <Heading headingPiece={titleDescriptionBlock[0].heading.headingPiece} />
+            )}
+            {titleDescriptionBlock[0]?.sectionDescription && (
+                <p className='text-center'>{titleDescriptionBlock[0].sectionDescription}</p>
+            )}
+        </div>
+        <HotDealFilter
+            categoryOptions={parentCategoriesFilter}
+            setList={setHotDealListings}
+        />
+        <div className='flex items-center justify-center gap-3 mt-10 flex-wrap'>
+            {
+                hotDealListings && hotDealListings.length > 0 ?
+                    hotDealListings.map(listing => (
+                        <ListingCard key={listing.documentId} item={listing} />
+                    ))
+                    :
+                    <NoDataCard>No Data Found</NoDataCard>
+            }
+        </div>
+    </div>
+  )
+}
+
+export default ClientHotDealWrapper

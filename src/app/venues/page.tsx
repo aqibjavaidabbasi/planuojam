@@ -9,7 +9,6 @@ async function VenuePage() {
 
   venues.map(venue => venueNames.push(venue.name));
 
-
   return (
     <div className='bg-normal px-10 sm:px-20 md:px-24 lg:px-32 py-7 md:py-10'>
       <ClientVenueWrapper 

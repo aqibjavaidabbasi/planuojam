@@ -4,6 +4,7 @@ import Button from '../ui/Button'
 import Image from 'next/image'
 import { HeroBannerBlock } from '@/types/pagesTypes'
 import { getCompleteImageUrl } from '@/utils/helpers'
+import { useRouter } from 'next/navigation'
 
 interface NormalBannerProps {
     data: HeroBannerBlock;
@@ -12,6 +13,7 @@ interface NormalBannerProps {
 
 function NormalBanner({data, imagePosition}: NormalBannerProps) {
     const heroImage = getCompleteImageUrl(data.heroImage.url);
+    const router = useRouter()
     // Both: image comes first on mobile
     const imageOrder = imagePosition === 'left' ? 'order-1 md:order-1' : 'order-1 md:order-2';
     const contentOrder = imagePosition === 'left' ? 'order-2 md:order-2' : 'order-2 md:order-1';
@@ -37,6 +39,7 @@ function NormalBanner({data, imagePosition}: NormalBannerProps) {
       <Button
         style={data.callToAction.style}
         size='large'
+        onClick={()=>router.push(data.callToAction.buttonUrl)}
       >
         {data.callToAction.bodyText}
       </Button>

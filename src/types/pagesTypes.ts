@@ -233,27 +233,41 @@ export interface listingItem{
   slug: string;
   title: string;
   type: string;
-  listingItem: Venue | Vendor;
+  listingItem: (Venue | Vendor)[];
   averageRating: number;
   ratingsCount: number;
 }
 
 export interface Venue {
   __component: 'dynamic-blocks.venue'
-  amneties: [];
-  bookingDurationType: string;
-  bookingDuration: number;
-  capacity: number;
-  id: number;
-  location: string
+  amneties?: [];
+  bookingDurationType?: string;
+  bookingDuration?: number;
+  capacity?: number;
+  id?: number;
+  location?: {
+    address: string;
+    city: string;
+    id: number;
+    latitude: number;
+    longitude: number;
+  }
 }
 export interface Vendor {
   __component: 'dynamic-blocks.vendor'
   id: number;
   about: string;
   experienceYears: number;
-  serviceArea: unknown;
-  location: string; //location is not in vendor yet
+  serviceArea: {
+    countries: Place[];
+    cities: Place[];
+    states: Place[];
+
+  }
+}
+
+export interface Place {
+  name: string;
 }
 
 export interface SelectedCategoriesList {

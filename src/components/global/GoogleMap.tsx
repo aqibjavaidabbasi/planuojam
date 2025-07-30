@@ -1,4 +1,3 @@
-// app/components/GoogleMap.tsx
 'use client';
 
 import { useState, useEffect, CSSProperties } from 'react';
@@ -24,35 +23,24 @@ const defaultCenter = {
   lng: LONGITUDE,
 };
 
-// Dummy data for markers
-const dummyLocations = [
-  {
-    id: 1,
-    name: 'Coffee Shop',
-    position: { lat: LATITUDE + 0.01, lng: LONGITUDE + 0.01 },
-    description: 'A cozy coffee shop with great lattes.',
-  },
-  {
-    id: 2,
-    name: 'City Park',
-    position: { lat: LATITUDE - 0.01, lng: LONGITUDE - 0.01 },
-    description: 'A beautiful park for a relaxing walk.',
-  },
-  {
-    id: 3,
-    name: 'Library',
-    position: { lat: LATITUDE + 0.015, lng: LONGITUDE - 0.015 },
-    description: 'A quiet place to read and study.',
-  },
-];
+export interface Location {
+  id: number;
+  name: string;
+  description: string;
+  position: {
+    lat: number;
+    lng: number;
+  }
+}
 
 type MapProps = {
   selectedPlace: google.maps.places.PlaceResult | null;
+  locations: Location[]
 };
 
-const Map = ({ selectedPlace }: MapProps) => {
+const Map = ({ selectedPlace, locations }: MapProps) => {
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<(typeof dummyLocations)[0] | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
 
   const onLoad = (mapInstance: google.maps.Map) => {
     setMap(mapInstance);
@@ -74,7 +62,7 @@ const Map = ({ selectedPlace }: MapProps) => {
         zoom={6}
         onLoad={onLoad}
       >
-        {dummyLocations.map((location) => (
+        {locations.map((location) => (
           <Marker
             key={location.id}
             position={location.position}

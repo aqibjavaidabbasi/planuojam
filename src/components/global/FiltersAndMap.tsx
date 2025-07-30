@@ -1,8 +1,8 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StandaloneSearchBox } from '@react-google-maps/api';
-import Map from './GoogleMap';
+import Map, { Location } from './GoogleMap';
 import Input from '../custom/Input';
 import Select from '../custom/Select';
 import Button from '../ui/Button';
@@ -20,14 +20,26 @@ interface FiltersAndMapProps {
     filters: FilterConfig[];
     type: 'venue' | 'vendor';
     setList: (venues: listingItem[]) => void;
+    initialFilterValues?: Record<string, string>;
+    locations: Location[]
 }
 
-const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList }) => {
+const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, initialFilterValues, locations }) => {
     const searchBoxRef = useRef<google.maps.places.SearchBox | null>(null);
     const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
     const [tempFilterValues, setTempFilterValues] = useState<Record<string, string>>({});
     const [appliedFilters, setAppliedFilters] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        if (initialFilterValues) {
+            setTempFilterValues(initialFilterValues);
+            Object.entries(initialFilterValues).forEach(([name, value]) => {
+                handleFilterChange(name, value);
+            });
+        }
+    }, [initialFilterValues]);
+    
 
     const onPlacesChanged = () => {
         if (searchBoxRef.current) {
@@ -85,6 +97,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList })
 
     const handleApply = async () => {
         setIsLoading(true);
+        console.log(appliedFilters)
         const res = await fetchListings(type, appliedFilters);
         setList(res);
         setIsLoading(false);
@@ -128,7 +141,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList })
                 </div>
             </div>
 
-            <Map selectedPlace={selectedPlace} />
+            <Map selectedPlace={selectedPlace} locations={locations} />
         </div>
     );
 };

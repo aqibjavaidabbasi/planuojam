@@ -2,23 +2,35 @@
 import NoDataCard from '@/components/custom/NoDataCard';
 import ListingCard from '@/components/Dynamic/ListingCard';
 import FiltersAndMap from '@/components/global/FiltersAndMap';
+import { Location } from '@/components/global/GoogleMap';
 import Loader from '@/components/ui/Loader';
 import { useEventTypes } from '@/context/EventTypesContext';
 import { fetchListings } from '@/services/common';
-import { listingItem } from '@/types/pagesTypes';
-import React, { useEffect, useState } from 'react';
+import { listingItem, Venue } from '@/types/pagesTypes';
+import { useSearchParams } from 'next/navigation';
+import React, { useEffect, useMemo, useState } from 'react';
 
 const PricingFilters = ['With Pricing only', 'Without Pricing Only'];
 const TYPE = 'venue'
 
 
-function ClientVenueWrapper({ venueNames }: { venueNames: string[]}) {
+function ClientVenueWrapper({ venueNames }: { venueNames: string[] }) {
 
     const [venueList, setVenueList] = useState<listingItem[]>([]);
     const [loading, setLoading] = useState(false);
-    const {eventTypes} = useEventTypes();
-    const eventTypeNames: string[] = []
-    eventTypes.map(event => eventTypeNames.push(event.eventName));
+    const { eventTypes } = useEventTypes();
+    const searchParams = useSearchParams();
+    const eventTypeNames: string[] = eventTypes.map(event => event.eventName);
+
+    const categoryFromUrl = searchParams.get('cat');
+    const eventTypeFromUrl = searchParams.get('eventType');
+
+    const initialFilters = useMemo(() => {
+        const obj: Record<string, string> = {};
+        if (categoryFromUrl) obj.category = categoryFromUrl;
+        if (eventTypeFromUrl) obj.eventType = eventTypeFromUrl;
+        return obj;
+    }, [categoryFromUrl, eventTypeFromUrl]);
 
     const filters = [
         {
@@ -38,11 +50,27 @@ function ClientVenueWrapper({ venueNames }: { venueNames: string[]}) {
         },
     ]
 
+
     useEffect(function () {
         setLoading(true);
+        const filters = {};
         async function fetchItems() {
+            if (categoryFromUrl) {
+                (filters as Record<string, unknown>).category = {
+                    name: {
+                        $eq: categoryFromUrl,
+                    },
+                };
+            }
+            if (eventTypeFromUrl) {
+                (filters as Record<string, unknown>).eventTypes = {
+                    eventName: {
+                        $eq: eventTypeFromUrl,
+                    },
+                };
+            }
             try {
-                const res = await fetchListings(TYPE);
+                const res = await fetchListings(TYPE, filters);
                 setVenueList(res);
             } catch (err) {
                 console.log(err);
@@ -50,17 +78,43 @@ function ClientVenueWrapper({ venueNames }: { venueNames: string[]}) {
             setLoading(false);
         }
         fetchItems();
-    }, []);
+    }, [categoryFromUrl, eventTypeFromUrl]);
 
     if (loading) return <div>
         <Loader />
     </div>
 
+    const locations: Location[] = venueList
+        .map(item => {
+            const venueBlock = item.listingItem.find(
+                block => block.__component === 'dynamic-blocks.venue'
+            ) as Venue | undefined;
+
+            if (!venueBlock?.location) return null;
+
+            return {
+                id: item.id,
+                name: item.title || 'Unnamed Venue',
+                description: item.description || '',
+                position: {
+                    lat: venueBlock.location.latitude,
+                    lng: venueBlock.location.longitude, // assuming you've fixed the typo
+                },
+            };
+        })
+        .filter((location): location is Location => location !== null);
+
     return (
         <div>
-            <FiltersAndMap filters={filters} type={TYPE} setList={setVenueList} />
+            <FiltersAndMap
+                filters={filters}
+                type={TYPE}
+                setList={setVenueList}
+                initialFilterValues={initialFilters}
+                locations={locations}
+            />
             <div className='flex items-center gap-5 my-10 flex-wrap'>
-                 {venueList.length === 0 ? (
+                {venueList.length === 0 ? (
                     <NoDataCard>No venues Found</NoDataCard>
                 ) : (
                     venueList.map(venue => (
