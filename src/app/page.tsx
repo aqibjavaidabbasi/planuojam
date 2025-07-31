@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import HomePage from './HomePage';
 
 export default function Root() {
-  redirect('/home');
+  return <HomePage />
 }

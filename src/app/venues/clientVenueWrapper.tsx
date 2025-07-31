@@ -6,7 +6,7 @@ import { Location } from '@/components/global/GoogleMap';
 import Loader from '@/components/ui/Loader';
 import { useEventTypes } from '@/context/EventTypesContext';
 import { fetchListings } from '@/services/common';
-import { listingItem, Venue } from '@/types/pagesTypes';
+import { ListingItem, Venue } from '@/types/pagesTypes';
 import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useMemo, useState } from 'react';
 
@@ -16,7 +16,7 @@ const TYPE = 'venue'
 
 function ClientVenueWrapper({ venueNames }: { venueNames: string[] }) {
 
-    const [venueList, setVenueList] = useState<listingItem[]>([]);
+    const [venueList, setVenueList] = useState<ListingItem[]>([]);
     const [loading, setLoading] = useState(false);
     const { eventTypes } = useEventTypes();
     const searchParams = useSearchParams();

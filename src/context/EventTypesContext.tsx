@@ -1,13 +1,12 @@
-
 'use client';
 
 import { fetchEventTypes } from '@/services/common';
-import { eventType } from '@/types/pagesTypes';
+import { EventTypes } from '@/types/pagesTypes';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface EventTypesContextProps {
-  eventTypes: eventType[];
-  getEventTypeBySlug: (slug: string) => eventType | undefined;
+  eventTypes: EventTypes[];
+  getEventTypeBySlug: (slug: string) => EventTypes | undefined;
 }
 
 const EventTypesContext = createContext<EventTypesContextProps | undefined>(undefined);
@@ -19,7 +18,7 @@ export const useEventTypes = () => {
 };
 
 export const EventTypesProvider = ({ children }: { children: ReactNode }) => {
-  const [eventTypes, setEventTypes] = useState<eventType[]>([]);
+  const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
 
   useEffect(() => {
     const fetchEvent = async () => {

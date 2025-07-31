@@ -17,7 +17,7 @@ const Select: React.FC<SelectProps> = ({
   const isControlled = value !== undefined;
 
   const selectProps: React.SelectHTMLAttributes<HTMLSelectElement> = {
-    className: `w-full py-1.5 md:py-2.5 px-2.5 md:px-5 border custom-border-color rounded-md text-base font-normal bg-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none ${className}`,
+    className: `w-full py-1.5 md:py-2.5 px-2.5 md:px-5 border border-border rounded-md text-base font-normal bg-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none ${className}`,
     ...props,
   };
 

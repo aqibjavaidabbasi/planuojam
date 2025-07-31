@@ -9,7 +9,7 @@ function Search() {
         <div className='relative w-full'>
             <input
                 type="search"
-                className="bg-white w-full p-1 border custom-border-color rounded-lg h-9 pl-8 focus:outline-none focus:ring-2 focus:ring-primary"
+                className="bg-white w-full p-1 border border-border rounded-lg h-9 pl-8 focus:outline-none focus:ring-2 focus:ring-primary"
                 placeholder="Search here"
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}

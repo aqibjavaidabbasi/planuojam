@@ -1,6 +1,5 @@
 'use client'
 import { header as HeaderType } from '@/types/pagesTypes';
-import { strapiImage } from '@/types/common';
 import Image from 'next/image';
 import React, { useState } from 'react'
 import Search from '../custom/Search';
@@ -8,10 +7,12 @@ import { getCompleteImageUrl } from '@/utils/helpers';
 import { FaRegUser, FaBars } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
 import { usePathname, useRouter } from 'next/navigation';
+import { useSiteSettings } from '@/context/SiteSettingsContext';
 
-function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderType }) {
+function Header({ headerData }: { headerData: HeaderType }) {
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
-    const imageUrl = getCompleteImageUrl(logo.url);
+    const { siteSettings } = useSiteSettings()
+    const imageUrl = getCompleteImageUrl(siteSettings.siteLogo.url);
     const router = useRouter();
     const pathname = usePathname();
 
@@ -29,7 +30,7 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
                         alt="Planuojam Logo"
                         width={100}
                         height={100}
-                        onClick={() => router.push('/home')}
+                        onClick={() => router.push('/')}
                         className="w-10 h-10 md:w-[95px] md:h-[60px] object-contain cursor-pointer"
                         priority
                     />
@@ -65,7 +66,7 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
                 {/* Right: Language, Search, User, Mobile Toggle */}
                 <div className="flex items-center gap-2 md:gap-3">
                     {/* Language Selector */}
-                    <select className="bg-white border custom-border-color rounded-md h-9 px-2 text-sm md:text-base">
+                    <select className="bg-white border border-border rounded-md h-9 px-2 text-sm md:text-base">
                         <option value="">English</option>
                         <option value="">Lietuvių</option>
                     </select>
@@ -167,7 +168,7 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
                             </nav>
 
                             <div className="mt-4 flex flex-col gap-2">
-                                <select className="bg-white border custom-border-color rounded-md h-9 px-2 text-sm">
+                                <select className="bg-white border border-border rounded-md h-9 px-2 text-sm">
                                     <option value="">English</option>
                                     <option value="">Lietuvių</option>
                                 </select>
@@ -192,7 +193,7 @@ function Header({ logo, headerData }: { logo: strapiImage; headerData: HeaderTyp
             </div>
             {/* Subnav Bar: Desktop only */}
             {Array.isArray(headerData?.eventTypes) && headerData.eventTypes.length > 0 && (
-                <div className="hidden md:flex w-full bg-gray-50 border-t border-b custom-border-color px-4 py-2 gap-2 z-20">
+                <div className="hidden md:flex w-full bg-gray-50 border-t border-b border-border px-4 py-2 gap-2 z-20">
                     {headerData.eventTypes.map(({ id, eventType }) => {
                         const isActive = isEventTypeActive(eventType.slug);
                         return (

@@ -16,7 +16,7 @@ export default function CardComponent({ card }: { card: CardComponentBlock }) {
     'shadow-md',
     'bg-white',
     'overflow-hidden',
-    'bg-normal',
+    'bg-background',
     isTop ? 'flex flex-col' : 'flex items-center gap-6',
     isRight ? 'flex row-reverse' : '',
   ].join(' ');

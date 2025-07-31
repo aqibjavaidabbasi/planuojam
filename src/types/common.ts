@@ -16,3 +16,8 @@ export interface strapiImage{
         }
     }
 }
+
+export interface User{
+    username: string;
+    email: string;
+}

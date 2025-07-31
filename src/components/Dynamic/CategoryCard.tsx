@@ -10,7 +10,7 @@ function CategoryCard({category}: {category: category}) {
      const router = useRouter();
   return (
     <div
-        className='flex flex-col gap-1.5 w-[300px] transition-all duration-300 ease-in hover:scale-105 cursor-pointer'
+        className='flex flex-col gap-1.5 w-[300px] transition-all duration-300 ease-in hover:scale-105 cursor-pointer rounded-lg'
         style={{
         backgroundColor: '#fff',
         boxShadow: '0px 0px 4px rgba(0,0,0,0.2)',

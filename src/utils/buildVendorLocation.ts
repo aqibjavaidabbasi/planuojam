@@ -1,7 +1,7 @@
 import { Location } from '@/components/global/GoogleMap';
-import { listingItem, Vendor } from '../types/pagesTypes'; 
+import { ListingItem, Vendor } from '../types/pagesTypes'; 
 
-async function geocodeLocations(listings: listingItem[]): Promise<Location[]> {
+async function geocodeLocations(listings: ListingItem[]): Promise<Location[]> {
   const locations: Location[] = [];
   const geocoder = new google.maps.Geocoder();
 

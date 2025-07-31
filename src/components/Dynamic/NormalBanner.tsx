@@ -29,7 +29,7 @@ function NormalBanner({data, imagePosition}: NormalBannerProps) {
         sizes="(max-width: 768px) 100vw, 50vw"
       />
     </div>
-    <div className={`flex flex-col gap-2.5 p-5 md:p-10 items-center md:items-start justify-center bg-normal ${contentOrder}`}>
+    <div className={`flex flex-col gap-2.5 p-5 md:p-10 items-center md:items-start justify-center bg-background ${contentOrder}`}>
       <Heading
         headingPiece={data.heading.headingPiece}
         as="h1"

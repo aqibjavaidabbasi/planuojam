@@ -6,10 +6,5 @@ import React from 'react'
 export default async function HomePage() {
     const homePageData: page = await fetchPage('home');
 
-
-    return (
-    <div>
-      <DynamicZoneRenderer blocks={homePageData.blocks} />
-    </div>
-  )
+    return <DynamicZoneRenderer blocks={homePageData.blocks} />
 }

@@ -7,7 +7,7 @@ import Input from '../custom/Input';
 import Select from '../custom/Select';
 import Button from '../ui/Button';
 import { fetchListings } from '@/services/common';
-import { listingItem } from '@/types/pagesTypes';
+import { ListingItem } from '@/types/pagesTypes';
 
 
 type FilterConfig = {
@@ -19,7 +19,7 @@ type FilterConfig = {
 interface FiltersAndMapProps {
     filters: FilterConfig[];
     type: 'venue' | 'vendor';
-    setList: (venues: listingItem[]) => void;
+    setList: (venues: ListingItem[]) => void;
     initialFilterValues?: Record<string, string>;
     locations: Location[]
 }

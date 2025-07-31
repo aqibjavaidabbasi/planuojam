@@ -9,54 +9,52 @@ import { useEventTypes } from '@/context/EventTypesContext';
 import { fetchListingsPerEvents } from '@/services/common';
 import { fetchPage } from '@/services/pagesApi';
 import { category, DynamicBlocks, TitleDescriptionBlock } from '@/types/pagesTypes';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
-function ClientEventTypeWrapper({ slug }: { slug: string }) {
+function ClientEventTypeWrapper() {
     const { getEventTypeBySlug } = useEventTypes();
+    const params = useParams();
+    const slug = typeof params.slug === 'string' ? params.slug : Array.isArray(params.slug) ? params.slug[0] : '';
     const eventType = getEventTypeBySlug(slug);
     const [eventBlock, setEventBlocks] = useState<DynamicBlocks[]>([]);
     const router = useRouter();
     const [categories, setCategories] = useState<category[]>([]);
+    const [loading, setLoading] = useState(false);
 
-    useEffect(function () {
-        async function fetchPageData() {
-            if (eventType && eventType.page) {
-                const res = await fetchPage(eventType.page.slug);
-                setEventBlocks(res.blocks);
-            }
+    useEffect(() => {
+        async function fetchData() {
+            setLoading(true);
+          if (eventType && eventType.page) {
+            // Fetch page data
+            const pageRes = await fetchPage(eventType.page.slug);
+            setEventBlocks(pageRes.blocks);
+      
+            // Fetch categories
+            const listingsRes = await fetchListingsPerEvents(eventType.eventName);
+            const allCategories: category[] = listingsRes
+              .map((listing: { category: category }) => listing?.category)
+              .filter((cat: { documentId: string }): cat is category => !!cat && !!cat.documentId);
+            const uniqueCategories: category[] = Array.from(
+              new Map(allCategories.map((cat) => [cat.documentId, cat])).values()
+            );
+            setCategories(uniqueCategories);
+          }
+          setLoading(false);
         }
-        fetchPageData();
-    }, [eventType])
+        fetchData();
+      }, [eventType]);
 
-    useEffect(function () {
-        async function fetchCategories() {
-            if (eventType && eventType.page) {
-                const res = await fetchListingsPerEvents(eventType.eventName);
+    if (!eventType || loading) return <Loader />;
 
-                const allCategories: category[] = res
-                    .map((listing: { category: category }) => listing?.category)
-                    .filter((cat: { documentId: string; }): cat is category => !!cat && !!cat.documentId);
-
-                const uniqueCategories: category[] = Array.from(
-                    new Map(allCategories.map((cat) => [cat.documentId, cat])).values()
-                );
-                setCategories(uniqueCategories);
-            }
-        }
-        fetchCategories();
-    }, [eventType])
-
-    if (!eventType) return <Loader />;
-
-    if (!eventType.page) return (
+    if (!eventType?.page) return (
         <div className="flex items-center justify-center min-h-[60vh]">
             <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full text-center border border-gray-200 flex flex-col items-center justify-center">
-                <p className='p-3 rounded-md text-lg font-semibold text-red-500'>{eventType.eventName}</p>
+                <p className='p-3 rounded-md text-lg font-semibold text-red-500'>{eventType?.eventName}</p>
                 <p className="text-gray-700 text-lg font-medium">
                     This page has not yet been created in Strapi, or if it is created, the link to this page is missing.
                 </p>
-                <Button style='ghost' onClick={() => router.push('/home')} >Go to homepage</Button>
+                <Button style='ghost' onClick={() => router.push('/')} >Go to homepage</Button>
             </div>
         </div>
     )
@@ -99,7 +97,7 @@ function ClientEventTypeWrapper({ slug }: { slug: string }) {
             <DynamicZoneRenderer blocks={heroBlock} />
 
             {/* venue categories */}
-            <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1400px]'>
+            <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1400px] mx-auto'>
                 <div className='flex flex-col items-center justify-center gap-2'>
                     {venueTitleBlock?.heading?.headingPiece && (
                         <Heading headingPiece={venueTitleBlock.heading.headingPiece} />
@@ -120,10 +118,10 @@ function ClientEventTypeWrapper({ slug }: { slug: string }) {
                 </div>
             </div>
             {/* vendor categories */}
-            <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1400px]'>
+            <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1400px] mx-auto'>
                 <div className='flex flex-col items-center justify-center gap-2'>
                     {vendorTitleBlock?.heading?.headingPiece && (
-                        <Heading headingPiece={vendorTitleBlock.heading.headingPiece} />
+                        <Heading extraStyles='!text-center' headingPiece={vendorTitleBlock.heading.headingPiece} />
                     )}
                     {vendorTitleBlock?.sectionDescription && (
                         <p className='text-center'>{vendorTitleBlock.sectionDescription}</p>

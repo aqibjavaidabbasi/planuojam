@@ -4,7 +4,7 @@ import { footer } from '@/types/pagesTypes';
 function Footer({footerData}: {footerData: footer}) {
 
     return (
-        <div className='bg-footer w-screen max-w-screen text-primary p-5' >
+        <div className='bg-footer-background w-screen max-w-screen text-primary p-5' >
             <div className='flex justify-start md:justify-between flex-col md:flex-row'>
                 {footerData?.footerlinkSection.map(section => (
                     <div key={section.id} className='py-3'>
@@ -16,7 +16,7 @@ function Footer({footerData}: {footerData: footer}) {
                     </div>
                 </div>))}
             </div>
-            <div className='flex items-center justify-between mt-4 pt-3 border-t-[0.5px] custom-border-color flex-col md:flex-row'>
+            <div className='flex items-center justify-between mt-4 pt-3 border-t-[0.5px] border-border flex-col md:flex-row'>
                 <div className='flex items-center gap-2.5'>
                     {footerData?.extraLinks.map((link, idx, arr) => (
                         <span key={link.id} className='flex items-center gap-2'>

@@ -8,7 +8,7 @@ import Input from '../custom/Input'
 
 function SubscriptionForm({ data }: { data: SocialLinksComponentBlock }) {
     return (
-        <div className='bg-normal flex items-center justify-center md:justify-between px-5 md:px-10 py-3 md:py-5 flex-col md:flex-row gap-2'>
+        <div className='bg-background flex items-center justify-center md:justify-between px-5 md:px-10 py-3 md:py-5 flex-col md:flex-row gap-2'>
             <div className='flex gap-2 items-center'>
                 <Input type='email' placeholder='Enter your email' />
                 <Button style='primary' extraStyles='!rounded-sm' >

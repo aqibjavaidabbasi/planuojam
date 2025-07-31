@@ -4,12 +4,12 @@ import ListingCard from '@/components/Dynamic/ListingCard'
 import HotDealFilter from '@/components/global/HotDealFilter'
 import Heading from '@/components/ui/heading'
 import { fetchHotDealListings, fetchParentCategories } from '@/services/common'
-import { category, listingItem, TitleDescriptionBlock } from '@/types/pagesTypes'
+import { category, ListingItem, TitleDescriptionBlock } from '@/types/pagesTypes'
 import React, { useEffect, useState } from 'react'
 
 function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: TitleDescriptionBlock[]}) {
     const [parentCategories,setParentCategories] = useState<category[]>();
-    const [hotDealListings, setHotDealListings] = useState<listingItem[]>()
+    const [hotDealListings, setHotDealListings] = useState<ListingItem[]>()
 
     useEffect(function(){
         async function fetchCategories(){
@@ -33,7 +33,7 @@ function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: T
     }
 
   return (
-    <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1400px]'>
+    <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1400px] mx-auto'>
         <div className='flex flex-col items-center justify-center gap-2'>
             {titleDescriptionBlock[0]?.heading?.headingPiece && (
                 <Heading headingPiece={titleDescriptionBlock[0].heading.headingPiece} />

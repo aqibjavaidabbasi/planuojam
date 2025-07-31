@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Select from '../custom/Select';
 import Button from '../ui/Button';
-import { category, listingItem } from '@/types/pagesTypes';
+import { category, ListingItem } from '@/types/pagesTypes';
 import { fetchChildCategories, fetchHotDealListings } from '@/services/common';
 import { useEventTypes } from '@/context/EventTypesContext';
 
@@ -14,7 +14,7 @@ type FilterConfig = {
 };
 
 interface HotDealFilterProps {
-    setList: (listings: listingItem[]) => void;
+    setList: (listings: ListingItem[]) => void;
     categoryOptions: FilterConfig;
 }
 
@@ -73,7 +73,7 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
 
     const handleApply = async () => {
         setIsLoading(true);
-        const filteredListings: listingItem[] = await fetchHotDealListings(appliedFilters);
+        const filteredListings: ListingItem[] = await fetchHotDealListings(appliedFilters);
         setList(filteredListings);
         setIsLoading(false);
     };
@@ -81,7 +81,7 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
     const handleClear = async () => {
         setIsLoading(true);
         setTempFilterValues({});
-        const allListings: listingItem[] = await fetchHotDealListings(); // No filters
+        const allListings: ListingItem[] = await fetchHotDealListings(); // No filters
         setList(allListings);
         setIsLoading(false);
     };

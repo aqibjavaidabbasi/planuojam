@@ -6,48 +6,15 @@ body {
   font-family: "Montserrat", sans-serif;
 }
 
-:root {
-  --primary-color: #cc922f;
-  --border-color: #dfddddab;
-  --footer-background: #111111;
-  --secondary-color: #6b6064;
-  --background-color: #f5f5f5;
+@theme {
+  --color-primary: #cc922f;
+  --color-border: #dfddddab;
+  --color-footer-background: #111111;
+  --color-secondary: #6b6064;
+  --color-background: #f5f5f5;
 }
 
-@layer utilities {
-  .text-primary {
-    color: var(--primary-color);
-  }
-  .bg-primary{
-    background-color: var(--primary-color);
-  }
-  .hover\:bg-primary:hover {
-    background-color: var(--primary-color);
-  }
-  .focus\:ring-primary:focus {
-    --tw-ring-color: var(--primary-color);
-  }
-  .custom-border-color {
-    border-color: var(--border-color);
-  }
-  .text-border{
-    color: var(--border-color);
-  }
-  .border-primary {
-    border-color: var(--primary-color);
-  }
-  .bg-footer {
-    background-color: var(--footer-background);
-  }
-  .text-secondary {
-    color: var(--secondary-color);
-  }
-  .bg-normal {
-    background-color: var(--background-color);
-  }
-}
 
-/* Add this to your global CSS */
 .custom-swiper .swiper-button-next,
 .custom-swiper .swiper-button-prev {
   @apply text-white bg-black/40 p-3 rounded-full hover:bg-black/60;

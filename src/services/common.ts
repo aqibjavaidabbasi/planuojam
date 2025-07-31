@@ -81,6 +81,9 @@ export async function fetchListings(type: 'venue' | 'vendor', appliedFilters = {
         },
         category: {
             populate: '*'
+        },
+        hotDeal:{
+            populate: '*'
         }
     }
     const filters = {
@@ -127,6 +130,9 @@ export async function fetchHotDealListings(filter = {}) {
             populate: '*'
         },
         category: {
+            populate: '*'
+        },
+        hotDeal: {
             populate: '*'
         }
     }

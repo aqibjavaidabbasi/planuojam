@@ -5,7 +5,7 @@ import FiltersAndMap from '@/components/global/FiltersAndMap';
 import Loader from '@/components/ui/Loader';
 import { useEventTypes } from '@/context/EventTypesContext';
 import { fetchListings } from '@/services/common';
-import { listingItem } from '@/types/pagesTypes';
+import { ListingItem } from '@/types/pagesTypes';
 import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
@@ -17,7 +17,7 @@ const TYPE = 'vendor'
 
 
 function ClientVendorWrapper({ vendorNames }: { vendorNames: string[] }) {
-    const [vendorList, setVendorList] = useState<listingItem[]>([]);
+    const [vendorList, setVendorList] = useState<ListingItem[]>([]);
     const [loading, setLoading] = useState(false);
     const { eventTypes } = useEventTypes();
     const eventTypeNames: string[] = [];
@@ -91,7 +91,9 @@ function ClientVendorWrapper({ vendorNames }: { vendorNames: string[] }) {
 
     if (loading) return <div>
         <Loader />
-    </div>
+    </div>;
+
+
     return (
         <div>
             <FiltersAndMap 

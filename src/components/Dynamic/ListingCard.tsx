@@ -1,8 +1,8 @@
 'use client'
-import { listingItem } from '@/types/pagesTypes'
+import { ListingItem } from '@/types/pagesTypes'
 import { getCompleteImageUrl } from '@/utils/helpers'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
@@ -12,20 +12,15 @@ import { FaHeart } from 'react-icons/fa'
 import { CiHeart } from 'react-icons/ci'
 import Button from '../ui/Button'
 import { IoNavigateOutline } from 'react-icons/io5'
+import { useRouter } from 'next/navigation'
 
-function ListingCard({ item }: { item: listingItem }) {
-  const [liked, setLiked] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) return null;
+function ListingCard({ item }: { item: ListingItem }) {
+  const [liked, setLiked] = useState(false)
+  const router = useRouter();
 
   return (
     <div
-      className="rounded-md bg-white relative max-w-full sm:max-w-[300px] overflow-hidden"
+      className="rounded-lg bg-white relative max-w-full sm:max-w-[300px] overflow-hidden border border-border"
       style={{
         boxShadow:
           '2px 0px 4px rgba(0,0,0,0.1), 0px 2px 4px rgba(0,0,0,0.1), 0px -2px 4px rgba(0,0,0,0.1), -2px 0px 4px rgba(0,0,0,0.1)'
@@ -49,6 +44,21 @@ function ListingCard({ item }: { item: listingItem }) {
           />
         )}
       </div>
+
+      {/* Hot Deal Badge */}
+      {item.hotDeal?.enableHotDeal && (
+        <div className="absolute top-4 right-4 z-10">
+          <div className="relative">
+            <div className="bg-primary text-white w-16 h-16 rounded-full flex items-center justify-center transform rotate-12">
+              <div className="text-center">
+                <div className="text-xs font-bold">HOT</div>
+                <div className="text-xs">DEAL</div>
+              </div>
+            </div>
+            <div className="absolute inset-0 rounded-full border-2 border-white transform rotate-12"></div>
+          </div>
+        </div>
+      )}
 
       {/* Swiper */}
       <Swiper
@@ -89,40 +99,45 @@ function ListingCard({ item }: { item: listingItem }) {
         <div className="flex justify-between items-center">
           <strong className="text-base md:text-lg">{item.title}</strong>
           <div className="flex gap-1 text-primary items-center text-sm">
-            <span>{item.averageRating ?? 'unrated'}</span>
+            <span>{item.averageRating ?? 'Unrated'}</span>
             <span>({item.ratingsCount ?? 0})</span>
           </div>
         </div>
 
-        {/* Location */}
-        <ul className="ml-4 list-disc text-sm text-gray-600">
-          {
-            item.listingItem.filter(item=>item.__component === 'dynamic-blocks.vendor')
-             &&
-             item.listingItem.map(item => (
-               <li key={item.id}>
-                 {'location' in item && item.location
-                   ? typeof item.location === 'string'
-                     ? item.location
-                     : item.location.address
-                   : 'No Location Provided.'}
-               </li>
-             ))
-            }
-            </ul>
+        {/* Location, Category, Event Type */}
+        <ul className="ml-4 list-disc text-sm text-secondary">
+          {item.listingItem?.length > 0 && (
+            <li className="truncate list-disc">
+              {item.listingItem[0].__component === 'dynamic-blocks.venue' && item.listingItem[0].location
+                ? `${item.listingItem[0].location.address}, ${item.listingItem[0].location.city}`
+                : item.listingItem[0].__component === 'dynamic-blocks.vendor' && item.listingItem[0].serviceArea?.cities?.length > 0
+                ? item.listingItem[0].serviceArea.cities.map(c => c.name).join(', ')
+                : 'No location provided'}
+            </li>
+          )}
+          {item.category?.name && <li className="truncate">{item.category.name}</li>}
+          {item.eventTypes?.eventName && (
+            <li className="truncate">
+              {item.eventTypes.eventName.length > 20
+                ? `${item.eventTypes.eventName.slice(0, 20)}...`
+                : item.eventTypes.eventName}
+            </li>
+          )}
+        </ul>
+
         {/* Pricing and Button */}
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2 text-sm">
             {item.price ? (
               <>
                 <span className="font-medium">Price</span>
-                <span className="font-semibold text-primary">${item.price}</span>
+                <span className="font-semibold text-primary">${item.price.toLocaleString()}</span>
               </>
             ) : (
               <span>Contact for pricing</span>
             )}
           </div>
-          <Button style="secondary" size="small">
+          <Button style="secondary" size="small" onClick={() => router.push(`/listing/${item.slug}`)}>
             View <IoNavigateOutline />
           </Button>
         </div>

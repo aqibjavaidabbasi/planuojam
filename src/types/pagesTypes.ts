@@ -1,4 +1,4 @@
-import { strapiImage } from "./common";
+import { strapiImage, User } from "./common";
 
 export interface page {
   id: number;
@@ -17,11 +17,11 @@ export interface header {
   };
   eventTypes: {
     id: number;
-    eventType: eventType;
+    eventType: EventTypes;
   }[]
 }
 
-export interface eventType {
+export interface EventTypes {
   documentId: string;
   id: number;
   locale: string;
@@ -154,13 +154,16 @@ export interface SocialLinksComponentBlock {
   __component: 'general.social-links-component';
   id: number;
   optionalSectionTitle: string;
-  socialLink: {
+  socialLink: SocialLink[];
+}
+
+export interface SocialLink{
     id: number;
     link: string;
     platform: string;
     visible: boolean;
-  }[];
 }
+
 export interface LocationComponentBlock {
   __component: 'general.location';
 }
@@ -189,11 +192,7 @@ export interface FAQComponentBlock {
   sectionTitle: string;
   id: number;
   numberOfColumns: 'one' | 'two';
-  items: {
-    id: number;
-    question: string;
-    answer: string;
-  }[]
+  items: FAQ[]
 }
 export interface CallToActionComponentBlock {
   __component: 'dynamic-blocks.call-to-action';
@@ -217,11 +216,18 @@ export interface topListingItemsBlock {
     id: number;
     listingsComponent: {
       id: number;
-      listingItem: listingItem;
+      listingItem: ListingItem;
     }[]
   }
 }
-export interface listingItem{
+
+export interface Contact{
+  email: string;
+  phone: string;
+  address: string;
+}
+
+export interface ListingItem{
   description: string;
   documentId: string;
   id: number;
@@ -229,28 +235,68 @@ export interface listingItem{
   images: strapiImage[];
   listingStatus: string;
   locale: string;
-  price: number;
+  price?: number;
   slug: string;
   title: string;
   type: string;
   listingItem: (Venue | Vendor)[];
   averageRating: number;
   ratingsCount: number;
+  category: category;
+  contact: Contact;
+  socialLinks: {
+    optionalSectionTitle: string;
+    socialLink: SocialLink[]
+  }
+  websiteLink: string;
+  workingHours: number;
+  pricingPackages: {
+    sectionTitle: string;
+    plans: Plans[];
+    optionalAddons: {
+      statement: string;
+      price: number;
+    }[]
+  }
+  portfolio: strapiImage;
+  FAQs: {
+    sectionTitle: string;
+    numberOfColumns: number;
+    items: FAQ[];
+  }
+  reviews: Review[];
+  user: User;
+  eventTypes: EventTypes;
+  hotDeal: {
+    enableHotDeal: boolean;
+    startDate: string;
+    lastDate: string;
+    dealNote: string;
+    discount: Discount;
+  }
+}
+export interface Discount{
+  discountType: 'Flat Rate' | 'Percentage'
+  percentage: number;
+  flatRatePrice: number;
 }
 
 export interface Venue {
   __component: 'dynamic-blocks.venue'
-  amneties?: [];
+  amneties?: {
+    text: string;
+  }[];
   bookingDurationType?: string;
   bookingDuration?: number;
   capacity?: number;
-  id?: number;
+  id: number;
   location?: {
     address: string;
     city: string;
     id: number;
     latitude: number;
     longitude: number;
+    country: string;
   }
 }
 export interface Vendor {
@@ -262,7 +308,6 @@ export interface Vendor {
     countries: Place[];
     cities: Place[];
     states: Place[];
-
   }
 }
 
@@ -321,3 +366,29 @@ export interface eventType {
       type?: string;
     }[]
   }
+
+export interface Plans {
+  name: string;
+  price: number;
+  isPopular: boolean;
+  cta: CallToActionComponentBlock;
+  featuresList: {
+    statement: string;
+  }[]
+}
+export interface FAQ{
+  id: number;
+  question: string;
+  answer: string;
+}
+
+export interface Review {
+  id: number;
+  author: User;
+  review: ReviewContent
+}
+export interface ReviewContent {
+  rating: number;
+  reviewBody: string;
+  reviewStatus: 'Pending Approval' | 'Approved' | 'Rejected'
+}
