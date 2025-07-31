@@ -18,6 +18,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
 
     const isNavActive = (url: string) => pathname === url;
     const isHotDealActive = () => pathname === '/hot-deal';
+    const isMapActive = () => pathname === '/map';
     const isEventTypeActive = (slug: string) => pathname === `/event-types/${slug}`;
 
     return (
@@ -163,6 +164,12 @@ function Header({ headerData }: { headerData: HeaderType }) {
                                         >
                                             Hot Deal
                                         </div>
+                                        <div
+                                            className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors not-only:${isMapActive() ? "bg-primary text-white" : "text-primary hover:bg-primary hover:text-white"}`}
+                                            onClick={() => router.push('/map')}
+                                        >
+                                            Map
+                                        </div>
                                     </>
                                 )}
                             </nav>
@@ -215,6 +222,12 @@ function Header({ headerData }: { headerData: HeaderType }) {
                         onClick={() => router.push('/hot-deal')}
                     >
                         Hot Deal
+                    </div>
+                    <div
+                        className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${isMapActive() ? "bg-primary text-white" : "text-primary hover:bg-primary hover:text-white"}`}
+                        onClick={() => router.push('/map')}
+                    >
+                        Map
                     </div>
                 </div>
             )}

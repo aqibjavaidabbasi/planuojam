@@ -34,7 +34,7 @@ export interface Location {
 }
 
 type MapProps = {
-  selectedPlace: google.maps.places.PlaceResult | null;
+  selectedPlace?: google.maps.places.PlaceResult | null;
   locations: Location[]
 };
 

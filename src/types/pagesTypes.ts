@@ -258,7 +258,7 @@ export interface ListingItem{
       price: number;
     }[]
   }
-  portfolio: strapiImage;
+  Portfolio: strapiImage[];
   FAQs: {
     sectionTitle: string;
     numberOfColumns: number;

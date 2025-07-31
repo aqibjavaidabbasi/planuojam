@@ -85,4 +85,5 @@ async function geocodeLocations(listings: ListingItem[]): Promise<Location[]> {
   return locations;
 }
 
+
 export default geocodeLocations;

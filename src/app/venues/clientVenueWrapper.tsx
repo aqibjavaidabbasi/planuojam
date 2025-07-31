@@ -84,25 +84,30 @@ function ClientVenueWrapper({ venueNames }: { venueNames: string[] }) {
         <Loader />
     </div>
 
-    const locations: Location[] = venueList
-        .map(item => {
-            const venueBlock = item.listingItem.find(
-                block => block.__component === 'dynamic-blocks.venue'
-            ) as Venue | undefined;
+    function getLocationsFromVenues(venues: typeof venueList): Location[] {
+        return venues
+            .map(item => {
+                const venueBlock = item.listingItem.find(
+                    block => block.__component === 'dynamic-blocks.venue'
+                ) as Venue | undefined;
 
-            if (!venueBlock?.location) return null;
+                if (!venueBlock?.location) return null;
 
-            return {
-                id: item.id,
-                name: item.title || 'Unnamed Venue',
-                description: item.description || '',
-                position: {
-                    lat: venueBlock.location.latitude,
-                    lng: venueBlock.location.longitude, // assuming you've fixed the typo
-                },
-            };
-        })
-        .filter((location): location is Location => location !== null);
+                return {
+                    id: item.id,
+                    name: item.title || 'Unnamed Venue',
+                    description: item.description || '',
+                    position: {
+                        lat: venueBlock.location.latitude,
+                        lng: venueBlock.location.longitude,
+                    },
+                };
+            })
+            .filter((location): location is Location => location !== null);
+    }
+
+    const locations: Location[] = getLocationsFromVenues(venueList);
+
 
     return (
         <div>

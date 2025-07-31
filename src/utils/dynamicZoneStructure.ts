@@ -189,6 +189,9 @@ export const PAGES_DYNAMIC_ZONE = {
                                             },
                                             'FAQs':{
                                                 populate: '*'
+                                            },
+                                            'hotDeal': {
+                                                populate: '*'
                                             }
                                         }
                                     } 

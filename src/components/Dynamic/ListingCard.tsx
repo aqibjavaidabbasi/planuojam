@@ -13,10 +13,12 @@ import { CiHeart } from 'react-icons/ci'
 import Button from '../ui/Button'
 import { IoNavigateOutline } from 'react-icons/io5'
 import { useRouter } from 'next/navigation'
+import { useSiteSettings } from '@/context/SiteSettingsContext'
 
 function ListingCard({ item }: { item: ListingItem }) {
   const [liked, setLiked] = useState(false)
   const router = useRouter();
+  const { siteSettings } = useSiteSettings();
 
   return (
     <div
@@ -131,7 +133,7 @@ function ListingCard({ item }: { item: ListingItem }) {
             {item.price ? (
               <>
                 <span className="font-medium">Price</span>
-                <span className="font-semibold text-primary">${item.price.toLocaleString()}</span>
+                <span className="font-semibold text-primary">{siteSettings.currency ?  siteSettings.currency.symbol : '$'}{item.price.toLocaleString()}</span>
               </>
             ) : (
               <span>Contact for pricing</span>

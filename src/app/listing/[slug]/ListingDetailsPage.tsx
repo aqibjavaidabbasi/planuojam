@@ -97,6 +97,18 @@ export default function ListingDetailsPage() {
                                     />
                                 </SwiperSlide>
                             ))}
+                             {listing.Portfolio && listing.Portfolio.map((image: strapiImage, index: number) => (
+                                <SwiperSlide key={index}>
+                                    <Image
+                                        src={getCompleteImageUrl(image.url)}
+                                        alt={listing.title}
+                                        width={400}
+                                        height={400}
+                                        className="w-full h-full object-cover rounded-lg"
+                                        priority={index === 0}
+                                    />
+                                </SwiperSlide>
+                            ))}
                         </Swiper>
                     )}
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -172,30 +184,6 @@ export default function ListingDetailsPage() {
                         </div>
                     ))}
                 </section>
-
-                {/* Portfolio Section */}
-                {listing.portfolio && (
-                    <section className="mb-12 border-t border-border pt-6">
-                        <h2 className="text-2xl font-semibold text-primary mb-4">Portfolio</h2>
-                        <Swiper
-                            modules={[Navigation, Pagination]}
-                            navigation
-                            pagination={{ clickable: true }}
-                            className="w-full h-[300px] rounded-lg shadow-sm"
-                        >
-                            <SwiperSlide>
-                                <Image
-                                    src={getCompleteImageUrl(listing.portfolio.url)}
-                                    alt="Portfolio"
-                                    width={listing.portfolio.width}
-                                    height={300}
-                                    className="w-full h-full object-cover rounded-lg"
-                                />
-                            </SwiperSlide>
-                        </Swiper>
-                    </section>
-                )}
-
                 {/* Pricing Section */}
                 {
                     listing.pricingPackages &&

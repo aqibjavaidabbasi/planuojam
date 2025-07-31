@@ -9,7 +9,7 @@ import { ListingItem } from '@/types/pagesTypes';
 import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
-import geocodeLocations from '@/utils/buildVendorLocation';
+import geocodeLocations from '@/utils/location';
 import { Location } from '@/components/global/GoogleMap';
 
 const PricingFilters = ['With Pricing only', 'Without Pricing Only'];
