@@ -24,7 +24,7 @@ function Faqitem({faq, idx, isOpen, setOpenIndexes}: FaqitemProps) {
     className="rounded-lg border border-gray-200 shadow-sm transition h-fit"
   >
     <button
-      className="w-full flex justify-between items-center px-6 py-5 text-left hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
+      className="w-full flex justify-between items-center px-6 py-3 text-left hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
       onClick={() => toggleIndex(idx)}
       aria-expanded={isOpen}
       aria-controls={`faq-answer-${idx}`}

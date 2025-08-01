@@ -1,3 +1,4 @@
+import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
 import { createQuery, fetchAPI } from "./api";
 
 export async function fetchChildCategories(slug: string) {
@@ -48,44 +49,7 @@ export async function fetchEventTypes() {
 }
 
 export async function fetchListings(type: 'venue' | 'vendor', appliedFilters = {}) {
-    const populate = {
-        images: {
-            populate: '*'
-        },
-        listingItem: {
-            on: {
-                'dynamic-blocks.vendor': {
-                    populate: {
-                        'serviceArea': {
-                            populate: {
-                                'countries': {
-                                    populate: true,
-                                },
-                                'cities': {
-                                    populate: true,
-                                },
-                                'states': {
-                                    populate: true,
-                                }
-                            }
-                        }
-                    }
-                },
-                'dynamic-blocks.venue': {
-                    populate: '*'
-                }
-            }
-        },
-        eventTypes: {
-            populate: '*'
-        },
-        category: {
-            populate: '*'
-        },
-        hotDeal:{
-            populate: '*'
-        }
-    }
+    const populate = LISTING_ITEM_POP_STRUCTURE;
     const filters = {
         filters: {
             type: type,

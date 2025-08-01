@@ -118,13 +118,6 @@ function ListingCard({ item }: { item: ListingItem }) {
             </li>
           )}
           {item.category?.name && <li className="truncate">{item.category.name}</li>}
-          {item.eventTypes?.eventName && (
-            <li className="truncate">
-              {item.eventTypes.eventName.length > 20
-                ? `${item.eventTypes.eventName.slice(0, 20)}...`
-                : item.eventTypes.eventName}
-            </li>
-          )}
         </ul>
 
         {/* Pricing and Button */}

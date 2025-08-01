@@ -48,27 +48,44 @@ function ClientMapWrapper() {
   }, [])
 
   // Map venues to Location[]
-  function getLocationsFromVenues(venues: ListingItem[]): Location[] {
-    return venues
-      .map(item => {
-        const venueBlock = item.listingItem?.find(
-          block => block.__component === 'dynamic-blocks.venue'
-        ) as Venue | undefined
+function getLocationsFromVenues(venues: ListingItem[]): Location[] {
+  return venues
+    .map(item => {
+      const venueBlock = item.listingItem?.find(
+        block => block.__component === 'dynamic-blocks.venue'
+      ) as Venue | undefined;
 
-        if (!venueBlock?.location) return null
+      if (!venueBlock?.location) return null;
 
-        return {
-          id: item.id,
-          name: item.title || 'Unnamed Venue',
-          description: item.description || '',
-          position: {
-            lat: venueBlock.location.latitude,
-            lng: venueBlock.location.longitude,
-          },
-        }
-      })
-      .filter((location): location is Location => location !== null)
-  }
+      return {
+        id: item.id,
+        name: item.title || 'Unnamed Venue',
+        username: item.user?.username || 'Unknown',
+        description: item.description || '',
+        category: {
+          name: item.category?.name || 'Uncategorized',
+          type: 'venue' as const,
+        },
+        position: {
+          lat: venueBlock.location.latitude,
+          lng: venueBlock.location.longitude,
+        },
+        address: venueBlock.location.address || 'No address provided',
+      };
+    })
+    .filter(
+      (location): location is {
+        id: number;
+        name: string;
+        username: string;
+        description: string;
+        category: { name: string; type: "venue" };
+        position: { lat: number; lng: number };
+        address: string;
+      } => location !== null
+    );
+}
+
 
   if (loading) {
     return (

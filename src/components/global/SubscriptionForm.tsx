@@ -2,9 +2,8 @@
 import { SocialLinksComponentBlock } from '@/types/pagesTypes'
 import React from 'react'
 import Button from '../ui/Button'
-import { FaFacebook, FaInstagram, FaLinkedin, FaPinterest, FaRedditAlien, FaTiktok, FaTwitter, FaYoutube } from 'react-icons/fa'
-import { FaSquareThreads } from 'react-icons/fa6'
 import Input from '../custom/Input'
+import SocialIcon from './SocialIcon'
 
 function SubscriptionForm({ data }: { data: SocialLinksComponentBlock }) {
     return (
@@ -18,21 +17,7 @@ function SubscriptionForm({ data }: { data: SocialLinksComponentBlock }) {
             <div className='flex flex-col gap-1 items-center lg:items-start'>
                 {data.optionalSectionTitle && <h3 className='font-semibold text-xl'>{data.optionalSectionTitle}</h3>}
                 {
-                    data.socialLink.length > 0 && <div className='flex items-center gap-2.5 md:gap-1.5  flex-wrap lg:items-start justify-center lg:justify-start'>
-                        {data.socialLink.map(link => (
-                            <span key={link.id} className='bg-white p-2 rounded-full cursor-pointer hover:bg-primary hover:text-white'>
-                                {link.platform.toLowerCase() === 'facebook' && <FaFacebook size={20} />}
-                                {link.platform.toLowerCase() === 'linkedin' && <FaLinkedin size={20} />}
-                                {link.platform.toLowerCase() === 'youtube' && <FaYoutube size={20} />}
-                                {link.platform.toLowerCase() === 'instagram' && <FaInstagram size={20} />}
-                                {link.platform.toLowerCase() === 'tiktok' && <FaTiktok size={20} />}
-                                {link.platform.toLowerCase() === 'twitter' && <FaTwitter size={20} />}
-                                {link.platform.toLowerCase() === 'pinterest' && <FaPinterest size={20} />}
-                                {link.platform.toLowerCase() === 'thread' && <FaSquareThreads size={20} />}
-                                {link.platform.toLowerCase() === 'reddit' && <FaRedditAlien size={20} />}
-                            </span>
-                        ))}
-                    </div>
+                    data.socialLink.length > 0 && <SocialIcon socialLink={data.socialLink} />
                 }
             </div>
         </div>

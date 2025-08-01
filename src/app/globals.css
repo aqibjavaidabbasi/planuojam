@@ -24,3 +24,37 @@ body {
 .custom-swiper .swiper-button-prev::after {
   @apply text-lg;
 }
+.gradient-bg{ 
+  background: linear-gradient(135deg, #cc922f 0%, #b8821a 100%);
+}
+
+.swiper-button {
+  position: absolute;
+  top: 50%;
+  z-index: 20;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  width: 36px;
+  height: 36px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  justify-content: center;
+  cursor: pointer;
+}
+.swiper-button:hover{
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.custom-prev {
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+.custom-next {
+  right: 0;
+  transform: translate(50%, -50%);
+}

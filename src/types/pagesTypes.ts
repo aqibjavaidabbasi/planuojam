@@ -266,7 +266,7 @@ export interface ListingItem{
   }
   reviews: Review[];
   user: User;
-  eventTypes: EventTypes;
+  eventTypes: EventTypes[];
   hotDeal: {
     enableHotDeal: boolean;
     startDate: string;

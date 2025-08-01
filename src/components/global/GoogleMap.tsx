@@ -6,6 +6,7 @@ import {
   Marker,
   InfoWindow,
 } from '@react-google-maps/api';
+import MapInfoWindow from './MapInfoWindow';
 
 const mapContainerStyle: CSSProperties = {
   position: 'absolute',
@@ -26,12 +27,19 @@ const defaultCenter = {
 export interface Location {
   id: number;
   name: string;
+  username: string;
   description: string;
+  category: {
+    name: string;
+    type: 'vendor' | 'venue' | string;
+  };
   position: {
     lat: number;
     lng: number;
-  }
+  };
+  address: string;
 }
+
 
 type MapProps = {
   selectedPlace?: google.maps.places.PlaceResult | null;
@@ -76,10 +84,7 @@ const Map = ({ selectedPlace, locations }: MapProps) => {
             position={selectedLocation.position}
             onCloseClick={() => setSelectedLocation(null)}
           >
-            <div className="p-2">
-              <h3 className="font-bold">{selectedLocation.name}</h3>
-              <p>{selectedLocation.description}</p>
-            </div>
+            <MapInfoWindow selectedLocation={selectedLocation} />
           </InfoWindow>
         )}
       </GoogleMap>
