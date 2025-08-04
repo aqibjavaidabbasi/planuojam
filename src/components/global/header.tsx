@@ -4,10 +4,11 @@ import Image from 'next/image';
 import React, { useState } from 'react'
 import Search from '../custom/Search';
 import { getCompleteImageUrl } from '@/utils/helpers';
-import { FaRegUser, FaBars } from 'react-icons/fa';
+import { FaBars } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
+import ProfileBtn from './ProfileBtn';
 
 function Header({ headerData }: { headerData: HeaderType }) {
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -78,9 +79,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                     </div>
 
                     {/* User Icon */}
-                    <div className="border border-primary rounded-full p-2 cursor-pointer group hover:bg-primary transition-colors">
-                        <FaRegUser className="text-primary group-hover:text-white text-sm md:text-base" />
-                    </div>
+                   <ProfileBtn />
 
                     {/* Mobile Nav Toggle */}
                     <button

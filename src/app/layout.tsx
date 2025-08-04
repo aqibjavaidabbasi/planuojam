@@ -1,32 +1,28 @@
 import "./globals.css";
-import Header from "@/components/global/header";
-import Footer from "@/components/global/footer";
-import { fetchFooter, fetchHeader } from "@/services/pagesApi";
 import dynamic from "next/dynamic";
 import { EventTypesProvider } from "@/context/EventTypesContext";
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
+import ReduxProvider from "@/store/provider";
 
-const GoogleMapsWrapper = dynamic(() => import('./GoogleMapsWrapper'))
+const GoogleMapsWrapper = dynamic(() => import("./GoogleMapsWrapper"));
 
-export default async function RootLayout({ children }: Readonly<{
+export default async function RootLayout({
+  children,
+}: Readonly<{
   children: React.ReactNode;
 }>) {
-
-  const headerData = await fetchHeader();
-  const footerData = await fetchFooter();
-
   return (
     <html lang="en">
       <body className="max-w-screen">
-        <GoogleMapsWrapper>
-          <SiteSettingsProvider>
-            <EventTypesProvider>
-              <Header headerData={headerData} />
-              <main>{children}</main>
-              <Footer footerData={footerData} />
-            </EventTypesProvider>
-          </SiteSettingsProvider>
-        </GoogleMapsWrapper>
+        <ReduxProvider>
+          <GoogleMapsWrapper>
+            <SiteSettingsProvider>
+              <EventTypesProvider>
+                <div>{children}</div>
+              </EventTypesProvider>
+            </SiteSettingsProvider>
+          </GoogleMapsWrapper>
+        </ReduxProvider>
       </body>
     </html>
   );
