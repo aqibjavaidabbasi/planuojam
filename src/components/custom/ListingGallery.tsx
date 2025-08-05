@@ -22,7 +22,7 @@ function ListingGallery({
 }) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const allImages = [...images, ...portfolio];
+  const allImages = [...images, ...(portfolio ?? [])];
 
   return (
     <div className="relative w-full">

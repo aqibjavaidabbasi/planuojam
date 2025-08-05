@@ -59,16 +59,16 @@ function ListingDetailHero({
               by {username}
             </p>
             <p className="text-base sm:text-xl text-white text-opacity-90 mb-6">
-              {contact.address}
+              {contact?.address}
             </p>
             <div className="flex flex-wrap gap-4 text-sm">
               <div className="flex items-center">
                 <MdOutlineEmail className="mr-2" size={24} />
-                <span>{contact.email}</span>
+                <span>{contact?.email}</span>
               </div>
               <div className="flex items-center">
                 <MdOutlineLocalPhone className="mr-2" size={24} />
-                <span>{contact.phone}</span>
+                <span>{contact?.phone}</span>
               </div>
             </div>
           </div>

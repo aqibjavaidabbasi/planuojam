@@ -20,4 +20,8 @@ export interface strapiImage{
 export interface User{
     username: string;
     email: string;
+    blocked: boolean;
+    confirmed: boolean;
+    id: number;
+    documentId: string;
 }
