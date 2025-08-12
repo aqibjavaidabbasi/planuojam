@@ -15,3 +15,8 @@ export async function fetchUser(jwt: string) {
   const res = await fetchAPIWithToken(`users/me`, query, filters, jwt);
   return res;
 }
+
+export async function register(data: Record<string, unknown>){
+  const res = await postAPI('/auth/local/register', data);
+  return res;
+}

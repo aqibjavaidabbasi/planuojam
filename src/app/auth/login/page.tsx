@@ -1,17 +1,17 @@
 "use client";
 import Checkbox from "@/components/custom/Checkbox";
-import GoogleButton from "@/components/custom/GoogleButton";
 import Input from "@/components/custom/Input";
+import Modal from "@/components/custom/Modal";
+import ForgotPasswordModal from "@/components/global/ForgotPasswordModal";
 import Button from "@/components/ui/Button";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
-import { fetchUser, login } from "@/services/auth";
 import { useAppDispatch } from "@/store/hooks";
 import { loginUser } from "@/store/slices/authSlice";
 import { getCompleteImageUrl } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 type FormValues = {
@@ -28,6 +28,7 @@ function LoginPage() {
   } = useForm<FormValues>();
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const [isOpen, setIsOpen ] = useState(false);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     try{
@@ -85,12 +86,9 @@ function LoginPage() {
               </div>
             <div className="flex items-center justify-between">
               <Checkbox label="Remember Me" />
-              <Link
-                href={""}
-                className="text-sm text-primary hover:underline transition-colors"
-              >
-                Forgot password?
-              </Link>
+              <Button style="link" onClick={()=>setIsOpen(true)} >
+                forgot password?
+              </Button>
             </div>
 
             <Button
@@ -102,7 +100,7 @@ function LoginPage() {
             </Button>
           </form>
 
-          <div className="relative my-6">
+          {/* <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
             </div>
@@ -111,9 +109,9 @@ function LoginPage() {
                 Or continue with
               </span>
             </div>
-          </div>
+          </div> */}
 
-          <GoogleButton label="Continue With Google" />
+          {/* <GoogleButton label="Continue With Google" /> */}
 
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">
@@ -128,6 +126,9 @@ function LoginPage() {
           </div>
         </div>
       </div>
+      <Modal isOpen={isOpen} onClose={()=>setIsOpen(false)}  >
+        <ForgotPasswordModal />
+      </Modal>
     </div>
   );
 }

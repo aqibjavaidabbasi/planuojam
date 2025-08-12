@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import { EventTypesProvider } from "@/context/EventTypesContext";
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
 import ReduxProvider from "@/store/provider";
+import { ParentCategoriesProvider } from "@/context/ParentCategoriesContext";
 
 const GoogleMapsWrapper = dynamic(() => import("./GoogleMapsWrapper"));
 
@@ -16,11 +17,13 @@ export default async function RootLayout({
       <body className="max-w-screen">
         <ReduxProvider>
           <GoogleMapsWrapper>
-            <SiteSettingsProvider>
-              <EventTypesProvider>
-                <div>{children}</div>
-              </EventTypesProvider>
-            </SiteSettingsProvider>
+            <ParentCategoriesProvider>
+              <SiteSettingsProvider>
+                <EventTypesProvider>
+                  <div>{children}</div>
+                </EventTypesProvider>
+              </SiteSettingsProvider>
+            </ParentCategoriesProvider>
           </GoogleMapsWrapper>
         </ReduxProvider>
       </body>

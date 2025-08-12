@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { FaRegUser } from 'react-icons/fa';
 import { RiLoginCircleLine } from 'react-icons/ri';
-import { setUser } from '@/store/slices/authSlice';
+import { logout, setUser } from '@/store/slices/authSlice';
+import Loader from '../ui/Loader';
 
 function ProfileBtn() {
   const user = useAppSelector((state) => state.auth.user);
@@ -25,14 +26,14 @@ function ProfileBtn() {
           }
         } catch (error) {
           console.error('Failed to fetch user:', error);
-          // Optionally dispatch a logout action or clear user state
+          dispatch(logout())
         } finally {
           setLoading(false);
         }
       }
     };
     validateUser();
-  }, [dispatch]); // Depend on dispatch, not token
+  }, [dispatch]);
 
   return (
     <div
@@ -40,7 +41,7 @@ function ProfileBtn() {
       onClick={() => !user && router.push('/auth/login')}
     >
       {loading ? (
-        <span className="text-sm md:text-base group-hover:text-white font-medium">Loading...</span>
+        <Loader />
       ) : user ? (
         <div className="flex items-center gap-2">
           <FaRegUser className="text-primary group-hover:text-white text-sm md:text-base" />

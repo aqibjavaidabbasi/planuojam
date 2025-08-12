@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { User } from "@/types/common";
-import { fetchRole, fetchUser, login } from "@/services/auth";
+import { login } from "@/services/auth";
 
 interface AuthState {
   user: User | null;
@@ -38,6 +38,9 @@ const authSlice = createSlice({
   reducers: {
     logout(state) {
       state.user = null;
+      state.status = "idle";
+      state.error = null;
+      localStorage.removeItem("token");
     },
     setUser(state, action){
       state.user = action.payload;

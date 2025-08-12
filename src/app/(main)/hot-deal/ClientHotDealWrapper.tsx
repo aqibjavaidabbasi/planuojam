@@ -3,21 +3,16 @@ import NoDataCard from '@/components/custom/NoDataCard'
 import ListingCard from '@/components/Dynamic/ListingCard'
 import HotDealFilter from '@/components/global/HotDealFilter'
 import Heading from '@/components/ui/heading'
+import Loader from '@/components/ui/Loader'
+import { useParentCategories } from '@/context/ParentCategoriesContext'
 import { fetchHotDealListings, fetchParentCategories } from '@/services/common'
 import { category, ListingItem, TitleDescriptionBlock } from '@/types/pagesTypes'
 import React, { useEffect, useState } from 'react'
 
 function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: TitleDescriptionBlock[]}) {
-    const [parentCategories,setParentCategories] = useState<category[]>();
     const [hotDealListings, setHotDealListings] = useState<ListingItem[]>()
+    const { parentCategories, isLoading, error } = useParentCategories();
 
-    useEffect(function(){
-        async function fetchCategories(){
-            const res = await fetchParentCategories();
-            setParentCategories(res);
-        }
-        fetchCategories();
-    },[])
     useEffect(function(){
         async function fetchListings(){
             const res = await fetchHotDealListings();
@@ -31,6 +26,14 @@ function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: T
         options: parentCategories?.map(cat => cat.name) || [],
         placeholder: 'Choose a vendor',
     }
+
+    if (isLoading) {
+        return <Loader />
+    }
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
 
   return (
     <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1400px] mx-auto'>
