@@ -1,8 +1,8 @@
 import QueryString from "qs";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337';
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
 const REVALIDATION_TIME = 3600; // 1 hour
-
 
 // Reusable fetch options
 const FETCH_OPTIONS = {
@@ -41,12 +41,22 @@ export async function fetchAPI(
       })}`
     : `${API_URL}/api/${endpoint}?${query}`;
 
-    console.log("fetching from :: ",url)
+  console.log("fetching from :: ", url);
 
   const response = await fetch(url, FETCH_OPTIONS);
+
   if (!response.ok) {
-    console.warn('DEBUG LOGGG:::', await response.json());
-    throw new Error(`Strapi API error! status: ${response.status}`);
+    // Handle errors (e.g., 400, 401, 500, etc.)
+    const errorData = await response.json();
+    console.warn("DEBUG LOGGG:::", errorData);
+    throw new Error(
+      errorData.error?.message || `Strapi API error! status: ${response.status}`
+    );
+  }
+
+  // Check for unexpected response statuses
+  if (response.status !== 200) {
+    throw new Error(`Something went wrong: ${response.status}`);
   }
 
   const data = await response.json();
@@ -79,8 +89,17 @@ export async function fetchAPIWithToken(
   };
   const response = await fetch(url, fetchOptions);
   if (!response.ok) {
-    console.warn('DEBUG LOGGG (TOKEN):::', await response.json());
-    throw new Error(`Strapi API error! status: ${response.status}`);
+    // Handle errors (e.g., 400, 401, 500, etc.)
+    const errorData = await response.json();
+    console.warn("DEBUG LOGGG:::", errorData);
+    throw new Error(
+      errorData.error?.message || `Strapi API error! status: ${response.status}`
+    );
+  }
+
+  // Check for unexpected response statuses
+  if (response.status !== 200) {
+    throw new Error(`Something went wrong: ${response.status}`);
   }
   const data = await response.json();
   return data;
@@ -110,12 +129,29 @@ export async function postAPI(
   // Ensure headers are not overwritten by ...options
   fetchOptions.headers = mergedHeaders;
 
-  console.log("posting to :: ", url, "with body ::", body, "and headers ::", mergedHeaders);
+  console.log(
+    "posting to :: ",
+    url,
+    "with body ::",
+    body,
+    "and headers ::",
+    mergedHeaders
+  );
 
   const response = await fetch(url, fetchOptions);
   if (!response.ok) {
-    console.warn('DEBUG LOGGG (POST):::', await response.json());
-    throw new Error(`Strapi API POST error! status: ${response.status}`);
+    // Handle errors (e.g., 400, 401, 500, etc.)
+    const errorData = await response.json();
+    console.warn("DEBUG LOGGG:::", errorData);
+    throw new Error(
+      errorData.error?.message ||
+        `Strapi API POST error! status: ${response.status}`
+    );
+  }
+
+  // Check for unexpected response statuses
+  if (response.status !== 200 && response.status !== 201) {
+    throw new Error(`Something went wrong: ${response.status}`);
   }
   const data = await response.json();
   return data;

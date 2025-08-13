@@ -4,6 +4,7 @@ import { IoMdArrowDropdown } from 'react-icons/io';
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   options: { value: string; label: string }[];
   placeholder?: string;
+  disabled?: boolean;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -12,12 +13,22 @@ const Select: React.FC<SelectProps> = ({
   className = '',
   value,
   defaultValue,
+  disabled = false,
   ...props
 }) => {
   const isControlled = value !== undefined;
 
+  // Compose className with disabled state styling
+  const selectClassName = `
+    w-full py-1.5 md:py-2.5 px-2.5 md:px-5 border border-border rounded-md text-base font-normal bg-white 
+    focus:outline-none focus:ring-2 focus:ring-primary appearance-none
+    ${disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60' : ''}
+    ${className}
+  `;
+
   const selectProps: React.SelectHTMLAttributes<HTMLSelectElement> = {
-    className: `w-full py-1.5 md:py-2.5 px-2.5 md:px-5 border border-border rounded-md text-base font-normal bg-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none ${className}`,
+    className: selectClassName,
+    disabled,
     ...props,
   };
 
@@ -28,7 +39,7 @@ const Select: React.FC<SelectProps> = ({
   }
 
   return (
-    <div className='relative w-full'>
+    <div className={`relative w-full ${disabled ? 'pointer-events-none' : ''}`}>
       <select {...selectProps}>
         {placeholder && (
           <option value="">
@@ -41,8 +52,13 @@ const Select: React.FC<SelectProps> = ({
           </option>
         ))}
       </select>
-      <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
-      <IoMdArrowDropdown />
+      <div
+        className={`
+          pointer-events-none absolute right-3 top-1/2 -translate-y-1/2
+          ${disabled ? 'text-gray-400' : ''}
+        `}
+      >
+        <IoMdArrowDropdown />
       </div>
     </div>
   );

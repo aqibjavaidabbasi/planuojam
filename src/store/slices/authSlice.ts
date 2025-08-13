@@ -1,8 +1,9 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { User } from "@/types/common";
-import { login } from "@/services/auth";
+import { loginExtraReducers } from "../extraReducers/auth/loginReducer";
+import { registerExtraReducers } from "../extraReducers/auth/registerReducer";
 
-interface AuthState {
+export interface AuthState {
   user: User | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
@@ -13,24 +14,6 @@ const initialState: AuthState = {
   error: null,
 };
 
-export const loginUser = createAsyncThunk(
-  "auth/loginUser",
-  async (credentials: Record<string, unknown>, thunkAPI) => {
-    try {
-      const res = await login(credentials);
-      if (!res) throw new Error("Login Failed! Please try again later!");
-      const jwt = res.jwt;
-      localStorage.setItem("token", jwt);
-      if (!jwt) throw new Error("Token Missing...! Forbidden");
-      // const user = await fetchUser(jwt);
-      // if (!user)
-      //   throw new Error("Something went wrong! Please try again later!");
-      return res.user
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(error?.message || "Login failed");
-    }
-  }
-);
 
 const authSlice = createSlice({
   name: "auth",
@@ -46,24 +29,9 @@ const authSlice = createSlice({
       state.user = action.payload;
     }
   },
-  //action: PayloadAction<{ user: User; token: string }>
-  //action: PayloadAction<AuthState["status"]>
   extraReducers: (builder) => {
-    builder
-      .addCase(loginUser.fulfilled, (state, action) => {
-        console.log(action.payload)
-        state.user = action.payload.user;
-        state.status = "succeeded";
-      })
-      .addCase(loginUser.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.user = null;
-        state.status = "failed";
-        state.error =
-          typeof action.payload === "string" ? action.payload : "Login Failed";
-      });
+    loginExtraReducers(builder),
+    registerExtraReducers(builder)
   },
 });
 

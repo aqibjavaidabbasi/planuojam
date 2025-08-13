@@ -1,14 +1,19 @@
 "use client";
+import Checkbox from "@/components/custom/Checkbox";
 import Input from "@/components/custom/Input";
 import Select from "@/components/custom/Select";
 import Button from "@/components/ui/Button";
 import { useParentCategories } from "@/context/ParentCategoriesContext";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
+import { useAppDispatch } from "@/store/hooks";
+import { registerUser } from "@/store/thunks/authThunks";
 import { getCompleteImageUrl } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { BsCart3 } from "react-icons/bs";
 import { TbTools } from "react-icons/tb";
 
@@ -24,24 +29,36 @@ type FormValues = {
 
 function RegisterPage() {
   const { siteSettings } = useSiteSettings();
-  const { formState: { errors }, handleSubmit, register, watch } = useForm<FormValues>();
+  const { formState: { errors, isSubmitting }, handleSubmit, register, watch } = useForm<FormValues>();
   const { parentCategories } = useParentCategories();
-
-  const showDropdown = watch('role') === 'provider';
+  const dispatch = useAppDispatch();
+  const router = useRouter();
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-      try{
-        //filter role, terms, confirm
-        const filteredData = {
-          serviceType: data.serviceType,
-          username: data.username,
-          email: data.email,
-          password: data.password,
-        }
-        console.log("form data::", filteredData)
-      }catch(err){
-        console.log("error",err);
+      //filter role, terms, confirm
+      const filteredData = {
+        serviceType: data.serviceType,
+        username: data.username,
+        email: data.email,
+        password: data.password,
       }
+      await toast.promise(
+        dispatch(registerUser(filteredData))
+          .unwrap()
+          .then(() => {
+            router.push('/auth/email-confirmation');
+          }),
+        {
+          loading: 'Registering your data...',
+          success: 'Registered successfully!',
+          error: (err) => {
+            // err is exactly what rejectWithValue() returned in the thunk
+            if (typeof err === "string") return err;
+            if (err && typeof err === "object" && "message" in err) return String(err.message);
+            return "Login failed. Please try again.";
+          },
+        }
+      );
     };
 
   return (
@@ -63,8 +80,8 @@ function RegisterPage() {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                I want to join as:
+              <label className={`block text-sm font-medium mb-3 ${errors.role ? "text-red-500" : "text-gray-700"}`}>
+                {errors.role ? "Please select a role" : "I want to join as:"}
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <label className="relative">
@@ -73,8 +90,9 @@ function RegisterPage() {
                     value="public"
                     className="sr-only"
                     {...register('role', { required: true })}
+                    disabled={isSubmitting}
                   />
-                  <div className="user-type-card border-2 border-gray-200 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:border-primary">
+                  <div className={`border-2 border-gray-200 rounded-lg p-4 ${isSubmitting ? "cursor-not-allowed opacity-60" : "cursor-pointer"} transition-all duration-200 hover:border-primary ${watch('role') === 'public' && "border-primary bg-primary/15"}`}>
                     <div className="text-center">
                       <div className="w-8 h-8 mx-auto mb-2 text-gray-600">
                         <BsCart3 size={20} />
@@ -92,8 +110,9 @@ function RegisterPage() {
                     value="provider"
                     className="sr-only"
                     {...register('role', { required: true })}
+                    disabled={isSubmitting}
                   />
-                  <div className="user-type-card border-2 border-gray-200 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:border-primary">
+                  <div className={`border-2 border-gray-200 rounded-lg p-4 ${isSubmitting ? "cursor-not-allowed opacity-60" : "cursor-pointer"} transition-all duration-200 hover:border-primary ${watch('role') === 'provider' && "border-primary bg-primary/15"}`}>
                     <div className="text-center">
                       <div className="w-8 h-8 mx-auto mb-2 text-gray-600">
                         <TbTools size={20} />
@@ -111,8 +130,7 @@ function RegisterPage() {
             </div>
 
             {
-              showDropdown &&
-              // add a smooth transtion to this dropdown
+              watch('role') === 'provider' &&
               <div className="flex flex-col gap-2.5"  
                 style={{ transition: "max-height 0.7s linear" }}
               > 
@@ -122,8 +140,10 @@ function RegisterPage() {
                     value: cat.name,
                     label: cat.name,
                   }))}
+                  disabled={isSubmitting}
                   {...register('serviceType', { required: true })}
                 />
+                {errors.serviceType && <p className="text-red-500">Service is required</p>}
               </div>
             }
 
@@ -132,63 +152,48 @@ function RegisterPage() {
                 type="text"
                 placeholder="Enter your username"
                 label="username"
+                disabled={isSubmitting}
                 {...register('username', { required: true })}
-
               />
+              {errors.username && <p className="text-red-500">Please enter a username</p>}
               <Input
                 type="email"
                 placeholder="Enter your email"
                 label="Email"
+                disabled={isSubmitting}
                 {...register("email", {
                   required: "Email is required",
                   pattern: { value: /^\S+@\S+$/, message: "Invalid email" },
                 })}
               />
+              {errors.email && <p className="text-red-500">{errors?.email?.message}</p>}
               <Input
                 type="password"
                 placeholder="Enter a strong password"
                 label="password"
+                disabled={isSubmitting}
                 {...register("password", {
                   required: "Password is required",
                   minLength: 8,
                 })}
               />
+              {errors.password && <p className="text-red-500">{errors?.password?.message}</p>}
               <Input
                 type="password"
                 placeholder="Confirm your password"
                 label="Confirm password"
+                disabled={isSubmitting}
                 {...register("confirmPassword", {
                   required: "Password is required",
                   minLength: 8,
                   validate: (value) => value === watch("password"),
                 })}
               />
+              {errors.confirmPassword && <p className="text-red-500">{errors?.confirmPassword?.message}</p>}
             </div>
 
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="terms"
-                {...register("terms", { required: true })}
-                required
-                className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary mt-1"
-              />
-              <label htmlFor="terms" className="ml-3 text-sm text-gray-600 flex items-center">
-                I agree to the
-                <Link
-                  href="/terms-of-service"
-                  className="text-primary hover:underline transition-all mx-2"
-                >
-                  Terms of Service
-                </Link>
-                and
-                <Link
-                  href="/privacy-policy"
-                  className="text-primary hover:underline transition-all ml-2"
-                >
-                  Privacy Policy
-                </Link>
-              </label>
+            <div className="">
+              <Checkbox label={errors.terms ? "Please read and agree to our Terms of Service and Privacy Policy" : " I agree to the Terms of Service and Privacy Policy"} disabled={isSubmitting} />
             </div>
 
             <Button style="primary" type="submit" extraStyles="!rounded-md !w-full">
