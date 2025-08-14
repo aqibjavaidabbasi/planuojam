@@ -32,11 +32,6 @@ function ClientLoginWrapper() {
         <div className="text-center mt-6">
           <p className="text-sm text-gray-600">
             Don't have an account?
-            {/* 
-          Links (<Link> or <a>) cannot be truly disabled in HTML. 
-          You can simulate a disabled state by preventing navigation and styling it as disabled.
-          Example below disables the link when isSubmitting is true.
-        */}
             <Link
               href="/auth/register"
               className={`text-primary font-medium transition-colors ml-2 hover:underline`}

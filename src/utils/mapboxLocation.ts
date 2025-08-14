@@ -1,29 +1,39 @@
-import { Location } from '@/components/global/GoogleMap';
+import { Location } from '@/components/global/MapboxMap';
 import { ListingItem, Vendor } from '../types/pagesTypes';
 
 async function geocodeLocations(listings: ListingItem[]): Promise<Location[]> {
   const locations: Location[] = [];
-  const geocoder = new google.maps.Geocoder();
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY;
+
+  if (!mapboxToken) {
+    console.error('Mapbox API key not found');
+    return locations;
+  }
 
   async function geocodePlace(placeName: string): Promise<{ lat: number; lng: number; address: string } | null> {
     try {
-      const response = await new Promise<google.maps.GeocoderResult[]>((resolve, reject) => {
-        geocoder.geocode({ address: placeName }, (results, status) => {
-          if (status === google.maps.GeocoderStatus.OK && results && results.length > 0) {
-            resolve(results);
-          } else {
-            reject(new Error(`Geocoding failed for ${placeName}: ${status}`));
-          }
-        });
-      });
+      const encodedPlaceName = encodeURIComponent(placeName);
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodedPlaceName}.json?access_token=${mapboxToken}&limit=1`
+      );
 
-      const result = response[0];
-      const location = result.geometry.location;
-      return {
-        lat: location.lat(),
-        lng: location.lng(),
-        address: result.formatted_address || placeName,
-      };
+      if (!response.ok) {
+        throw new Error(`Geocoding failed for ${placeName}: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.features && data.features.length > 0) {
+        const feature = data.features[0];
+        const [lng, lat] = feature.center;
+        return {
+          lat,
+          lng,
+          address: feature.place_name || placeName,
+        };
+      } else {
+        throw new Error(`No results found for ${placeName}`);
+      }
     } catch (error) {
       console.error(`Error geocoding ${placeName}:`, error);
       return null;

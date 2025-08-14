@@ -6,7 +6,7 @@ import ReduxProvider from "@/store/provider";
 import { ParentCategoriesProvider } from "@/context/ParentCategoriesContext";
 import { Toaster } from "react-hot-toast";
 
-const GoogleMapsWrapper = dynamic(() => import("./GoogleMapsWrapper"));
+const MapboxWrapper = dynamic(() => import("./MapboxWrapper"));
 
 export default async function RootLayout({
   children,
@@ -17,7 +17,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className="max-w-screen">
         <ReduxProvider>
-          <GoogleMapsWrapper>
+          <MapboxWrapper>
             <ParentCategoriesProvider>
               <SiteSettingsProvider>
                 <EventTypesProvider>
@@ -25,7 +25,7 @@ export default async function RootLayout({
                 </EventTypesProvider>
               </SiteSettingsProvider>
             </ParentCategoriesProvider>
-          </GoogleMapsWrapper>
+          </MapboxWrapper>
         </ReduxProvider>
         <Toaster
            position="top-center"

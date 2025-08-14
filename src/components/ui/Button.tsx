@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface ButtonProps {
-  style: 'primary' | 'secondary' | 'ghost' | 'link';
+  style: 'primary' | 'secondary' | 'ghost' | 'link' | 'destructive';
   size?: 'default' | 'small' | 'large';
   children: React.ReactNode;
   extraStyles?: string;
@@ -23,7 +23,8 @@ function Button({
     primary: 'rounded-full bg-primary text-white hover:bg-black',
     secondary: 'rounded-md bg-black text-white hover:bg-primary',
     ghost: 'rounded-md bg-transparent hover:bg-gray-100 text-black border border-transparent hover:border-gray-400 shadow-none',
-    link: 'text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50'
+    link: 'text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50',
+    destructive: 'rounded-md bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500'
   } as const;
 
   const sizes = {
@@ -37,7 +38,7 @@ function Button({
       onClick={onClick}
       type={type}
       disabled={disabled}
-      className={`flex items-center capitalize justify-center gap-1.5 font-medium ${styles[style]} ${sizes[size]} ${extraStyles} ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : 'cursor-pointer'}`}
+      className={`flex items-center capitalize justify-center gap-1.5 font-medium ${styles[style]} ${sizes[size]} ${extraStyles} ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none whitespace-nowrap' : 'cursor-pointer'}`}
     >
       {children}
     </button>

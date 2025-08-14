@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { StandaloneSearchBox } from '@react-google-maps/api';
-import Map, { Location } from './GoogleMap';
-import Input from '../custom/Input';
+import React, { useEffect, useState } from 'react';
+import MapboxSearch from './MapboxSearch';
+import MapboxMap, { Location } from './MapboxMap';
 import Select from '../custom/Select';
 import Button from '../ui/Button';
 import { fetchListings } from '@/services/common';
@@ -25,8 +24,15 @@ interface FiltersAndMapProps {
 }
 
 const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, initialFilterValues, locations }) => {
-    const searchBoxRef = useRef<google.maps.places.SearchBox | null>(null);
-    const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
+    const [selectedPlace, setSelectedPlace] = useState<{
+        geometry: {
+            location: {
+                lat: number;
+                lng: number;
+            };
+        };
+        place_name: string;
+    } | null>(null);
     const [tempFilterValues, setTempFilterValues] = useState<Record<string, string>>({});
     const [appliedFilters, setAppliedFilters] = useState({});
     const [isLoading, setIsLoading] = useState(false);
@@ -41,13 +47,16 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
     }, [initialFilterValues]);
     
 
-    const onPlacesChanged = () => {
-        if (searchBoxRef.current) {
-            const places = searchBoxRef.current.getPlaces();
-            if (places && places.length > 0) {
-                setSelectedPlace(places[0]);
-            }
-        }
+    const onPlaceSelect = (place: {
+        geometry: {
+            location: {
+                lat: number;
+                lng: number;
+            };
+        };
+        place_name: string;
+    } | null) => {
+        setSelectedPlace(place);
     };
     const handleFilterChange = (name: string, value: string) => {
 
@@ -116,12 +125,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
     return (
         <div>
             <div className="mb-4 flex flex-col gap-2.5">
-                <StandaloneSearchBox
-                    onLoad={(searchBox) => (searchBoxRef.current = searchBox)}
-                    onPlacesChanged={onPlacesChanged}
-                >
-                    <Input placeholder="Search for a place" type="text" />
-                </StandaloneSearchBox>
+                <MapboxSearch onPlaceSelect={onPlaceSelect} placeholder="Search for a place" />
                 <div className='flex gap-2 items-center justify-center flex-col lg:flex-row'>
                     {filters.map(({ name, options, placeholder }) => (
                         <Select
@@ -141,7 +145,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
                 </div>
             </div>
 
-            <Map selectedPlace={selectedPlace} locations={locations} />
+            <MapboxMap selectedPlace={selectedPlace} locations={locations} />
         </div>
     );
 };

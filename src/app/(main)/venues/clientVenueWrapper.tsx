@@ -2,7 +2,7 @@
 import NoDataCard from "@/components/custom/NoDataCard";
 import ListingCard from "@/components/Dynamic/ListingCard";
 import FiltersAndMap from "@/components/global/FiltersAndMap";
-import { Location } from "@/components/global/GoogleMap";
+import { Location } from "@/components/global/MapboxMap";
 import Loader from "@/components/ui/Loader";
 import { useEventTypes } from "@/context/EventTypesContext";
 import { fetchListings } from "@/services/common";

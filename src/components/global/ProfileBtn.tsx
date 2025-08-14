@@ -38,19 +38,18 @@ function ProfileBtn() {
   return (
     <div
       className="border border-primary rounded-full p-2 cursor-pointer group hover:bg-primary transition-colors"
-      onClick={() => !user && router.push('/auth/login')}
     >
       {loading ? (
         <Loader />
       ) : user ? (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" onClick={() => router.push('/profile')}>
           <FaRegUser className="text-primary group-hover:text-white text-sm md:text-base" />
           <span className="capitalize text-sm md:text-base group-hover:text-white font-medium">
             {user.username}
           </span>
         </div>
       ) : (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" onClick={() => router.push('/auth/login')}>
           <RiLoginCircleLine className="text-primary group-hover:text-white text-sm md:text-base" />
           <span className="capitalize text-sm md:text-base group-hover:text-white font-medium">Login</span>
         </div>

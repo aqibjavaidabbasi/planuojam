@@ -1,8 +1,8 @@
 'use client'
-import Map, { Location } from '@/components/global/GoogleMap'
+import MapboxMap, { Location } from '@/components/global/MapboxMap'
 import { fetchListings } from '@/services/common'
 import { ListingItem, Venue } from '@/types/pagesTypes'
-import geocodeLocations from '@/utils/location'
+import geocodeLocations from '@/utils/mapboxLocation'
 import React, { useEffect, useState } from 'react'
 
 function ClientMapWrapper() {
@@ -105,7 +105,7 @@ function getLocationsFromVenues(venues: ListingItem[]): Location[] {
 
   return (
     <div className='w-screen h-full'>
-          <Map locations={locations} />
+          <MapboxMap locations={locations} />
     </div>
   )
 }

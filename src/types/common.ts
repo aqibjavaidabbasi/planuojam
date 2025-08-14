@@ -24,4 +24,5 @@ export interface User{
     confirmed: boolean;
     id: number;
     documentId: string;
+    serviceType: string | null;
 }

@@ -1,6 +1,6 @@
 // components/MapInfoWindow.tsx
 import React from 'react';
-import { Location } from './GoogleMap'; // adjust path if needed
+import { Location } from './MapboxMap'; // adjust path if needed
 import { useRouter } from 'next/navigation';
 import Button from '../ui/Button';
 
