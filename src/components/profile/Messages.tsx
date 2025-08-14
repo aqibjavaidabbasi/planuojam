@@ -29,7 +29,7 @@ function Messages() {
           Messages Coming Soon
         </h3>
         <p className="text-gray-600 max-w-md mx-auto">
-          We're working on bringing you a powerful messaging system to connect
+          We&apos;re working on bringing you a powerful messaging system to connect
           with property owners and renters.
         </p>
       </div>

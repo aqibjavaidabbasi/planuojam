@@ -5,8 +5,8 @@ import HotDealFilter from '@/components/global/HotDealFilter'
 import Heading from '@/components/ui/heading'
 import Loader from '@/components/ui/Loader'
 import { useParentCategories } from '@/context/ParentCategoriesContext'
-import { fetchHotDealListings, fetchParentCategories } from '@/services/common'
-import { category, ListingItem, TitleDescriptionBlock } from '@/types/pagesTypes'
+import { fetchHotDealListings } from '@/services/common'
+import { ListingItem, TitleDescriptionBlock } from '@/types/pagesTypes'
 import React, { useEffect, useState } from 'react'
 
 function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: TitleDescriptionBlock[]}) {

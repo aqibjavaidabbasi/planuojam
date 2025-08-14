@@ -36,9 +36,9 @@ function ReviewsTab() {
             <span className="text-sm text-gray-500">2 days ago</span>
           </div>
           <p className="text-gray-700 mb-4">
-            "Excellent property! The apartment was clean, well-maintained, and
+            &quot;Excellent property! The apartment was clean, well-maintained, and
             exactly as described. The landlord was very responsive and helpful
-            throughout our stay."
+            throughout our stay.&quot;
           </p>
           <div className="text-sm text-gray-600">
             <span className="font-medium">Property:</span> Modern Downtown
@@ -78,9 +78,9 @@ function ReviewsTab() {
             <span className="text-sm text-gray-500">1 week ago</span>
           </div>
           <p className="text-gray-700 mb-4">
-            "Good location and decent amenities. The place was mostly clean,
+            &quot;Good location and decent amenities. The place was mostly clean,
             though there were some minor maintenance issues that could be
-            addressed."
+            addressed.&quot;
           </p>
           <div className="text-sm text-gray-600">
             <span className="font-medium">Property:</span> Cozy Studio in

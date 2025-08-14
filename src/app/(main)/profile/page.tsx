@@ -1,6 +1,5 @@
 "use client";
 
-import Input from "@/components/custom/Input";
 import FavouriteListings from "@/components/profile/FavouriteListings";
 import Messages from "@/components/profile/Messages";
 import Mylistings from "@/components/profile/Mylistings";
@@ -13,7 +12,6 @@ import { CgProfile } from "react-icons/cg";
 import { FaArrowCircleDown, FaList } from "react-icons/fa";
 import { LuMessageSquareText } from "react-icons/lu";
 import { MdOutlineFavorite, MdStarBorderPurple500 } from "react-icons/md";
-import { TbLogout } from "react-icons/tb";
 
 function ProfilePage() {
   const [activeTab, setActiveTab] = useState("profile");

@@ -11,7 +11,7 @@ interface ParentCategoriesContextProps {
 
 const ParentCategoriesContext = createContext<ParentCategoriesContextProps | undefined>(undefined);
 
-const ParentCategoriesProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
+const ParentCategoriesProvider: React.FC<React.PropsWithChildren<object>> = ({ children }) => {
   const [parentCategories, setParentCategories] = useState<category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,8 +22,12 @@ const ParentCategoriesProvider: React.FC<React.PropsWithChildren<{}>> = ({ child
       try {
         const data = await fetchParentCategories();
         setParentCategories(data);
-      } catch (error: any) {
-        setError(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError('An unknown error occurred');
+        }
       } finally {
         setIsLoading(false);
       }

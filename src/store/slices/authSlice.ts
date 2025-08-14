@@ -30,8 +30,8 @@ const authSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    loginExtraReducers(builder),
-    registerExtraReducers(builder)
+    loginExtraReducers(builder);
+    registerExtraReducers(builder);
   },
 });
 

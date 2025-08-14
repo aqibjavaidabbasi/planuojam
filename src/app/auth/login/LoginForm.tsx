@@ -4,7 +4,7 @@ import Button from "@/components/ui/Button";
 import { useAppDispatch } from "@/store/hooks";
 import { loginUser } from "@/store/thunks/authThunks";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
