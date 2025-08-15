@@ -1,6 +1,6 @@
 import React from 'react'
-import Heading from '../ui/heading'
-import Button from '../ui/Button'
+import Heading from '../custom/heading'
+import Button from '../custom/Button'
 import Image from 'next/image'
 import { HeroBannerBlock } from '@/types/pagesTypes'
 import { getCompleteImageUrl } from '@/utils/helpers'

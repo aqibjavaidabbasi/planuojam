@@ -7,7 +7,6 @@ export const loginExtraReducers = (
 ) => {
   builder
     .addCase(loginUser.fulfilled, (state, action) => {
-      console.log("log from login reducer",action.payload)
       state.user = action.payload.user;
       state.status = "succeeded";
     })

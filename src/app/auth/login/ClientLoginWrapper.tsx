@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import LoginForm from "./LoginForm";
 import Link from "next/link";
 import Modal from "@/components/custom/Modal";
-import ForgotPasswordModal from "@/components/global/ForgotPasswordModal";
+import ForgotPasswordModal from "@/components/modals/ForgotPasswordModal";
 import Image from "next/image";
 import { getCompleteImageUrl } from "@/utils/helpers";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
@@ -41,7 +41,7 @@ function ClientLoginWrapper() {
           </p>
         </div>
       </div>
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} >
         <ForgotPasswordModal onClose={() => setIsOpen(false)} />
       </Modal>
     </div>

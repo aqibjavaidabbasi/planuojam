@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Input from "@/components/custom/Input";
-import Button from "@/components/ui/Button";
+import Button from "@/components/custom/Button";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { resetPassword } from "@/services/auth";

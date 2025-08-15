@@ -1,7 +1,7 @@
 'use client'
 import { EventTypesBlock } from '@/types/pagesTypes'
 import React from 'react'
-import Heading from '../ui/heading';
+import Heading from '../custom/heading';
 import { getCompleteImageUrl } from '@/utils/helpers';
 import NoDataCard from '../custom/NoDataCard';
 import { useRouter } from 'next/navigation';

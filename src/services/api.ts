@@ -156,3 +156,119 @@ export async function postAPI(
   const data = await response.json();
   return data;
 }
+
+// POST API function with JWT token in headers
+// Always fetch the token inside this function. If not found, throw an error.
+export async function postAPIWithToken(
+  endpoint: string,
+  body: Record<string, unknown>,
+  options: RequestInit = {}
+) {
+  // Try to get the token from localStorage
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  if (!token) {
+    throw new Error("No authentication token found. Please log in.");
+  }
+
+  const url = `${API_URL}/api/${endpoint}`;
+  const mergedHeaders = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+    ...(options.headers || {}),
+  };
+
+  const fetchOptions: RequestInit = {
+    method: "POST",
+    headers: mergedHeaders,
+    body: JSON.stringify(body),
+    ...options,
+  };
+
+  // Ensure headers are not overwritten by ...options
+  fetchOptions.headers = mergedHeaders;
+
+  console.log(
+    "posting with token to :: ",
+    url,
+    "with body ::",
+    body,
+    "and headers ::",
+    mergedHeaders
+  );
+
+  const response = await fetch(url, fetchOptions);
+  if (!response.ok) {
+    // Handle errors (e.g., 400, 401, 500, etc.)
+    const errorData = await response.json();
+    console.warn("DEBUG LOGGG:::", errorData);
+    throw new Error(
+      errorData.error?.message ||
+        `Strapi API POST error! status: ${response.status}`
+    );
+  }
+
+  // Check for unexpected response statuses
+  if (response.status !== 200 && response.status !== 201) {
+    throw new Error(`Something went wrong: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}
+
+// PUT API function
+// Always fetch the token inside this function. If not found, throw an error.
+export async function putAPI(
+  endpoint: string,
+  body: Record<string, unknown>,
+  options: RequestInit = {}
+) {
+  // Try to get the token from localStorage
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  if (!token) {
+    throw new Error("No authentication token found. Please log in.");
+  }
+
+  const url = `${API_URL}/api/${endpoint}`;
+  const mergedHeaders = {
+    "Content-Type": "application/json",
+    ...(options.headers || {}),
+    Authorization: `Bearer ${token}`,
+  };
+
+  const fetchOptions: RequestInit = {
+    method: "PUT",
+    headers: mergedHeaders,
+    body: JSON.stringify(body),
+    ...options,
+  };
+
+  // Ensure headers are not overwritten by ...options
+  fetchOptions.headers = mergedHeaders;
+
+  console.log(
+    "updating to :: ",
+    url,
+    "with body ::",
+    body,
+    "and headers ::",
+    mergedHeaders
+  );
+
+  const response = await fetch(url, fetchOptions);
+  if (!response.ok) {
+    // Handle errors (e.g., 400, 401, 500, etc.)
+    const errorData = await response.json();
+    console.warn("DEBUG LOGGG:::", errorData);
+    throw new Error(
+      errorData.error?.message ||
+        `Strapi API PUT error! status: ${response.status}`
+    );
+  }
+
+  // Check for unexpected response statuses
+  if (response.status !== 200 && response.status !== 201) {
+    throw new Error(`Something went wrong: ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+}

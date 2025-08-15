@@ -2,7 +2,7 @@
 import { Plans } from "@/types/pagesTypes";
 import React from "react";
 import { FaStar } from "react-icons/fa";
-import Button from "../ui/Button";
+import Button from "../custom/Button";
 
 function PricingPlans({
   plan,

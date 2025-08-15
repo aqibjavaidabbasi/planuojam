@@ -1,4 +1,4 @@
-import { API_URL, createQuery, fetchAPIWithToken, postAPI } from "./api";
+import { API_URL, createQuery, fetchAPIWithToken, postAPI, postAPIWithToken, putAPI } from "./api";
 
 export async function login(data: Record<string, unknown>) {
   try {
@@ -90,5 +90,24 @@ export async function resetPassword(data: Record<string, unknown>) {
   } catch (err) {
     console.log(err);
     throw new Error("Failed to reset password. Please try again later!");
+  }
+}
+
+export async function updateUserData(id: number, data: Record<string, unknown>){
+  try{
+    const res = await putAPI(`users/${id}`, data);
+    return res;
+  }catch(err){
+    console.log(err);
+    throw new Error("Failed to update user, please try again later!");
+  }
+}
+export async function updateUserPassword(data: Record<string, unknown>) {
+  try {
+    const res = await postAPIWithToken(`auth/change-password`, data);
+    return res;
+  } catch (err) {
+    console.log(err);
+    throw new Error("Failed to update password, please try again later!");
   }
 }

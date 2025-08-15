@@ -1,7 +1,7 @@
 'use client'
 import Input from '@/components/custom/Input';
 import TextArea from '@/components/custom/TextArea';
-import Button from '@/components/ui/Button';
+import Button from '@/components/custom/Button';
 import React from 'react'
 
 function ContactForm() {

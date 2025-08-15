@@ -2,7 +2,7 @@
 import NoDataCard from '@/components/custom/NoDataCard';
 import ListingCard from '@/components/Dynamic/ListingCard';
 import FiltersAndMap from '@/components/global/FiltersAndMap';
-import Loader from '@/components/ui/Loader';
+import Loader from '@/components/custom/Loader';
 import { useEventTypes } from '@/context/EventTypesContext';
 import { fetchListings } from '@/services/common';
 import { ListingItem } from '@/types/pagesTypes';

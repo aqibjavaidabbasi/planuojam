@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { FaRegUser } from 'react-icons/fa';
 import { RiLoginCircleLine } from 'react-icons/ri';
 import { logout, setUser } from '@/store/slices/authSlice';
-import Loader from '../ui/Loader';
+import Loader from '../custom/Loader';
 
 function ProfileBtn() {
   const user = useAppSelector((state) => state.auth.user);

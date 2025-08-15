@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { User } from "@/types/common";
 import { loginExtraReducers } from "../extraReducers/auth/loginReducer";
 import { registerExtraReducers } from "../extraReducers/auth/registerReducer";
+import { updateUserDataExtraReducers } from "../extraReducers/auth/updateUserDataReducer";
 
 export interface AuthState {
   user: User | null;
@@ -32,6 +33,7 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     loginExtraReducers(builder);
     registerExtraReducers(builder);
+    updateUserDataExtraReducers(builder);
   },
 });
 

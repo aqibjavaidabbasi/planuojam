@@ -1,6 +1,6 @@
 import { topListingItemsBlock } from '@/types/pagesTypes'
 import React from 'react'
-import Heading from '../ui/heading';
+import Heading from '../custom/heading';
 import ListingCard from './ListingCard';
 
 function TopListingItem({ data }: { data: topListingItemsBlock }) {

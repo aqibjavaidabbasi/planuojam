@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "mapdev": "next dev -p 5173",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

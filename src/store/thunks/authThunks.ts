@@ -1,4 +1,4 @@
-import { login, register } from "@/services/auth";
+import { login, register, updateUserData } from "@/services/auth";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 // Utility: safely extract Strapi v5 error message
@@ -52,3 +52,17 @@ export const registerUser = createAsyncThunk(
 );
 
 
+export const updateUser = createAsyncThunk(
+  'auth/updateUser',
+  async (data: Record<string, unknown>, thunkAPI) => {
+    try {
+      // Expecting data to contain at least an 'id' field and the rest as update fields
+      const { id, ...updateFields } = data as { id: number } & Record<string, unknown>;
+      if (!id) throw new Error("User ID is required to update user data");
+      const res = await updateUserData(id, updateFields);
+      return res;
+    } catch (error: unknown) {
+      return thunkAPI.rejectWithValue(getStrapiErrorMessage(error));
+    }
+  }
+);

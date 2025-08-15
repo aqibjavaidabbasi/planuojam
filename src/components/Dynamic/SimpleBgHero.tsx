@@ -1,8 +1,8 @@
 'use client'
 import React from 'react'
 import Image from 'next/image'
-import Heading from '../ui/heading'
-import Button from '../ui/Button'
+import Heading from '../custom/heading'
+import Button from '../custom/Button'
 import { HeroBannerBlock } from '@/types/pagesTypes'
 import { getCompleteImageUrl } from '@/utils/helpers'
 

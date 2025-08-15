@@ -1,6 +1,6 @@
 "use client";
 import Input from "@/components/custom/Input";
-import Button from "@/components/ui/Button";
+import Button from "@/components/custom/Button";
 import { useAppDispatch } from "@/store/hooks";
 import { loginUser } from "@/store/thunks/authThunks";
 import { useRouter } from "next/navigation";

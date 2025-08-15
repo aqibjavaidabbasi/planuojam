@@ -1,6 +1,6 @@
 import { BlockGroupsBlock } from '@/types/pagesTypes'
 import React from 'react'
-import Heading from '../ui/heading'
+import Heading from '../custom/heading'
 import { getCompleteImageUrl } from '@/utils/helpers'
 
 function BackgroundImageBlock({data} : {data: BlockGroupsBlock}) {

@@ -2,9 +2,9 @@
 import NoDataCard from '@/components/custom/NoDataCard';
 import CategoryCard from '@/components/Dynamic/CategoryCard';
 import DynamicZoneRenderer from '@/components/global/DynamicZoneRenderer';
-import Button from '@/components/ui/Button';
-import Heading from '@/components/ui/heading';
-import Loader from '@/components/ui/Loader';
+import Button from '@/components/custom/Button';
+import Heading from '@/components/custom/heading';
+import Loader from '@/components/custom/Loader';
 import { useEventTypes } from '@/context/EventTypesContext';
 import { fetchListingsPerEvents } from '@/services/common';
 import { fetchPage } from '@/services/pagesApi';

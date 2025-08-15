@@ -4,7 +4,7 @@ import { getCompleteImageUrl } from "@/utils/helpers";
 import Image from "next/image";
 import React from "react";
 import Input from "../custom/Input";
-import Button from "../ui/Button";
+import Button from "../custom/Button";
 import { useForm } from "react-hook-form";
 import { forgotPassword } from "@/services/auth";
 import toast from "react-hot-toast";

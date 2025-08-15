@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, ReactNode } from "react";
-import Button from "../ui/Button";
+import Button from "../custom/Button";
 import { FaXmark } from "react-icons/fa6";
 
 interface ModalProps {
@@ -72,7 +72,7 @@ const Modal: React.FC<ModalProps> = ({
                 {title && (
                     <h2
                         id="modal-title"
-                        className="text-xl font-semibold mb-4"
+                        className="text-xl font-semibold absolute top-4 left-3"
                         tabIndex={0}
                     >
                         {title}
@@ -80,10 +80,10 @@ const Modal: React.FC<ModalProps> = ({
                 )}
 
                 {/* Body */}
-                <div>{children}</div>
+                <div className="my-4">{children}</div>
 
                 {/* Footer */}
-                {footer && <div className="mt-6">{footer}</div>}
+                {footer && <div className="mt-3">{footer}</div>}
             </div>
 
             <style jsx>{`

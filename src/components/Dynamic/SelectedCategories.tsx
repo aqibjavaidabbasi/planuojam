@@ -1,7 +1,7 @@
 import { SelectedCategoriesList } from '@/types/pagesTypes'
 import { filterUniqueCategoriesByParent } from '@/utils/helpers';
 import React from 'react'
-import Heading from '../ui/heading';
+import Heading from '../custom/heading';
 import CategoryCard from './CategoryCard';
 import NoDataCard from '../custom/NoDataCard';
 

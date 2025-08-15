@@ -2,7 +2,7 @@
 import Checkbox from "@/components/custom/Checkbox";
 import Input from "@/components/custom/Input";
 import Select from "@/components/custom/Select";
-import Button from "@/components/ui/Button";
+import Button from "@/components/custom/Button";
 import { useParentCategories } from "@/context/ParentCategoriesContext";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { useAppDispatch } from "@/store/hooks";
@@ -37,7 +37,7 @@ function RegisterPage() {
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
       //filter role, terms, confirm
       const filteredData = {
-        serviceType: data.serviceType,
+        serviceType: data.serviceType ?? null,
         username: data.username,
         email: data.email,
         password: data.password,

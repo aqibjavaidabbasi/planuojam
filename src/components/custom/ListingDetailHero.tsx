@@ -3,7 +3,7 @@ import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { Discount } from "@/types/pagesTypes";
 import React from "react";
 import { MdOutlineEmail, MdOutlineLocalPhone } from "react-icons/md";
-import Button from "../ui/Button";
+import Button from "../custom/Button";
 
 interface ListingDetailHeroProps {
   category: string;

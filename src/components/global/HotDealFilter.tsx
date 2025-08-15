@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Select from '../custom/Select';
-import Button from '../ui/Button';
+import Button from '../custom/Button';
 import { category, ListingItem } from '@/types/pagesTypes';
 import { fetchChildCategories, fetchHotDealListings } from '@/services/common';
 import { useEventTypes } from '@/context/EventTypesContext';

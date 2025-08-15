@@ -1,6 +1,6 @@
 import { TitleDescriptionBlock } from '@/types/pagesTypes'
 import React from 'react'
-import Heading from '../ui/heading'
+import Heading from '../custom/heading'
 
 function TitleDescription({ data }: { data: TitleDescriptionBlock }) {
     return (

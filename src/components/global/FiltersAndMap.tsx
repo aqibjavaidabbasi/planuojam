@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import MapboxSearch from './MapboxSearch';
 import MapboxMap, { Location } from './MapboxMap';
 import Select from '../custom/Select';
-import Button from '../ui/Button';
+import Button from '../custom/Button';
 import { fetchListings } from '@/services/common';
 import { ListingItem } from '@/types/pagesTypes';
 

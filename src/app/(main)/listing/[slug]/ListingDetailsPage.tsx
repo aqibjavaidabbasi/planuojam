@@ -8,7 +8,7 @@ import "swiper/css/pagination";
 import { ListingItem } from "@/types/pagesTypes";
 import { fetchListingItemPerSlug } from "@/services/pagesApi";
 import Faqitem from "@/components/Dynamic/Faqitem";
-import Loader from "@/components/ui/Loader";
+import Loader from "@/components/custom/Loader";
 import ListingDetailHero from "@/components/custom/ListingDetailHero";
 import VenueCard from "@/components/custom/VenueCard";
 import VendorCard from "@/components/custom/VendorCard";

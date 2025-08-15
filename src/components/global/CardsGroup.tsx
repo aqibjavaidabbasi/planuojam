@@ -1,6 +1,6 @@
 import { ImageBlocksGroupBlock } from '@/types/pagesTypes'
 import React from 'react'
-import Heading from '../ui/heading'
+import Heading from '../custom/heading'
 import Image from 'next/image'
 import { getCompleteImageUrl } from '@/utils/helpers'
 

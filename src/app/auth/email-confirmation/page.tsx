@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Button from "@/components/ui/Button";
+import Button from "@/components/custom/Button";
 import Input from "@/components/custom/Input";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -71,7 +71,7 @@ function EmailConfirmationPage() {
           </span>
         </div>
         {emailConfirm ? (
-          <div className="bg-green-100 border border-green-300 text-green-800 rounded p-4 text-center flex items-center justify-center">
+          <div className="bg-green-100 border border-green-300 text-green-800 rounded p-4 text-center flex flex-col items-center justify-center">
             <p className="font-semibold mb-2">Email confirmed successfully!</p>
             <p className="mb-2">You can now log in to your account.</p>
             <Button onClick={()=>router.push('/auth/login')} type="button" style="link">

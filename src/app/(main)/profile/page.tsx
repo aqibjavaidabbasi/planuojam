@@ -5,7 +5,7 @@ import Messages from "@/components/profile/Messages";
 import Mylistings from "@/components/profile/Mylistings";
 import ProfileTab from "@/components/profile/ProfileTab";
 import ReviewsTab from "@/components/profile/ReviewsTab";
-import Button from "@/components/ui/Button";
+import Button from "@/components/custom/Button";
 import { useAppSelector } from "@/store/hooks";
 import React, { useState } from "react";
 import { CgProfile } from "react-icons/cg";
@@ -49,7 +49,7 @@ function ProfilePage() {
                     </h3>
                     <p className="text-gray-600">{user?.email}</p>
                     {user?.serviceType !== null && (
-                      <span className="inline-block bg-primary text-white px-3 py-1 rounded-full text-sm mt-2">
+                      <span className="inline-block bg-primary text-white px-3 py-1 rounded-full text-sm mt-2 w-fit">
                         {user?.serviceType}
                       </span>
                     )}
