@@ -7,17 +7,18 @@ import ProfileTab from "@/components/profile/ProfileTab";
 import ReviewsTab from "@/components/profile/ReviewsTab";
 import Button from "@/components/custom/Button";
 import { useAppSelector } from "@/store/hooks";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
 import { FaArrowCircleDown, FaList } from "react-icons/fa";
 import { LuMessageSquareText } from "react-icons/lu";
 import { MdOutlineFavorite, MdStarBorderPurple500 } from "react-icons/md";
+import { useRouter } from "next/navigation";
 
 function ProfilePage() {
   const [activeTab, setActiveTab] = useState("profile");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const user = useAppSelector((state) => state.auth.user);
-
+  const router = useRouter()
   const showTab = (tabName: string) => {
     setActiveTab(tabName);
     // Close sidebar on mobile after selecting a tab
@@ -26,8 +27,16 @@ function ProfilePage() {
     }
   };
 
+  // Check if user is logged in
+  useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+  }, [user, router]);
+
   return (
     <div className="bg-gray-50 min-h-screen font-inter">
+      {!user && <p>Please login to view your profile. Redirecting...</p> }
       {/* Main Dashboard Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8 min-h-[calc(100vh-200px)]">
@@ -37,13 +46,13 @@ function ProfilePage() {
           >
             <div className="flex justify-between items-center lg:justify-center mx-2 mb-2">
               <div className="bg-gray-50 rounded-xl p-6">
-                <div className="flex items-center space-x-4">
+                <div className="flex flex-col items-center space-y-2">
                   <div className="w-15 h-15 bg-primary rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-2xl">
                       {user?.username?.slice(0, 2)}
                     </span>
                   </div>
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-2 items-center">
                     <h3 className="text-lg font-semibold text-gray-800">
                       {user?.username}
                     </h3>
@@ -99,7 +108,6 @@ function ProfilePage() {
                 </button>
               )}
 
-              {user?.serviceType === null && (
                 <button
                   onClick={() => showTab("favourite-listings")}
                   className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${
@@ -111,7 +119,6 @@ function ProfilePage() {
                   <MdOutlineFavorite size={20} className="mr-3" />
                   Favourite Listings
                 </button>
-              )}
 
               <button
                 onClick={() => showTab("messages")}

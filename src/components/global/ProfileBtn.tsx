@@ -7,33 +7,10 @@ import { FaRegUser } from 'react-icons/fa';
 import { RiLoginCircleLine } from 'react-icons/ri';
 import { logout, setUser } from '@/store/slices/authSlice';
 import Loader from '../custom/Loader';
+import { User } from '@/types/common';
 
-function ProfileBtn() {
-  const user = useAppSelector((state) => state.auth.user);
-  const dispatch = useAppDispatch();
+function ProfileBtn({loading, user}: {loading: boolean, user: User | null}) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const validateUser = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          setLoading(true);
-          const res = await fetchUser(token);
-          if (res) {
-            dispatch(setUser(res));
-          }
-        } catch (error) {
-          console.error('Failed to fetch user:', error);
-          dispatch(logout())
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-    validateUser();
-  }, [dispatch]);
 
   return (
     <div

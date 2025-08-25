@@ -4,7 +4,7 @@ import { footer } from '@/types/pagesTypes';
 function Footer({footerData}: {footerData: footer}) {
 
     return (
-        <div className='bg-footer-background w-screen max-w-screen text-primary p-5' >
+        <div className='bg-footer-background w-screen text-primary p-5' >
             <div className='flex justify-start md:justify-between flex-col md:flex-row'>
                 {footerData?.footerlinkSection.map(section => (
                     <div key={section.id} className='py-3'>

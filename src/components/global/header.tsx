@@ -9,6 +9,11 @@ import { IoMdClose } from 'react-icons/io';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import ProfileBtn from './ProfileBtn';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { fetchLikedListing } from '@/store/thunks/likedListing';
+import { fetchUser } from '@/services/auth';
+import { logout, setUser } from '@/store/slices/authSlice';
 
 function Header({ headerData }: { headerData: HeaderType }) {
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -16,11 +21,46 @@ function Header({ headerData }: { headerData: HeaderType }) {
     const imageUrl = getCompleteImageUrl(siteSettings.siteLogo.url);
     const router = useRouter();
     const pathname = usePathname();
-
+    const dispatch = useAppDispatch();
     const isNavActive = (url: string) => pathname === url;
     const isHotDealActive = () => pathname === '/hot-deal';
     const isMapActive = () => pathname === '/map';
     const isEventTypeActive = (slug: string) => pathname === `/event-types/${slug}`;
+    const user = useAppSelector((state) => state.auth.user);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const validateUser = async () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    setLoading(true);
+                    const res = await fetchUser(token);
+                    if (res) {
+                        dispatch(setUser(res));
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch user:', error);
+                    dispatch(logout())
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+        validateUser();
+    }, [dispatch]);
+
+
+    //set liked listing state in header to set state globally on mount
+    useEffect(() => {
+        async function getLikedListings() {
+            if (loading) return;
+            setLoading(true);
+            await dispatch(fetchLikedListing(user?.documentId as string)).unwrap();
+            setLoading(false);
+        }
+        getLikedListings();
+    }, []);
 
     return (
         <header className='sticky top-0 z-30'>
@@ -79,7 +119,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                     </div>
 
                     {/* User Icon */}
-                   <ProfileBtn />
+                    <ProfileBtn loading={loading} user={user} />
 
                     {/* Mobile Nav Toggle */}
                     <button

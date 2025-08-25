@@ -1,3 +1,5 @@
+import { ListingItem } from "./pagesTypes";
+
 export interface strapiImage{
     url: string;
     width: number;
@@ -15,6 +17,13 @@ export interface strapiImage{
             width: number;
         }
     }
+}
+
+export interface LikedListing{
+    id: number;
+    documentId: string;
+    listing: ListingItem;
+    user: User
 }
 
 export interface User{

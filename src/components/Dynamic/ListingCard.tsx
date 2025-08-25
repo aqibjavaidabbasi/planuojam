@@ -8,17 +8,51 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
-import { FaHeart } from 'react-icons/fa'
+import { FaHeart, FaSpinner } from 'react-icons/fa'
 import { CiHeart } from 'react-icons/ci'
 import Button from '../custom/Button'
 import { IoNavigateOutline } from 'react-icons/io5'
 import { useRouter } from 'next/navigation'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import LoginNavigateModal from '../modals/LoginNavigateModal'
+import { addToLikedListing, removeFromLikedListing } from '@/store/thunks/likedListing'
+import toast from 'react-hot-toast'
 
 function ListingCard({ item }: { item: ListingItem }) {
-  const [liked, setLiked] = useState(false)
   const router = useRouter();
   const { siteSettings } = useSiteSettings();
+  const { user } = useAppSelector(state => state.auth);
+  const { status,items: likedListings } = useAppSelector(state => state.likedListings);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const dispatch = useAppDispatch();
+
+  const isLiked = Array.isArray(likedListings) && likedListings.some(listing => listing.listing.documentId === item.documentId);
+
+  function handleHeartClick() {
+    //if user is not logged in, show modal for login 
+    if (!user) {
+      setShowLoginModal(true)
+      return;
+    }
+    // When already liked, find the corresponding liked item id (cannot be undefined if isLiked is true)
+    const likedItem = isLiked
+      ? (Array.isArray(likedListings)
+        ? likedListings.find(listing => listing.listing.documentId === item.documentId)
+        : undefined)
+      : undefined;
+
+    toast.promise(
+      isLiked
+        ? dispatch(removeFromLikedListing(likedItem!.documentId)).unwrap()
+        : dispatch(addToLikedListing(item.documentId)).unwrap(),
+      {
+        loading: `${isLiked ? 'Removing' : 'Adding'} to wishlist...`,
+        success: `${isLiked ? 'Removed' : 'Added'} to wishlist!`,
+        error: `${isLiked ? 'Failed to remove' : 'Failed to add'} to wishlist`
+      }
+    )
+  }
 
   return (
     <div
@@ -29,17 +63,21 @@ function ListingCard({ item }: { item: ListingItem }) {
       }}
     >
       {/* Heart icon */}
-      <div className="absolute top-2 left-2 z-40">
-        {liked ? (
+      <div className="absolute top-2 left-2 z-20">
+        {status === 'loading' ? (
+          <FaSpinner size={32}
+            color="#e53e3e"
+            className="cursor-not-allowed" />
+        ) : isLiked ? (
           <FaHeart
-            onClick={() => setLiked(false)}
+            onClick={handleHeartClick}
             size={32}
             color="#e53e3e"
             className="cursor-pointer"
           />
         ) : (
           <CiHeart
-            onClick={() => setLiked(true)}
+            onClick={handleHeartClick}
             size={32}
             color="#e2e8f0"
             className="cursor-pointer"
@@ -110,11 +148,18 @@ function ListingCard({ item }: { item: ListingItem }) {
         <ul className="ml-4 list-disc text-sm text-secondary">
           {item.listingItem?.length > 0 && (
             <li className="truncate list-disc">
-              {item.listingItem[0].__component === 'dynamic-blocks.venue' && item.listingItem[0].location
-                ? `${item.listingItem[0].location.address}, ${item.listingItem[0].location.city}`
-                : item.listingItem[0].__component === 'dynamic-blocks.vendor' && item.listingItem[0].serviceArea?.cities?.length > 0
-                ? item.listingItem[0].serviceArea.cities.map(c => c.name).join(', ')
-                : 'No location provided'}
+              <span>
+                {item.listingItem[0].__component === 'dynamic-blocks.vendor' && item.listingItem[0].serviceArea?.length > 0
+                  ? item.listingItem[0].serviceArea
+                    .map(area => `${area?.city?.name ?? ''}  ${area?.state?.name ?? ''}`)
+                    .filter(Boolean)
+                    .join(', ')
+                  : 'No location provided'}
+              </span>
+              <span>
+                {item.listingItem[0].__component === 'dynamic-blocks.venue' && item.listingItem[0].location
+                  ? item.listingItem[0].location.country : 'No Venue Location provided'}
+              </span>
             </li>
           )}
           {item.category?.name && <li className="truncate">{item.category.name}</li>}
@@ -126,7 +171,7 @@ function ListingCard({ item }: { item: ListingItem }) {
             {item.price ? (
               <>
                 <span className="font-medium">Price</span>
-                <span className="font-semibold text-primary">{siteSettings.currency ?  siteSettings.currency.symbol : '$'}{item.price.toLocaleString()}</span>
+                <span className="font-semibold text-primary">{siteSettings.currency ? siteSettings.currency.symbol : '$'}{item.price.toLocaleString()}</span>
               </>
             ) : (
               <span>Contact for pricing</span>
@@ -137,6 +182,8 @@ function ListingCard({ item }: { item: ListingItem }) {
           </Button>
         </div>
       </div>
+
+      <LoginNavigateModal showModal={showLoginModal} setShowModal={setShowLoginModal} />
     </div>
   )
 }

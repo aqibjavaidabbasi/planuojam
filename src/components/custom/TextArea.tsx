@@ -2,11 +2,20 @@ import React from 'react'
 
 interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   rows?: number;
+  label?: string;
 }
 
-function TextArea({rows, ...props}: TextAreaProps) {
+function TextArea({rows, label, ...props}: TextAreaProps) {
   return (
     <div>
+      {label && (
+        <label
+          htmlFor={label}
+          className="block capitalize text-sm font-medium text-gray-700 mb-2 tracking-wider"
+        >
+          {label}
+        </label>
+      )}
       <textarea
         {...props}
         rows={rows}

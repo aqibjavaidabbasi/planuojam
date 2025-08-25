@@ -162,7 +162,8 @@ export async function postAPI(
 export async function postAPIWithToken(
   endpoint: string,
   body: Record<string, unknown>,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  query?: string,
 ) {
   // Try to get the token from localStorage
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -170,7 +171,7 @@ export async function postAPIWithToken(
     throw new Error("No authentication token found. Please log in.");
   }
 
-  const url = `${API_URL}/api/${endpoint}`;
+  const url = `${API_URL}/api/${endpoint}${query ? `?${query}` : ''}`;
   const mergedHeaders = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
@@ -220,7 +221,8 @@ export async function postAPIWithToken(
 export async function putAPI(
   endpoint: string,
   body: Record<string, unknown>,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  query?: string,
 ) {
   // Try to get the token from localStorage
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -228,7 +230,7 @@ export async function putAPI(
     throw new Error("No authentication token found. Please log in.");
   }
 
-  const url = `${API_URL}/api/${endpoint}`;
+  const url = `${API_URL}/api/${endpoint}${query ? `?${query}` : ''}`;
   const mergedHeaders = {
     "Content-Type": "application/json",
     ...(options.headers || {}),
@@ -271,4 +273,58 @@ export async function putAPI(
   }
   const data = await response.json();
   return data;
+}
+
+
+// DELETE API function
+// Always fetch the token inside this function. If not found, throw an error.
+export async function deleteAPI(
+  endpoint: string,
+  options: RequestInit = {}
+) {
+  // Try to get the token from localStorage
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  if (!token) {
+    throw new Error("No authentication token found. Please log in.");
+  }
+
+  const url = `${API_URL}/api/${endpoint}`;
+  const mergedHeaders = {
+    ...(options.headers || {}),
+    Authorization: `Bearer ${token}`,
+  };
+
+  const fetchOptions: RequestInit = {
+    method: "DELETE",
+    headers: mergedHeaders,
+    ...options,
+  };
+
+  // Ensure headers are not overwritten by ...options
+  fetchOptions.headers = mergedHeaders;
+
+  console.log(
+    "deleting from :: ",
+    url,
+    "with headers ::",
+    mergedHeaders
+  );
+
+  const response = await fetch(url, fetchOptions);
+  if (!response.ok) {
+    // Handle errors (e.g., 400, 401, 500, etc.)
+    const errorData = await response.json();
+    console.warn("DEBUG LOGGG:::", errorData);
+    throw new Error(
+      errorData.error?.message ||
+        `Strapi API DELETE error! status: ${response.status}`
+    );
+  }
+
+  console.log("response status::", response.status)
+
+  // Check for unexpected response statuses
+  if (response.status !== 200 && response.status !== 204) {
+    throw new Error(`Something went wrong: ${response.status}`);
+  }
 }

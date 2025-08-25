@@ -144,10 +144,10 @@ export interface CityListBlock {
 export interface city {
   id: number;
   city: {
-  documentId: string;
-  locale: string;
-  name: string;
-}
+    documentId: string;
+    locale: string;
+    name: string;
+  }
 }
 
 export interface SocialLinksComponentBlock {
@@ -157,11 +157,11 @@ export interface SocialLinksComponentBlock {
   socialLink: SocialLink[];
 }
 
-export interface SocialLink{
-    id: number;
-    link: string;
-    platform: string;
-    visible: boolean;
+export interface SocialLink {
+  id: number;
+  link: string;
+  platform: string;
+  visible: boolean;
 }
 
 export interface LocationComponentBlock {
@@ -221,13 +221,13 @@ export interface topListingItemsBlock {
   }
 }
 
-export interface Contact{
+export interface Contact {
   email: string;
   phone: string;
   address: string;
 }
 
-export interface ListingItem{
+export interface ListingItem {
   description: string;
   documentId: string;
   id: number;
@@ -275,7 +275,7 @@ export interface ListingItem{
     discount: Discount;
   }
 }
-export interface Discount{
+export interface Discount {
   discountType: 'Flat Rate' | 'Percentage'
   percentage: number;
   flatRatePrice: number;
@@ -304,11 +304,13 @@ export interface Vendor {
   id: number;
   about: string;
   experienceYears: number;
-  serviceArea: {
-    countries: Place[];
-    cities: Place[];
-    states: Place[];
-  }
+  serviceArea: ServiceArea[]
+}
+export interface ServiceArea {
+  city: Place;
+  state: Place;
+  latitude: number;
+  longitude: number;
 }
 
 export interface Place {
@@ -358,14 +360,14 @@ export interface eventType {
   image: strapiImage;
   externalUrl?: string;
 }
-  export interface RichTextAreaBlock {
-    __component: "dynamic-blocks.rich-text-area";
-    id: number;
-    content: {
-      level?: number;
-      type?: string;
-    }[]
-  }
+export interface RichTextAreaBlock {
+  __component: "dynamic-blocks.rich-text-area";
+  id: number;
+  content: {
+    level?: number;
+    type?: string;
+  }[]
+}
 
 export interface Plans {
   name: string;
@@ -376,7 +378,7 @@ export interface Plans {
     statement: string;
   }[]
 }
-export interface FAQ{
+export interface FAQ {
   id: number;
   question: string;
   answer: string;

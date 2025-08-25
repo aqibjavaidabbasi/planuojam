@@ -36,8 +36,6 @@ export async function emailConfirmation(confirmationToken: string) {
     confirmationToken
   )}`;
 
-  console.log("Confirming email with URL:", url);
-
   const response = await fetch(url, {
     method: "GET",
     redirect: "manual", // Handle 302 as a success indicator

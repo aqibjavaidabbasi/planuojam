@@ -56,11 +56,11 @@ function ListingReviews({ reviews }: { reviews: Review[] }) {
                   }}
                 >
                   <span className="text-white font-bold text-lg">
-                    {review.author.username?.charAt(0).toUpperCase() || "?"}
+                    {review.author?.username?.charAt(0).toUpperCase() || "?"}
                   </span>
                 </div>
                 <p className="text-secondary font-semibold">
-                  {review.author.username}
+                  {review.author?.username}
                 </p>
               </div>
               <div className="flex items-center gap-2.5 justify-end">
