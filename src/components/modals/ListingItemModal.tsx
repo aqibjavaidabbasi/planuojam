@@ -1,888 +1,1308 @@
-import React, { useEffect, useMemo, useState } from "react";
-import Modal from "../custom/Modal";
-import Input from "../custom/Input";
-import TextArea from "../custom/TextArea";
-import Select from "../custom/Select";
-import Checkbox from "../custom/Checkbox";
-import Button from "../custom/Button";
-import { ListingItem, Vendor, Venue, ServiceArea, Discount, FAQ, Plans, SocialLink } from "@/types/pagesTypes";
-import { deleteAPI, postAPIWithToken, putAPI } from "@/services/api";
-import { useForm } from "react-hook-form";
+"use client"
 
-// Helper types for form state (allow partials for create flows)
-type ListingItemForm = Partial<ListingItem> & {
-    listingItem?: Array<Partial<Venue> | Partial<Vendor>>;
-    eventTypes?: Array<{ documentId?: string; id?: number } | any>;
-    category?: any;
-};
+import type React from "react"
+import { useEffect, useMemo, useState } from "react"
+import Modal from "../custom/Modal"
+import Input from "../custom/Input"
+import TextArea from "../custom/TextArea"
+import Select from "../custom/Select"
+import Checkbox from "../custom/Checkbox"
+import Button from "../custom/Button"
+import type { FAQ, category } from "@/types/pagesTypes"
+import { useForm } from "react-hook-form"
+import ToggleButton from "../custom/ToggleButton"
+import ImageUploader from "../custom/ImageUploader"
+import MultiSelect from "../custom/MultiSelect"
+import { useEventTypes } from "@/context/EventTypesContext"
+import { useCities } from "@/context/CitiesContext"
+import { useStates } from "@/context/StatesContext"
+import { useParentCategories } from "@/context/ParentCategoriesContext"
+import { fetchChildCategories } from "@/services/common"
+import type { CreateListingFormTypes } from "@/types/createListingForm"
+import { FaRegTrashAlt } from "react-icons/fa"
+import toast from "react-hot-toast"
+import { createListing } from "@/services/listing"
+import { useAppSelector } from "@/store/hooks"
+import { geocodePlace } from "@/utils/mapboxLocation"
+import { slugify } from "@/utils/helpers"
 
 interface ListingItemModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    // Strapi REST endpoint, e.g. "listing-items"
-    endpoint: string;
-    // Optional existing listing for edit/delete
-    initialData?: ListingItem;
-    // Callbacks
-    onSaved?: (saved: any) => void;
-    onDeleted?: () => void;
+  isOpen: boolean
+  onClose: () => void
+  onSaved?: () => void
 }
 
-const ListingItemModal: React.FC<ListingItemModalProps> = ({
-    isOpen,
-    onClose,
-    endpoint,
-    initialData,
-    onSaved,
-    onDeleted,
-}) => {
-    const isEdit = !!initialData?.id;
-    const [submitting, setSubmitting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+const ErrorMessage = ({ error }: { error?: any }) => {
+  if (!error) return null
+  return <p className="text-red-500 text-sm mt-1">{error.message}</p>
+}
 
-    const initialDataCopy = {
-        title: initialData?.title || "",
-        slug: initialData?.slug || "",
-        description: initialData?.description || "",
-        type: initialData?.type || "vendor",
-        featured: initialData?.featured ?? false,
-        price: initialData?.price ?? undefined,
-        listingStatus: initialData?.listingStatus || "Draft",
-        category: initialData?.category || undefined,
-        contact: initialData?.contact || { email: "", phone: "", address: "" },
-        websiteLink: initialData?.websiteLink || "",
-        workingHours: initialData?.workingHours ?? undefined,
-        socialLinks: initialData?.socialLinks || { optionalSectionTitle: "", socialLink: [] },
-        eventTypes: initialData?.eventTypes || [],
-        pricingPackages: initialData?.pricingPackages || {
-            sectionTitle: "",
-            plans: [],
-            optionalAddons: [],
+const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, onSaved }) => {
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const {
+    handleSubmit: rhfHandleSubmit,
+    register,
+    setValue,
+    getValues,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<CreateListingFormTypes>({
+    defaultValues: {
+      listingStatus: "draft",
+      type: "vendor",
+      featured: false,
+      price: 0,
+      description: "",
+      listingItem: [
+        {
+          __component: "dynamic-blocks.vendor",
+          about: "",
+          experienceYears: 0,
+          serviceArea: [],
         },
-        FAQs: initialData?.FAQs || { sectionTitle: "", numberOfColumns: 1, items: [] },
-        hotDeal: initialData?.hotDeal || {
-            enableHotDeal: false,
-            startDate: "",
-            lastDate: "",
-            dealNote: "",
-            discount: { discountType: "Flat Rate", percentage: 0, flatRatePrice: 0 } as Discount,
-        },
-        listingItem: initialData?.listingItem || [
-            { __component: "dynamic-blocks.vendor", about: "", experienceYears: 0, serviceArea: [] as ServiceArea[] },
-        ],
+      ],
+    },
+  })
+  const form = watch()
+  const [imageIds, setImageIds] = useState<number[]>([])
+  const { eventTypes } = useEventTypes()
+  const { cities } = useCities()
+  const { states } = useStates()
+  const [eventTypesIds, setEventTypesIds] = useState<string[]>([])
+  const { parentCategories } = useParentCategories()
+  const [childCategories, setChildCategories] = useState<category[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<string>("")
+  const { user } = useAppSelector((state) => state.auth)
+  const [isLoading, setIsLoading] = useState(false);
+  const [categoryOptions, setCategoryOptions] = useState<category[]>([]);
+
+  //filter parent categories and remove everything that is not as per user type
+  useEffect(() => {
+    if (user) {
+      const filteredCategories = parentCategories.filter((category) => category.name === user.serviceType)
+      setCategoryOptions(filteredCategories)
+    }
+  }, [parentCategories, user])
+
+  useEffect(() => {
+    if (isOpen) {
+      // Ensure errors cleared and defaults reset when opening
+      setError(null)
+    }
+  }, [isOpen, reset])
+
+  useEffect(() => {
+    async function fetchChildren() {
+      const res = await fetchChildCategories(form.type)
+      setChildCategories(res)
+    }
+    fetchChildren()
+  }, [form.type])
+
+  const isVendor = useMemo(() => (form?.type || "vendor").toLowerCase() === "vendor", [form?.type])
+
+  const updateField = (path: string, value: any) => {
+    setValue(path as any, value, { shouldDirty: true })
+  }
+
+  const addArrayItem = (path: string, item: any) => {
+    const current = (getValues(path as any) as any[]) || []
+    setValue(path as any, [...current, item], { shouldDirty: true })
+  }
+
+  const removeArrayItem = (path: string, index: number) => {
+    const current = (getValues(path as any) as any[]) || []
+    const next = current.filter((_, i) => i !== index)
+    setValue(path as any, next, { shouldDirty: true })
+  }
+
+  const updateListingItem = (field: string, value: any, itemIndex = 0) => {
+    const currentItems = getValues("listingItem") || []
+    const updatedItems = [...currentItems]
+
+    if (!updatedItems[itemIndex]) {
+      updatedItems[itemIndex] = {
+        __component: isVendor ? "dynamic-blocks.vendor" : "dynamic-blocks.venue",
+      }
     }
 
-    const {
-        handleSubmit: rhfHandleSubmit,
-        setValue,
-        getValues,
-        watch,
-        reset,
-    } = useForm<ListingItemForm>({
-        defaultValues: initialDataCopy
-    });
-    const form = watch();
+    // Handle nested field updates
+    const fieldParts = field.split(".")
+    let target: any = updatedItems[itemIndex]
 
-    useEffect(() => {
-        if (isOpen) {
-            // Ensure errors cleared and defaults reset when opening
-            setError(null);
-            reset(initialDataCopy);
+    for (let i = 0; i < fieldParts.length - 1; i++) {
+      const part = fieldParts[i]
+      if (!target[part]) {
+        target[part] = {}
+      }
+      target = target[part]
+    }
+
+    target[fieldParts[fieldParts.length - 1]] = value
+    setValue("listingItem", updatedItems, { shouldDirty: true })
+  }
+
+  const addServiceArea = () => {
+    const currentItems = getValues("listingItem") || []
+    const updatedItems = [...currentItems]
+
+    if (!updatedItems[0]) {
+      updatedItems[0] = { __component: "dynamic-blocks.vendor", serviceArea: [] }
+    }
+
+    if (!updatedItems[0].serviceArea) {
+      updatedItems[0].serviceArea = []
+    }
+
+    updatedItems[0].serviceArea.push({
+      city: "",
+      state: "",
+      latitude: "",
+      longitude: "",
+    })
+
+    setValue("listingItem", updatedItems, { shouldDirty: true })
+  }
+
+  const removeServiceArea = (index: number) => {
+    const currentItems = getValues("listingItem") || []
+    const updatedItems = [...currentItems]
+
+    if (updatedItems[0]?.serviceArea) {
+      updatedItems[0].serviceArea = updatedItems[0].serviceArea.filter((_, i) => i !== index)
+      setValue("listingItem", updatedItems, { shouldDirty: true })
+    }
+  }
+
+  const addAmenity = () => {
+    const currentItems = getValues("listingItem") || []
+    const updatedItems = [...currentItems]
+
+    if (!updatedItems[0]) {
+      updatedItems[0] = { __component: "dynamic-blocks.venue", amneties: [] }
+    }
+
+    if (!updatedItems[0].amneties) {
+      updatedItems[0].amneties = []
+    }
+
+    updatedItems[0].amneties.push({ text: "" })
+    setValue("listingItem", updatedItems, { shouldDirty: true })
+  }
+
+  const removeAmenity = (index: number) => {
+    const currentItems = getValues("listingItem") || []
+    const updatedItems = [...currentItems]
+
+    if (updatedItems[0]?.amneties) {
+      updatedItems[0].amneties = updatedItems[0].amneties.filter((_, i) => i !== index)
+      setValue("listingItem", updatedItems, { shouldDirty: true })
+    }
+  }
+
+  const onSubmit = async () => {
+    setSubmitting(true)
+    setError(null)
+    setIsLoading(true);
+    try {
+      const payload = getValues()
+      if (user) {
+        // Wrap user relation
+        payload.user = user.documentId
+      }
+      if (imageIds.length === 0 && imageIds.length > 0) {
+        setError("Please upload at least one image")
+        return
+      }
+      //add image ids to portfolio if there are any
+      if (imageIds.length > 0) {
+        // Connect media by numeric id
+        payload.portfolio = imageIds
+      }
+      //   add event types ids to payload if there are any
+      if (eventTypesIds.length > 0) {
+        payload.eventTypes = {
+          set: [...eventTypesIds],
         }
-    }, [isOpen, initialData, reset]);
-
-    useEffect(() => {
-        if (form.type === "venue" && (form.listingItem?.[0]?.__component !== "dynamic-blocks.venue")) {
-            updateField("listingItem", [
-                {
-                    __component: "dynamic-blocks.venue",
-                    id: initialData?.listingItem?.[0]?.id ?? 0, // Preserve id if editing
-                    capacity: 0,
-                    bookingDurationType: "",
-                    bookingDuration: 0,
-                    location: { address: "", city: "", country: "", latitude: 0, longitude: 0, id: 0 },
-                    amneties: [],
-                },
-            ]);
-        } else if (form.type === "vendor" && (form.listingItem?.[0]?.__component !== "dynamic-blocks.vendor")) {
-            updateField("listingItem", [
-                {
-                    __component: "dynamic-blocks.vendor",
-                    id: initialData?.listingItem?.[0]?.id ?? 0,
-                    about: "",
-                    experienceYears: 0,
-                    serviceArea: [],
-                },
-            ]);
+      }
+      if (selectedCategory) {
+        // Wrap category relation
+        payload.category = selectedCategory
+      }
+      //if working hours is NAN then make it disappaer from payload
+      if (form.workingHours && isNaN(form.workingHours)) {
+        delete payload.workingHours
+      }
+      //if user has selected a type add the type to the listing item as well
+      if (form.type) {
+        if (form.type === "vendor") {
+          payload.listingItem.map((item) => (item.__component = "dynamic-blocks.vendor"))
+        } else if (form.type === "venue") {
+          payload.listingItem.map((item) => (item.__component = "dynamic-blocks.venue"))
+        } else if (form.type !== "vendor" && form.type !== "venue") {
+          throw new Error("Please select a valid service type")
         }
-    }, [form.type, initialData]);
+      }
 
-    const isVendor = useMemo(() => (form?.type || "vendor").toLowerCase() === "vendor", [form?.type]);
+      if (form.type && payload.listingItem) {
+        payload.listingItem = payload.listingItem.map((item: any) => {
+          const next: any = {
+            ...item,
+            __component: form.type === "vendor" ? "dynamic-blocks.vendor" : "dynamic-blocks.venue",
+          }
 
-    const updateField = (path: string, value: any) => {
-        setValue(path as any, value, { shouldDirty: true });
-    };
+          // Transform vendor serviceArea city/state to relation connects
+          if (Array.isArray(next.serviceArea)) {
+            next.serviceArea = next.serviceArea.map((sa: any) => {
+              const transformed: any = { ...sa }
+              if (sa?.city) {
+                transformed.city = { connect: [sa.city] }
+              } else {
+                // Remove empty city field to avoid validation error
+                delete transformed.city
+              }
+              if (sa?.state) {
+                transformed.state = { connect: [sa.state] }
+              } else {
+                // Remove empty state field to avoid validation error
+                delete transformed.state
+              }
+              return transformed
+            })
+          }
 
-    const addArrayItem = (path: string, item: any) => {
-        const current = (getValues(path as any) as any[]) || [];
-        setValue(path as any, [...current, item], { shouldDirty: true });
-    };
-
-    const removeArrayItem = (path: string, index: number) => {
-        const current = (getValues(path as any) as any[]) || [];
-        const next = current.filter((_, i) => i !== index);
-        setValue(path as any, next, { shouldDirty: true });
-    };
-
-    const onSubmit = async () => {
-        setSubmitting(true);
-        setError(null);
-        try {
-            const payload = getValues(); // Adjust to { data: payload } if your API requires
-            console.log(payload)
-            // let res;
-            // if (isEdit && initialData?.id) {
-            //     res = await putAPI(`${endpoint}/${initialData.id}`, payload);
-            // } else {
-            //     res = await postAPIWithToken(endpoint, payload);
-            // }
-            // onSaved?.(res);
-            onClose();
-        } catch (e: any) {
-            setError(e?.message || "Failed to save listing");
-        } finally {
-            setSubmitting(false);
-        }
-    };
-
-    const handleDelete = async () => {
-        if (!isEdit || !initialData?.id) return;
-        setSubmitting(true);
-        setError(null);
-        try {
-            await deleteAPI(`${endpoint}/${initialData.id}`);
-            onDeleted?.();
-            onClose();
-        } catch (e: any) {
-            setError(e?.message || "Failed to delete listing");
-        } finally {
-            setSubmitting(false);
-        }
-    };
-
-    return (
-        <Modal
-            isOpen={isOpen}
-            onClose={onClose}
-            size="lg"
-            title={isEdit ? "Edit Listing" : "Create Listing"}
-            footer={
-                <div className="flex gap-3 justify-between flex-wrap">
-                    <div className="flex gap-2">
-                        {isEdit && (
-                            <Button style="secondary" onClick={handleDelete} disabled={submitting}>
-                                Delete
-                            </Button>
-                        )}
-                    </div>
-                    <div className="ml-auto flex gap-2">
-                        <Button style="ghost" onClick={onClose} disabled={submitting}>
-                            Cancel
-                        </Button>
-                        <Button style="primary" onClick={rhfHandleSubmit(onSubmit)} disabled={submitting}>
-                            {submitting ? "Saving..." : isEdit ? "Save" : "Create"}
-                        </Button>
-                    </div>
-                </div>
+          // Transform venue location city/state to relation connects (backend updated to relations)
+          if (next.location) {
+            const loc: any = { ...next.location }
+            if (loc.city) {
+              loc.city = { connect: [loc.city] }
+            } else {
+              delete loc.city
             }
-        >
-            {error && (
-                <div className="mb-4 p-3 rounded bg-red-50 text-red-700 border border-red-200">
-                    {error}
-                </div>
-            )}
+            if (loc.state) {
+              loc.state = { connect: [loc.state] }
+            } else {
+              delete loc.state
+            }
+            next.location = loc
+          }
 
-            {/* Basic Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-14">
-                <div className="col-span-2">
-                    <Input
-                        type="text"
-                        label="Title"
-                        value={form.title || ""}
-                        onChange={(e) => updateField("title", e.target.value)}
-                    />
-                </div>
-                <Input
-                    type="text"
-                    label="Slug"
-                    value={form.slug || ""}
-                    onChange={(e) => updateField("slug", e.target.value)}
-                />
-                <Input
-                    type="number"
-                    label="Price"
-                    value={form.price ?? ""}
-                    onChange={(e) => updateField("price", Number(e.target.value))}
-                />
-                <Select
-                    placeholder="Select Type"
-                    value={form.type || "vendor"}
-                    onChange={(e: any) => updateField("type", e.target.value)}
-                    options={[
-                        { label: "Vendor", value: "vendor" },
-                        { label: "Venue", value: "venue" },
-                    ]}
-                />
-                <Select
-                    placeholder="Listing Status"
-                    value={form.listingStatus || "Draft"}
-                    onChange={(e: any) => updateField("listingStatus", e.target.value)}
-                    options={[
-                        { label: "Draft", value: "Draft" },
-                        { label: "Published", value: "Published" },
-                    ]}
-                />
-                <div className="flex items-center mt-6">
-                    <Checkbox
-                        label="Featured"
-                        checked={!!form.featured}
-                        onChange={(e: any) => updateField("featured", e.target.checked)}
-                    />
-                </div>
+          //only include about, experience years and serviceArea for vendor and the rest for venue,...delete the fields depending on the type...
+          if (form.type === "vendor") {
+            delete next.location
+            delete next.capacity
+            delete next.amneties
+            delete next.bookingDuration
+            delete next.bookingDurationType
+          } else {
+            delete next.about
+            delete next.experienceYears
+            delete next.serviceArea
+          }
+
+          return next
+        })
+      }
+
+      //set slug using title
+      payload.slug = `${slugify(payload.title)}-${payload?.locale ?? 'en'}-${Date.now()}`
+
+      //set locale --later we will do it dynamically but for now hard code it
+      payload.locale = 'en'
+
+      const data = {
+        data: payload,
+      }
+
+      const res = await createListing(data)
+      toast.success("Listing Created successfully")
+      onSaved?.()
+      onClose()
+      reset()
+      setSelectedCategory("")
+      setEventTypesIds([])
+      setError("");
+      setImageIds([]);
+    } catch (e: any) {
+      setError(e?.message || "Failed to save listing")
+      toast.error("Please fix the errors in the form")
+    } finally {
+      setSubmitting(false)
+      setIsLoading(false);
+    }
+  }
+
+  const isWorking = submitting || isLoading
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="lg"
+      title={"Create Listing"}
+      footer={
+        <div className="flex gap-3 justify-between flex-wrap">
+          <div className="ml-auto flex gap-2">
+            <Button style="ghost" onClick={onClose} disabled={isWorking}>
+              Cancel
+            </Button>
+            <Button style="primary" onClick={rhfHandleSubmit(onSubmit)} disabled={isWorking}>
+              {submitting ? "Saving..." : "Create"}
+            </Button>
+          </div>
+        </div>
+      }
+    >
+      {error && <div className="mb-4 p-3 rounded bg-red-50 text-red-700 border border-red-200">{error}</div>}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6  mt-14 ">
+        {/* left side */}
+        <div>
+          {/* Basic Details */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-b-2 border-t-2 border-primary/20 py-4">
+            <div className="col-span-2">
+              <h3 className="text-lg font-semibold mb-2">Basic Details</h3>
             </div>
+            <div className="col-span-2">
+              <Input
+                type="text"
+                label="Title"
+                disabled={isWorking}
+                required={true}
+                {...register("title", { required: "Title is required" })}
+              />
+              <ErrorMessage error={errors.title} />
+            </div>
+            <div>
+              <Select
+                placeholder="Select Type"
+                disabled={isWorking}
+                {...register("type", { required: "Type is required" })}
+                options={categoryOptions.map((category) => ({
+                  label: category.name,
+                  value: category.name,
+                }))}
+              />
+              <ErrorMessage error={errors.type} />
+            </div>
+            <div>
+              <Select
+                placeholder="Listing Status"
+                disabled={isWorking}
+                {...register("listingStatus", { required: "Listing status is required" })}
+                options={[
+                  { label: "Draft", value: "draft" },
+                  { label: "Published", value: "published" },
+                  { label: "Pending Review", value: "pending review" },
+                  { label: "Archived", value: "archived" },
+                ]}
+              />
+              <ErrorMessage error={errors.listingStatus} />
+            </div>
+            <div>
+              <Input
+                type="number"
+                label="Price"
+                disabled={isWorking}
+                {...register("price", {
+                  valueAsNumber: true,
+                  min: { value: 0, message: "Price must be positive" },
+                  max: { value: 1000000, message: "Price must be less than 1000000" },
+                })}
+              />
+              <ErrorMessage error={errors.price} />
+            </div>
+            <div className="flex items-center mt-6">
+              <Checkbox
+                label="Featured"
+                checked={watch("featured")}
+                onChange={(e) => setValue("featured", e.target.checked)}
+                disabled={isWorking}
+              />
+            </div>
+            {/* Description */}
+            <div className="col-span-2">
+              <TextArea
+                label="Description"
+                placeholder="Description"
+                disabled={isWorking}
+                rows={4}
+                {...register("description", { required: "Description is required" })}
+              />
+              <ErrorMessage error={errors.description} />
+            </div>
+            <div>
+              <Input
+                type="url"
+                label="Website Link"
+                disabled={isWorking}
+                {...register("websiteLink", {
+                  pattern: { value: /^https?:\/\/.+/, message: "Please enter a valid URL" },
+                })}
+              />
+              <ErrorMessage error={errors.websiteLink} />
+            </div>
+            <div>
+              <Input
+                type="number"
+                label="Working Hours (per day)"
+                disabled={isWorking}
+                {...register("workingHours", {
+                  valueAsNumber: true,
+                  min: { value: 1, message: "Working hours must be at least 1" },
+                  max: { value: 24, message: "Working hours cannot exceed 24" },
+                })}
+              />
+              <ErrorMessage error={errors.workingHours} />
+            </div>
+          </div>
 
-            <div className="mt-4">
+          {/* Vendor/Venue specific */}
+          <div className="border-b-2 border-primary/20 py-4">
+            <h3 className="text-lg font-semibold mb-2">{isVendor ? "Vendor" : "Venue"} Details</h3>
+            <p className="text-gray-500 font-medium text-sm tracking-wide mb-2">
+              (Add a city, state (county/province) for this service area. Add coordinates manually or fetch using the
+              "fetch coordinates" button to get coordinates.)
+            </p>
+            {isVendor ? (
+              <div className="flex flex-col gap-4">
                 <TextArea
-                    label="Description"
-                    placeholder="Description"
-                    value={form.description || ""}
-                    onChange={(e) => updateField("description", e.target.value)}
-                    rows={4}
-                />
-            </div>
-
-            {/* Contact */}
-            <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-2">Contact</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Input
-                        type="email"
-                        label="Email"
-                        value={form.contact?.email || ""}
-                        onChange={(e) => updateField("contact.email", e.target.value)}
-                    />
-                    <Input
-                        type="text"
-                        label="Phone"
-                        value={form.contact?.phone || ""}
-                        onChange={(e) => updateField("contact.phone", e.target.value)}
-                    />
-                    <Input
-                        type="text"
-                        label="Address"
-                        value={form.contact?.address || ""}
-                        onChange={(e) => updateField("contact.address", e.target.value)}
-                    />
-                </div>
-            </div>
-
-            {/* Links and Hours */}
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input
-                    type="url"
-                    label="Website Link"
-                    value={form.websiteLink || ""}
-                    onChange={(e) => updateField("websiteLink", e.target.value)}
+                  label="About"
+                  disabled={isWorking}
+                  value={form.listingItem?.[0]?.about || ""}
+                  onChange={(e) => updateListingItem("about", e.target.value)}
                 />
                 <Input
-                    type="number"
-                    label="Working Hours (per day)"
-                    value={form.workingHours ?? ""}
-                    onChange={(e) => updateField("workingHours", Number(e.target.value))}
+                  type="number"
+                  label="Experience Years"
+                  disabled={isWorking}
+                  value={form.listingItem?.[0]?.experienceYears || ""}
+                  onChange={(e) => updateListingItem("experienceYears", Number(e.target.value))}
                 />
-            </div>
-
-            {/* Social Links */}
-            <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-2">Social Links</h3>
-                <Input
-                    type="text"
-                    label="Section Title"
-                    value={form.socialLinks?.optionalSectionTitle || ""}
-                    onChange={(e) => updateField("socialLinks.optionalSectionTitle", e.target.value)}
-                />
-                <div className="mt-2 flex flex-col gap-3">
-                    {((form.socialLinks?.socialLink || []) as Partial<SocialLink>[]).map((s: Partial<SocialLink>, idx) => (
-                        <div key={idx} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
-                            <Input
-                                type="text"
-                                label="Platform"
-                                value={s.platform || ""}
-                                onChange={(e) => {
-                                    const list = [...(form.socialLinks?.socialLink || [])] as Partial<SocialLink>[];
-                                    list[idx] = { ...(list[idx] || {}), platform: e.target.value } as Partial<SocialLink>;
-                                    updateField("socialLinks.socialLink", list);
-                                }}
-                            />
-                            <Input
-                                type="url"
-                                label="Link"
-                                value={s.link || ""}
-                                onChange={(e) => {
-                                    const list = [...(form.socialLinks?.socialLink || [])] as Partial<SocialLink>[];
-                                    list[idx] = { ...(list[idx] || {}), link: e.target.value } as Partial<SocialLink>;
-                                    updateField("socialLinks.socialLink", list);
-                                }}
-                            />
-                            <Select
-                                placeholder="Show This Icon?"
-                                value={String(s.visible ?? true)}
-                                onChange={(e: any) => {
-                                    const list = [...(form.socialLinks?.socialLink || [])] as Partial<SocialLink>[];
-                                    list[idx] = { ...(list[idx] || {}), visible: e.target.value === "true" } as Partial<SocialLink>;
-                                    updateField("socialLinks.socialLink", list);
-                                }}
-                                options={[{ label: "Yes", value: "true" }, { label: "No", value: "false" }]}
-                            />
-                            <Button style="ghost" onClick={() => removeArrayItem("socialLinks.socialLink", idx)}>Remove</Button>
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="font-medium">Service Areas</h4>
+                    <Button type="button" style="secondary" disabled={isWorking} onClick={addServiceArea}>
+                      Add Service Area
+                    </Button>
+                  </div>
+                  {(form.listingItem?.[0]?.serviceArea || []).map((sa, idx) => (
+                    <div key={idx} className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
+                      <div className="col-span-2">
+                        <Select
+                          label="City"
+                          value={sa.city || ""}
+                          disabled={isWorking}
+                          onChange={(e) => {
+                            const currentItems = getValues("listingItem") || []
+                            const updatedItems = [...currentItems]
+                            if (updatedItems[0]?.serviceArea) {
+                              updatedItems[0].serviceArea[idx] = {
+                                ...updatedItems[0].serviceArea[idx],
+                                city: e.target.value,
+                              }
+                              setValue("listingItem", updatedItems, { shouldDirty: true })
+                            }
+                          }}
+                          options={[{ label: "Select City", value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <Select
+                          label="State"
+                          value={sa.state || ""}
+                          disabled={isWorking}
+                          onChange={(e) => {
+                            const currentItems = getValues("listingItem") || []
+                            const updatedItems = [...currentItems]
+                            if (updatedItems[0]?.serviceArea) {
+                              updatedItems[0].serviceArea[idx] = {
+                                ...updatedItems[0].serviceArea[idx],
+                                state: e.target.value,
+                              }
+                              setValue("listingItem", updatedItems, { shouldDirty: true })
+                            }
+                          }}
+                          options={[{ label: "Select State", value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
+                        />
+                      </div>
+                      <div className="col-span-1">
+                        <Input
+                          type="text"
+                          label="Latitude"
+                          disabled={isWorking}
+                          value={sa.latitude || ""}
+                          onChange={(e) => {
+                            const currentItems = getValues("listingItem") || []
+                            const updatedItems = [...currentItems]
+                            if (updatedItems[0]?.serviceArea) {
+                              updatedItems[0].serviceArea[idx] = {
+                                ...updatedItems[0].serviceArea[idx],
+                                latitude: e.target.value,
+                              }
+                              setValue("listingItem", updatedItems, { shouldDirty: true })
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="col-span-1">
+                        <Input
+                          type="text"
+                          label="Longitude"
+                          disabled={isWorking}
+                          value={sa.longitude || ""}
+                          onChange={(e) => {
+                            const currentItems = getValues("listingItem") || []
+                            const updatedItems = [...currentItems]
+                            if (updatedItems[0]?.serviceArea) {
+                              updatedItems[0].serviceArea[idx] = {
+                                ...updatedItems[0].serviceArea[idx],
+                                longitude: e.target.value,
+                              }
+                              setValue("listingItem", updatedItems, { shouldDirty: true })
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="col-span-6">
+                        <div className="flex gap-3">
+                          <Button
+                            type="button"
+                            style="secondary"
+                            disabled={isWorking}
+                            onClick={async () => {
+                              const currentItems = (getValues("listingItem") || []) as any[]
+                              if (!currentItems[0] || !currentItems[0].serviceArea) return
+                              const updatedItems = [...currentItems]
+                              const saItem = updatedItems[0].serviceArea[idx]
+                              if (!saItem) return
+                              const cityName = cities.find((c) => c.documentId === saItem.city)?.name
+                              const stateName = states.find((s) => s.documentId === saItem.state)?.name
+                              const res = await geocodePlace(cityName, stateName)
+                              if (res) {
+                                updatedItems[0].serviceArea[idx] = {
+                                  ...saItem,
+                                  latitude: String(res.lat),
+                                  longitude: String(res.lng),
+                                }
+                                setValue("listingItem", updatedItems, { shouldDirty: true })
+                              }
+                            }}
+                          >
+                            Fetch coordinates
+                          </Button>
+                          <Button
+                            type="button"
+                            style="ghost"
+                            disabled={isWorking}
+                            onClick={() => removeServiceArea(idx)}
+                            extraStyles="text-red-600 hover:text-red-700"
+                          >
+                            Remove
+                          </Button>
                         </div>
-                    ))}
-                    <div>
-                        <Button style="secondary" onClick={() => addArrayItem("socialLinks.socialLink", { platform: "", link: "", visible: true })}>
-                            + Add Social Link
-                        </Button>
+                      </div>
                     </div>
+                  ))}
                 </div>
-            </div>
-
-            {/* Pricing Packages */}
-            <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-2">Pricing Packages</h3>
-                <Input
-                    type="text"
-                    label="Section Title"
-                    value={form.pricingPackages?.sectionTitle || ""}
-                    onChange={(e) => updateField("pricingPackages.sectionTitle", e.target.value)}
-                />
-                <div className="flex flex-col gap-4 mt-2">
-                    {(form.pricingPackages?.plans || []).map((p: Partial<Plans>, idx: number) => (
-                        <div key={idx} className="border rounded p-3 grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
-                            <Input type="text" label="Name" value={p.name || ""} onChange={(e) => {
-                                const list = [...(form.pricingPackages?.plans || [])] as Partial<Plans>[];
-                                list[idx] = { ...(list[idx] || {}), name: e.target.value } as Partial<Plans>;
-                                updateField("pricingPackages.plans", list);
-                            }} />
-                            <Input type="number" label="Price" value={p.price ?? ""} onChange={(e) => {
-                                const list = [...(form.pricingPackages?.plans || [])] as Partial<Plans>[];
-                                list[idx] = { ...(list[idx] || {}), price: Number(e.target.value) } as Partial<Plans>;
-                                updateField("pricingPackages.plans", list);
-                            }} />
-                            <Select placeholder="Popular" value={String(p.isPopular ?? false)} onChange={(e: any) => {
-                                const list = [...(form.pricingPackages?.plans || [])] as Partial<Plans>[];
-                                list[idx] = { ...(list[idx] || {}), isPopular: e.target.value === "true" } as Partial<Plans>;
-                                updateField("pricingPackages.plans", list);
-                            }} options={[{ label: "No", value: "false" }, { label: "Yes", value: "true" }]} />
-                            <Button style="ghost" onClick={() => removeArrayItem("pricingPackages.plans", idx)}>Remove Plan</Button>
-                        </div>
-                    ))}
-                    <div>
-                        <Button style="secondary" onClick={() => addArrayItem("pricingPackages.plans", { name: "", price: 0, isPopular: false, cta: { __component: 'dynamic-blocks.call-to-action', id: 0, bodyText: '', buttonUrl: '', style: 'primary' }, featuresList: [] })}>
-                            + Add Plan
-                        </Button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
+                  <div className="col-span-2">
+                    <Input
+                      type="text"
+                      label="Address"
+                      disabled={isWorking}
+                      value={form.listingItem?.[0]?.location?.address || ""}
+                      onChange={(e) => updateListingItem("location.address", e.target.value)}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Select
+                      label="City"
+                      disabled={isWorking}
+                      value={form.listingItem?.[0]?.location?.city || ""}
+                      onChange={(e) => updateListingItem("location.city", e.target.value)}
+                      options={[{ label: "Select City", value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Select
+                      label="State"
+                      disabled={isWorking}
+                      value={form.listingItem?.[0]?.location?.state || ""}
+                      onChange={(e) => updateListingItem("location.state", e.target.value)}
+                      options={[{ label: "Select State", value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
+                  <div className="col-span-2">
+                    <Input
+                      type="text"
+                      label="Latitude"
+                      disabled={isWorking}
+                      value={form.listingItem?.[0]?.location?.latitude || ""}
+                      onChange={(e) => updateListingItem("location.latitude", e.target.value)}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Input
+                      type="text"
+                      label="Longitude"
+                      disabled={isWorking}
+                      value={form.listingItem?.[0]?.location?.longitude || ""}
+                      onChange={(e) => updateListingItem("location.longitude", e.target.value)}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Button
+                      type="button"
+                      style="secondary"
+                      disabled={isWorking}
+                      onClick={async () => {
+                        const cityId = form.listingItem?.[0]?.location?.city
+                        const stateId = form.listingItem?.[0]?.location?.state
+                        const cityName = cities.find((c) => c.documentId === cityId)?.name
+                        const stateName = states.find((s) => s.documentId === stateId)?.name
+                        const res = await geocodePlace(cityName, stateName)
+                        if (res) {
+                          updateListingItem("location.latitude", String(res.lat))
+                          updateListingItem("location.longitude", String(res.lng))
+                        }
+                      }}
+                    >
+                      Fetch coordinates
+                    </Button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end mb-3">
+                  <div className="col-span-2">
+                    <Input
+                      type="number"
+                      label="Capacity"
+                      disabled={isWorking}
+                      value={form.listingItem?.[0]?.capacity || ""}
+                      onChange={(e) => updateListingItem("capacity", Number(e.target.value))}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Select
+                      label="Booking Duration Type"
+                      disabled={isWorking}
+                      value={form.listingItem?.[0]?.bookingDurationType || ""}
+                      onChange={(e) => updateListingItem("bookingDurationType", e.target.value)}
+                      options={[
+                        { label: "Select Duration Type", value: "" },
+                        { label: "Per Day", value: "Per Day" },
+                        { label: "Per Hour", value: "Per Hour" },
+                      ]}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end mb-3">
+                  <div className="col-span-2">
+                    <Input
+                      type="number"
+                      disabled={isWorking}
+                      label="Booking Duration"
+                      value={form.listingItem?.[0]?.bookingDuration || ""}
+                      onChange={(e) => updateListingItem("bookingDuration", Number(e.target.value))}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="font-medium">Amenities</h4>
+                    <Button type="button" disabled={isWorking} style="secondary" onClick={addAmenity}>
+                      Add Amenity
+                    </Button>
+                  </div>
+                  {(form.listingItem?.[0]?.amneties || []).map((amenity, idx) => (
+                    <div key={idx} className="flex gap-2 items-end mb-2">
+                      <div className="flex-1">
+                        <Input
+                          type="text"
+                          disabled={isWorking}
+                          label={`Amenity ${idx + 1}`}
+                          value={amenity.text || ""}
+                          onChange={(e) => {
+                            const currentItems = getValues("listingItem") || []
+                            const updatedItems = [...currentItems]
+                            if (updatedItems[0]?.amneties) {
+                              updatedItems[0].amneties[idx] = {
+                                ...updatedItems[0].amneties[idx],
+                                text: e.target.value,
+                              }
+                              setValue("listingItem", updatedItems, { shouldDirty: true })
+                            }
+                          }}
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        style="ghost"
+                        disabled={isWorking}
+                        onClick={() => removeAmenity(idx)}
+                        extraStyles="text-red-600 hover:text-red-700"
+                      >
+                        Remove
+                      </Button>
                     </div>
+                  ))}
                 </div>
-            </div>
+              </div>
+            )}
+          </div>
 
-            {/* FAQs */}
-            <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-2">FAQs</h3>
-                <Input
-                    type="text"
-                    label="Section Title"
-                    value={form.FAQs?.sectionTitle || ""}
-                    onChange={(e) => updateField("FAQs.sectionTitle", e.target.value)}
-                />
-                <div className="flex flex-col gap-3 mt-2">
-                    {(form.FAQs?.items || []).map((f: Partial<FAQ>, idx: number) => (
-                        <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
-                            <div className="col-span-2">
-                                <Input type="text" label="Question" value={f.question || ""} onChange={(e) => {
-                                    const list = [...(form.FAQs?.items || [])] as Partial<FAQ>[];
-                                    list[idx] = { ...(list[idx] || {}), question: e.target.value } as Partial<FAQ>;
-                                    updateField("FAQs.items", list);
-                                }} />
-                            </div>
-                            <Button style="ghost" onClick={() => removeArrayItem("FAQs.items", idx)}>Remove</Button>
-                            <div className="col-span-3" >
-                                <TextArea label="Answer" rows={5} value={f.answer || ""} onChange={(e) => {
-                                    const list = [...(form.FAQs?.items || [])] as Partial<FAQ>[];
-                                    list[idx] = { ...(list[idx] || {}), answer: e.target.value } as Partial<FAQ>;
-                                    updateField("FAQs.items", list);
-                                }} />
-                            </div>
-                        </div>
-                    ))}
-                    <div>
-                        <Button style="secondary" onClick={() => addArrayItem("FAQs.items", { question: "", answer: "" })}>
-                            + Add FAQ
-                        </Button>
-                    </div>
-                </div>
+          {/* Hot Deal  */}
+          <div className="border-b-2 border-primary/20 py-4 hidden">
+            <div className="flex justify-between items-center w-full">
+              <h3 className="text-lg font-semibold mb-2">Hot Deal</h3>
+              <ToggleButton
+                onLabel="YES"
+                offLabel="NO"
+                disabled={isWorking}
+                defaultOn={form.hotDeal?.enableHotDeal ?? false}
+                onToggle={(state) => updateField("hotDeal.enableHotDeal", state)}
+              />
             </div>
-
-            {/* Hot Deal */}
-            <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-2">Hot Deal</h3>
+            {form.hotDeal?.enableHotDeal && (
+              <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Input type="date" label="Start Date" value={form.hotDeal?.startDate || ""} onChange={(e) => updateField("hotDeal.startDate", e.target.value)} />
-                    <Input type="date" label="Last Date" value={form.hotDeal?.lastDate || ""} onChange={(e) => updateField("hotDeal.lastDate", e.target.value)} />
+                  <Input
+                    type="date"
+                    label="Start Date"
+                    disabled={isWorking}
+                    value={form.hotDeal?.startDate || ""}
+                    onChange={(e) => updateField("hotDeal.startDate", e.target.value)}
+                  />
+                  <Input
+                    type="date"
+                    label="Last Date"
+                    disabled={isWorking}
+                    value={form.hotDeal?.lastDate || ""}
+                    onChange={(e) => updateField("hotDeal.lastDate", e.target.value)}
+                  />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
-
-                    <Input
-                        type="text"
-                        label="Deal Note"
-                        value={form.hotDeal?.dealNote || ""}
-                        onChange={(e) => updateField("hotDeal.dealNote", e.target.value)}
-                    />
-                    <div className="flex items-end">
-                        <Select
-                            placeholder="Discount Type"
-                            value={form.hotDeal?.discount?.discountType || "Flat Rate"}
-                            onChange={(e: any) => updateField("hotDeal.discount.discountType", e.target.value)}
-                            options={[{ label: "Flat Rate", value: "Flat Rate" }, { label: "Percentage", value: "Percentage" }]}
-                        />
-                    </div>
-                    {form.hotDeal?.discount?.discountType === "Flat Rate" && <Input
-                        type="number"
-                        label="Flat Rate Price"
-                        value={form.hotDeal?.discount?.flatRatePrice ?? ""}
-                        onChange={(e) => updateField("hotDeal.discount.flatRatePrice", Number(e.target.value))}
-                    />}
-                    {form.hotDeal?.discount?.discountType === "Percentage" && <Input
-                        type="number"
-                        label="Percentage"
-                        value={form.hotDeal?.discount?.percentage ?? ""}
-                        onChange={(e) => updateField("hotDeal.discount.percentage", Number(e.target.value))}
-                    />}
+                  <Input
+                    type="text"
+                    label="Deal Note"
+                    disabled={isWorking}
+                    value={form.hotDeal?.dealNote || ""}
+                    onChange={(e) => updateField("hotDeal.dealNote", e.target.value)}
+                  />
+                  <div className="flex items-end">
                     <Select
-                        placeholder="Enable"
-                        value={String(form.hotDeal?.enableHotDeal ?? false)}
-                        onChange={(e: any) => updateField("hotDeal.enableHotDeal", e.target.value === "true")}
-                        options={[{ label: "No", value: "false" }, { label: "Yes", value: "true" }]}
+                      label="Discount Type"
+                      disabled={isWorking}
+                      value={form.hotDeal?.discount?.discountType || "Flat Rate"}
+                      onChange={(e: any) => updateField("hotDeal.discount.discountType", e.target.value)}
+                      options={[
+                        { label: "Flat Rate", value: "Flat Rate" },
+                        { label: "Percentage", value: "Percentage" },
+                      ]}
                     />
+                  </div>
+                  {form.hotDeal?.discount?.discountType === "Flat Rate" && (
+                    <Input
+                      type="number"
+                      label="Flat Rate Price"
+                      disabled={isWorking}
+                      value={form.hotDeal?.discount?.flatRatePrice ?? ""}
+                      onChange={(e) => updateField("hotDeal.discount.flatRatePrice", Number(e.target.value))}
+                    />
+                  )}
+                  {form.hotDeal?.discount?.discountType === "Percentage" && (
+                    <Input
+                      type="number"
+                      label="Percentage"
+                      disabled={isWorking}
+                      value={form.hotDeal?.discount?.percentage ?? ""}
+                      onChange={(e) => updateField("hotDeal.discount.percentage", Number(e.target.value))}
+                    />
+                  )}
                 </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* right side */}
+        <div>
+          {/* images */}
+          <div className="flex flex-col gap-2 border-b-2 border-t-2 border-primary/20 py-4">
+            <h3 className="text-lg font-semibold mb-2">Add Portfolio Images</h3>
+            <ImageUploader setImageIds={setImageIds} disabled={isWorking} />
+            {imageIds.length > 0 && <p className="text-gray-500 font-medium text-sm" >Images have ben uploaded</p> }
+          </div>
+          {/* Contact */}
+          <div className="border-b-2 border-primary/20 py-4">
+            <h3 className="text-lg font-semibold mb-2">Contact</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="col-span-2">
+                <Input
+                  type="email"
+                  label="Email"
+                  disabled={isWorking}
+                  {...register("contact.email", {
+                    required: "Email is required",
+                    pattern: { value: /^\S+@\S+$/i, message: "Invalid email format" },
+                  })}
+                />
+                <ErrorMessage error={errors.contact?.email as any} />
+              </div>
+              <div>
+                <Input type="text" label="Phone" disabled={isWorking} {...register("contact.phone", { required: "Phone is required" })} />
+                <ErrorMessage error={errors.contact?.phone as any} />
+              </div>
+              <div className="col-span-3">
+                <Input
+                  type="text"
+                  disabled={isWorking}
+                  label="Address"
+                  {...register("contact.address", { required: "Address is required" })}
+                />
+                <ErrorMessage error={errors.contact?.address as any} />
+              </div>
             </div>
+          </div>
 
-            {/* Vendor/Venue specific */}
-            <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-2">{isVendor ? "Vendor" : "Venue"} Details</h3>
-                {isVendor ? (
-                    <div className="flex flex-col gap-4">
-                        <TextArea
-                            label="About"
-                            value={(form.listingItem?.[0] as Partial<Vendor> | undefined)?.about || ""}
-                            onChange={(e) => {
-                                const arr = [...(form.listingItem || [])];
-                                const vendor: Partial<Vendor> & { __component: "dynamic-blocks.vendor"; id: number } = {
-                                    __component: "dynamic-blocks.vendor",
-                                    id: (arr[0] as Partial<Vendor>)?.id ?? 0, // Preserve existing id or default to 0
-                                    ...(arr[0] as Partial<Vendor> || {}),
-                                    about: e.target.value,
-                                };
-                                arr[0] = vendor as Vendor & Partial<Vendor>;
-                                updateField("listingItem", arr);
-                            }}
-                        />
+          {/* Social Links */}
+          <div className="border-b-2 border-primary/20 py-4 hidden">
+            <h3 className="text-lg font-semibold mb-2">Social Links</h3>
+            <Input
+              type="text"
+              label="Section Title"
+              disabled={isWorking}
+              value={form.socialLinks?.optionalSectionTitle || ""}
+              onChange={(e) => updateField("socialLinks.optionalSectionTitle", e.target.value)}
+            />
+            <div className="flex flex-col gap-3 mt-2">
+              {(form.socialLinks?.socialLink || []).map((s, idx) => (
+                <div key={idx} className="grid grid-cols-1 md:grid-cols-8 gap-3 items-end">
+                  <div className="col-span-3">
+                    <Select
+                      label="Platform"
+                      disabled={isWorking}
+                      value={s.platform || ""}
+                      onChange={(e) => {
+                        const list = [...(form.socialLinks?.socialLink || [])]
+                        list[idx] = {
+                          ...list[idx],
+                          platform: e.target.value as
+                            | "facebook"
+                            | "linkedin"
+                            | "youtube"
+                            | "instagram"
+                            | "tiktok"
+                            | "pinterest"
+                            | "twitter"
+                            | "thread"
+                            | "reddit",
+                        }
+                        updateField("socialLinks.socialLink", list)
+                      }}
+                      options={[
+                        { label: "Select Platform", value: "" },
+                        { label: "Facebook", value: "facebook" },
+                        { label: "LinkedIn", value: "linkedin" },
+                        { label: "YouTube", value: "youtube" },
+                        { label: "Instagram", value: "instagram" },
+                        { label: "TikTok", value: "tiktok" },
+                        { label: "Pinterest", value: "pinterest" },
+                        { label: "Twitter", value: "twitter" },
+                        { label: "Thread", value: "thread" },
+                        { label: "Reddit", value: "reddit" },
+                      ]}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Input
+                      type="url"
+                      label="Link"
+                      disabled={isWorking}
+                      value={s.link || ""}
+                      onChange={(e) => {
+                        const list = [...(form.socialLinks?.socialLink || [])]
+                        list[idx] = { ...list[idx], link: e.target.value }
+                        updateField("socialLinks.socialLink", list)
+                      }}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <Select
+                      label="Show this icon"
+                      disabled={isWorking}
+                      value={String(s.visible ?? true)}
+                      onChange={(e) => {
+                        const list = [...(form.socialLinks?.socialLink || [])]
+                        list[idx] = { ...list[idx], visible: e.target.value === "true" }
+                        updateField("socialLinks.socialLink", list)
+                      }}
+                      options={[
+                        { label: "Yes", value: "true" },
+                        { label: "No", value: "false" },
+                      ]}
+                    />
+                  </div>
+                  <div className="col-span-1 flex items-center justify-center">
+                    <Button
+                      style="ghost"
+                      size="large"
+                      disabled={isWorking}
+                      extraStyles="!p-0 !w-8 !h-8 !text-red-500 hover:!text-red-300 focus:!text-red-300 hover:!bg-transparent focus:!bg-transparent hover:!border-transparent focus:!border-transparent"
+                      onClick={() => removeArrayItem("socialLinks.socialLink", idx)}
+                    >
+                      <FaRegTrashAlt />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+              <div>
+                <Button
+                  style="secondary"
+                  disabled={isWorking}
+                  onClick={() =>
+                    addArrayItem("socialLinks.socialLink", {
+                      platform: "",
+                      link: "",
+                      visible: true,
+                    })
+                  }
+                >
+                  + Add Social Link
+                </Button>
+              </div>
+            </div>
+          </div>
+          {/* FAQs */}
+          <div className="border-b-2 border-primary/20 py-4 hidden">
+            <h3 className="text-lg font-semibold mb-2">FAQs</h3>
+            <Input
+              type="text"
+              label="Section Title"
+              disabled={isWorking}
+              value={form.FAQs?.sectionTitle || ""}
+              onChange={(e) => updateField("FAQs.sectionTitle", e.target.value)}
+            />
+            <div className="flex flex-col gap-3 mt-2">
+              {(form.FAQs?.items || []).map((f: Partial<FAQ>, idx: number) => (
+                <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+                  <div className="col-span-2">
+                    <Input
+                      type="text"
+                      label="Question"
+                      disabled={isWorking}
+                      value={f.question || ""}
+                      onChange={(e) => {
+                        const list = [...(form.FAQs?.items || [])] as Partial<FAQ>[]
+                        list[idx] = { ...(list[idx] || {}), question: e.target.value } as Partial<FAQ>
+                        updateField("FAQs.items", list)
+                      }}
+                    />
+                  </div>
+                  <Button
+                    style="ghost"
+                    size="large"
+                    disabled={isWorking}
+                    extraStyles="!p-0 !w-8 !h-8 !text-red-500 hover:!text-red-300 focus:!text-red-300 hover:!bg-transparent focus:!bg-transparent hover:!border-transparent focus:!border-transparent"
+                    onClick={() => removeArrayItem("FAQs.items", idx)}
+                  >
+                    <FaRegTrashAlt />
+                  </Button>
+                  <div className="col-span-3">
+                    <TextArea
+                      label="Answer"
+                      disabled={isWorking}
+                      rows={5}
+                      value={f.answer || ""}
+                      onChange={(e) => {
+                        const list = [...(form.FAQs?.items || [])] as Partial<FAQ>[]
+                        list[idx] = { ...(list[idx] || {}), answer: e.target.value } as Partial<FAQ>
+                        updateField("FAQs.items", list)
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+              <div>
+                <Button style="secondary"disabled={isWorking} onClick={() => addArrayItem("FAQs.items", { question: "", answer: "" })}>
+                  + Add FAQ
+                </Button>
+              </div>
+            </div>
+          </div>
+          {/* Event Types (IDs or documentIds depending on your API) */}
+          <div className="border-b-2 border-primary/20 py-4">
+            <h3 className="text-lg font-semibold mb-2">Event Types</h3>
+            <div className="flex flex-col gap-3">
+              <MultiSelect
+              disabled={isWorking}
+                options={eventTypes.map((e) => ({ label: e.eventName, value: e.documentId }))}
+                value={eventTypesIds}
+                onChange={(selected) => setEventTypesIds(selected)}
+                placeholder="Choose event types"
+              />
+              <ErrorMessage error={errors.eventTypes} />
+            </div>
+          </div>
 
-                        <Input
-                            type="number"
-                            label="Experience Years"
-                            value={(form.listingItem?.[0] as Partial<Vendor> | undefined)?.experienceYears ?? ""}
-                            onChange={(e) => {
-                                const arr = [...(form.listingItem || [])];
-                                const vendor: Partial<Vendor> & { __component: "dynamic-blocks.vendor"; id: number } = {
-                                    __component: "dynamic-blocks.vendor",
-                                    id: (arr[0] as Partial<Vendor>)?.id ?? 0,
-                                    ...(arr[0] as Partial<Vendor> || {}),
-                                    experienceYears: Number(e.target.value),
-                                };
-                                arr[0] = vendor as Vendor & Partial<Vendor>;
-                                updateField("listingItem", arr);
-                            }}
-                        />
+          {/* Category (free text or id depending on your API) */}
+          <div className="border-b-2 border-primary/20 py-4">
+            <h3 className="text-lg font-semibold mb-2">Category</h3>
+            <Select
+              options={childCategories.map((c) => ({ label: c.name, value: c.documentId }))}
+              value={selectedCategory}
+              disabled={isWorking}
+              onChange={(e: any) => setSelectedCategory(e.target.value)}
+              label="Choose category"
+              placeholder="Choose category"
+            />
+            <ErrorMessage error={errors.category} />
+          </div>
 
-                        <div>
-                            <h4 className="font-medium mb-2">Service Areas</h4>
-                            {(((form.listingItem?.[0] as Partial<Vendor> | undefined)?.serviceArea as ServiceArea[]) || []).map(
-                                (sa, idx) => (
-                                    <div key={idx} className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end mb-3">
-                                        <Input
-                                            type="text"
-                                            label="City"
-                                            value={(sa.city as any)?.name || ""}
-                                            onChange={(e) => {
-                                                const serviceAreas = [...((form.listingItem?.[0] as Partial<Vendor>)?.serviceArea || [])];
-                                                serviceAreas[idx] = { ...serviceAreas[idx], city: { name: e.target.value } } as ServiceArea;
-                                                const arr = [...(form.listingItem || [])];
-                                                const vendor: Partial<Vendor> & { __component: "dynamic-blocks.vendor"; id: number } = {
-                                                    __component: "dynamic-blocks.vendor",
-                                                    id: (arr[0] as Partial<Vendor>)?.id ?? 0,
-                                                    ...(arr[0] as Partial<Vendor> || {}),
-                                                    serviceArea: serviceAreas,
-                                                };
-                                                arr[0] = vendor as Vendor & Partial<Vendor>;
-                                                updateField("listingItem", arr);
-                                            }}
-                                        />
-                                        <Input
-                                            type="text"
-                                            label="State"
-                                            value={(sa.state as any)?.name || ""}
-                                            onChange={(e) => {
-                                                const serviceAreas = [...((form.listingItem?.[0] as Partial<Vendor>)?.serviceArea || [])];
-                                                serviceAreas[idx] = { ...serviceAreas[idx], state: { name: e.target.value } } as ServiceArea;
-                                                const arr = [...(form.listingItem || [])];
-                                                const vendor: Partial<Vendor> & { __component: "dynamic-blocks.vendor"; id: number } = {
-                                                    __component: "dynamic-blocks.vendor",
-                                                    id: (arr[0] as Partial<Vendor>)?.id ?? 0,
-                                                    ...(arr[0] as Partial<Vendor> || {}),
-                                                    serviceArea: serviceAreas,
-                                                };
-                                                arr[0] = vendor as Vendor & Partial<Vendor>;
-                                                updateField("listingItem", arr);
-                                            }}
-                                        />
-                                        <Input
-                                            type="number"
-                                            label="Latitude"
-                                            value={sa.latitude ?? ""}
-                                            onChange={(e) => {
-                                                const serviceAreas = [...((form.listingItem?.[0] as Partial<Vendor>)?.serviceArea || [])];
-                                                serviceAreas[idx] = { ...serviceAreas[idx], latitude: Number(e.target.value) } as ServiceArea;
-                                                const arr = [...(form.listingItem || [])];
-                                                const vendor: Partial<Vendor> & { __component: "dynamic-blocks.vendor"; id: number } = {
-                                                    __component: "dynamic-blocks.vendor",
-                                                    id: (arr[0] as Partial<Vendor>)?.id ?? 0,
-                                                    ...(arr[0] as Partial<Vendor> || {}),
-                                                    serviceArea: serviceAreas,
-                                                };
-                                                arr[0] = vendor  as Vendor & Partial<Vendor>;
-                                                updateField("listingItem", arr);
-                                            }}
-                                        />
-                                        <Input
-                                            type="number"
-                                            label="Longitude"
-                                            value={sa.longitude ?? ""}
-                                            onChange={(e) => {
-                                                const serviceAreas = [...((form.listingItem?.[0] as Partial<Vendor>)?.serviceArea || [])];
-                                                serviceAreas[idx] = { ...serviceAreas[idx], longitude: Number(e.target.value) } as ServiceArea;
-                                                const arr = [...(form.listingItem || [])];
-                                                const vendor: Partial<Vendor> & { __component: "dynamic-blocks.vendor"; id: number } = {
-                                                    __component: "dynamic-blocks.vendor",
-                                                    id: (arr[0] as Partial<Vendor>)?.id ?? 0,
-                                                    ...(arr[0] as Partial<Vendor> || {}),
-                                                    serviceArea: serviceAreas,
-                                                };
-                                                arr[0] = vendor as Vendor & Partial<Vendor>;
-                                                updateField("listingItem", arr);
-                                            }}
-                                        />
-                                        <Button
-                                            style="ghost"
-                                            onClick={() => {
-                                                const serviceAreas = [...((form.listingItem?.[0] as Partial<Vendor>)?.serviceArea || [])].filter(
-                                                    (_, i) => i !== idx
-                                                );
-                                                const arr = [...(form.listingItem || [])];
-                                                const vendor: Partial<Vendor> & { __component: "dynamic-blocks.vendor"; id: number } = {
-                                                    __component: "dynamic-blocks.vendor",
-                                                    id: (arr[0] as Partial<Vendor>)?.id ?? 0,
-                                                    ...(arr[0] as Partial<Vendor> || {}),
-                                                    serviceArea: serviceAreas,
-                                                };
-                                                arr[0] = vendor as Vendor & Partial<Vendor>;
-                                                updateField("listingItem", arr);
-                                            }}
-                                        >
-                                            Remove
-                                        </Button>
-                                    </div>
-                                )
-                            )}
-                            <Button
-                                style="secondary"
-                                onClick={() => {
-                                    const serviceAreas = [
-                                        ...((form.listingItem?.[0] as Partial<Vendor>)?.serviceArea || []),
-                                        { city: { name: "" }, state: { name: "" }, latitude: 0, longitude: 0 },
-                                    ];
-                                    const arr = [...(form.listingItem || [])];
-                                    const vendor: Partial<Vendor> & { __component: "dynamic-blocks.vendor"; id: number } = {
-                                        __component: "dynamic-blocks.vendor",
-                                        id: (arr[0] as Partial<Vendor>)?.id ?? 0,
-                                        ...(arr[0] as Partial<Vendor> || {}),
-                                        serviceArea: serviceAreas,
-                                    };
-                                    arr[0] = vendor as Vendor & Partial<Vendor>;
-                                    updateField("listingItem", arr);
-                                }}
-                            >
-                                + Add Service Area
-                            </Button>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="flex flex-col gap-4">
-                        <Input
-                            type="number"
-                            label="Capacity"
-                            value={(form.listingItem?.[0] as Partial<Venue> | undefined)?.capacity ?? ""}
-                            onChange={(e) => {
-                                const arr = [...(form.listingItem || [])];
-                                const venue: Partial<Venue> & { __component: "dynamic-blocks.venue"; id: number } = {
-                                    __component: "dynamic-blocks.venue",
-                                    id: (arr[0] as Partial<Venue>)?.id ?? 0,
-                                    ...(arr[0] as Partial<Venue> || {}),
-                                    capacity: Number(e.target.value),
-                                };
-                                arr[0] = venue;
-                                updateField("listingItem", arr);
-                            }}
-                        />
-                        <Input
+          {/* Pricing Packages */}
+          <div className="border-b-2 border-primary/20 py-4 hidden">
+            <h3 className="text-lg font-semibold mb-2">Pricing Packages</h3>
+            <Input
+              type="text"
+              label="Section Title"
+              disabled={isWorking}
+              value={form.pricingPackages?.sectionTitle || ""}
+              onChange={(e) => updateField("pricingPackages.sectionTitle", e.target.value)}
+            />
+            <div className="flex flex-col gap-4 mt-2">
+              {(form.pricingPackages?.plans || []).map((p, idx) => (
+                <div key={idx} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+                  <div className="col-span-2">
+                    <Input
+                      type="text"
+                      label="Name"
+                      disabled={isWorking}
+                      value={p.name || ""}
+                      onChange={(e) => {
+                        const list = [...(form.pricingPackages?.plans || [])]
+                        list[idx] = { ...list[idx], name: e.target.value }
+                        updateField("pricingPackages.plans", list)
+                      }}
+                    />
+                  </div>
+                  <Input
+                    type="number"
+                    label="Price"
+                    disabled={isWorking}
+                    value={p.price ?? ""}
+                    onChange={(e) => {
+                      const list = [...(form.pricingPackages?.plans || [])]
+                      list[idx] = { ...list[idx], price: Number(e.target.value) }
+                      updateField("pricingPackages.plans", list)
+                    }}
+                  />
+                  <div className="col-span-1 flex items-center justify-end gap-2">
+                    <p>Popular:</p>
+                    <ToggleButton
+                      defaultOn={!!p.isPopular}
+                      disabled={isWorking}
+                      onToggle={(v) => {
+                        const list = [...(form.pricingPackages?.plans || [])]
+                        list[idx] = { ...list[idx], isPopular: v }
+                        updateField("pricingPackages.plans", list)
+                      }}
+                    />
+                  </div>
+                  <div className="col-span-4 mt-3">
+                    <p className="text-gray-500 font-medium tracking-wide">Add Custom CTA (Call To Action) button:</p>
+                  </div>
+                  <div className="col-span-4 grid grid-cols-1 md:grid-cols-3 items-end gap-3">
+                    <Input
+                      type="text"
+                      disabled={isWorking}
+                      label="CTA Body Text"
+                      value={p.cta?.bodyText || ""}
+                      onChange={(e) => {
+                        const list = [...(form.pricingPackages?.plans || [])]
+                        list[idx] = {
+                          ...list[idx],
+                          cta: { ...list[idx].cta, bodyText: e.target.value as string },
+                        }
+                        updateField("pricingPackages.plans", list)
+                      }}
+                    />
+                    <Input
+                      type="text"
+                      label="CTA Button URL"
+                      disabled={isWorking}
+                      value={p.cta?.buttonUrl || ""}
+                      onChange={(e) => {
+                        const list = [...(form.pricingPackages?.plans || [])]
+                        list[idx] = {
+                          ...list[idx],
+                          cta: { ...list[idx].cta, buttonUrl: e.target.value as string },
+                        }
+                        updateField("pricingPackages.plans", list)
+                      }}
+                    />
+                    <Select
+                      label="CTA Style"
+                      disabled={isWorking}
+                      value={p.cta?.style || "primary"}
+                      onChange={(e) => {
+                        const list = [...(form.pricingPackages?.plans || [])]
+                        list[idx] = {
+                          ...list[idx],
+                          cta: { ...list[idx].cta, style: e.target.value as "primary" | "secondary" },
+                        }
+                        updateField("pricingPackages.plans", list)
+                      }}
+                      options={[
+                        { label: "Primary", value: "primary" },
+                        { label: "Secondary", value: "secondary" },
+                      ]}
+                    />
+                  </div>
+                  <div className="col-span-1 md:col-span-4">
+                    <h4 className="text-gray-500 font-medium tracking-wide">Features List:</h4>
+                    {(p.featuresList || []).map((feature, fIdx) => (
+                      <div key={fIdx} className="flex gap-2 mb-2 items-end w-full">
+                        <div className="flex-1">
+                          <Input
                             type="text"
-                            label="Booking Duration Type"
-                            value={(form.listingItem?.[0] as Partial<Venue> | undefined)?.bookingDurationType || ""}
+                            disabled={isWorking}
+                            label={`Feature ${fIdx + 1}`}
+                            value={feature.statement || ""}
                             onChange={(e) => {
-                                const arr = [...(form.listingItem || [])];
-                                const venue: Partial<Venue> & { __component: "dynamic-blocks.venue"; id: number } = {
-                                    __component: "dynamic-blocks.venue",
-                                    id: (arr[0] as Partial<Venue>)?.id ?? 0,
-                                    ...(arr[0] as Partial<Venue> || {}),
-                                    bookingDurationType: e.target.value,
-                                };
-                                arr[0] = venue;
-                                updateField("listingItem", arr);
+                              const list = [...(form.pricingPackages?.plans || [])]
+                              const features = [...(list[idx].featuresList || [])]
+                              features[fIdx] = { statement: e.target.value }
+                              list[idx] = { ...list[idx], featuresList: features }
+                              updateField("pricingPackages.plans", list)
                             }}
-                        />
-                        <Input
-                            type="number"
-                            label="Booking Duration"
-                            value={(form.listingItem?.[0] as Partial<Venue> | undefined)?.bookingDuration ?? ""}
-                            onChange={(e) => {
-                                const arr = [...(form.listingItem || [])];
-                                const venue: Partial<Venue> & { __component: "dynamic-blocks.venue"; id: number } = {
-                                    __component: "dynamic-blocks.venue",
-                                    id: (arr[0] as Partial<Venue>)?.id ?? 0,
-                                    ...(arr[0] as Partial<Venue> || {}),
-                                    bookingDuration: Number(e.target.value),
-                                };
-                                arr[0] = venue;
-                                updateField("listingItem", arr);
-                            }}
-                        />
-                        <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-                            <Input
-                                type="text"
-                                label="Address"
-                                value={(form.listingItem?.[0] as Partial<Venue> | undefined)?.location?.address || ""}
-                                onChange={(e) => {
-                                    const arr = [...(form.listingItem || [])];
-                                    const venue: Partial<Venue> & { __component: "dynamic-blocks.venue"; id: number } = {
-                                        __component: "dynamic-blocks.venue",
-                                        id: (arr[0] as Partial<Venue>)?.id ?? 0,
-                                        ...(arr[0] as Partial<Venue> || {}),
-                                    };
-                                    const loc = {
-                                        ...(venue.location || { address: "", city: "", country: "", latitude: 0, longitude: 0, id: 0 }),
-                                        address: e.target.value,
-                                    };
-                                    venue.location = loc;
-                                    arr[0] = venue;
-                                    updateField("listingItem", arr);
-                                }}
-                            />
-                            <Input
-                                type="text"
-                                label="City"
-                                value={(form.listingItem?.[0] as Partial<Venue> | undefined)?.location?.city || ""}
-                                onChange={(e) => {
-                                    const arr = [...(form.listingItem || [])];
-                                    const venue: Partial<Venue> & { __component: "dynamic-blocks.venue"; id: number } = {
-                                        __component: "dynamic-blocks.venue",
-                                        id: (arr[0] as Partial<Venue>)?.id ?? 0,
-                                        ...(arr[0] as Partial<Venue> || {}),
-                                    };
-                                    const loc = {
-                                        ...(venue.location || { address: "", city: "", country: "", latitude: 0, longitude: 0, id: 0 }),
-                                        city: e.target.value,
-                                    };
-                                    venue.location = loc;
-                                    arr[0] = venue;
-                                    updateField("listingItem", arr);
-                                }}
-                            />
-                            <Input
-                                type="text"
-                                label="Country"
-                                value={(form.listingItem?.[0] as Partial<Venue> | undefined)?.location?.country || ""}
-                                onChange={(e) => {
-                                    const arr = [...(form.listingItem || [])];
-                                    const venue: Partial<Venue> & { __component: "dynamic-blocks.venue"; id: number } = {
-                                        __component: "dynamic-blocks.venue",
-                                        id: (arr[0] as Partial<Venue>)?.id ?? 0,
-                                        ...(arr[0] as Partial<Venue> || {}),
-                                    };
-                                    const loc = {
-                                        ...(venue.location || { address: "", city: "", country: "", latitude: 0, longitude: 0, id: 0 }),
-                                        country: e.target.value,
-                                    };
-                                    venue.location = loc;
-                                    arr[0] = venue;
-                                    updateField("listingItem", arr);
-                                }}
-                            />
-                            <Input
-                                type="number"
-                                label="Latitude"
-                                value={(form.listingItem?.[0] as Partial<Venue> | undefined)?.location?.latitude ?? ""}
-                                onChange={(e) => {
-                                    const arr = [...(form.listingItem || [])];
-                                    const venue: Partial<Venue> & { __component: "dynamic-blocks.venue"; id: number } = {
-                                        __component: "dynamic-blocks.venue",
-                                        id: (arr[0] as Partial<Venue>)?.id ?? 0,
-                                        ...(arr[0] as Partial<Venue> || {}),
-                                    };
-                                    const loc = {
-                                        ...(venue.location || { address: "", city: "", country: "", latitude: 0, longitude: 0, id: 0 }),
-                                        latitude: Number(e.target.value),
-                                    };
-                                    venue.location = loc;
-                                    arr[0] = venue;
-                                    updateField("listingItem", arr);
-                                }}
-                            />
-                            <Input
-                                type="number"
-                                label="Longitude"
-                                value={(form.listingItem?.[0] as Partial<Venue> | undefined)?.location?.longitude ?? ""}
-                                onChange={(e) => {
-                                    const arr = [...(form.listingItem || [])];
-                                    const venue: Partial<Venue> & { __component: "dynamic-blocks.venue"; id: number } = {
-                                        __component: "dynamic-blocks.venue",
-                                        id: (arr[0] as Partial<Venue>)?.id ?? 0,
-                                        ...(arr[0] as Partial<Venue> || {}),
-                                    };
-                                    const loc = {
-                                        ...(venue.location || { address: "", city: "", country: "", latitude: 0, longitude: 0, id: 0 }),
-                                        longitude: Number(e.target.value),
-                                    };
-                                    venue.location = loc;
-                                    arr[0] = venue;
-                                    updateField("listingItem", arr);
-                                }}
-                            />
+                          />
                         </div>
-                        <div>
-                            <h4 className="font-medium mb-2">Amenities</h4>
-                            {(((form.listingItem?.[0] as Partial<Venue> | undefined)?.amneties) || []).map((a: any, idx: number) => (
-                                <div key={idx} className="flex gap-2 items-end mb-2">
-                                    <Input
-                                        type="text"
-                                        label="Amenity"
-                                        value={a.text || ""}
-                                        onChange={(e) => {
-                                            const amneties = [...((form.listingItem?.[0] as Partial<Venue>)?.amneties || [])];
-                                            amneties[idx] = { text: e.target.value };
-                                            const arr = [...(form.listingItem || [])];
-                                            const venue: Partial<Venue> & { __component: "dynamic-blocks.venue"; id: number } = {
-                                                __component: "dynamic-blocks.venue",
-                                                id: (arr[0] as Partial<Venue>)?.id ?? 0,
-                                                ...(arr[0] as Partial<Venue> || {}),
-                                                amneties,
-                                            };
-                                            arr[0] = venue;
-                                            updateField("listingItem", arr);
-                                        }}
-                                    />
-                                    <Button
-                                        style="ghost"
-                                        onClick={() => {
-                                            const amneties = [...((form.listingItem?.[0] as Partial<Venue>)?.amneties || [])].filter(
-                                                (_, i) => i !== idx
-                                            );
-                                            const arr = [...(form.listingItem || [])];
-                                            const venue: Partial<Venue> & { __component: "dynamic-blocks.venue"; id: number } = {
-                                                __component: "dynamic-blocks.venue",
-                                                id: (arr[0] as Partial<Venue>)?.id ?? 0,
-                                                ...(arr[0] as Partial<Venue> || {}),
-                                                amneties,
-                                            };
-                                            arr[0] = venue;
-                                            updateField("listingItem", arr);
-                                        }}
-                                    >
-                                        Remove
-                                    </Button>
-                                </div>
-                            ))}
-                            <Button
-                                style="secondary"
-                                onClick={() => {
-                                    const amneties = [...((form.listingItem?.[0] as Partial<Venue>)?.amneties || []), { text: "" }];
-                                    const arr = [...(form.listingItem || [])];
-                                    const venue: Partial<Venue> & { __component: "dynamic-blocks.venue"; id: number } = {
-                                        __component: "dynamic-blocks.venue",
-                                        id: (arr[0] as Partial<Venue>)?.id ?? 0,
-                                        ...(arr[0] as Partial<Venue> || {}),
-                                        amneties,
-                                    };
-                                    arr[0] = venue;
-                                    updateField("listingItem", arr);
-                                }}
-                            >
-                                + Add Amenity
-                            </Button>
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            {/* Event Types (IDs or documentIds depending on your API) */}
-            <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-2">Event Types</h3>
-                <div className="flex flex-col gap-3">
-                    {(form.eventTypes || []).map((et: any, idx: number) => (
-                        <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
-                            <Input type="number" label="ID" value={et?.id ?? ""} onChange={(e) => {
-                                const arr = [...(form.eventTypes || [])];
-                                arr[idx] = { ...(arr[idx] || {}), id: Number(e.target.value) };
-                                updateField("eventTypes", arr);
-                            }} />
-                            <Input type="text" label="documentId" value={et?.documentId || ""} onChange={(e) => {
-                                const arr = [...(form.eventTypes || [])];
-                                arr[idx] = { ...(arr[idx] || {}), documentId: e.target.value };
-                                updateField("eventTypes", arr);
-                            }} />
-                            <Button style="ghost" onClick={() => removeArrayItem("eventTypes", idx)}>Remove</Button>
-                        </div>
+                        <Button
+                          size="large"
+                          disabled={isWorking}
+                          extraStyles="!p-0 !w-8 !h-8 !text-red-500 hover:!text-red-300 focus:!text-red-300 hover:!bg-transparent focus:!bg-transparent hover:!border-transparent focus:!border-transparent"
+                          style="ghost"
+                          onClick={() => {
+                            const list = [...(form.pricingPackages?.plans || [])]
+                            const features = [...(list[idx].featuresList || [])]
+                            features.splice(fIdx, 1)
+                            list[idx] = { ...list[idx], featuresList: features }
+                            updateField("pricingPackages.plans", list)
+                          }}
+                        >
+                          <FaRegTrashAlt />
+                        </Button>
+                      </div>
                     ))}
-                    <div>
-                        <Button style="secondary" onClick={() => addArrayItem("eventTypes", { id: undefined, documentId: "" })}>+ Add Event Type</Button>
-                    </div>
+                  </div>
+                  <div className="col-span-4 flex items-end justify-between gap-2">
+                    <Button
+                      style="secondary"
+                      disabled={isWorking}
+                      onClick={() => {
+                        const list = [...(form.pricingPackages?.plans || [])]
+                        const features = [...(list[idx].featuresList || []), { statement: "" }]
+                        list[idx] = { ...list[idx], featuresList: features }
+                        updateField("pricingPackages.plans", list)
+                      }}
+                    >
+                      + Add Feature
+                    </Button>
+                    <Button
+                      style="ghost"
+                      disabled={isWorking}
+                      size="large"
+                      extraStyles="!p-0 !w-8 !h-8 !text-red-500 hover:!text-red-300 focus:!text-red-300 hover:!bg-transparent focus:!bg-transparent hover:!border-transparent focus:!border-transparent"
+                      onClick={() => removeArrayItem("pricingPackages.plans", idx)}
+                    >
+                      <FaRegTrashAlt />
+                    </Button>
+                  </div>
                 </div>
+              ))}
+              <Button
+                style="secondary"
+                disabled={isWorking}
+                onClick={() =>
+                  addArrayItem("pricingPackages.plans", {
+                    name: "",
+                    price: 0,
+                    isPopular: false,
+                    cta: {
+                      bodyText: "",
+                      buttonUrl: "",
+                      style: "primary",
+                    },
+                    featuresList: [],
+                  })
+                }
+              >
+                + Add Plan
+              </Button>
             </div>
-
-            {/* Category (free text or id depending on your API) */}
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Input type="number" label="Category ID" value={(form.category as any)?.id ?? ""} onChange={(e) => updateField("category.id", Number(e.target.value))} />
-                <Input type="text" label="Category DocumentId" value={(form.category as any)?.documentId || ""} onChange={(e) => updateField("category.documentId", e.target.value)} />
-                <Input type="text" label="Category Name" value={(form.category as any)?.name || ""} onChange={(e) => updateField("category.name", e.target.value)} />
+            <div className="mt-4">
+              <h4 className="text-gray-500 font-medium tracking-wide">Optional Addons:</h4>
+              {(form.pricingPackages?.optionalAddons || []).map((addon, idx) => (
+                <div key={idx} className="flex gap-2 mb-2 items-end">
+                  <Input
+                    type="text"
+                    disabled={isWorking}
+                    label={`Addon Statement ${idx + 1}`}
+                    value={addon.statement || ""}
+                    onChange={(e) => {
+                      const list = [...(form.pricingPackages?.optionalAddons || [])]
+                      list[idx] = { ...list[idx], statement: e.target.value }
+                      updateField("pricingPackages.optionalAddons", list)
+                    }}
+                  />
+                  <Input
+                    type="number"
+                    disabled={isWorking}
+                    label={`Addon Price ${idx + 1}`}
+                    value={addon.price ?? ""}
+                    onChange={(e) => {
+                      const list = [...(form.pricingPackages?.optionalAddons || [])]
+                      list[idx] = { ...list[idx], price: Number(e.target.value) }
+                      updateField("pricingPackages.optionalAddons", list)
+                    }}
+                  />
+                  <Button
+                    style="ghost"
+                    disabled={isWorking}
+                    size="large"
+                    extraStyles="!p-0 !w-8 !h-8 !text-red-500 hover:!text-red-300 focus:!text-red-300 hover:!bg-transparent focus:!bg-transparent hover:!border-transparent focus:!border-transparent"
+                    onClick={() => removeArrayItem("pricingPackages.optionalAddons", idx)}
+                  >
+                    <FaRegTrashAlt />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                style="secondary"
+                disabled={isWorking}
+                onClick={() =>
+                  addArrayItem("pricingPackages.optionalAddons", {
+                    statement: "",
+                    price: 0,
+                  })
+                }
+              >
+                + Add Optional Addon
+              </Button>
             </div>
-        </Modal>
-    );
-};
+          </div>
+        </div>
+      </div>
+    </Modal>
+  )
+}
 
-export default ListingItemModal;
+export default ListingItemModal

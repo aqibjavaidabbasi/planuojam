@@ -172,9 +172,6 @@ export const PAGES_DYNAMIC_ZONE = {
                                 populate: {
                                     'listingItem': {
                                         populate: {
-                                            'images':{
-                                                populate: '*'
-                                            },
                                             'listingItem': {
                                                 populate: '*'
                                             },

@@ -5,6 +5,8 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   options: { value: string; label: string }[];
   placeholder?: string;
   disabled?: boolean;
+  required?: boolean;
+  label?: string;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -14,6 +16,8 @@ const Select: React.FC<SelectProps> = ({
   value,
   defaultValue,
   disabled = false,
+  required = false,
+  label = "",
   ...props
 }) => {
   const isControlled = value !== undefined;
@@ -40,27 +44,38 @@ const Select: React.FC<SelectProps> = ({
 
   return (
     <div className={`relative w-full ${disabled ? 'pointer-events-none' : ''}`}>
-      <select {...selectProps}>
-        {placeholder && (
-          <option value="">
-            {placeholder}
-          </option>
-        )}
-        {options.map((option) => (
-          <option value={option.value} key={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <div
-        className={`
+      {label !== "" && (
+        <label
+          htmlFor={selectProps.id}
+          className="block capitalize text-sm font-medium text-gray-700 mb-2 tracking-wider"
+        >
+          {label}{required && <span className="text-red-500 ml-1">*</span>}
+        </label>
+      )}
+      <div className="relative">
+        <select {...selectProps} id={selectProps.id}>
+          {placeholder && (
+            <option value="">
+              {placeholder}
+            </option>
+          )}
+          {options.map((option) => (
+            <option value={option.value} key={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <div
+          className={`
           pointer-events-none absolute right-3 top-1/2 -translate-y-1/2
           ${disabled ? 'text-gray-400' : ''}
         `}
-      >
-        <IoMdArrowDropdown />
+        >
+          <IoMdArrowDropdown />
+        </div>
       </div>
     </div>
+
   );
 };
 

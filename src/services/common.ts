@@ -61,6 +61,20 @@ export async function fetchListings(type: 'venue' | 'vendor', appliedFilters = {
     return res;
 }
 
+export async function fetchCities() {
+    const populate = { populate: '*' };
+    const query = createQuery(populate);
+    const res = await fetchAPI('cities', query);
+    return res;
+}
+
+export async function fetchStates() {
+    const populate = { populate: '*' };
+    const query = createQuery(populate);
+    const res = await fetchAPI('states', query);
+    return res;
+}
+
 export async function fetchListingsPerEvents(passedEvent: string) {
     const populate = {
         eventTypes: {
@@ -84,9 +98,6 @@ export async function fetchListingsPerEvents(passedEvent: string) {
 
 export async function fetchHotDealListings(filter = {}) {
     const populate = {
-        images: {
-            populate: '*'
-        },
         listingItem: {
             populate: '*'
         },
@@ -97,6 +108,9 @@ export async function fetchHotDealListings(filter = {}) {
             populate: '*'
         },
         hotDeal: {
+            populate: '*'
+        },
+        portfolio: {
             populate: '*'
         }
     }

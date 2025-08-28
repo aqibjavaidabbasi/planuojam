@@ -23,7 +23,7 @@ function ListingCard({ item }: { item: ListingItem }) {
   const router = useRouter();
   const { siteSettings } = useSiteSettings();
   const { user } = useAppSelector(state => state.auth);
-  const { status,items: likedListings } = useAppSelector(state => state.likedListings);
+  const { status, items: likedListings } = useAppSelector(state => state.likedListings);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -114,7 +114,7 @@ function ListingCard({ item }: { item: ListingItem }) {
           disableOnInteraction: false
         }}
       >
-        {item.images?.map((img, idx) => {
+        {item.portfolio?.length > 0 ? item.portfolio?.map((img, idx) => {
           const imageUrl = getCompleteImageUrl(img.url)
           return (
             <SwiperSlide key={idx}>
@@ -130,7 +130,17 @@ function ListingCard({ item }: { item: ListingItem }) {
               </div>
             </SwiperSlide>
           )
-        })}
+        }) : [1,2,3].map((_, idx)=> <SwiperSlide key={idx}>
+          <div className="relative w-full h-40 md:h-56 lg:h-64">
+            <Image
+              src={"/placeholder.png"}
+              alt="placeholder"
+              fill
+              style={{ objectFit: 'cover' }}
+              sizes="(max-width: 768px) 100vw, 400px"
+            />
+          </div>
+        </SwiperSlide>)}
       </Swiper>
 
       {/* Content */}
@@ -177,9 +187,19 @@ function ListingCard({ item }: { item: ListingItem }) {
               <span>Contact for pricing</span>
             )}
           </div>
-          <Button style="secondary" size="small" onClick={() => router.push(`/listing/${item.slug}`)}>
-            View <IoNavigateOutline />
-          </Button>
+          {user?.serviceType && user?.documentId && item?.user?.documentId === user.documentId ? (
+            <Button
+              style="secondary"
+              size="small"
+              onClick={() => router.push(`/listing/${item.documentId}/edit`)}
+            >
+              Edit <IoNavigateOutline />
+            </Button>
+          ) : (
+            <Button style="secondary" size="small" onClick={() => router.push(`/listing/${item.slug}`)}>
+              View <IoNavigateOutline />
+            </Button>
+          )}
         </div>
       </div>
 

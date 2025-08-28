@@ -43,7 +43,7 @@ const Modal: React.FC<ModalProps> = ({
     const sizes = {
         sm: "max-w-sm",
         md: "max-w-md",
-        lg: "max-w-2xl",
+        lg: "max-w-6xl",
     };
 
     return (

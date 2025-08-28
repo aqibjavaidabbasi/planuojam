@@ -232,7 +232,6 @@ export interface ListingItem {
   documentId: string;
   id: number;
   featured: boolean;
-  images: strapiImage[];
   listingStatus: string;
   locale: string;
   price?: number;
@@ -258,7 +257,7 @@ export interface ListingItem {
       price: number;
     }[]
   }
-  Portfolio: strapiImage[];
+  portfolio: strapiImage[];
   FAQs: {
     sectionTitle: string;
     numberOfColumns: number;

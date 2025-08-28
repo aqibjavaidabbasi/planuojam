@@ -1,0 +1,86 @@
+"use client"
+
+import React, { useState } from "react"
+import { useFieldArray, useForm } from "react-hook-form"
+import Input from "../../custom/Input"
+import Button from "../../custom/Button"
+import { FaRegTrashAlt } from "react-icons/fa"
+import { toast } from "react-hot-toast"
+import { updateListing } from "@/services/listing"
+import type { ListingItem } from "@/types/pagesTypes"
+
+export type FAQItem = { question: string; answer: string }
+export type FAQsForm = { sectionTitle?: string; items: FAQItem[] }
+
+export default function FAQsSection({ listing, onSaved }: { listing: ListingItem; onSaved?: () => void }) {
+  const [submitting, setSubmitting] = useState(false)
+  const { register, control, handleSubmit, formState: { errors } } = useForm<FAQsForm>({
+    defaultValues: {
+      sectionTitle: (listing.FAQs as any)?.sectionTitle || "",
+      items: ((listing.FAQs as any)?.items || [{ question: "", answer: "" }]) as FAQItem[],
+    },
+  })
+
+  const { fields, append, remove } = useFieldArray({ control, name: "items" })
+
+  const onSubmit = async (values: FAQsForm) => {
+    if (!values.items || values.items.length === 0) {
+      toast.error("Add at least one FAQ")
+      return
+    }
+    const hasInvalid = values.items.some((i) => !i.question?.trim() || !i.answer?.trim())
+    if (hasInvalid) {
+      toast.error("Each FAQ needs a question and an answer")
+      return
+    }
+
+    setSubmitting(true)
+    try {
+      await updateListing(listing.documentId, { data: { FAQs: values } })
+      toast.success("FAQs updated")
+      onSaved?.()
+    } catch (e: any) {
+      toast.error(e?.message || "Failed to update FAQs")
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="py-4">
+      <h3 className="text-lg font-semibold mb-2">FAQs</h3>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <Input type="text" label="Section Title" disabled={submitting} {...register("sectionTitle")} />
+
+        <div className="flex flex-col gap-3">
+          {fields.map((field, idx) => (
+            <div key={field.id} className="grid grid-cols-12 gap-3 items-end">
+              <div className="col-span-5">
+                <Input type="text" label={`Question ${idx + 1}`} disabled={submitting} {...register(`items.${idx}.question` as const, { required: "Required" })} />
+                {errors.items?.[idx]?.question && <p className="text-red-500 text-sm mt-1">{errors.items[idx]?.question?.message as any}</p>}
+              </div>
+              <div className="col-span-6">
+                <Input type="text" label={`Answer ${idx + 1}`} disabled={submitting} {...register(`items.${idx}.answer` as const, { required: "Required" })} />
+                {errors.items?.[idx]?.answer && <p className="text-red-500 text-sm mt-1">{errors.items[idx]?.answer?.message as any}</p>}
+              </div>
+              <div className="col-span-1 flex justify-end">
+                <Button type="button" style="destructive" disabled={submitting} onClick={() => remove(idx)}>
+                  <FaRegTrashAlt />
+                </Button>
+              </div>
+            </div>
+          ))}
+          <Button type="button" style="secondary" disabled={submitting} onClick={() => append({ question: "", answer: "" })}>
+            + Add FAQ
+          </Button>
+        </div>
+
+        <div className="flex justify-end">
+          <Button style="primary" type="submit" disabled={submitting}>
+            {submitting ? "Saving..." : "Save Changes"}
+          </Button>
+        </div>
+      </form>
+    </div>
+  )
+}

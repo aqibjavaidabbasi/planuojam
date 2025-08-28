@@ -6,9 +6,10 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   type: string;
   label?: string;
   disabled?: boolean;
+  required?: boolean;
 }
 
-function Input({ label = "", type, disabled = false, ...props }: InputProps) {
+function Input({ label = "", type, disabled = false, required = false, ...props }: InputProps) {
   const [showPassword, setShowPassword] = React.useState(false);
 
   // Determine if this is a password field
@@ -24,7 +25,7 @@ function Input({ label = "", type, disabled = false, ...props }: InputProps) {
           htmlFor={inputId}
           className="block capitalize text-sm font-medium text-gray-700 mb-2 tracking-wider"
         >
-          {label}
+          {label}{required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
       <input
@@ -33,6 +34,7 @@ function Input({ label = "", type, disabled = false, ...props }: InputProps) {
         {...props}
         className={`w-full py-1.5 md:py-2.5 px-2.5 md:px-5 border border-border rounded-md text-base font-normal bg-white focus:outline-none focus:border-transparent transition-all duration-200 outline-none focus:ring-2 focus:ring-primary ${disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60' : ''} ${isPassword ? "pr-10" : ""}`}
         disabled={disabled}
+        required={required}
       />
       {isPassword && (
         <button

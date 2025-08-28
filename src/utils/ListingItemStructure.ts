@@ -1,7 +1,4 @@
 export const LISTING_ITEM_POP_STRUCTURE = {
-    images: {
-        populate: '*'
-    },
     category: {
         populate: '*'
     },
@@ -11,13 +8,10 @@ export const LISTING_ITEM_POP_STRUCTURE = {
                 populate: {
                     'serviceArea': {
                         populate: {
-                            'countries': {
+                            'city': {
                                 populate: true,
                             },
-                            'cities': {
-                                populate: true,
-                            },
-                            'states': {
+                            'state': {
                                 populate: true,
                             }
                         }
@@ -56,7 +50,7 @@ export const LISTING_ITEM_POP_STRUCTURE = {
             }
         }
     },
-    Portfolio: {
+    portfolio: {
         populate: '*'
     },
     FAQs: {

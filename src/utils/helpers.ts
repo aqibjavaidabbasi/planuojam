@@ -40,3 +40,25 @@ export const getStrapiErrorMessage = (error: unknown): string => {
   }
   return "An unexpected error occurred";
 };
+
+export function slugify(input: string): string {
+  if (!input) return "";
+
+  return input
+    .normalize("NFKD") // split accented characters into base + diacritic
+    .replace(/[\u0300-\u036f]/g, "") // remove diacritics
+    .replace(/ß/g, "ss") // German sharp S
+    .replace(/æ/g, "ae") // Latin ligature
+    .replace(/ø/g, "o")
+    .replace(/đ/g, "d")
+    .replace(/ħ/g, "h")
+    .replace(/ı/g, "i")
+    .replace(/ł/g, "l")
+    .replace(/Œ/g, "oe")
+    .replace(/©/g, "c")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-") // keep only alphanumerics, replace others with `-`
+    .replace(/^-+|-+$/g, "") // trim leading/trailing dashes
+    .replace(/-{2,}/g, "-"); // collapse multiple dashes
+}

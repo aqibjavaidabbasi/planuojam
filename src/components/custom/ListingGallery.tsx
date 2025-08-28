@@ -12,17 +12,15 @@ import "swiper/css/pagination";
 import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
 function ListingGallery({
-  images,
   portfolio,
   title,
 }: {
-  images: strapiImage[];
   portfolio: strapiImage[];
   title: string;
 }) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const allImages = [...images, ...(portfolio ?? [])];
+  const allImages = [...(portfolio ?? [])];
 
   return (
     <div className="relative w-full">

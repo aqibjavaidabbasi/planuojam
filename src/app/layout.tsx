@@ -1,6 +1,8 @@
 import "./globals.css";
 import dynamic from "next/dynamic";
 import { EventTypesProvider } from "@/context/EventTypesContext";
+import { CitiesProvider } from "@/context/CitiesContext";
+import { StatesProvider } from "@/context/StatesContext";
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
 import ReduxProvider from "@/store/provider";
 import { ParentCategoriesProvider } from "@/context/ParentCategoriesContext";
@@ -21,7 +23,11 @@ export default async function RootLayout({
             <ParentCategoriesProvider>
               <SiteSettingsProvider>
                 <EventTypesProvider>
-                  <div>{children}</div>
+                  <StatesProvider>
+                    <CitiesProvider>
+                      <div>{children}</div>
+                    </CitiesProvider>
+                  </StatesProvider>
                 </EventTypesProvider>
               </SiteSettingsProvider>
             </ParentCategoriesProvider>

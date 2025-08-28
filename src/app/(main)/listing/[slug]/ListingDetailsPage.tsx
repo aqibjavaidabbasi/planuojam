@@ -65,7 +65,7 @@ export default function ListingDetailsPage() {
         {/* Hero Section */}
         <section className="my-6">
           <ListingDetailHero
-            category={listing.category.name}
+            category={listing.category?.name}
             title={listing.title}
             username={listing.user?.username}
             contact={listing.contact}
@@ -86,8 +86,7 @@ export default function ListingDetailsPage() {
               <p className="text-secondary my-4">{listing.description}</p>
               {/* gallery */}
               <ListingGallery
-                images={listing.images}
-                portfolio={listing.Portfolio}
+                portfolio={listing.portfolio}
                 title={listing.title}
               />
             </div>
