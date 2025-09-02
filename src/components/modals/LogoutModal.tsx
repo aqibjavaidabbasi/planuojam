@@ -7,17 +7,17 @@ import toast from "react-hot-toast";
 import { logout } from "@/store/slices/authSlice";
 import { TbLogout } from "react-icons/tb";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 function LogoutModalChildren() {
+  const t = useTranslations('Modals.Logout')
   return (
     <div className="flex flex-col items-center justify-center text-center px-2 py-2">
       <div className="flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
         <TbLogout size={36} className="text-red-500" />
       </div>
-      <h2 className="text-lg font-semibold mb-2 text-gray-800">Are you sure you want to logout?</h2>
-      <p className="text-gray-500 text-sm">
-        You will be logged out of your account and redirected to the login page.
-      </p>
+      <h2 className="text-lg font-semibold mb-2 text-gray-800">{t('confirmTitle')}</h2>
+      <p className="text-gray-500 text-sm">{t('confirmDesc')}</p>
     </div>
   );
 }
@@ -29,18 +29,19 @@ interface LogoutModalFooterProps {
 function LogoutModalFooter({ onClose }: LogoutModalFooterProps) {
     const dispatch = useAppDispatch();
     const router = useRouter()
+    const t = useTranslations('Modals.Logout')
 
     async function logoutUser() {
        dispatch(logout());
-       toast.success("Logged out successfully!");
+       toast.success(t('toasts.loggedOut'));
        onClose();
        router.push('/auth/login')
     }
 
   return (
     <div className="flex w-full items-center justify-end gap-2.5 mt-2">
-      <Button style="ghost" onClick={onClose} extraStyles="!px-5 !py-2">Cancel</Button>
-      <Button style="destructive" onClick={logoutUser} extraStyles="!px-5 !py-2">Logout</Button>
+      <Button style="ghost" onClick={onClose} extraStyles="!px-5 !py-2">{t('cancel')}</Button>
+      <Button style="destructive" onClick={logoutUser} extraStyles="!px-5 !py-2">{t('logoutCta')}</Button>
     </div>
   );
 }
@@ -51,6 +52,7 @@ interface LogoutModalProps {
 }
 
 function LogoutModal({ isOpen, onClose }: LogoutModalProps) {
+  const t = useTranslations('Modals.Logout')
   return (
     <Modal
       isOpen={isOpen}
@@ -58,7 +60,7 @@ function LogoutModal({ isOpen, onClose }: LogoutModalProps) {
       title={
         <span className="flex items-center gap-2">
           <TbLogout className="text-red-500" />
-          <span>Logout</span>
+          <span>{t('title')}</span>
         </span>
       }
       footer={<LogoutModalFooter onClose={onClose} />}

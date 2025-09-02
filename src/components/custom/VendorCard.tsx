@@ -1,5 +1,7 @@
+"use client";
 import { Vendor } from "@/types/pagesTypes";
 import React from "react";
+import { useTranslations } from "next-intl";
 
 
 
@@ -8,17 +10,18 @@ interface VendorCardProps {
 }
 
 function VendorCard({ item }: VendorCardProps) {
+  const t = useTranslations('Custom.VendorCard')
   return (
     <div>
       {(item.about || item.experienceYears || item.serviceArea) && (
         <React.Fragment>
-          <h3 className="text-lg font-semibold text-primary">Vendor Details</h3>
+          <h3 className="text-lg font-semibold text-primary">{t('title')}</h3>
           <p className="text-secondary">{item.about}</p>
-          <p className="text-secondary">Experience: {item.experienceYears} years</p>
+          <p className="text-secondary">{t('experienceYears', {years: item.experienceYears || 0})}</p>
           {item.serviceArea && (
             <div>
               <p className="text-secondary">
-                Service Area:{" "}
+                {t('serviceArea')}{" "}
                 {[
                   item.serviceArea.length > 0
                     ? item.serviceArea.map((s) => s.state.name).join(", ")
@@ -28,7 +31,7 @@ function VendorCard({ item }: VendorCardProps) {
                     : null,
                 ]
                   .filter(Boolean)
-                  .join(", ") || "Not specified"}
+                  .join(", ") || t('notSpecified')}
               </p>
             </div>
           )}

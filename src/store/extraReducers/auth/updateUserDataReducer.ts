@@ -1,14 +1,15 @@
 import { updateUser } from "@/store/thunks/authThunks";
 import { AuthState } from "@/store/slices/authSlice";
-import { AnyAction, PayloadAction } from "@reduxjs/toolkit";
+import { ActionReducerMapBuilder, AnyAction, PayloadAction } from "@reduxjs/toolkit";
+import { User } from "@/types/common";
 
-export function updateUserDataExtraReducers(builder: any) {
+export function updateUserDataExtraReducers(builder: ActionReducerMapBuilder<AuthState>) {
   builder
     .addCase(updateUser.pending, (state: AuthState) => {
       state.status = "loading";
       state.error = null;
     })
-    .addCase(updateUser.fulfilled, (state: AuthState, action: PayloadAction<any>) => {
+    .addCase(updateUser.fulfilled, (state: AuthState, action: PayloadAction<User>) => {
       state.status = "succeeded";
       // Update the user in state with the new data
       state.user = {

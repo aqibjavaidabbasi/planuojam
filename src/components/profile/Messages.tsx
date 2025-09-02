@@ -1,13 +1,13 @@
 import React from "react";
+import { useTranslations } from "next-intl";
 
 function Messages() {
+  const t = useTranslations('Profile.Messages');
   return (
     <div className="p-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Messages</h1>
-        <p className="text-gray-600 mt-2">
-          Coming soon - Stay tuned for messaging features!
-        </p>
+        <h1 className="text-2xl font-bold text-gray-800">{t('title')}</h1>
+        <p className="text-gray-600 mt-2">{t('subtitle')}</p>
       </div>
       <div className="text-center py-16">
         <div className="w-24 h-24 bg-[#cc922f] rounded-full flex items-center justify-center mx-auto mb-6">
@@ -25,12 +25,9 @@ function Messages() {
             />
           </svg>
         </div>
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">
-          Messages Coming Soon
-        </h3>
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">{t('comingSoonTitle')}</h3>
         <p className="text-gray-600 max-w-md mx-auto">
-          We&apos;re working on bringing you a powerful messaging system to connect
-          with property owners and renters.
+          {t('comingSoonDesc')}
         </p>
       </div>
     </div>

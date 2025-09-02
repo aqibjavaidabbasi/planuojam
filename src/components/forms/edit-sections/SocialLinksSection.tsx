@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, type FieldError } from "react-hook-form"
 import Input from "../../custom/Input"
 import Select from "../../custom/Select"
 import Button from "../../custom/Button"
@@ -12,16 +12,16 @@ import type { ListingItem } from "@/types/pagesTypes"
 
 type SocialLink = {
   platform:
-    | "facebook"
-    | "linkedin"
-    | "youtube"
-    | "instagram"
-    | "tiktok"
-    | "pinterest"
-    | "twitter"
-    | "thread"
-    | "reddit"
-    | ""
+  | "facebook"
+  | "linkedin"
+  | "youtube"
+  | "instagram"
+  | "tiktok"
+  | "pinterest"
+  | "twitter"
+  | "thread"
+  | "reddit"
+  | ""
   link: string
   visible?: boolean
 }
@@ -31,7 +31,7 @@ type SocialLinksForm = {
   socialLink: SocialLink[]
 }
 
-const ErrorMessage = ({ error }: { error?: any }) => {
+const ErrorMessage = ({ error }: { error?: FieldError }) => {
   if (!error) return null
   return <p className="text-red-500 text-sm mt-1">{error.message}</p>
 }
@@ -45,6 +45,10 @@ export default function SocialLinksSection({
 }) {
   const [submitting, setSubmitting] = useState(false)
 
+  const initialSocialLinks: SocialLink[] = Array.isArray((listing.socialLinks as unknown as { socialLink?: unknown })?.socialLink)
+    ? ((listing.socialLinks as unknown as { socialLink?: SocialLink[] }).socialLink ?? [])
+    : []
+
   const {
     register,
     setValue,
@@ -53,19 +57,19 @@ export default function SocialLinksSection({
     formState: { errors },
   } = useForm<SocialLinksForm>({
     defaultValues: {
-      optionalSectionTitle: (listing.socialLinks as any)?.optionalSectionTitle || "",
-      socialLink: ((listing.socialLinks as any)?.socialLink || []) as SocialLink[],
+      optionalSectionTitle: (listing.socialLinks)?.optionalSectionTitle || "",
+      socialLink: initialSocialLinks,
     },
   })
 
-  const addArrayItem = (path: keyof SocialLinksForm, item: any) => {
-    const current = (getValues(path) as any[]) || []
-    setValue(path, [...current, item], { shouldDirty: true })
+  const addSocialLink = (item: SocialLink) => {
+    const current = getValues("socialLink") || []
+    setValue("socialLink", [...current, item], { shouldDirty: true })
   }
 
-  const removeArrayItem = (path: keyof SocialLinksForm, index: number) => {
-    const current = (getValues(path) as any[]) || []
-    setValue(path, current.filter((_, i) => i !== index), { shouldDirty: true })
+  const removeSocialLink = (index: number) => {
+    const current = getValues("socialLink") || []
+    setValue("socialLink", current.filter((_, i) => i !== index), { shouldDirty: true })
   }
 
   const onSubmit = async (values: SocialLinksForm) => {
@@ -80,8 +84,9 @@ export default function SocialLinksSection({
       await updateListing(listing.documentId, { data: { socialLinks: values } })
       toast.success("Social links updated")
       onSaved?.()
-    } catch (e: any) {
-      toast.error(e?.message || "Failed to update social links")
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to update social links"
+      toast.error(message)
     } finally {
       setSubmitting(false)
     }
@@ -125,7 +130,7 @@ export default function SocialLinksSection({
                     { label: "Reddit", value: "reddit" },
                   ]}
                 />
-                <ErrorMessage error={errors.socialLink?.[idx]?.platform as any} />
+                <ErrorMessage error={errors.socialLink?.[idx]?.platform} />
               </div>
               <div className="col-span-3">
                 <Input
@@ -139,7 +144,7 @@ export default function SocialLinksSection({
                     setValue("socialLink", list, { shouldDirty: true })
                   }}
                 />
-                <ErrorMessage error={errors.socialLink?.[idx]?.link as any} />
+                <ErrorMessage error={errors.socialLink?.[idx]?.link} />
               </div>
               <div className="col-span-1">
                 <Select
@@ -162,7 +167,7 @@ export default function SocialLinksSection({
                   style="destructive"
                   size="large"
                   disabled={isWorking}
-                  onClick={() => removeArrayItem("socialLink", idx)}
+                  onClick={() => removeSocialLink(idx)}
                   type="button"
                 >
                   <FaRegTrashAlt />
@@ -175,7 +180,7 @@ export default function SocialLinksSection({
               style="secondary"
               disabled={isWorking}
               type="button"
-              onClick={() => addArrayItem("socialLink", { platform: "", link: "", visible: true })}
+              onClick={() => addSocialLink({ platform: "", link: "", visible: true })}
             >
               + Add Social Link
             </Button>

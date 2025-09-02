@@ -1,4 +1,5 @@
 'use client' //for interactivity that might be added later
+import { Link } from '@/i18n/navigation';
 import { footer } from '@/types/pagesTypes';
 
 function Footer({footerData}: {footerData: footer}) {
@@ -10,9 +11,9 @@ function Footer({footerData}: {footerData: footer}) {
                     <div key={section.id} className='py-3'>
                     <p className='text-white font-semibold mb-2 capitalize'>{section.title}</p>
                     <div className='flex flex-col gap-1'>
-                        {section.navItem.map(item => (<a className='hover:underline capitalize' href={item.relativeUrl} key={item.id}>
+                        {section.navItem.map(item => (<Link className='hover:underline capitalize' href={item.relativeUrl} key={item.id}>
                             {item.label}
-                        </a>))}
+                        </Link>))}
                     </div>
                 </div>))}
             </div>
@@ -20,9 +21,9 @@ function Footer({footerData}: {footerData: footer}) {
                 <div className='flex items-center gap-2.5'>
                     {footerData?.extraLinks.map((link, idx, arr) => (
                         <span key={link.id} className='flex items-center gap-2'>
-                            <a className='hover:underline capitalize' href={link.relativeUrl}>
+                            <Link className='hover:underline capitalize' href={link.relativeUrl}>
                                 {link.label}
-                            </a>
+                            </Link>
                             {idx < arr.length - 1 && (
                                 <span className="mx-2 text-white select-none">|</span>
                             )}

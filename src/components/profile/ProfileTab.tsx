@@ -9,6 +9,13 @@ import { useAppDispatch } from "@/store/hooks";
 import { updateUser } from "@/store/thunks/authThunks";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
+import { useTranslations } from "next-intl";
+
+type PasswordForm = {
+  currentPassword: string;
+  password: string;
+  passwordConfirmation: string;
+};
 
 function ProfileTab({ user }: { user: User | null }) {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -16,7 +23,8 @@ function ProfileTab({ user }: { user: User | null }) {
   const [username, setUsername] = useState("");
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
-  const { register, handleSubmit, watch, formState: {errors}, reset } = useForm()
+  const { register, handleSubmit, watch, formState: {errors}, reset } = useForm<PasswordForm>()
+  const t = useTranslations('Profile.ProfileTab');
 
   useEffect(function(){
     setUsername(user?.username ?? "");
@@ -26,7 +34,7 @@ function ProfileTab({ user }: { user: User | null }) {
     if (e) e.preventDefault();
     if (!user) return;
     if (!username?.trim()) {
-      toast.error("Username can not be empty");
+      toast.error(t('errors.usernameEmpty'));
       return;
     }
     if (username === user?.username) {
@@ -37,19 +45,19 @@ function ProfileTab({ user }: { user: User | null }) {
     await toast.promise(
       dispatch(updateUser({ id: user.id, username })).unwrap(),
       {
-        loading: "Updating username...",
-        success: "Username updated successfully",
-        error: (err: any) =>
-          (err && typeof err === "object" && "message" in err)
-            ? String((err as any).message)
-            : "Failed to update username",
+        loading: t('toasts.updatingUsername'),
+        success: t('toasts.usernameUpdated'),
+        error: (err: unknown) =>
+          err && typeof err === "object" && "message" in err
+            ? String((err as { message?: unknown }).message)
+            : t('toasts.usernameUpdateFailed'),
       }
     ).finally(() => setLoading(false));
   }
 
-  async function handlePasswordUpdate(data: any) {
+  async function handlePasswordUpdate(data: PasswordForm) {
     if (!user) {
-      toast.error("User not found");
+      toast.error(t('errors.userNotFound'));
       return;
     }
     setLoading(true);
@@ -63,10 +71,12 @@ function ProfileTab({ user }: { user: User | null }) {
       await toast.promise(
         updateUserPassword(payload),
         {
-          loading: "Updating password...",
-          success: "Password updated successfully",
-          error: (err: any) =>
-            err?.message || "Failed to update password",
+          loading: t('toasts.updatingPassword'),
+          success: t('toasts.passwordUpdated'),
+          error: (err: unknown) =>
+            err && typeof err === "object" && "message" in err
+              ? String((err as { message?: unknown }).message)
+              : t('toasts.passwordUpdateFailed'),
         }
       );
     } finally {
@@ -79,9 +89,9 @@ function ProfileTab({ user }: { user: User | null }) {
     <div className="p-8">
       <div className="flex justify-between items-start">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Profile Settings</h1>
+          <h1 className="text-2xl font-bold text-gray-800">{t('title')}</h1>
           <p className="text-gray-600 mt-2">
-            Manage your personal information and password.
+            {t('subtitle')}
           </p>
         </div>
         {/* Logout Button */}
@@ -91,7 +101,7 @@ function ProfileTab({ user }: { user: User | null }) {
           disabled={loading}
         >
           <TbLogout size={20} className="mr-3" />
-          Logout
+          {t('logout')}
         </Button>
       </div>
 
@@ -100,8 +110,8 @@ function ProfileTab({ user }: { user: User | null }) {
           <div className="w-full">
             <Input
               type="text"
-              placeholder="username"
-              label="username"
+              placeholder={t('usernamePlaceholder')}
+              label={t('usernameLabel')}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               disabled={loading}
@@ -113,69 +123,69 @@ function ProfileTab({ user }: { user: User | null }) {
             extraStyles="!rounded-md !whitespace-nowrap"
             disabled={loading}
           >
-            Save Username
+            {t('saveUsername')}
           </Button>
         </form>
         {/* Password Update Section */}
         <div className="mt-12 pt-8 border-t border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            Update Password
+            {t('password.updateTitle')}
           </h2>
           <form className="space-y-4" onSubmit={handleSubmit(handlePasswordUpdate)}>
             <Input
               type="password"
-              label="Current password"
-              placeholder="Enter your current password"
+              label={t('password.currentLabel')}
+              placeholder={t('password.currentPlaceholder')}
               {...register('currentPassword', {
-                required: "Current password is required",
+                required: t('password.errors.currentRequired'),
                 minLength: {
                   value: 8,
-                  message: "Password must be at least 8 characters"
+                  message: t('password.errors.minLength')
                 }
               })}
               disabled={loading}
             />
             {errors.currentPassword && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.currentPassword.message as string}
+                {errors.currentPassword.message}
               </p>
             )}
             <Input
               type="password"
-              label="New password"
-              placeholder="Enter your new password"
+              label={t('password.newLabel')}
+              placeholder={t('password.newPlaceholder')}
               {...register('password', {
-                required: "A new password is required",
+                required: t('password.errors.newRequired'),
                 minLength: {
                   value: 8,
-                  message: "Password must be at least 8 characters"
+                  message: t('password.errors.minLength')
                 }
               })}
               disabled={loading}
             />
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.password.message as string}
+                {errors.password.message}
               </p>
             )}
             <Input
               type="password"
-              label="Confirm password"
-              placeholder="Confirm your new password"
+              label={t('password.confirmLabel')}
+              placeholder={t('password.confirmPlaceholder')}
               disabled={loading}
               {...register('passwordConfirmation', {
-                required: "Password confirm is required",
+                required: t('password.errors.confirmRequired'),
                 minLength: {
                   value: 8,
-                  message: "Password must be at least 8 characters"
+                  message: t('password.errors.minLength')
                 },
                 validate: (value) =>
-                  value === watch('password') || "Passwords do not match"
+                  value === watch('password') || t('password.errors.noMatch')
               })}
             />
             {errors.passwordConfirmation && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.passwordConfirmation.message as string}
+                {errors.passwordConfirmation.message}
               </p>
             )}
             <Button
@@ -184,7 +194,7 @@ function ProfileTab({ user }: { user: User | null }) {
               type="submit"
               disabled={loading}
             >
-              Update password
+              {t('password.updateCta')}
             </Button>
           </form>
         </div>
@@ -196,3 +206,4 @@ function ProfileTab({ user }: { user: User | null }) {
 }
 
 export default ProfileTab;
+

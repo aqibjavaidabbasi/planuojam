@@ -6,7 +6,7 @@ import Search from '../custom/Search';
 import { getCompleteImageUrl } from '@/utils/helpers';
 import { FaBars } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
-import { usePathname, useRouter } from 'next/navigation';
+import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import ProfileBtn from './ProfileBtn';
 import { useEffect } from 'react';
@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchLikedListing } from '@/store/thunks/likedListing';
 import { fetchUser } from '@/services/auth';
 import { logout, setUser } from '@/store/slices/authSlice';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, LOCALE_OPTIONS } from '@/config/i18n';
 
 function Header({ headerData }: { headerData: HeaderType }) {
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -28,6 +29,8 @@ function Header({ headerData }: { headerData: HeaderType }) {
     const isEventTypeActive = (slug: string) => pathname === `/event-types/${slug}`;
     const user = useAppSelector((state) => state.auth.user);
     const [loading, setLoading] = useState(false);
+    const [selectedLocale, setSelectedLocale] = useState<string>(DEFAULT_LOCALE);
+
 
     useEffect(() => {
         const validateUser = async () => {
@@ -53,14 +56,45 @@ function Header({ headerData }: { headerData: HeaderType }) {
 
     //set liked listing state in header to set state globally on mount
     useEffect(() => {
-        async function getLikedListings() {
-            if (loading) return;
-            setLoading(true);
-            await dispatch(fetchLikedListing(user?.documentId as string)).unwrap();
-            setLoading(false);
+        if (!user?.documentId) return;
+        // Fetch liked listings when user id becomes available
+        dispatch(fetchLikedListing(user.documentId)).unwrap().catch(() => {});
+    }, [dispatch, user?.documentId]);
+
+    // Initialize selected locale from localStorage or URL segment
+    useEffect(() => {
+        const stored = typeof window !== 'undefined' ? localStorage.getItem('locale') : null;
+        if (stored && SUPPORTED_LOCALES.includes(stored)) {
+            setSelectedLocale(stored);
+            return;
         }
-        getLikedListings();
+        // Detect from URL: '/{locale}/...' => first segment
+        const seg = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : '';
+        if (seg && SUPPORTED_LOCALES.includes(seg)) {
+            setSelectedLocale(seg);
+        } else {
+            setSelectedLocale(DEFAULT_LOCALE);
+        }
     }, []);
+
+    // Keep selector in sync if user navigates to a different locale elsewhere
+    useEffect(() => {
+        const seg = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : '';
+        if (seg && SUPPORTED_LOCALES.includes(seg) && seg !== selectedLocale) {
+            setSelectedLocale(seg);
+        }
+    }, [pathname, selectedLocale]);
+
+    const handleLocaleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const next = e.target.value;
+        if (!SUPPORTED_LOCALES.includes(next)) return;
+        setSelectedLocale(next);
+        try {
+            localStorage.setItem('locale', next);
+        } catch {}
+        // Navigate to same path under the new locale
+        router.replace(pathname, { locale: next });
+    };
 
     return (
         <header className='sticky top-0 z-30'>
@@ -80,26 +114,17 @@ function Header({ headerData }: { headerData: HeaderType }) {
                     {/* Desktop Nav */}
                     <nav className="hidden md:flex items-center gap-3 md:ml-10">
                         {headerData?.nav.item.map((navItem) => {
-                            const openInNewTab = navItem.target?.toLowerCase().includes("_blank");
                             const isActive = isNavActive(navItem.relativeUrl);
 
-                            const handleClick = () => {
-                                if (openInNewTab) {
-                                    window.open(navItem.relativeUrl, "_blank");
-                                } else {
-                                    router.push(navItem.relativeUrl);
-                                }
-                            };
-
                             return (
-                                <div
+                                <Link
                                     key={navItem.id}
+                                    href={navItem.relativeUrl}
                                     className={`cursor-pointer px-3 py-2 rounded-sm transition-colors text-sm md:text-base capitalize 
                                         ${isActive ? "bg-primary text-white" : "text-primary bg-white hover:bg-primary hover:text-white"}`}
-                                    onClick={handleClick}
                                 >
                                     {navItem.label}
-                                </div>
+                                </Link>
                             );
                         })}
                     </nav>
@@ -107,10 +132,16 @@ function Header({ headerData }: { headerData: HeaderType }) {
 
                 {/* Right: Language, Search, User, Mobile Toggle */}
                 <div className="flex items-center gap-2 md:gap-3">
-                    {/* Language Selector */}
-                    <select className="bg-white border border-border rounded-md h-9 px-2 text-sm md:text-base">
-                        <option value="">English</option>
-                        <option value="">Lietuvių</option>
+                    <select
+                        className="bg-white border border-border rounded-md h-9 px-2 text-sm md:text-base"
+                        value={selectedLocale}
+                        onChange={handleLocaleChange}
+                    >
+                        {LOCALE_OPTIONS.map((opt: { code: string; label: string }) => (
+                            <option key={opt.code} value={opt.code}>
+                                {opt.label}
+                            </option>
+                        ))}
                     </select>
 
                     {/* Search: hidden on xs, visible from sm */}
@@ -156,21 +187,14 @@ function Header({ headerData }: { headerData: HeaderType }) {
                                 {headerData?.nav.item.map(navItem => {
                                     const isActive = isNavActive(navItem.relativeUrl);
                                     return (
-                                        <div
+                                        <Link
+                                            href={navItem.relativeUrl}
                                             className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-white hover:bg-primary hover:text-white
                                                 ${isActive ? "bg-primary text-white" : ""}`}
                                             key={navItem.id}
-                                            onClick={() => {
-                                                if (navItem.target?.toLowerCase().includes("_blank")) {
-                                                    window.open(navItem.relativeUrl, "_blank");
-                                                } else {
-                                                    router.push(navItem.relativeUrl);
-                                                }
-                                                setMobileNavOpen(false);
-                                            }}
                                         >
                                             {navItem.label}
-                                        </div>
+                                        </Link>
                                     );
                                 })}
 
@@ -184,39 +208,46 @@ function Header({ headerData }: { headerData: HeaderType }) {
                                         {headerData.eventTypes.map(({ id, eventType }) => {
                                             const isActive = isEventTypeActive(eventType.slug);
                                             return (
-                                                <div
+                                                <Link
+                                                    href={`/event-types/${eventType.slug}`}
                                                     className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white
                                                         ${isActive ? "bg-primary text-white" : ""}`}
                                                     key={id}
-                                                    onClick={() => {
-                                                        router.push(`/event-types/${eventType.slug}`)
-                                                        setMobileNavOpen(false)
-                                                    }}
                                                 >
                                                     {eventType.eventName}
-                                                </div>
+                                                </Link>
                                             );
                                         })}
-                                        <div
+                                        <Link
                                             className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors not-only:${isHotDealActive() ? "bg-primary text-white" : "text-primary hover:bg-primary hover:text-white"}`}
-                                            onClick={() => router.push('/hot-deal')}
+                                            href="/hot-deal"
                                         >
                                             Hot Deal
-                                        </div>
-                                        <div
+                                        </Link>
+                                        <Link
                                             className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors not-only:${isMapActive() ? "bg-primary text-white" : "text-primary hover:bg-primary hover:text-white"}`}
-                                            onClick={() => router.push('/map')}
+                                            href="/map"
                                         >
                                             Map
-                                        </div>
+                                        </Link>
                                     </>
                                 )}
                             </nav>
 
                             <div className="mt-4 flex flex-col gap-2">
-                                <select className="bg-white border border-border rounded-md h-9 px-2 text-sm">
-                                    <option value="">English</option>
-                                    <option value="">Lietuvių</option>
+                                <select
+                                    className="bg-white border border-border rounded-md h-9 px-2 text-sm"
+                                    value={selectedLocale}
+                                    onChange={(e) => {
+                                        handleLocaleChange(e);
+                                        setMobileNavOpen(false);
+                                    }}
+                                >
+                                    {LOCALE_OPTIONS.map((opt: { code: string; label: string }) => (
+                                        <option key={opt.code} value={opt.code}>
+                                            {opt.label}
+                                        </option>
+                                    ))}
                                 </select>
                                 <Search />
                             </div>
@@ -243,31 +274,28 @@ function Header({ headerData }: { headerData: HeaderType }) {
                     {headerData.eventTypes.map(({ id, eventType }) => {
                         const isActive = isEventTypeActive(eventType.slug);
                         return (
-                            <div
+                            <Link
                                 key={id}
+                                href={`/event-types/${eventType.slug}`}
                                 className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors
                                     ${isActive ? "bg-primary text-white" : "text-primary hover:bg-primary hover:text-white"}`}
-                                onClick={() => {
-                                    router.push(`/event-types/${eventType.slug}`)
-                                    setMobileNavOpen(false)
-                                }}
                             >
                                 {eventType.eventName}
-                            </div>
+                            </Link>
                         );
                     })}
-                    <div
+                    <Link
                         className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${isHotDealActive() ? "bg-primary text-white" : "text-primary hover:bg-primary hover:text-white"}`}
-                        onClick={() => router.push('/hot-deal')}
+                        href="/hot-deal"
                     >
                         Hot Deal
-                    </div>
-                    <div
+                    </Link>
+                    <Link
                         className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${isMapActive() ? "bg-primary text-white" : "text-primary hover:bg-primary hover:text-white"}`}
-                        onClick={() => router.push('/map')}
+                        href="/map"
                     >
                         Map
-                    </div>
+                    </Link>
                 </div>
             )}
 

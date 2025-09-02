@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo, useState } from "react"
+import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import Input from "../../custom/Input"
 import TextArea from "../../custom/TextArea"
@@ -13,7 +13,6 @@ import type { ListingItem } from "@/types/pagesTypes"
 
 export type BasicForm = {
   title: string
-  type: string
   listingStatus: "draft" | "published" | "pending review" | "archived"
   price?: number
   featured?: boolean
@@ -28,30 +27,27 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<BasicForm>({
     defaultValues: {
       title: listing.title || "",
-      type: (listing.type as any) || "vendor",
-      listingStatus: (listing.listingStatus as any) || "draft",
-      price: (listing.price as any) ?? undefined,
+      listingStatus: (listing.listingStatus as "draft" | "published" | "pending review" | "archived") || "draft",
+      price: (listing.price as number) ?? undefined,
       featured: listing.featured || false,
       description: listing.description || "",
       websiteLink: listing.websiteLink || "",
-      workingHours: (listing.workingHours as any) ?? undefined,
+      workingHours: (listing.workingHours as number) ?? undefined,
     },
   })
 
   const onSubmit = async (values: BasicForm) => {
     setSubmitting(true)
     try {
-      const payload: any = { ...values }
-      delete payload.listingStatus;
-      delete payload.type;
+      const payload = { ...values }
       if (values.websiteLink === "") delete payload.websiteLink
-      if (values.price == null || isNaN(values.price as any)) delete payload.price
-      if (values.workingHours == null || isNaN(values.workingHours as any)) delete payload.workingHours
+      if (values.price == null || isNaN(values.price)) delete payload.price
+      if (values.workingHours == null || isNaN(values.workingHours)) delete payload.workingHours
       await updateListing(listing.documentId, { data: payload })
       toast.success("Basic details updated")
       onSaved?.()
-    } catch (e: any) {
-      toast.error(e?.message || "Failed to update basic details")
+    } catch (e: unknown) {
+      toast.error((e as Error)?.message || "Failed to update basic details")
     } finally {
       setSubmitting(false)
     }
@@ -69,14 +65,6 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
         </div>
         <div>
           <Select
-            disabled
-            value={listing.type}
-            options={[{ label: listing.type, value: listing.type }]}
-          />
-          {errors.type && <p className="text-red-500 text-sm mt-1">{errors.type.message as any}</p>}
-        </div>
-        <div>
-          <Select
             disabled={listing.listingStatus === "published" || listing.listingStatus === "rejected" || submitting}
             {...register("listingStatus", { required: "Listing status is required" })}
             options={[
@@ -86,26 +74,26 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
               { label: "Rejected", value: "rejected" },
             ]}
           />
-          {errors.listingStatus && <p className="text-red-500 text-sm mt-1">{errors.listingStatus.message as any}</p>}
+          {errors.listingStatus && <p className="text-red-500 text-sm mt-1">{errors.listingStatus.message}</p>}
         </div>
         <div>
           <Input type="number" label="Price" disabled={submitting} {...register("price", { valueAsNumber: true, min: { value: 0, message: "Price must be positive" } })} />
-          {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price.message as any}</p>}
+          {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>}
         </div>
         <div className="flex items-center mt-6">
           <Checkbox label="Featured" checked={!!watch("featured")} onChange={(e) => setValue("featured", e.target.checked)} disabled={submitting} />
         </div>
         <div className="col-span-2">
           <TextArea label="Description" placeholder="Description" rows={4} disabled={submitting} {...register("description", { required: "Description is required" })} />
-          {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message as any}</p>}
+          {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
         </div>
         <div>
           <Input type="url" label="Website Link" disabled={submitting} {...register("websiteLink", { pattern: { value: /^https?:\/\/.+/, message: "Please enter a valid URL" } })} />
-          {errors.websiteLink && <p className="text-red-500 text-sm mt-1">{errors.websiteLink.message as any}</p>}
+          {errors.websiteLink && <p className="text-red-500 text-sm mt-1">{errors.websiteLink.message}</p>}
         </div>
         <div>
           <Input type="number" label="Working Hours (per day)" disabled={submitting} {...register("workingHours", { valueAsNumber: true, min: { value: 1, message: "Min 1" }, max: { value: 24, message: "Max 24" } })} />
-          {errors.workingHours && <p className="text-red-500 text-sm mt-1">{errors.workingHours.message as any}</p>}
+          {errors.workingHours && <p className="text-red-500 text-sm mt-1">{errors.workingHours.message}</p>}
         </div>
       </div>
       <div className="flex justify-end mt-4">

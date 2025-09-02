@@ -1,11 +1,8 @@
 'use client';
-import { fetchUser } from '@/services/auth';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FaRegUser } from 'react-icons/fa';
 import { RiLoginCircleLine } from 'react-icons/ri';
-import { logout, setUser } from '@/store/slices/authSlice';
 import Loader from '../custom/Loader';
 import { User } from '@/types/common';
 

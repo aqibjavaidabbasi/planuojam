@@ -4,6 +4,7 @@ import { Discount } from "@/types/pagesTypes";
 import React from "react";
 import { MdOutlineEmail, MdOutlineLocalPhone } from "react-icons/md";
 import Button from "../custom/Button";
+import { useTranslations } from "next-intl";
 
 interface ListingDetailHeroProps {
   category: string;
@@ -34,6 +35,7 @@ function ListingDetailHero({
   websiteLink,
 }: ListingDetailHeroProps) {
   const { siteSettings } = useSiteSettings();
+  const t = useTranslations('Listing.Hero');
   const startDate = hotDeal && new Date(hotDeal.startDate);
   const lastDate = hotDeal && new Date(hotDeal.lastDate);
   const isDealActive =
@@ -56,7 +58,7 @@ function ListingDetailHero({
             </div>
             <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2">{title}</h1>
             <p className="text-base sm:text-lg text-white text-opacity-80 mb-4">
-              by {username}
+              {t('by', {username})}
             </p>
             <p className="text-base sm:text-xl text-white text-opacity-90 mb-6">
               {contact?.address}
@@ -84,7 +86,7 @@ function ListingDetailHero({
                 {/* hot deal badge if hot deal is active */}
                 {isDealActive && (
                   <div className="bg-red-500 text-white text-xs px-2 py-1 rounded-full mb-2 inline-block">
-                    HOT DEAL
+                    {t('hotDealBadge')}
                   </div>
                 )}
 
@@ -105,11 +107,11 @@ function ListingDetailHero({
                 {isDealActive &&
                   hotDeal.discount.discountType === "Percentage" && (
                     <div className="text-sm opacity-80 mb-4">
-                      30% OFF - Limited Time
+                      {t('percentageOffLimited', {percent: 30})}
                     </div>
                   )}
 
-                <Button style="secondary">Get Your Ticket Now</Button>
+                <Button style="secondary">{t('getTicketCta')}</Button>
               </div>
             )}
             {/* Website Link */}
@@ -131,7 +133,7 @@ function ListingDetailHero({
                 }
                 onClick={() => window.open(websiteLink, "_blank")}
               >
-                <span className="text-white">Visit Website</span>
+                <span className="text-white">{t('visitWebsite')}</span>
               </div>
             )}
           </div>

@@ -7,6 +7,7 @@ import Select from "../custom/Select";
 import { fetchListingsByUser } from "@/services/listing";
 import type { ListingItem } from "@/types/pagesTypes";
 import ListingCard from "@/components/Dynamic/ListingCard";
+import { useTranslations } from "next-intl";
 
 function Mylistings() {
   const [open, setOpen] = useState(false);
@@ -15,15 +16,17 @@ function Mylistings() {
   const [error, setError] = useState<string | null>(null);
   const [listings, setListings] = useState<ListingItem[]>([]);
   const user = useAppSelector((state) => state.auth.user);
+  const t = useTranslations('Profile.MyListings');
+  const tCommon = useTranslations('Common');
 
   const statusOptions = useMemo(
     () => [
-      { label: "Draft", value: "draft" },
-      { label: "Published", value: "published" },
-      { label: "Pending Review", value: "pending review" },
-      { label: "Archived", value: "archived" },
+      { label: t('status.draft'), value: "draft" },
+      { label: t('status.published'), value: "published" },
+      { label: t('status.pending'), value: "pending review" },
+      { label: t('status.archived'), value: "archived" },
     ],
-    []
+    [t]
   );
 
   const loadListings = async () => {
@@ -32,9 +35,11 @@ function Mylistings() {
     setError(null);
     try {
       const data = await fetchListingsByUser(user.documentId, statusFilter);
-      setListings(data as ListingItem[]);
-    } catch (e: any) {
-      setError(e?.message || "Failed to load listings");
+      setListings(data);
+    } catch (e: unknown) {
+      const message =
+        e && typeof e === "object" && "message" in e ? String((e as { message: unknown }).message) : '';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -49,34 +54,34 @@ function Mylistings() {
     <div className="p-8">
       <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">My Listings</h1>
-          <p className="text-gray-600 mt-2">Manage all your property listings.</p>
+          <h1 className="text-2xl font-bold text-gray-800">{t('title')}</h1>
+          <p className="text-gray-600 mt-2">{t('subtitle')}</p>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <div className="min-w-56">
             <Select
-              label="Filter by status"
+              label={t('filterLabel')}
               value={statusFilter}
-              onChange={(e: any) => setStatusFilter(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value)}
               options={statusOptions}
-              placeholder="All statuses"
+              placeholder={t('allStatuses')}
             />
           </div>
           <Button style="secondary" size="large" onClick={() => setOpen(true)}>
-            Create Listing
+            {t('create')}
           </Button>
         </div>
       </div>
 
-      {loading && <p>Loading...</p>}
+      {loading && <p>{tCommon('loading')}</p>}
       {!loading && error && <p className="text-red-600">{error}</p>}
 
       {!loading && !error && listings.length === 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="col-span-3 flex flex-col items-center gap-4 justify-center h-full">
-            <NoDataCard>No Listings to show. Start by creating your first listing</NoDataCard>
+            <NoDataCard>{t('empty')}</NoDataCard>
             <Button style="secondary" size="large" onClick={() => setOpen(true)}>
-              Create Listing
+              {t('create')}
             </Button>
           </div>
         </div>
@@ -85,7 +90,7 @@ function Mylistings() {
       {!loading && !error && listings.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {listings.map((l) => (
-            <ListingCard key={l.documentId} item={l as any} />
+            <ListingCard key={l.documentId} item={l} />
           ))}
         </div>
       )}
@@ -103,3 +108,4 @@ function Mylistings() {
 }
 
 export default Mylistings;
+

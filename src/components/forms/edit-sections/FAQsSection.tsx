@@ -16,8 +16,8 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
   const [submitting, setSubmitting] = useState(false)
   const { register, control, handleSubmit, formState: { errors } } = useForm<FAQsForm>({
     defaultValues: {
-      sectionTitle: (listing.FAQs as any)?.sectionTitle || "",
-      items: ((listing.FAQs as any)?.items || [{ question: "", answer: "" }]) as FAQItem[],
+      sectionTitle: (listing.FAQs)?.sectionTitle || "",
+      items: ((listing.FAQs)?.items || [{ question: "", answer: "" }]) as FAQItem[],
     },
   })
 
@@ -39,8 +39,8 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
       await updateListing(listing.documentId, { data: { FAQs: values } })
       toast.success("FAQs updated")
       onSaved?.()
-    } catch (e: any) {
-      toast.error(e?.message || "Failed to update FAQs")
+    } catch (e: unknown) {
+      toast.error((e as Error)?.message || "Failed to update FAQs")
     } finally {
       setSubmitting(false)
     }
@@ -57,11 +57,11 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
             <div key={field.id} className="grid grid-cols-12 gap-3 items-end">
               <div className="col-span-5">
                 <Input type="text" label={`Question ${idx + 1}`} disabled={submitting} {...register(`items.${idx}.question` as const, { required: "Required" })} />
-                {errors.items?.[idx]?.question && <p className="text-red-500 text-sm mt-1">{errors.items[idx]?.question?.message as any}</p>}
+                {errors.items?.[idx]?.question && <p className="text-red-500 text-sm mt-1">{errors.items[idx]?.question?.message}</p>}
               </div>
               <div className="col-span-6">
                 <Input type="text" label={`Answer ${idx + 1}`} disabled={submitting} {...register(`items.${idx}.answer` as const, { required: "Required" })} />
-                {errors.items?.[idx]?.answer && <p className="text-red-500 text-sm mt-1">{errors.items[idx]?.answer?.message as any}</p>}
+                {errors.items?.[idx]?.answer && <p className="text-red-500 text-sm mt-1">{errors.items[idx]?.answer?.message}</p>}
               </div>
               <div className="col-span-1 flex justify-end">
                 <Button type="button" style="destructive" disabled={submitting} onClick={() => remove(idx)}>

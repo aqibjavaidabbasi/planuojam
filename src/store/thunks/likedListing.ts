@@ -3,7 +3,6 @@ import { getLikedListings } from "@/services/likedListing"
 import { getStrapiErrorMessage } from "@/utils/helpers"
 import { RootState } from "../index"
 import { createLikedListing, deleteLikedListing } from "@/services/likedListing"
-import { LikedListing } from "@/types/common"
 
 // Async thunks for server sync
 export const fetchLikedListing = createAsyncThunk(

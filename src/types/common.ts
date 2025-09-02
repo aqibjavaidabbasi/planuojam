@@ -1,6 +1,7 @@
 import { ListingItem } from "./pagesTypes";
 
 export interface strapiImage{
+    id: number;
     url: string;
     width: number;
     formats: {

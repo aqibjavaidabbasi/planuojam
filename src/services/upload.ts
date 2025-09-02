@@ -1,7 +1,7 @@
 // lib/strapiUpload.ts
 export async function uploadToStrapi(
     files: File[] | File,
-  ): Promise<any> {
+  ): Promise<UploadedFile[]> {
     const formData = new FormData();
   
     // Handle single or multiple
@@ -13,7 +13,7 @@ export async function uploadToStrapi(
   
     // Add folder info so files go into that folder in Strapi Media Library
     formData.append("path", "/user-uploads");
-    const token = typeof window !== undefined ? localStorage.getItem("token") : "";
+    const token = typeof window !== 'undefined' ? localStorage.getItem("token") : "";
 
     if(!token){
         throw new Error("No Token found!");
@@ -34,6 +34,14 @@ export async function uploadToStrapi(
     }
   
     const uploaded = await res.json();
-    return uploaded;
+    return uploaded as UploadedFile[];
   }
   
+  // Strapi returns an array of uploaded file objects. We type only common fields
+  export type UploadedFile = {
+    id: number;
+    url: string;
+    name: string;
+  } & Record<string, unknown>;
+  
+  export type StrapiUploadResponse = UploadedFile[];

@@ -1,0 +1,375 @@
+{
+  "Auth": {
+    "Login": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to your account",
+      "noAccount": "Don't have an account?",
+      "signUpHere": "Sign up here",
+      "loggingIn": "Logging in...",
+      "loggedIn": "Logged in successfully!",
+      "loginFailed": "Login failed. Please try again.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your email",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "passwordRequired": "Password is required",
+      "forgotPassword": "Forgot password?",
+      "signIn": "Sign in"
+    },
+    "Register": {
+      "title": "Create Account",
+      "subtitle": "Join our community today",
+      "registering": "Registering your data...",
+      "registered": "Registered successfully!",
+      "registerFailed": "Registration failed. Please try again.",
+      "joinAs": "I want to join as:",
+      "roleRequired": "Please select a role",
+      "roleBuyer": "Buyer",
+      "roleBuyerDesc": "Find services",
+      "roleProvider": "Service Provider",
+      "roleProviderDesc": "Offer services",
+      "chooseService": "Choose a service",
+      "serviceRequired": "Service is required",
+      "usernameLabel": "Username",
+      "usernamePlaceholder": "Enter your username",
+      "usernameRequired": "Please enter a username",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your email",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter a strong password",
+      "passwordRequired": "Password is required",
+      "confirmPasswordLabel": "Confirm password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "confirmPasswordRequired": "Password is required",
+      "tosAgree": "I agree to the Terms of Service and Privacy Policy",
+      "tosRequired": "Please read and agree to our Terms of Service and Privacy Policy",
+      "registerCta": "Register",
+      "alreadyHaveAccount": "Already have an account?",
+      "signInHere": "Sign in here"
+    },
+    "ResetPassword": {
+      "title": "Reset Password",
+      "resetting": "Resetting your password...",
+      "resetSuccessToast": "Password reset successfully! You can log in now",
+      "resetFailed": "Password reset failed. Please try again.",
+      "resetSuccess": "Password reset successfully!",
+      "youCanLogin": "You can now log in with your new password.",
+      "goToLogin": "Go to Login",
+      "newPasswordPlaceholder": "New Password",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 8 characters",
+      "confirmNewPasswordPlaceholder": "Confirm New Password",
+      "confirmPasswordRequired": "Please confirm your password",
+      "passwordsDoNotMatch": "Passwords do not match",
+      "resetCta": "Reset Password",
+      "backToLogin": "Back to Login"
+    },
+    "EmailConfirmation": {
+      "title": "Email Confirmation",
+      "instruction": "Please confirm your email address to activate your account.",
+      "resendHint": "If you did not receive the confirmation email, you can resend it below.",
+      "resendLoading": "Sending confirmation email...",
+      "resendSuccess": "Confirmation email sent successfully!",
+      "resendFailed": "We failed to send confirmation email. Please try again.",
+      "confirming": "Confirming your email...",
+      "confirmed": "Confirmed your email successfully! You can log in to continue",
+      "confirmFailed": "Email confirmation failed. Please try again.",
+      "success": "Email confirmed successfully!",
+      "youCanLogin": "You can now log in to your account.",
+      "login": "Login",
+      "tokenLabel": "Confirmation Token",
+      "tokenPlaceholder": "Enter confirmation token from email",
+      "tokenRequired": "Confirmation token is required",
+      "confirmCta": "Confirm Email",
+      "resendCta": "Resend Confirmation Email"
+    }
+  },
+  "Contact": {
+    "chatWithUs": {
+      "title": "Chat with us",
+      "liveChat": "Start a live chat",
+      "email": "Shoot us an email",
+      "messageOnX": "Message us on X"
+    },
+    "callUs": {
+      "title": "Call us",
+      "hours": "Call our team Mon–Fri from 8am to 5pm.",
+      "phone": "+1 (555) 000–0000"
+    },
+    "visitUs": {
+      "title": "Visit us",
+      "description": "Chat to us in person at our Melbourne HQ.",
+      "address": "100 Smith Street, Collingwood VIC 3066"
+    },
+    "Form": {
+      "title": "Contact our team",
+      "description": "Got any questions about the product or scaling on our platform? We’re here to help. Chat to our friendly team 24/7 and get onboard in less than 5 minutes.",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "emailPlaceholder": "you@company.com",
+      "country": {
+        "lt": "LT",
+        "ru": "RU"
+      },
+      "phonePlaceholder": "+1 (555) 000-0000",
+      "messagePlaceholder": "Leave us a message...",
+      "send": "Send message"
+    }
+  },
+  "Common": {
+    "errors": {
+      "failedToLoad": "Failed to load",
+      "notFound": "Not found"
+    },
+    "loading": "Loading..."
+  },
+  "Map": {
+    "loading": "Loading map...",
+    "errors": {
+      "failedToLoadLocations": "Failed to load locations"
+    },
+    "fallback": {
+      "unnamedVenue": "Unnamed Venue",
+      "unknownUser": "Unknown",
+      "uncategorized": "Uncategorized",
+      "noAddress": "No address provided"
+    }
+  },
+  "Listing": {
+    "Edit": {
+      "preview": "Preview Listing",
+      "editing": "Editing",
+      "listingFallback": "Listing",
+      "documentId": "Document ID",
+      "status": "Status",
+      "tabs": {
+        "basic": "Basic Details",
+        "vv": "Vendor/Venue Details",
+        "deal": "Hot Deal",
+        "images": "Images",
+        "contact": "Contact",
+        "social": "Social Links",
+        "pricing": "Pricing",
+        "faqs": "FAQs"
+      }
+    },
+    "Details": {
+      "overview": "Overview",
+      "rating": "Rating",
+      "hotDeal": "Hot Deal",
+      "flatRate": "Flat rate",
+      "percentOff": "off",
+      "valid": "Valid",
+      "reviews": "Reviews",
+      "noReviews": "No reviews yet",
+      "faqs": "FAQs"
+    },
+    "Hero": {
+      "by": "by {username}",
+      "hotDealBadge": "HOT DEAL",
+      "percentageOffLimited": "{percent}% OFF - Limited Time",
+      "getTicketCta": "Get Your Ticket Now",
+      "visitWebsite": "Visit Website"
+    }
+  },
+  "Profile": {
+    "loginPrompt": "Please login to view your profile. Redirecting...",
+    "tabs": {
+      "profile": "Profile",
+      "myListings": "My Listings",
+      "favouriteListings": "Favourite Listings",
+      "messages": "Messages",
+      "reviews": "Reviews"
+    },
+    "ProfileTab": {
+      "title": "Profile Settings",
+      "subtitle": "Manage your personal information and password.",
+      "logout": "Logout",
+      "usernameLabel": "Username",
+      "usernamePlaceholder": "Username",
+      "saveUsername": "Save Username",
+      "errors": {
+        "usernameEmpty": "Username can not be empty",
+        "userNotFound": "User not found"
+      },
+      "toasts": {
+        "updatingUsername": "Updating username...",
+        "usernameUpdated": "Username updated successfully",
+        "usernameUpdateFailed": "Failed to update username",
+        "updatingPassword": "Updating password...",
+        "passwordUpdated": "Password updated successfully",
+        "passwordUpdateFailed": "Failed to update password"
+      },
+      "password": {
+        "updateTitle": "Update Password",
+        "currentLabel": "Current password",
+        "currentPlaceholder": "Enter your current password",
+        "newLabel": "New password",
+        "newPlaceholder": "Enter your new password",
+        "confirmLabel": "Confirm password",
+        "confirmPlaceholder": "Confirm your new password",
+        "updateCta": "Update password",
+        "errors": {
+          "currentRequired": "Current password is required",
+          "newRequired": "A new password is required",
+          "confirmRequired": "Password confirm is required",
+          "minLength": "Password must be at least 8 characters",
+          "noMatch": "Passwords do not match"
+        }
+      }
+    },
+    "FavouriteListings": {
+      "title": "Favourite Listings",
+      "subtitle": "Your saved and favourite properties.",
+      "empty": "No Favourite Listings to show"
+    },
+    "MyListings": {
+      "title": "My Listings",
+      "subtitle": "Manage all your property listings.",
+      "filterLabel": "Filter by status",
+      "allStatuses": "All statuses",
+      "create": "Create Listing",
+      "empty": "No Listings to show. Start by creating your first listing",
+      "status": {
+        "draft": "Draft",
+        "published": "Published",
+        "pending": "Pending Review",
+        "archived": "Archived"
+      }
+    },
+    "Messages": {
+      "title": "Messages",
+      "subtitle": "Coming soon - Stay tuned for messaging features!",
+      "comingSoonTitle": "Messages Coming Soon",
+      "comingSoonDesc": "We're working on bringing you a powerful messaging system to connect with property owners and renters."
+    },
+    "ReviewsTab": {
+      "title": "Reviews",
+      "subtitle": "View and manage your property reviews.",
+      "propertyLabel": "Property:"
+    }
+  },
+  "Vendors": {
+    "filters": {
+      "chooseVendor": "Choose a vendor",
+      "selectPricing": "Select pricing",
+      "pickEventType": "Pick event type",
+      "withPricingOnly": "With pricing only",
+      "withoutPricingOnly": "Without pricing only"
+    },
+    "noVendorsFound": "No vendors found"
+  },
+  "Venues": {
+    "filters": {
+      "chooseVenue": "Choose a venue",
+      "selectPricing": "Select pricing",
+      "chooseEventType": "Choose event type",
+      "withPricingOnly": "With pricing only",
+      "withoutPricingOnly": "Without pricing only"
+    },
+    "noVenuesFound": "No venues found"
+  },
+  "Custom": {
+    "ImageUploader": {
+      "selectImages": "Select Images",
+      "uploadImages": "Upload {count} Images",
+      "toasts": {
+        "uploadSuccess": "Images uploaded successfully",
+        "uploadFailed": "Failed to upload images"
+      }
+    },
+    "NoDataCard": {
+      "expandSearchHint": "Try expanding your search radius or check different locations."
+    },
+    "VendorCard": {
+      "title": "Vendor Details",
+      "experienceYears": "Experience: {years} years",
+      "serviceArea": "Service Area:",
+      "notSpecified": "Not specified"
+    },
+    "VenueCard": {
+      "title": "Venue Details",
+      "capacity": "Capacity: {count}",
+      "location": "Location"
+    }
+  },
+  "Global": {
+    "SubscriptionForm": {
+      "emailPlaceholder": "Enter your email",
+      "subscribe": "Subscribe"
+    }
+  },
+  "NotFound": {
+    "title": "Oops! Something went wrong",
+    "description": "We can't seem to find the page you're looking for."
+  },
+  "Modals": {
+    "ForgotPassword": {
+      "title": "Reset Password",
+      "description": "Enter your email address and we'll send you a link to reset your password",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your email",
+      "sendResetLink": "Send Reset Link",
+      "errors": {
+        "emailRequired": "Email is required",
+        "emailInvalid": "Invalid email address"
+      },
+      "toasts": {
+        "sending": "Sending email...",
+        "sent": "Email sent successfully!",
+        "errorDefault": "Could not send email. Please try again."
+      }
+    },
+    "LoginNavigate": {
+      "title": "Login to like this listing",
+      "description": "By logging in, you can save this listing to your favorites and receive updates when it's available.",
+      "loginCta": "Login"
+    },
+    "Logout": {
+      "title": "Logout",
+      "confirmTitle": "Are you sure you want to logout?",
+      "confirmDesc": "You will be logged out of your account and redirected to the login page.",
+      "cancel": "Cancel",
+      "logoutCta": "Logout",
+      "toasts": {
+        "loggedOut": "Logged out successfully!"
+      }
+    },
+    "ListingItem": {
+      "errors": {
+        "noImage": "Please upload at least one image",
+        "invalidServiceType": "Please select a valid service type"
+      }
+    }
+  },
+  "Dynamic": {
+    "ListingCard": {
+      "toasts": {
+        "adding": "Adding to wishlist...",
+        "removed": "Removed from wishlist!",
+        "removing": "Removing from wishlist...",
+        "added": "Added to wishlist!",
+        "addFailed": "Failed to add to wishlist",
+        "removeFailed": "Failed to remove from wishlist"
+      },
+      "hot": "HOT",
+      "deal": "DEAL",
+      "imageAlt": "Venue Image {index}",
+      "placeholderAlt": "placeholder",
+      "unrated": "Unrated",
+      "noLocation": "No location provided",
+      "noVenueLocation": "No Venue Location provided",
+      "price": "Price",
+      "contactForPricing": "Contact for pricing",
+      "edit": "Edit",
+      "view": "View"
+    },
+    "SelectedCategories": {
+      "noCategoriesFound": "No Categories Found"
+    }
+  }
+}

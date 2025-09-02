@@ -1,10 +1,12 @@
 import React, { ReactNode } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface NoDataCardProps {
   children: ReactNode
 }
 
 function NoDataCard({ children }: NoDataCardProps) {
+  const t = useTranslations('Custom.NoDataCard')
   return (
     <div className="bg-primary/10 border border-primary/20 rounded-lg p-6 text-center fade-in max-w-2xl mx-auto">
       <div className="flex items-center justify-center gap-4">
@@ -15,7 +17,7 @@ function NoDataCard({ children }: NoDataCardProps) {
         </div>
         <div className="text-left flex-grow">
           <h3 className="text-lg font-semibold text-gray-800 mb-1">{children}</h3>
-          <p className="text-gray-600 text-sm">Try expanding your search radius or check different locations.</p>
+          <p className="text-gray-600 text-sm">{t('expandSearchHint')}</p>
         </div>
       </div>
     </div>

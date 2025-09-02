@@ -5,7 +5,7 @@ import { getCompleteImageUrl } from '@/utils/helpers'
 
 function BackgroundImageBlock({data} : {data: BlockGroupsBlock}) {
   return (
-    <div className='w-screen max-w-screen lg:max-w-[1400px] py-5 md:py-10 px-3 md:px-6'>
+    <div className='w-full max-w-[1400px] mx-auto py-5 md:py-10 px-3 md:px-6'>
         <div className='flex flex-col items-center justify-center gap-2'>
             <Heading headingPiece={data.title.heading.headingPiece} />
             <p>{data.title.sectionDescription}</p>

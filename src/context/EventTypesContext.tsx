@@ -3,6 +3,7 @@
 import { fetchEventTypes } from '@/services/common';
 import { EventTypes } from '@/types/pagesTypes';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useLocale } from 'next-intl';
 
 interface EventTypesContextProps {
   eventTypes: EventTypes[];
@@ -19,15 +20,16 @@ export const useEventTypes = () => {
 
 export const EventTypesProvider = ({ children }: { children: ReactNode }) => {
   const [eventTypes, setEventTypes] = useState<EventTypes[]>([]);
+  const locale = useLocale();
 
   useEffect(() => {
     const fetchEvent = async () => {
-     const res = await fetchEventTypes();
+     const res = await fetchEventTypes(locale);
       setEventTypes(res);
     };
 
     fetchEvent();
-  }, []);
+  }, [locale]);
 
   const getEventTypeBySlug = (slug: string) =>
     eventTypes.find((type) => type.slug === slug);

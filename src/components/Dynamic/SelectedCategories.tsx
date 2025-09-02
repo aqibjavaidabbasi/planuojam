@@ -1,13 +1,14 @@
+"use client";
 import { SelectedCategoriesList } from '@/types/pagesTypes'
 import { filterUniqueCategoriesByParent } from '@/utils/helpers';
 import React from 'react'
 import Heading from '../custom/heading';
 import CategoryCard from './CategoryCard';
 import NoDataCard from '../custom/NoDataCard';
-
+import { useTranslations } from 'next-intl';
 
 function SelectedCategories({ data }: { data: SelectedCategoriesList }) {
-
+    const t = useTranslations('Dynamic.SelectedCategories');
     const updatedData = filterUniqueCategoriesByParent(data);
 
     return (
@@ -21,10 +22,10 @@ function SelectedCategories({ data }: { data: SelectedCategoriesList }) {
                     updatedData.length > 0 ?
                         updatedData.map(item => {
                             const category = item.category;
-                            return ( <CategoryCard key={category.documentId} category={category} />)
+                            return (<CategoryCard key={category.documentId} category={category} />)
                         })
                         :
-                        <NoDataCard>No Categories Found</NoDataCard>
+                        <NoDataCard>{t('noCategoriesFound')}</NoDataCard>
                 }
             </div>
         </div>

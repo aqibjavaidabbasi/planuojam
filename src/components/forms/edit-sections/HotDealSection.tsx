@@ -28,11 +28,11 @@ export default function HotDealSection({ listing, onSaved }: { listing: ListingI
   const [submitting, setSubmitting] = useState(false)
   const { register, watch, setValue, handleSubmit } = useForm<HotDealForm>({
     defaultValues: {
-      enableHotDeal: (listing.hotDeal as any)?.enableHotDeal ?? false,
-      startDate: (listing.hotDeal as any)?.startDate || "",
-      lastDate: (listing.hotDeal as any)?.lastDate || "",
-      dealNote: (listing.hotDeal as any)?.dealNote || "",
-      discount: (listing.hotDeal as any)?.discount || { discountType: "Flat Rate" },
+      enableHotDeal: (listing.hotDeal)?.enableHotDeal ?? false,
+      startDate: (listing.hotDeal)?.startDate || "",
+      lastDate: (listing.hotDeal)?.lastDate || "",
+      dealNote: (listing.hotDeal)?.dealNote || "",
+      discount: (listing.hotDeal)?.discount || { discountType: "Flat Rate" },
     },
   })
 
@@ -65,8 +65,8 @@ export default function HotDealSection({ listing, onSaved }: { listing: ListingI
       await updateListing(listing.documentId, { data: { hotDeal: values } })
       toast.success("Hot Deal updated")
       onSaved?.()
-    } catch (e: any) {
-      toast.error(e?.message || "Failed to update Hot Deal")
+    } catch (e: unknown) {
+      toast.error((e as Error)?.message || "Failed to update Hot Deal")
     } finally {
       setSubmitting(false)
     }
@@ -98,7 +98,7 @@ export default function HotDealSection({ listing, onSaved }: { listing: ListingI
                 label="Discount Type"
                 disabled={submitting}
                 value={form.discount?.discountType || "Flat Rate"}
-                onChange={(e: any) => setValue("discount.discountType", e.target.value, { shouldDirty: true })}
+                onChange={(e) => setValue("discount.discountType", e.target.value === "Flat Rate" ? "Flat Rate" : "Percentage", { shouldDirty: true })}
                 options={[
                   { label: "Flat Rate", value: "Flat Rate" },
                   { label: "Percentage", value: "Percentage" },

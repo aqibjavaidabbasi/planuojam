@@ -18,6 +18,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import LoginNavigateModal from '../modals/LoginNavigateModal'
 import { addToLikedListing, removeFromLikedListing } from '@/store/thunks/likedListing'
 import toast from 'react-hot-toast'
+import { useTranslations } from 'next-intl'
 
 function ListingCard({ item }: { item: ListingItem }) {
   const router = useRouter();
@@ -26,6 +27,7 @@ function ListingCard({ item }: { item: ListingItem }) {
   const { status, items: likedListings } = useAppSelector(state => state.likedListings);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const dispatch = useAppDispatch();
+  const t = useTranslations('Dynamic.ListingCard');
 
   const isLiked = Array.isArray(likedListings) && likedListings.some(listing => listing.listing.documentId === item.documentId);
 
@@ -47,9 +49,9 @@ function ListingCard({ item }: { item: ListingItem }) {
         ? dispatch(removeFromLikedListing(likedItem!.documentId)).unwrap()
         : dispatch(addToLikedListing(item.documentId)).unwrap(),
       {
-        loading: `${isLiked ? 'Removing' : 'Adding'} to wishlist...`,
-        success: `${isLiked ? 'Removed' : 'Added'} to wishlist!`,
-        error: `${isLiked ? 'Failed to remove' : 'Failed to add'} to wishlist`
+        loading: isLiked ? t('toasts.removing') : t('toasts.adding'),
+        success: isLiked ? t('toasts.removed') : t('toasts.added'),
+        error: isLiked ? t('toasts.removeFailed') : t('toasts.addFailed')
       }
     )
   }
@@ -91,8 +93,8 @@ function ListingCard({ item }: { item: ListingItem }) {
           <div className="relative">
             <div className="bg-primary text-white w-16 h-16 rounded-full flex items-center justify-center transform rotate-12">
               <div className="text-center">
-                <div className="text-xs font-bold">HOT</div>
-                <div className="text-xs">DEAL</div>
+                <div className="text-xs font-bold">{t('hot')}</div>
+                <div className="text-xs">{t('deal')}</div>
               </div>
             </div>
             <div className="absolute inset-0 rounded-full border-2 border-white transform rotate-12"></div>
@@ -121,7 +123,7 @@ function ListingCard({ item }: { item: ListingItem }) {
               <div className="relative w-full h-40 md:h-56 lg:h-64">
                 <Image
                   src={imageUrl}
-                  alt={`Venue Image ${idx + 1}`}
+                  alt={t('imageAlt', { index: idx + 1 })}
                   fill
                   style={{ objectFit: 'cover' }}
                   sizes="(max-width: 768px) 100vw, 400px"
@@ -134,7 +136,7 @@ function ListingCard({ item }: { item: ListingItem }) {
           <div className="relative w-full h-40 md:h-56 lg:h-64">
             <Image
               src={"/placeholder.png"}
-              alt="placeholder"
+              alt={t('placeholderAlt')}
               fill
               style={{ objectFit: 'cover' }}
               sizes="(max-width: 768px) 100vw, 400px"
@@ -149,7 +151,7 @@ function ListingCard({ item }: { item: ListingItem }) {
         <div className="flex justify-between items-center">
           <strong className="text-base md:text-lg">{item.title}</strong>
           <div className="flex gap-1 text-primary items-center text-sm">
-            <span>{item.averageRating ?? 'Unrated'}</span>
+            <span>{item.averageRating ?? t('unrated')}</span>
             <span>({item.ratingsCount ?? 0})</span>
           </div>
         </div>
@@ -164,11 +166,11 @@ function ListingCard({ item }: { item: ListingItem }) {
                     .map(area => `${area?.city?.name ?? ''}  ${area?.state?.name ?? ''}`)
                     .filter(Boolean)
                     .join(', ')
-                  : 'No location provided'}
+                  : t('noLocation')}
               </span>
               <span>
                 {item.listingItem[0].__component === 'dynamic-blocks.venue' && item.listingItem[0].location
-                  ? item.listingItem[0].location.country : 'No Venue Location provided'}
+                  ? item.listingItem[0].location.country : t('noVenueLocation')}
               </span>
             </li>
           )}
@@ -180,11 +182,11 @@ function ListingCard({ item }: { item: ListingItem }) {
           <div className="flex items-center gap-2 text-sm">
             {item.price ? (
               <>
-                <span className="font-medium">Price</span>
+                <span className="font-medium">{t('price')}</span>
                 <span className="font-semibold text-primary">{siteSettings.currency ? siteSettings.currency.symbol : '$'}{item.price.toLocaleString()}</span>
               </>
             ) : (
-              <span>Contact for pricing</span>
+              <span>{t('contactForPricing')}</span>
             )}
           </div>
           {user?.serviceType && user?.documentId && item?.user?.documentId === user.documentId ? (
@@ -193,11 +195,11 @@ function ListingCard({ item }: { item: ListingItem }) {
               size="small"
               onClick={() => router.push(`/listing/${item.documentId}/edit`)}
             >
-              Edit <IoNavigateOutline />
+              {t('edit')} <IoNavigateOutline />
             </Button>
           ) : (
             <Button style="secondary" size="small" onClick={() => router.push(`/listing/${item.slug}`)}>
-              View <IoNavigateOutline />
+              {t('view')} <IoNavigateOutline />
             </Button>
           )}
         </div>

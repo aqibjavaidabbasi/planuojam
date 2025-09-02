@@ -4,8 +4,11 @@ import React, { useState } from "react";
 import Button from "./Button";
 import { FaXmark } from "react-icons/fa6";
 import toast from "react-hot-toast";
+import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 const ImageUploader = ({setImageIds, disabled}: {setImageIds: (ids: number[]) => void, disabled: boolean}) => {
+    const t = useTranslations('Custom.ImageUploader');
     const [files, setFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
     const [uploading, setUploading] = useState(false);
@@ -43,14 +46,14 @@ const ImageUploader = ({setImageIds, disabled}: {setImageIds: (ids: number[]) =>
             setUploading(true);
             const res = await uploadToStrapi(files);
             console.log("Uploaded:", res);
-            setImageIds(res.map((item: any) => item.id));
+            setImageIds(res.map((item) => item.id));
             // Reset
             setFiles([]);
             setPreviews([]);
-            toast.success("Images Uploaded Successfully")
+            toast.success(t('toasts.uploadSuccess'))
         } catch (err) {
             console.error("Upload error:", err);
-            toast.error("Failed to Upload Images")
+            toast.error(t('toasts.uploadFailed'))
         } finally {
             setUploading(false);
         }
@@ -71,15 +74,17 @@ const ImageUploader = ({setImageIds, disabled}: {setImageIds: (ids: number[]) =>
                 htmlFor="fileInput"
                 className="px-4 py-2 bg-primary text-white rounded-lg cursor-pointer"
             >
-                Select Images
+                {t('selectImages')}
             </label>
 
             <div className="grid grid-cols-3 gap-4 mt-4">
                 {previews.map((src, index) => (
                     <div key={index} className="relative">
-                        <img
+                        <Image
                             src={src}
                             alt={`preview-${index}`}
+                            width={200}
+                            height={200}
                             className="w-full h-32 object-cover rounded-lg"
                         />
                         <Button onClick={() => removeFile(index)} disabled={uploading || disabled} style="secondary" extraStyles="absolute top-1 right-1 !rounded-full !p-2" >
@@ -89,7 +94,11 @@ const ImageUploader = ({setImageIds, disabled}: {setImageIds: (ids: number[]) =>
                 ))}
             </div>
 
-            {files.length > 0 && (<Button onClick={handleUpload} style="primary" disabled={uploading || disabled} >Upload {files.length} Images</Button>)}
+            {files.length > 0 && (
+                <Button onClick={handleUpload} style="primary" disabled={uploading || disabled} >
+                    {t('uploadImages', {count: files.length})}
+                </Button>
+            )}
         </div>
     );
 };

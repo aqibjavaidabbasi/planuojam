@@ -1,0 +1,367 @@
+{
+  "Auth": {
+    "Login": {
+      "title": "Sveiki sugrįžę",
+      "subtitle": "Prisijunkite prie savo paskyros",
+      "noAccount": "Neturite paskyros?",
+      "signUpHere": "Registruokitės čia",
+      "loggingIn": "Jungiama...",
+      "loggedIn": "Sėkmingai prisijungėte!",
+      "loginFailed": "Prisijungti nepavyko. Bandykite dar kartą.",
+      "emailLabel": "El. paštas",
+      "emailPlaceholder": "Įveskite el. paštą",
+      "emailRequired": "El. paštas yra privalomas",
+      "emailInvalid": "Neteisingas el. paštas",
+      "passwordLabel": "Slaptažodis",
+      "passwordPlaceholder": "Įveskite slaptažodį",
+      "passwordRequired": "Slaptažodis yra privalomas",
+      "forgotPassword": "Pamiršote slaptažodį?",
+      "signIn": "Prisijungti"
+    },
+    "Register": {
+      "title": "Sukurti paskyrą",
+      "subtitle": "Prisijunkite prie mūsų bendruomenės šiandien",
+      "registering": "Registruojami jūsų duomenys...",
+      "registered": "Sėkmingai užsiregistravote!",
+      "registerFailed": "Registracija nepavyko. Bandykite dar kartą.",
+      "joinAs": "Noriu prisijungti kaip:",
+      "roleRequired": "Pasirinkite rolę",
+      "roleBuyer": "Pirkėjas",
+      "roleBuyerDesc": "Raskite paslaugas",
+      "roleProvider": "Paslaugų teikėjas",
+      "roleProviderDesc": "Siūlykite paslaugas",
+      "chooseService": "Pasirinkite paslaugą",
+      "serviceRequired": "Paslauga privaloma",
+      "usernameLabel": "Vartotojo vardas",
+      "usernamePlaceholder": "Įveskite vartotojo vardą",
+      "usernameRequired": "Įveskite vartotojo vardą",
+      "emailLabel": "El. paštas",
+      "emailPlaceholder": "Įveskite el. paštą",
+      "emailRequired": "El. paštas yra privalomas",
+      "emailInvalid": "Neteisingas el. paštas",
+      "passwordLabel": "Slaptažodis",
+      "passwordPlaceholder": "Įveskite stiprų slaptažodį",
+      "passwordRequired": "Slaptažodis yra privalomas",
+      "confirmPasswordLabel": "Patvirtinkite slaptažodį",
+      "confirmPasswordPlaceholder": "Pakartokite slaptažodį",
+      "confirmPasswordRequired": "Slaptažodis yra privalomas",
+      "tosAgree": "Sutinku su Paslaugų teikimo sąlygomis ir Privatumo politika",
+      "tosRequired": "Perskaitykite ir sutikite su Paslaugų teikimo sąlygomis ir Privatumo politika",
+      "registerCta": "Registruotis",
+      "alreadyHaveAccount": "Jau turite paskyrą?",
+      "signInHere": "Prisijunkite čia"
+    },
+    "ResetPassword": {
+      "title": "Atkurti slaptažodį",
+      "resetting": "Atkuriamas slaptažodis...",
+      "resetSuccessToast": "Slaptažodis sėkmingai atkurtas! Dabar galite prisijungti",
+      "resetFailed": "Nepavyko atkurti slaptažodžio. Bandykite dar kartą.",
+      "resetSuccess": "Slaptažodis sėkmingai atkurtas!",
+      "youCanLogin": "Dabar galite prisijungti su nauju slaptažodžiu.",
+      "goToLogin": "Eiti į prisijungimą",
+      "newPasswordPlaceholder": "Naujas slaptažodis",
+      "passwordRequired": "Slaptažodis yra privalomas",
+      "passwordMinLength": "Slaptažodis turi būti bent 8 simbolių",
+      "confirmNewPasswordPlaceholder": "Patvirtinkite naują slaptažodį",
+      "confirmPasswordRequired": "Patvirtinkite slaptažodį",
+      "passwordsDoNotMatch": "Slaptažodžiai nesutampa",
+      "resetCta": "Atkurti slaptažodį",
+      "backToLogin": "Grįžti į prisijungimą"
+    },
+    "EmailConfirmation": {
+      "title": "El. pašto patvirtinimas",
+      "instruction": "Patvirtinkite savo el. pašto adresą, kad suaktyvintumėte paskyrą.",
+      "resendHint": "Jei negavote patvirtinimo laiško, galite jį persiųsti žemiau.",
+      "resendLoading": "Siunčiamas patvirtinimo laiškas...",
+      "resendSuccess": "Patvirtinimo laiškas sėkmingai išsiųstas!",
+      "resendFailed": "Nepavyko išsiųsti patvirtinimo laiško. Bandykite dar kartą.",
+      "confirming": "Tvirtinamas jūsų el. paštas...",
+      "confirmed": "El. paštas sėkmingai patvirtintas! Galite prisijungti ir tęsti",
+      "confirmFailed": "Nepavyko patvirtinti el. pašto. Bandykite dar kartą.",
+      "success": "El. paštas sėkmingai patvirtintas!",
+      "youCanLogin": "Dabar galite prisijungti prie savo paskyros.",
+      "login": "Prisijungti",
+      "tokenLabel": "Patvirtinimo kodas",
+      "tokenPlaceholder": "Įveskite patvirtinimo kodą iš el. laiško",
+      "tokenRequired": "Reikalingas patvirtinimo kodas",
+      "confirmCta": "Patvirtinti el. paštą",
+      "resendCta": "Persiųsti patvirtinimo el. laišką"
+    }
+  },
+  "Contact": {
+    "chatWithUs": {
+      "title": "Susisiekite su mumis",
+      "liveChat": "Pradėti pokalbį gyvai",
+      "email": "Parašykite mums el. paštu",
+      "messageOnX": "Parašykite mums per X"
+    },
+    "callUs": {
+      "title": "Paskambinkite mums",
+      "hours": "Skambinkite mūsų komandai I–V nuo 8 iki 17 val.",
+      "phone": "+1 (555) 000–0000"
+    },
+    "visitUs": {
+      "title": "Apsilankykite pas mus",
+      "description": "Apsilankykite mūsų būstinėje Melburne.",
+      "address": "100 Smith Street, Collingwood VIC 3066"
+    },
+    "Form": {
+      "title": "Susisiekite su mūsų komanda",
+      "description": "Turite klausimų apie produktą ar plėtrą mūsų platformoje? Mes pasiruošę padėti. Susisiekite su mūsų draugiška komanda 24/7 ir pradėkite naudotis per mažiau nei 5 minutes.",
+      "firstName": "Vardas",
+      "lastName": "Pavardė",
+      "emailPlaceholder": "jūs@imone.com",
+      "country": {
+        "lt": "LT",
+        "ru": "RU"
+      },
+      "phonePlaceholder": "+1 (555) 000-0000",
+      "messagePlaceholder": "Palikite mums žinutę...",
+      "send": "Siųsti žinutę"
+    }
+  },
+  "Common": {
+    "errors": {
+      "failedToLoad": "Nepavyko įkelti",
+      "notFound": "Nerasta"
+    },
+    "loading": "Kraunama..."
+  },
+  "Listing": {
+    "Edit": {
+      "preview": "Peržiūrėti įrašą",
+      "editing": "Redaguojama",
+      "listingFallback": "Įrašas",
+      "documentId": "Dokumento ID",
+      "status": "Būsena",
+      "tabs": {
+        "basic": "Pagrindinė informacija",
+        "vv": "Tiekėjo/Vietos informacija",
+        "deal": "Karštas pasiūlymas",
+        "images": "Nuotraukos",
+        "contact": "Kontaktai",
+        "social": "Socialiniai tinklai",
+        "pricing": "Kainodara",
+        "faqs": "DUK"
+      }
+    },
+    "Details": {
+      "overview": "Apžvalga",
+      "rating": "Įvertinimas",
+      "hotDeal": "Karštas pasiūlymas",
+      "flatRate": "Fiksuota kaina",
+      "percentOff": "nuolaida",
+      "valid": "Galioja",
+      "reviews": "Atsiliepimai",
+      "noReviews": "Kol kas nėra atsiliepimų",
+      "faqs": "DUK"
+    },
+    "Hero": {
+      "by": "autorius {username}",
+      "hotDealBadge": "KARŠTAS PASIŪLYMAS",
+      "percentageOffLimited": "{percent}% NUOLAIDA - Ribotas laikas",
+      "getTicketCta": "Įsigyti bilietą",
+      "visitWebsite": "Apsilankyti svetainėje"
+    }
+  },
+  "Map": {
+    "loading": "Kraunamas žemėlapis...",
+    "errors": {
+      "failedToLoadLocations": "Nepavyko įkelti vietų"
+    },
+    "fallback": {
+      "unnamedVenue": "Be pavadinimo",
+      "unknownUser": "Nežinomas",
+      "uncategorized": "Be kategorijos",
+      "noAddress": "Adresas nenurodytas"
+    }
+  },
+  "Vendors": {
+    "filters": {
+      "chooseVendor": "Pasirinkite tiekėją",
+      "selectPricing": "Pasirinkite kainodarą",
+      "pickEventType": "Pasirinkite renginio tipą",
+      "withPricingOnly": "Tik su kaina",
+      "withoutPricingOnly": "Tik be kainos"
+    },
+    "noVendorsFound": "Tiekėjų nerasta"
+  },
+  "Venues": {
+    "filters": {
+      "chooseVenue": "Pasirinkite vietą",
+      "selectPricing": "Pasirinkite kainodarą",
+      "chooseEventType": "Pasirinkite renginio tipą",
+      "withPricingOnly": "Tik su kaina",
+      "withoutPricingOnly": "Tik be kainos"
+    },
+    "noVenuesFound": "Vietų nerasta"
+  },
+  "NotFound": {
+    "title": "Oi! Įvyko klaida",
+    "description": "Panašu, kad nerandame puslapio, kurio ieškote."
+  },
+  "Global": {
+    "SubscriptionForm": {
+      "emailPlaceholder": "Įveskite savo el. paštą",
+      "subscribe": "Prenumeruoti"
+    }
+  },
+  "Modals": {
+    "ForgotPassword": {
+      "title": "Atkurti slaptažodį",
+      "description": "Įveskite savo el. pašto adresą ir mes atsiųsime nuorodą slaptažodžiui atkurti",
+      "emailLabel": "El. paštas",
+      "emailPlaceholder": "Įveskite el. paštą",
+      "sendResetLink": "Siųsti atkūrimo nuorodą",
+      "errors": {
+        "emailRequired": "El. paštas yra privalomas",
+        "emailInvalid": "Neteisingas el. pašto adresas"
+      },
+      "toasts": {
+        "sending": "Siunčiamas el. laiškas...",
+        "sent": "El. laiškas sėkmingai išsiųstas!",
+        "errorDefault": "Nepavyko išsiųsti el. laiško. Bandykite dar kartą."
+      }
+    },
+    "LoginNavigate": {
+      "title": "Prisijunkite, kad pamėgtumėte šį įrašą",
+      "description": "Prisijungę galėsite išsaugoti šį įrašą į mėgstamus ir gauti pranešimus, kai jis bus pasiekiamas.",
+      "loginCta": "Prisijungti"
+    },
+    "Logout": {
+      "title": "Atsijungti",
+      "confirmTitle": "Ar tikrai norite atsijungti?",
+      "confirmDesc": "Būsite atjungti nuo paskyros ir nukreipti į prisijungimo puslapį.",
+      "cancel": "Atšaukti",
+      "logoutCta": "Atsijungti",
+      "toasts": {
+        "loggedOut": "Sėkmingai atsijungėte!"
+      }
+    },
+    "ListingItem": {
+      "errors": {
+        "noImage": "Įkelkite bent vieną nuotrauką",
+        "invalidServiceType": "Pasirinkite tinkamą paslaugos tipą"
+      }
+    }
+  },
+  "Profile": {
+    "ReviewsTab": {
+      "title": "Atsiliepimai",
+      "subtitle": "Peržiūrėkite ir tvarkykite savo turto atsiliepimus.",
+      "propertyLabel": "Turtas:"
+    },
+    "ProfileTab": {
+      "title": "Paskyros nustatymai",
+      "subtitle": "Tvarkykite savo asmeninę informaciją ir slaptažodį.",
+      "logout": "Atsijungti",
+      "usernameLabel": "Vartotojo vardas",
+      "usernamePlaceholder": "Vartotojo vardas",
+      "saveUsername": "Išsaugoti vardą",
+      "errors": {
+        "usernameEmpty": "Vartotojo vardas negali būti tuščias",
+        "userNotFound": "Vartotojas nerastas"
+      },
+      "toasts": {
+        "updatingUsername": "Atnaujinamas vartotojo vardas...",
+        "usernameUpdated": "Vartotojo vardas sėkmingai atnaujintas",
+        "usernameUpdateFailed": "Nepavyko atnaujinti vartotojo vardo",
+        "updatingPassword": "Atnaujinamas slaptažodis...",
+        "passwordUpdated": "Slaptažodis sėkmingai atnaujintas",
+        "passwordUpdateFailed": "Nepavyko atnaujinti slaptažodžio"
+      },
+      "password": {
+        "updateTitle": "Atnaujinti slaptažodį",
+        "currentLabel": "Dabartinis slaptažodis",
+        "currentPlaceholder": "Įveskite dabartinį slaptažodį",
+        "newLabel": "Naujas slaptažodis",
+        "newPlaceholder": "Įveskite naują slaptažodį",
+        "confirmLabel": "Patvirtinkite slaptažodį",
+        "confirmPlaceholder": "Patvirtinkite naują slaptažodį",
+        "updateCta": "Atnaujinti slaptažodį",
+        "errors": {
+          "currentRequired": "Būtina įvesti dabartinį slaptažodį",
+          "newRequired": "Būtina įvesti naują slaptažodį",
+          "confirmRequired": "Būtina patvirtinti slaptažodį",
+          "minLength": "Slaptažodis turi būti bent 8 simbolių",
+          "noMatch": "Slaptažodžiai nesutampa"
+        }
+      }
+    },
+    "FavouriteListings": {
+      "title": "Mėgstami įrašai",
+      "subtitle": "Jūsų išsaugoti ir mėgstami objektai.",
+      "empty": "Nėra mėgstamų įrašų, kuriuos būtų galima rodyti"
+    },
+    "MyListings": {
+      "title": "Mano įrašai",
+      "subtitle": "Tvarkykite visus savo įrašus.",
+      "filterLabel": "Filtruoti pagal būseną",
+      "allStatuses": "Visos būsenos",
+      "create": "Sukurti įrašą",
+      "empty": "Nėra įrašų rodymui. Pradėkite sukurdami pirmą įrašą",
+      "status": {
+        "draft": "Juodraštis",
+        "published": "Paskelbtas",
+        "pending": "Laukia peržiūros",
+        "archived": "Archyvuotas"
+      }
+    },
+    "Messages": {
+      "title": "Žinutės",
+      "subtitle": "Netrukus – sekite naujienas dėl žinučių funkcijų!",
+      "comingSoonTitle": "Žinutės netrukus",
+      "comingSoonDesc": "Dirbame ties galinga žinučių sistema, kad galėtumėte bendrauti su savininkais ir nuomininkais."
+    }
+  },
+  "Custom": {
+    "ImageUploader": {
+      "selectImages": "Pasirinkti nuotraukas",
+      "uploadImages": "Įkelti {count} nuotraukas",
+      "toasts": {
+        "uploadSuccess": "Nuotraukos sėkmingai įkeltos",
+        "uploadFailed": "Nepavyko įkelti nuotraukų"
+      }
+    },
+    "NoDataCard": {
+      "expandSearchHint": "Pabandykite išplėsti paieškos spindulį arba rinkitės kitą vietą."
+    },
+    "VendorCard": {
+      "title": "Tiekėjo informacija",
+      "experienceYears": "Patirtis: {years} m.",
+      "serviceArea": "Paslaugų zona:",
+      "notSpecified": "Nenurodyta"
+    },
+    "VenueCard": {
+      "title": "Vietos informacija",
+      "capacity": "Talpa: {count}",
+      "location": "Vieta"
+    }
+  },
+  "Dynamic": {
+    "ListingCard": {
+      "toasts": {
+        "adding": "Pridedama į pageidavimus...",
+        "removed": "Pašalinta iš pageidavimų!",
+        "removing": "Šalinama iš pageidavimų...",
+        "added": "Pridėta į pageidavimus!",
+        "addFailed": "Nepavyko pridėti į pageidavimus",
+        "removeFailed": "Nepavyko pašalinti iš pageidavimų"
+      },
+      "hot": "KARŠTA",
+      "deal": "AKCIJA",
+      "imageAlt": "Vietos nuotrauka {index}",
+      "placeholderAlt": "vietos rezervacija",
+      "unrated": "Neįvertinta",
+      "noLocation": "Vieta nenurodyta",
+      "noVenueLocation": "Vietos lokacija nenurodyta",
+      "price": "Kaina",
+      "contactForPricing": "Dėl kainos susisiekite",
+      "edit": "Redaguoti",
+      "view": "Peržiūrėti"
+    },
+    "SelectedCategories": {
+      "noCategoriesFound": "Kategorijų nerasta"
+    }
+  }
+}

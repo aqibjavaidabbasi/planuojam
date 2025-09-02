@@ -8,6 +8,7 @@ import Button from "../custom/Button";
 import { useForm } from "react-hook-form";
 import { forgotPassword } from "@/services/auth";
 import toast from "react-hot-toast";
+import { useTranslations } from "next-intl";
 
 interface ForgotPasswordModalProps {
   onClose: () => void;
@@ -15,6 +16,7 @@ interface ForgotPasswordModalProps {
 
 function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
   const { siteSettings } = useSiteSettings();
+  const t = useTranslations("Modals.ForgotPassword");
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -27,13 +29,13 @@ function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
         onClose();
       }),
       {
-        loading: "Sending email...",
-        success: "Email Sent successfully!",
+        loading: t("toasts.sending"),
+        success: t("toasts.sent"),
         error: (err) => {
           if (typeof err === "string") return err;
           if (err && typeof err === "object" && "message" in err)
             return String(err.message);
-          return "Could not send email. Please try again.";
+          return t("toasts.errorDefault");
         },
       }
     );
@@ -51,24 +53,21 @@ function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
             style={{ objectFit: "cover" }}
           />
         </div>
-        <h1 className="text-2xl font-bold mb-2">Reset Password</h1>
-        <p className="text-sm">
-          Enter your email address and we&apos;ll send you a link to reset your
-          password
-        </p>
+        <h1 className="text-2xl font-bold mb-2">{t("title")}</h1>
+        <p className="text-sm">{t("description")}</p>
       </div>
 
       <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
         <Input
           type="email"
-          label="email"
-          placeholder="Enter your email"
+          label={t("emailLabel")}
+          placeholder={t("emailPlaceholder")}
           disabled={isSubmitting}
           {...register("email", {
-            required: "Email is required",
+            required: t("errors.emailRequired"),
             pattern: {
               value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-              message: "Invalid email address",
+              message: t("errors.emailInvalid"),
             },
           })}
         />
@@ -84,7 +83,7 @@ function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
           extraStyles="!w-full"
           disabled={isSubmitting}
         >
-          Send Reset Link
+          {t("sendResetLink")}
         </Button>
       </form>
     </div>

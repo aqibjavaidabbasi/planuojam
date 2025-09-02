@@ -24,8 +24,8 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
       toast.success("Images saved")
       onSaved?.()
       setImageIds([])
-    } catch (e: any) {
-      toast.error(e?.message || "Failed to save images")
+    } catch (e: unknown) {
+      toast.error((e as Error)?.message || "Failed to save images")
     } finally {
       setSubmitting(false)
     }

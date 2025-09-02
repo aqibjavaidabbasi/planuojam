@@ -1,5 +1,33 @@
 import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
 import { createQuery, fetchAPI } from "./api";
+import { DEFAULT_LOCALE } from "@/config/i18n";
+
+// Generic fetch with locale fallback: try requested locale -> DEFAULT_LOCALE -> base (no locale)
+async function fetchWithLocaleFallback(
+    resource: string,
+    populate: Record<string, any>,
+    filters?: Record<string, any>,
+    locale?: string
+) {
+    // 1) Try the requested locale
+    if (locale) {
+        const queryWithLocale = createQuery(populate, { locale });
+        const resLocale = await fetchAPI(resource, queryWithLocale, filters);
+        if (Array.isArray(resLocale) ? resLocale.length : !!resLocale) return resLocale;
+    }
+
+    // 2) Fallback to DEFAULT_LOCALE (if different from requested)
+    if (!locale || locale !== DEFAULT_LOCALE) {
+        const queryDefault = createQuery(populate, { locale: DEFAULT_LOCALE });
+        const resDefault = await fetchAPI(resource, queryDefault, filters);
+        if (Array.isArray(resDefault) ? resDefault.length : !!resDefault) return resDefault;
+    }
+
+    // 3) Final fallback: no locale constraint
+    const queryBase = createQuery(populate);
+    const resBase = await fetchAPI(resource, queryBase, filters);
+    return resBase;
+}
 
 export async function fetchChildCategories(slug: string) {
     const filter = {
@@ -21,7 +49,7 @@ export async function fetchChildCategories(slug: string) {
     const res = await fetchAPI(`categories`, query, filter);
     return res;
 }
-export async function fetchParentCategories() {
+export async function fetchParentCategories(locale?: string) {
     const filter = {
         filters: {
             parentCategory: {
@@ -29,12 +57,10 @@ export async function fetchParentCategories() {
             }
         }
     }
-    const populate = {}
-    const query = createQuery(populate);
-    const res = await fetchAPI(`categories`, query, filter);
-    return res;
+    const populate = {};
+    return await fetchWithLocaleFallback('categories', populate, filter, locale);
 }
-export async function fetchEventTypes() {
+export async function fetchEventTypes(locale?: string) {
     const populate = {
         image: {
             populate: '*'
@@ -43,9 +69,7 @@ export async function fetchEventTypes() {
             populate: true
         }
     }
-    const query = createQuery(populate);
-    const res = await fetchAPI('event-types', query);
-    return res;
+    return await fetchWithLocaleFallback('event-types', populate, undefined, locale);
 }
 
 export async function fetchListings(type: 'venue' | 'vendor', appliedFilters = {}) {
@@ -61,18 +85,14 @@ export async function fetchListings(type: 'venue' | 'vendor', appliedFilters = {
     return res;
 }
 
-export async function fetchCities() {
+export async function fetchCities(locale?: string) {
     const populate = { populate: '*' };
-    const query = createQuery(populate);
-    const res = await fetchAPI('cities', query);
-    return res;
+    return await fetchWithLocaleFallback('cities', populate, undefined, locale);
 }
 
-export async function fetchStates() {
+export async function fetchStates(locale?: string) {
     const populate = { populate: '*' };
-    const query = createQuery(populate);
-    const res = await fetchAPI('states', query);
-    return res;
+    return await fetchWithLocaleFallback('states', populate, undefined, locale);
 }
 
 export async function fetchListingsPerEvents(passedEvent: string) {

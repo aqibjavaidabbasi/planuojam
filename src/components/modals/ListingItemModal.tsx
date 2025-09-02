@@ -10,6 +10,7 @@ import Checkbox from "../custom/Checkbox"
 import Button from "../custom/Button"
 import type { FAQ, category } from "@/types/pagesTypes"
 import { useForm } from "react-hook-form"
+import type { FieldError, Path, PathValue } from "react-hook-form"
 import ToggleButton from "../custom/ToggleButton"
 import ImageUploader from "../custom/ImageUploader"
 import MultiSelect from "../custom/MultiSelect"
@@ -25,6 +26,7 @@ import { createListing } from "@/services/listing"
 import { useAppSelector } from "@/store/hooks"
 import { geocodePlace } from "@/utils/mapboxLocation"
 import { slugify } from "@/utils/helpers"
+import { useLocale, useTranslations } from "next-intl"
 
 interface ListingItemModalProps {
   isOpen: boolean
@@ -32,14 +34,16 @@ interface ListingItemModalProps {
   onSaved?: () => void
 }
 
-const ErrorMessage = ({ error }: { error?: any }) => {
+const ErrorMessage = ({ error }: { error?: FieldError | { message?: string } }) => {
   if (!error) return null
-  return <p className="text-red-500 text-sm mt-1">{error.message}</p>
+  return <p className="text-red-500 text-sm mt-1">{(error as { message?: string }).message}</p>
 }
 
 const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, onSaved }) => {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const t = useTranslations('Modals.ListingItem')
+  const locale = useLocale()
 
   const {
     handleSubmit: rhfHandleSubmit,
@@ -104,22 +108,23 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
 
   const isVendor = useMemo(() => (form?.type || "vendor").toLowerCase() === "vendor", [form?.type])
 
-  const updateField = (path: string, value: any) => {
-    setValue(path as any, value, { shouldDirty: true })
+  const updateField = <P extends Path<CreateListingFormTypes>>(path: P, value: PathValue<CreateListingFormTypes, P>) => {
+    setValue(path, value, { shouldDirty: true })
   }
 
-  const addArrayItem = (path: string, item: any) => {
-    const current = (getValues(path as any) as any[]) || []
-    setValue(path as any, [...current, item], { shouldDirty: true })
+  const addArrayItem = <P extends Path<CreateListingFormTypes>>(path: P, item: unknown) => {
+    const current = (getValues(path) as unknown as unknown[]) || []
+    const next = [...current, item] as unknown[]
+    setValue(path, next as PathValue<CreateListingFormTypes, P>, { shouldDirty: true })
   }
 
-  const removeArrayItem = (path: string, index: number) => {
-    const current = (getValues(path as any) as any[]) || []
-    const next = current.filter((_, i) => i !== index)
-    setValue(path as any, next, { shouldDirty: true })
+  const removeArrayItem = <P extends Path<CreateListingFormTypes>>(path: P, index: number) => {
+    const current = (getValues(path) as unknown as unknown[]) || []
+    const next = current.filter((_, i) => i !== index) as unknown[]
+    setValue(path, next as PathValue<CreateListingFormTypes, P>, { shouldDirty: true })
   }
 
-  const updateListingItem = (field: string, value: any, itemIndex = 0) => {
+  const updateListingItem = (field: string, value: unknown, itemIndex = 0) => {
     const currentItems = getValues("listingItem") || []
     const updatedItems = [...currentItems]
 
@@ -131,18 +136,19 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
 
     // Handle nested field updates
     const fieldParts = field.split(".")
-    let target: any = updatedItems[itemIndex]
+    let target: Record<string, unknown> = updatedItems[itemIndex] as unknown as Record<string, unknown>
 
     for (let i = 0; i < fieldParts.length - 1; i++) {
       const part = fieldParts[i]
-      if (!target[part]) {
+      const current = target[part]
+      if (typeof current !== "object" || current === null) {
         target[part] = {}
       }
-      target = target[part]
+      target = target[part] as Record<string, unknown>
     }
 
-    target[fieldParts[fieldParts.length - 1]] = value
-    setValue("listingItem", updatedItems, { shouldDirty: true })
+    target[fieldParts[fieldParts.length - 1]] = value as unknown
+    setValue("listingItem", updatedItems as PathValue<CreateListingFormTypes, "listingItem">, { shouldDirty: true })
   }
 
   const addServiceArea = () => {
@@ -214,7 +220,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
         payload.user = user.documentId
       }
       if (imageIds.length === 0 && imageIds.length > 0) {
-        setError("Please upload at least one image")
+        setError(t('errors.noImage'))
         return
       }
       //add image ids to portfolio if there are any
@@ -243,64 +249,68 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
         } else if (form.type === "venue") {
           payload.listingItem.map((item) => (item.__component = "dynamic-blocks.venue"))
         } else if (form.type !== "vendor" && form.type !== "venue") {
-          throw new Error("Please select a valid service type")
+          throw new Error(t('errors.invalidServiceType'))
         }
       }
 
       if (form.type && payload.listingItem) {
-        payload.listingItem = payload.listingItem.map((item: any) => {
-          const next: any = {
-            ...item,
+        type ListingItemType = CreateListingFormTypes["listingItem"][number]
+        payload.listingItem = payload.listingItem.map((item): ListingItemType => {
+          let next: ListingItemType = {
+            ...(item as ListingItemType),
             __component: form.type === "vendor" ? "dynamic-blocks.vendor" : "dynamic-blocks.venue",
           }
 
           // Transform vendor serviceArea city/state to relation connects
-          if (Array.isArray(next.serviceArea)) {
-            next.serviceArea = next.serviceArea.map((sa: any) => {
-              const transformed: any = { ...sa }
-              if (sa?.city) {
-                transformed.city = { connect: [sa.city] }
-              } else {
-                // Remove empty city field to avoid validation error
-                delete transformed.city
-              }
-              if (sa?.state) {
-                transformed.state = { connect: [sa.state] }
-              } else {
-                // Remove empty state field to avoid validation error
-                delete transformed.state
-              }
-              return transformed
-            })
+          const serviceArea = next.serviceArea
+          if (Array.isArray(serviceArea)) {
+            next = {
+              ...next,
+              serviceArea: serviceArea.map((sa) => {
+                const transformed = { ...(sa || {}) }
+                if (transformed.city) {
+                  // backend expects relation connect
+                  ;(transformed as unknown as { city: { connect: string[] } }).city = { connect: [transformed.city] as string[] }
+                } else {
+                  delete (transformed as Record<string, unknown>).city
+                }
+                if (transformed.state) {
+                  ;(transformed as unknown as { state: { connect: string[] } }).state = { connect: [transformed.state] as string[] }
+                } else {
+                  delete (transformed as Record<string, unknown>).state
+                }
+                return transformed as NonNullable<ListingItemType["serviceArea"]>[number]
+              }),
+            }
           }
 
           // Transform venue location city/state to relation connects (backend updated to relations)
-          if (next.location) {
-            const loc: any = { ...next.location }
+          if (next.location && typeof next.location === 'object') {
+            const loc = { ...next.location }
             if (loc.city) {
-              loc.city = { connect: [loc.city] }
+              ;(loc as unknown as { city: { connect: string[] } }).city = { connect: [loc.city] as string[] }
             } else {
-              delete loc.city
+              delete (loc as Record<string, unknown>).city
             }
             if (loc.state) {
-              loc.state = { connect: [loc.state] }
+              ;(loc as unknown as { state: { connect: string[] } }).state = { connect: [loc.state] as string[] }
             } else {
-              delete loc.state
+              delete (loc as Record<string, unknown>).state
             }
-            next.location = loc
+            next = { ...next, location: loc as ListingItemType["location"] }
           }
 
-          //only include about, experience years and serviceArea for vendor and the rest for venue,...delete the fields depending on the type...
+          //only include about, experience years and serviceArea for vendor and the rest for venue
           if (form.type === "vendor") {
-            delete next.location
-            delete next.capacity
-            delete next.amneties
-            delete next.bookingDuration
-            delete next.bookingDurationType
+            delete (next as { location?: unknown }).location
+            delete (next as { capacity?: unknown }).capacity
+            delete (next as { amneties?: unknown }).amneties
+            delete (next as { bookingDuration?: unknown }).bookingDuration
+            delete (next as { bookingDurationType?: unknown }).bookingDurationType
           } else {
-            delete next.about
-            delete next.experienceYears
-            delete next.serviceArea
+            delete (next as { about?: unknown }).about
+            delete (next as { experienceYears?: unknown }).experienceYears
+            delete (next as { serviceArea?: unknown }).serviceArea
           }
 
           return next
@@ -308,27 +318,28 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
       }
 
       //set slug using title
-      payload.slug = `${slugify(payload.title)}-${payload?.locale ?? 'en'}-${Date.now()}`
+      payload.slug = `${slugify(payload.title)}-${locale}-${Date.now()}`
 
-      //set locale --later we will do it dynamically but for now hard code it
-      payload.locale = 'en'
+      // set locale from current app locale
+      payload.locale = locale
 
       const data = {
         data: payload,
       }
 
-      const res = await createListing(data)
-      toast.success("Listing Created successfully")
+      await createListing(data)
+      toast.success(t('toasts.created'))
       onSaved?.()
       onClose()
       reset()
       setSelectedCategory("")
       setEventTypesIds([])
-      setError("");
+      setError(null);
       setImageIds([]);
-    } catch (e: any) {
-      setError(e?.message || "Failed to save listing")
-      toast.error("Please fix the errors in the form")
+    } catch (e: unknown) {
+      const message = e && typeof e === 'object' && 'message' in e ? String((e as { message?: unknown }).message) : t('toasts.failed')
+      setError(message)
+      toast.error(t('toasts.fixErrors'))
     } finally {
       setSubmitting(false)
       setIsLoading(false);
@@ -342,15 +353,15 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
       isOpen={isOpen}
       onClose={onClose}
       size="lg"
-      title={"Create Listing"}
+      title={t('title')}
       footer={
         <div className="flex gap-3 justify-between flex-wrap">
           <div className="ml-auto flex gap-2">
             <Button style="ghost" onClick={onClose} disabled={isWorking}>
-              Cancel
+              {t('buttons.cancel')}
             </Button>
             <Button style="primary" onClick={rhfHandleSubmit(onSubmit)} disabled={isWorking}>
-              {submitting ? "Saving..." : "Create"}
+              {submitting ? t('buttons.saving') : t('buttons.create')}
             </Button>
           </div>
         </div>
@@ -364,23 +375,23 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           {/* Basic Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-b-2 border-t-2 border-primary/20 py-4">
             <div className="col-span-2">
-              <h3 className="text-lg font-semibold mb-2">Basic Details</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('sections.basicDetails')}</h3>
             </div>
             <div className="col-span-2">
               <Input
                 type="text"
-                label="Title"
+                label={t('fields.title.label')}
                 disabled={isWorking}
                 required={true}
-                {...register("title", { required: "Title is required" })}
+                {...register("title", { required: t('fields.title.required') })}
               />
               <ErrorMessage error={errors.title} />
             </div>
             <div>
               <Select
-                placeholder="Select Type"
+                placeholder={t('fields.type.placeholder')}
                 disabled={isWorking}
-                {...register("type", { required: "Type is required" })}
+                {...register("type", { required: t('fields.type.required') })}
                 options={categoryOptions.map((category) => ({
                   label: category.name,
                   value: category.name,
@@ -390,14 +401,14 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
             </div>
             <div>
               <Select
-                placeholder="Listing Status"
+                placeholder={t('fields.listingStatus.placeholder')}
                 disabled={isWorking}
-                {...register("listingStatus", { required: "Listing status is required" })}
+                {...register("listingStatus", { required: t('fields.listingStatus.required') })}
                 options={[
-                  { label: "Draft", value: "draft" },
-                  { label: "Published", value: "published" },
-                  { label: "Pending Review", value: "pending review" },
-                  { label: "Archived", value: "archived" },
+                  { label: t('fields.listingStatus.options.draft'), value: "draft" },
+                  { label: t('fields.listingStatus.options.published'), value: "published" },
+                  { label: t('fields.listingStatus.options.pendingReview'), value: "pending review" },
+                  { label: t('fields.listingStatus.options.archived'), value: "archived" },
                 ]}
               />
               <ErrorMessage error={errors.listingStatus} />
@@ -405,19 +416,19 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
             <div>
               <Input
                 type="number"
-                label="Price"
+                label={t('fields.price.label')}
                 disabled={isWorking}
                 {...register("price", {
                   valueAsNumber: true,
-                  min: { value: 0, message: "Price must be positive" },
-                  max: { value: 1000000, message: "Price must be less than 1000000" },
+                  min: { value: 0, message: t('fields.price.errors.min') },
+                  max: { value: 1000000, message: t('fields.price.errors.max') },
                 })}
               />
               <ErrorMessage error={errors.price} />
             </div>
             <div className="flex items-center mt-6">
               <Checkbox
-                label="Featured"
+                label={t('fields.featured.label')}
                 checked={watch("featured")}
                 onChange={(e) => setValue("featured", e.target.checked)}
                 disabled={isWorking}
@@ -426,21 +437,21 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
             {/* Description */}
             <div className="col-span-2">
               <TextArea
-                label="Description"
-                placeholder="Description"
+                label={t('fields.description.label')}
+                placeholder={t('fields.description.placeholder')}
                 disabled={isWorking}
                 rows={4}
-                {...register("description", { required: "Description is required" })}
+                {...register("description", { required: t('fields.description.required') })}
               />
               <ErrorMessage error={errors.description} />
             </div>
             <div>
               <Input
                 type="url"
-                label="Website Link"
+                label={t('fields.websiteLink.label')}
                 disabled={isWorking}
                 {...register("websiteLink", {
-                  pattern: { value: /^https?:\/\/.+/, message: "Please enter a valid URL" },
+                  pattern: { value: /^https?:\/\/.+/, message: t('fields.websiteLink.errors.invalid') },
                 })}
               />
               <ErrorMessage error={errors.websiteLink} />
@@ -448,12 +459,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
             <div>
               <Input
                 type="number"
-                label="Working Hours (per day)"
+                label={t('fields.workingHours.label')}
                 disabled={isWorking}
                 {...register("workingHours", {
                   valueAsNumber: true,
-                  min: { value: 1, message: "Working hours must be at least 1" },
-                  max: { value: 24, message: "Working hours cannot exceed 24" },
+                  min: { value: 1, message: t('fields.workingHours.errors.min') },
+                  max: { value: 24, message: t('fields.workingHours.errors.max') },
                 })}
               />
               <ErrorMessage error={errors.workingHours} />
@@ -462,38 +473,37 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
 
           {/* Vendor/Venue specific */}
           <div className="border-b-2 border-primary/20 py-4">
-            <h3 className="text-lg font-semibold mb-2">{isVendor ? "Vendor" : "Venue"} Details</h3>
+            <h3 className="text-lg font-semibold mb-2">{isVendor ? t('sections.vendorDetails') : t('sections.venueDetails')}</h3>
             <p className="text-gray-500 font-medium text-sm tracking-wide mb-2">
-              (Add a city, state (county/province) for this service area. Add coordinates manually or fetch using the
-              "fetch coordinates" button to get coordinates.)
+              {t('serviceArea.helpText')}
             </p>
             {isVendor ? (
               <div className="flex flex-col gap-4">
                 <TextArea
-                  label="About"
+                  label={t('fields.about.label')}
                   disabled={isWorking}
                   value={form.listingItem?.[0]?.about || ""}
                   onChange={(e) => updateListingItem("about", e.target.value)}
                 />
                 <Input
                   type="number"
-                  label="Experience Years"
+                  label={t('fields.experienceYears.label')}
                   disabled={isWorking}
                   value={form.listingItem?.[0]?.experienceYears || ""}
                   onChange={(e) => updateListingItem("experienceYears", Number(e.target.value))}
                 />
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-medium">Service Areas</h4>
+                    <h4 className="font-medium">{t('serviceArea.title')}</h4>
                     <Button type="button" style="secondary" disabled={isWorking} onClick={addServiceArea}>
-                      Add Service Area
+                      {t('serviceArea.add')}
                     </Button>
                   </div>
                   {(form.listingItem?.[0]?.serviceArea || []).map((sa, idx) => (
                     <div key={idx} className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
                       <div className="col-span-2">
                         <Select
-                          label="City"
+                          label={t('fields.city.label')}
                           value={sa.city || ""}
                           disabled={isWorking}
                           onChange={(e) => {
@@ -507,12 +517,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                               setValue("listingItem", updatedItems, { shouldDirty: true })
                             }
                           }}
-                          options={[{ label: "Select City", value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
+                          options={[{ label: t('fields.city.placeholder'), value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
                         />
                       </div>
                       <div className="col-span-2">
                         <Select
-                          label="State"
+                          label={t('fields.state.label')}
                           value={sa.state || ""}
                           disabled={isWorking}
                           onChange={(e) => {
@@ -526,13 +536,13 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                               setValue("listingItem", updatedItems, { shouldDirty: true })
                             }
                           }}
-                          options={[{ label: "Select State", value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
+                          options={[{ label: t('fields.state.placeholder'), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
                         />
                       </div>
                       <div className="col-span-1">
                         <Input
                           type="text"
-                          label="Latitude"
+                          label={t('fields.latitude.label')}
                           disabled={isWorking}
                           value={sa.latitude || ""}
                           onChange={(e) => {
@@ -551,7 +561,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       <div className="col-span-1">
                         <Input
                           type="text"
-                          label="Longitude"
+                          label={t('fields.longitude.label')}
                           disabled={isWorking}
                           value={sa.longitude || ""}
                           onChange={(e) => {
@@ -574,9 +584,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                             style="secondary"
                             disabled={isWorking}
                             onClick={async () => {
-                              const currentItems = (getValues("listingItem") || []) as any[]
-                              if (!currentItems[0] || !currentItems[0].serviceArea) return
+                              const currentItems = (getValues("listingItem") || []) as CreateListingFormTypes["listingItem"]
+                              if (!currentItems[0]) return
                               const updatedItems = [...currentItems]
+                              if (!updatedItems[0].serviceArea) {
+                                updatedItems[0].serviceArea = []
+                              }
                               const saItem = updatedItems[0].serviceArea[idx]
                               if (!saItem) return
                               const cityName = cities.find((c) => c.documentId === saItem.city)?.name
@@ -592,7 +605,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                               }
                             }}
                           >
-                            Fetch coordinates
+                            {t('buttons.fetchCoordinates')}
                           </Button>
                           <Button
                             type="button"
@@ -601,7 +614,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                             onClick={() => removeServiceArea(idx)}
                             extraStyles="text-red-600 hover:text-red-700"
                           >
-                            Remove
+                            {t('buttons.remove')}
                           </Button>
                         </div>
                       </div>
@@ -615,7 +628,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   <div className="col-span-2">
                     <Input
                       type="text"
-                      label="Address"
+                      label={t('fields.address.label')}
                       disabled={isWorking}
                       value={form.listingItem?.[0]?.location?.address || ""}
                       onChange={(e) => updateListingItem("location.address", e.target.value)}
@@ -623,20 +636,20 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   </div>
                   <div className="col-span-2">
                     <Select
-                      label="City"
+                      label={t('fields.city.label')}
                       disabled={isWorking}
                       value={form.listingItem?.[0]?.location?.city || ""}
                       onChange={(e) => updateListingItem("location.city", e.target.value)}
-                      options={[{ label: "Select City", value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
+                      options={[{ label: t('fields.city.placeholder'), value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
                     />
                   </div>
                   <div className="col-span-2">
                     <Select
-                      label="State"
+                      label={t('fields.state.label')}
                       disabled={isWorking}
                       value={form.listingItem?.[0]?.location?.state || ""}
                       onChange={(e) => updateListingItem("location.state", e.target.value)}
-                      options={[{ label: "Select State", value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
+                      options={[{ label: t('fields.state.placeholder'), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
                     />
                   </div>
                 </div>
@@ -644,7 +657,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   <div className="col-span-2">
                     <Input
                       type="text"
-                      label="Latitude"
+                      label={t('fields.latitude.label')}
                       disabled={isWorking}
                       value={form.listingItem?.[0]?.location?.latitude || ""}
                       onChange={(e) => updateListingItem("location.latitude", e.target.value)}
@@ -653,7 +666,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   <div className="col-span-2">
                     <Input
                       type="text"
-                      label="Longitude"
+                      label={t('fields.longitude.label')}
                       disabled={isWorking}
                       value={form.listingItem?.[0]?.location?.longitude || ""}
                       onChange={(e) => updateListingItem("location.longitude", e.target.value)}
@@ -676,7 +689,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                         }
                       }}
                     >
-                      Fetch coordinates
+                      {t('buttons.fetchCoordinates')}
                     </Button>
                   </div>
                 </div>
@@ -684,7 +697,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   <div className="col-span-2">
                     <Input
                       type="number"
-                      label="Capacity"
+                      label={t('fields.capacity.label')}
                       disabled={isWorking}
                       value={form.listingItem?.[0]?.capacity || ""}
                       onChange={(e) => updateListingItem("capacity", Number(e.target.value))}
@@ -692,14 +705,14 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   </div>
                   <div className="col-span-2">
                     <Select
-                      label="Booking Duration Type"
+                      label={t('fields.bookingDurationType.label')}
                       disabled={isWorking}
                       value={form.listingItem?.[0]?.bookingDurationType || ""}
                       onChange={(e) => updateListingItem("bookingDurationType", e.target.value)}
                       options={[
-                        { label: "Select Duration Type", value: "" },
-                        { label: "Per Day", value: "Per Day" },
-                        { label: "Per Hour", value: "Per Hour" },
+                        { label: t('fields.bookingDurationType.placeholder'), value: "" },
+                        { label: t('fields.bookingDurationType.options.perDay'), value: "Per Day" },
+                        { label: t('fields.bookingDurationType.options.perHour'), value: "Per Hour" },
                       ]}
                     />
                   </div>
@@ -709,7 +722,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                     <Input
                       type="number"
                       disabled={isWorking}
-                      label="Booking Duration"
+                      label={t('fields.bookingDuration.label')}
                       value={form.listingItem?.[0]?.bookingDuration || ""}
                       onChange={(e) => updateListingItem("bookingDuration", Number(e.target.value))}
                     />
@@ -717,9 +730,9 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 </div>
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-medium">Amenities</h4>
+                    <h4 className="font-medium">{t('amenities.title')}</h4>
                     <Button type="button" disabled={isWorking} style="secondary" onClick={addAmenity}>
-                      Add Amenity
+                      {t('amenities.add')}
                     </Button>
                   </div>
                   {(form.listingItem?.[0]?.amneties || []).map((amenity, idx) => (
@@ -728,7 +741,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                         <Input
                           type="text"
                           disabled={isWorking}
-                          label={`Amenity ${idx + 1}`}
+                          label={`${t('amenities.itemLabel')} ${idx + 1}`}
                           value={amenity.text || ""}
                           onChange={(e) => {
                             const currentItems = getValues("listingItem") || []
@@ -750,7 +763,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                         onClick={() => removeAmenity(idx)}
                         extraStyles="text-red-600 hover:text-red-700"
                       >
-                        Remove
+                        {t('buttons.remove')}
                       </Button>
                     </div>
                   ))}
@@ -802,7 +815,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       label="Discount Type"
                       disabled={isWorking}
                       value={form.hotDeal?.discount?.discountType || "Flat Rate"}
-                      onChange={(e: any) => updateField("hotDeal.discount.discountType", e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                        updateField(
+                          "hotDeal.discount.discountType",
+                          e.target.value as "Flat Rate" | "Percentage"
+                        )
+                      }
                       options={[
                         { label: "Flat Rate", value: "Flat Rate" },
                         { label: "Percentage", value: "Percentage" },
@@ -855,11 +873,11 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                     pattern: { value: /^\S+@\S+$/i, message: "Invalid email format" },
                   })}
                 />
-                <ErrorMessage error={errors.contact?.email as any} />
+                <ErrorMessage error={errors.contact?.email} />
               </div>
               <div>
                 <Input type="text" label="Phone" disabled={isWorking} {...register("contact.phone", { required: "Phone is required" })} />
-                <ErrorMessage error={errors.contact?.phone as any} />
+                <ErrorMessage error={errors.contact?.phone} />
               </div>
               <div className="col-span-3">
                 <Input
@@ -868,7 +886,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   label="Address"
                   {...register("contact.address", { required: "Address is required" })}
                 />
-                <ErrorMessage error={errors.contact?.address as any} />
+                <ErrorMessage error={errors.contact?.address} />
               </div>
             </div>
           </div>
@@ -1001,8 +1019,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       disabled={isWorking}
                       value={f.question || ""}
                       onChange={(e) => {
-                        const list = [...(form.FAQs?.items || [])] as Partial<FAQ>[]
-                        list[idx] = { ...(list[idx] || {}), question: e.target.value } as Partial<FAQ>
+                        const existing = form.FAQs?.items || []
+                        const list = existing.map((it) => ({
+                          question: it?.question ?? "",
+                          answer: it?.answer ?? "",
+                        })) as { question: string; answer: string }[]
+                        list[idx] = { ...list[idx], question: e.target.value }
                         updateField("FAQs.items", list)
                       }}
                     />
@@ -1023,8 +1045,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       rows={5}
                       value={f.answer || ""}
                       onChange={(e) => {
-                        const list = [...(form.FAQs?.items || [])] as Partial<FAQ>[]
-                        list[idx] = { ...(list[idx] || {}), answer: e.target.value } as Partial<FAQ>
+                        const existing = form.FAQs?.items || []
+                        const list = existing.map((it) => ({
+                          question: it?.question ?? "",
+                          answer: it?.answer ?? "",
+                        })) as { question: string; answer: string }[]
+                        list[idx] = { ...list[idx], answer: e.target.value }
                         updateField("FAQs.items", list)
                       }}
                     />
@@ -1060,7 +1086,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               options={childCategories.map((c) => ({ label: c.name, value: c.documentId }))}
               value={selectedCategory}
               disabled={isWorking}
-              onChange={(e: any) => setSelectedCategory(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCategory(e.target.value)}
               label="Choose category"
               placeholder="Choose category"
             />

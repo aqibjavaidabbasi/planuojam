@@ -1,0 +1,375 @@
+{
+  "Auth": {
+    "Login": {
+      "title": "С возвращением",
+      "subtitle": "Войдите в свой аккаунт",
+      "noAccount": "Нет аккаунта?",
+      "signUpHere": "Зарегистрируйтесь здесь",
+      "loggingIn": "Вход...",
+      "loggedIn": "Вы успешно вошли!",
+      "loginFailed": "Не удалось войти. Попробуйте ещё раз.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Введите ваш email",
+      "emailRequired": "Требуется email",
+      "emailInvalid": "Некорректный email",
+      "passwordLabel": "Пароль",
+      "passwordPlaceholder": "Введите пароль",
+      "passwordRequired": "Требуется пароль",
+      "forgotPassword": "Забыли пароль?",
+      "signIn": "Войти"
+    },
+    "Register": {
+      "title": "Создать аккаунт",
+      "subtitle": "Присоединяйтесь к нашему сообществу",
+      "registering": "Идёт регистрация...",
+      "registered": "Регистрация прошла успешно!",
+      "registerFailed": "Не удалось зарегистрироваться. Попробуйте ещё раз.",
+      "joinAs": "Хочу присоединиться как:",
+      "roleRequired": "Пожалуйста, выберите роль",
+      "roleBuyer": "Покупатель",
+      "roleBuyerDesc": "Найдите услуги",
+      "roleProvider": "Поставщик услуг",
+      "roleProviderDesc": "Предлагайте услуги",
+      "chooseService": "Выберите услугу",
+      "serviceRequired": "Требуется услуга",
+      "usernameLabel": "Имя пользователя",
+      "usernamePlaceholder": "Введите имя пользователя",
+      "usernameRequired": "Пожалуйста, введите имя пользователя",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Введите ваш email",
+      "emailRequired": "Требуется email",
+      "emailInvalid": "Некорректный email",
+      "passwordLabel": "Пароль",
+      "passwordPlaceholder": "Введите надёжный пароль",
+      "passwordRequired": "Требуется пароль",
+      "confirmPasswordLabel": "Подтвердите пароль",
+      "confirmPasswordPlaceholder": "Повторите пароль",
+      "confirmPasswordRequired": "Подтвердите пароль",
+      "tosAgree": "Я согласен с Условиями использования и Политикой конфиденциальности",
+      "tosRequired": "Пожалуйста, прочитайте и согласитесь с Условиями использования и Политикой конфиденциальности",
+      "registerCta": "Зарегистрироваться",
+      "alreadyHaveAccount": "Уже есть аккаунт?",
+      "signInHere": "Войдите здесь"
+    },
+    "ResetPassword": {
+      "title": "Сброс пароля",
+      "resetting": "Выполняется сброс пароля...",
+      "resetSuccessToast": "Пароль успешно сброшен! Теперь вы можете войти",
+      "resetFailed": "Не удалось сбросить пароль. Попробуйте ещё раз.",
+      "resetSuccess": "Пароль успешно сброшен!",
+      "youCanLogin": "Теперь вы можете войти с новым паролем.",
+      "goToLogin": "Перейти к входу",
+      "newPasswordPlaceholder": "Новый пароль",
+      "passwordRequired": "Требуется пароль",
+      "passwordMinLength": "Пароль должен быть не менее 8 символов",
+      "confirmNewPasswordPlaceholder": "Подтвердите новый пароль",
+      "confirmPasswordRequired": "Подтвердите пароль",
+      "passwordsDoNotMatch": "Пароли не совпадают",
+      "resetCta": "Сбросить пароль",
+      "backToLogin": "Назад ко входу"
+    },
+    "EmailConfirmation": {
+      "title": "Подтверждение email",
+      "instruction": "Пожалуйста, подтвердите ваш email для активации аккаунта.",
+      "resendHint": "Если вы не получили письмо с подтверждением, вы можете отправить его ещё раз ниже.",
+      "resendLoading": "Отправка письма с подтверждением...",
+      "resendSuccess": "Письмо с подтверждением успешно отправлено!",
+      "resendFailed": "Не удалось отправить письмо с подтверждением. Попробуйте ещё раз.",
+      "confirming": "Подтверждение email...",
+      "confirmed": "Email успешно подтверждён! Вы можете войти, чтобы продолжить",
+      "confirmFailed": "Не удалось подтвердить email. Попробуйте ещё раз.",
+      "success": "Email успешно подтверждён!",
+      "youCanLogin": "Теперь вы можете войти в свой аккаунт.",
+      "login": "Войти",
+      "tokenLabel": "Код подтверждения",
+      "tokenPlaceholder": "Введите код подтверждения из письма",
+      "tokenRequired": "Требуется код подтверждения",
+      "confirmCta": "Подтвердить email",
+      "resendCta": "Отправить письмо с подтверждением ещё раз"
+    }
+  },
+  "Contact": {
+    "chatWithUs": {
+      "title": "Свяжитесь с нами",
+      "liveChat": "Начать чат",
+      "email": "Напишите нам по email",
+      "messageOnX": "Напишите нам в X"
+    },
+    "callUs": {
+      "title": "Позвоните нам",
+      "hours": "Звоните нашей команде Пн–Пт с 8:00 до 17:00.",
+      "phone": "+1 (555) 000–0000"
+    },
+    "visitUs": {
+      "title": "Посетите нас",
+      "description": "Приходите к нам в штаб-квартиру в Мельбурне.",
+      "address": "100 Smith Street, Collingwood VIC 3066"
+    },
+    "Form": {
+      "title": "Свяжитесь с нашей командой",
+      "description": "Есть вопросы о продукте или масштабировании на нашей платформе? Мы рады помочь. Свяжитесь с нашей дружной командой 24/7 и приступите менее чем за 5 минут.",
+      "firstName": "Имя",
+      "lastName": "Фамилия",
+      "emailPlaceholder": "you@company.com",
+      "country": {
+        "lt": "LT",
+        "ru": "RU"
+      },
+      "phonePlaceholder": "+1 (555) 000-0000",
+      "messagePlaceholder": "Оставьте нам сообщение...",
+      "send": "Отправить сообщение"
+    }
+  },
+  "Common": {
+    "errors": {
+      "failedToLoad": "Не удалось загрузить",
+      "notFound": "Не найдено"
+    },
+    "loading": "Загрузка..."
+  },
+  "Listing": {
+    "Details": {
+      "overview": "Обзор",
+      "rating": "Рейтинг",
+      "hotDeal": "Горячее предложение",
+      "flatRate": "Фиксированная цена",
+      "percentOff": "скидка",
+      "valid": "Действительно",
+      "reviews": "Отзывы",
+      "noReviews": "Отзывов пока нет",
+      "faqs": "Вопросы и ответы"
+    },
+    "Edit": {
+      "preview": "Предпросмотр объявления",
+      "editing": "Редактирование",
+      "listingFallback": "Объявление",
+      "documentId": "ID документа",
+      "status": "Статус",
+      "tabs": {
+        "basic": "Основные сведения",
+        "vv": "Данные поставщика/площадки",
+        "deal": "Горячее предложение",
+        "images": "Изображения",
+        "contact": "Контакты",
+        "social": "Соцсети",
+        "pricing": "Ценообразование",
+        "faqs": "Вопросы и ответы"
+      }
+    },
+    "Hero": {
+      "by": "от {username}",
+      "hotDealBadge": "ГОРЯЧЕЕ ПРЕДЛОЖЕНИЕ",
+      "percentageOffLimited": "Скидка {percent}% — Ограниченное предложение",
+      "getTicketCta": "Купить билет",
+      "visitWebsite": "Перейти на сайт"
+    }
+  },
+  "Map": {
+    "loading": "Загрузка карты...",
+    "errors": {
+      "failedToLoadLocations": "Не удалось загрузить местоположения"
+    },
+    "fallback": {
+      "unnamedVenue": "Без названия",
+      "unknownUser": "Неизвестно",
+      "uncategorized": "Без категории",
+      "noAddress": "Адрес не указан"
+    }
+  },
+  "Vendors": {
+    "filters": {
+      "chooseVendor": "Выберите поставщика",
+      "selectPricing": "Выберите цену",
+      "pickEventType": "Выберите тип события",
+      "withPricingOnly": "Только с ценой",
+      "withoutPricingOnly": "Только без цены"
+    },
+    "noVendorsFound": "Поставщики не найдены"
+  },
+  "Venues": {
+    "filters": {
+      "chooseVenue": "Выберите площадку",
+      "selectPricing": "Выберите цену",
+      "chooseEventType": "Выберите тип события",
+      "withPricingOnly": "Только с ценой",
+      "withoutPricingOnly": "Только без цены"
+    },
+    "noVenuesFound": "Площадки не найдены"
+  },
+  "NotFound": {
+    "title": "Упс! Что-то пошло не так",
+    "description": "Не получается найти страницу, которую вы ищете."
+  },
+  "Global": {
+    "SubscriptionForm": {
+      "emailPlaceholder": "Введите ваш email",
+      "subscribe": "Подписаться"
+    }
+  },
+  "Modals": {
+    "ForgotPassword": {
+      "title": "Сброс пароля",
+      "description": "Введите адрес электронной почты, и мы отправим ссылку для сброса пароля",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Введите ваш email",
+      "sendResetLink": "Отправить ссылку",
+      "errors": {
+        "emailRequired": "Требуется email",
+        "emailInvalid": "Некорректный адрес email"
+      },
+      "toasts": {
+        "sending": "Отправка письма...",
+        "sent": "Письмо успешно отправлено!",
+        "errorDefault": "Не удалось отправить письмо. Попробуйте ещё раз."
+      }
+    },
+    "LoginNavigate": {
+      "title": "Войдите, чтобы поставить лайк",
+      "description": "После входа вы сможете сохранить это объявление в избранное и получать обновления о его доступности.",
+      "loginCta": "Войти"
+    },
+    "Logout": {
+      "title": "Выход",
+      "confirmTitle": "Вы уверены, что хотите выйти?",
+      "confirmDesc": "Вы выйдете из аккаунта и будете перенаправлены на страницу входа.",
+      "cancel": "Отмена",
+      "logoutCta": "Выйти",
+      "toasts": {
+        "loggedOut": "Вы успешно вышли!"
+      }
+    },
+    "ListingItem": {
+      "errors": {
+        "noImage": "Пожалуйста, загрузите хотя бы одно изображение",
+        "invalidServiceType": "Пожалуйста, выберите корректный тип услуги"
+      }
+    }
+  },
+  "Custom": {
+    "ImageUploader": {
+      "selectImages": "Выбрать изображения",
+      "uploadImages": "Загрузить {count} изображений",
+      "toasts": {
+        "uploadSuccess": "Изображения успешно загружены",
+        "uploadFailed": "Не удалось загрузить изображения"
+      }
+    },
+    "NoDataCard": {
+      "expandSearchHint": "Попробуйте увеличить радиус поиска или выберите другое место."
+    },
+    "VendorCard": {
+      "title": "Информация о поставщике",
+      "experienceYears": "Опыт: {years} лет",
+      "serviceArea": "Зона обслуживания:",
+      "notSpecified": "Не указано"
+    },
+    "VenueCard": {
+      "title": "Информация о площадке",
+      "capacity": "Вместимость: {count}",
+      "location": "Местоположение"
+    }
+  },
+  "Dynamic": {
+    "ListingCard": {
+      "toasts": {
+        "adding": "Добавление в избранное...",
+        "removed": "Удалено из избранного!",
+        "removing": "Удаление из избранного...",
+        "added": "Добавлено в избранное!",
+        "addFailed": "Не удалось добавить в избранное",
+        "removeFailed": "Не удалось удалить из избранного"
+      },
+      "hot": "ГОРЯЧЕЕ",
+      "deal": "ПРЕДЛОЖЕНИЕ",
+      "imageAlt": "Изображение площадки {index}",
+      "placeholderAlt": "заглушка",
+      "unrated": "Без оценки",
+      "noLocation": "Местоположение не указано",
+      "noVenueLocation": "Местоположение площадки не указано",
+      "price": "Цена",
+      "contactForPricing": "Свяжитесь для уточнения цены",
+      "edit": "Редактировать",
+      "view": "Просмотр"
+    },
+    "SelectedCategories": {
+      "noCategoriesFound": "Категории не найдены"
+    }
+  },
+  "Profile": {
+    "loginPrompt": "Пожалуйста, войдите, чтобы просмотреть профиль. Перенаправление...",
+    "tabs": {
+      "profile": "Профиль",
+      "myListings": "Мои объявления",
+      "favouriteListings": "Избранные объявления",
+      "messages": "Сообщения",
+      "reviews": "Отзывы"
+    },
+    "ProfileTab": {
+      "title": "Настройки профиля",
+      "subtitle": "Управляйте личной информацией и паролем.",
+      "logout": "Выйти",
+      "usernameLabel": "Имя пользователя",
+      "usernamePlaceholder": "Имя пользователя",
+      "saveUsername": "Сохранить имя",
+      "errors": {
+        "usernameEmpty": "Имя пользователя не может быть пустым",
+        "userNotFound": "Пользователь не найден"
+      },
+      "toasts": {
+        "updatingUsername": "Обновление имени пользователя...",
+        "usernameUpdated": "Имя пользователя успешно обновлено",
+        "usernameUpdateFailed": "Не удалось обновить имя пользователя",
+        "updatingPassword": "Обновление пароля...",
+        "passwordUpdated": "Пароль успешно обновлён",
+        "passwordUpdateFailed": "Не удалось обновить пароль"
+      },
+      "password": {
+        "updateTitle": "Обновить пароль",
+        "currentLabel": "Текущий пароль",
+        "currentPlaceholder": "Введите текущий пароль",
+        "newLabel": "Новый пароль",
+        "newPlaceholder": "Введите новый пароль",
+        "confirmLabel": "Подтвердите пароль",
+        "confirmPlaceholder": "Подтвердите новый пароль",
+        "updateCta": "Обновить пароль",
+        "errors": {
+          "currentRequired": "Требуется текущий пароль",
+          "newRequired": "Требуется новый пароль",
+          "confirmRequired": "Требуется подтверждение пароля",
+          "minLength": "Пароль должен быть не менее 8 символов",
+          "noMatch": "Пароли не совпадают"
+        }
+      }
+    },
+    "FavouriteListings": {
+      "title": "Избранные объявления",
+      "subtitle": "Ваши сохранённые и избранные объекты.",
+      "empty": "Нет избранных объявлений для отображения"
+    },
+    "MyListings": {
+      "title": "Мои объявления",
+      "subtitle": "Управляйте всеми вашими объявлениями.",
+      "filterLabel": "Фильтр по статусу",
+      "allStatuses": "Все статусы",
+      "create": "Создать объявление",
+      "empty": "Нет объявлений для отображения. Начните с создания первого объявления",
+      "status": {
+        "draft": "Черновик",
+        "published": "Опубликовано",
+        "pending": "Ожидает проверки",
+        "archived": "В архиве"
+      }
+    },
+    "Messages": {
+      "title": "Сообщения",
+      "subtitle": "Скоро — следите за обновлениями функций сообщений!",
+      "comingSoonTitle": "Сообщения скоро",
+      "comingSoonDesc": "Мы работаем над удобной системой сообщений для связи с владельцами и арендаторами."
+    },
+    "ReviewsTab": {
+      "title": "Отзывы",
+      "subtitle": "Просматривайте и управляйте отзывами о вашей собственности.",
+      "propertyLabel": "Объект:"
+    }
+  }
+}

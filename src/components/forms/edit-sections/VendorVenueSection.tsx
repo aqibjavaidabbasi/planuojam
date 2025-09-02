@@ -6,7 +6,6 @@ import Input from "../../custom/Input"
 import TextArea from "../../custom/TextArea"
 import Select from "../../custom/Select"
 import Button from "../../custom/Button"
-import ToggleButton from "../../custom/ToggleButton"
 import { toast } from "react-hot-toast"
 import { updateListing } from "@/services/listing"
 import type { ListingItem } from "@/types/pagesTypes"
@@ -38,24 +37,41 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
   const { cities } = useCities()
   const { states } = useStates()
 
+  const vendorSource = (Array.isArray((listing.listingItem as unknown)) ? (listing.listingItem as unknown[])[0] : undefined) as unknown
   const defaultVendor: VendorForm = {
-    about: (listing.listingItem as any)?.[0]?.about || "",
-    experienceYears: (listing.listingItem as any)?.[0]?.experienceYears ?? undefined,
-    serviceArea: ((listing.listingItem as any)?.[0]?.serviceArea || []) as ServiceArea[],
+    about: (vendorSource && typeof (vendorSource as { about?: unknown }).about === "string") ? (vendorSource as { about?: string }).about || "" : "",
+    experienceYears: (vendorSource && typeof (vendorSource as { experienceYears?: unknown }).experienceYears === "number")
+      ? (vendorSource as { experienceYears?: number }).experienceYears
+      : undefined,
+    serviceArea: (vendorSource && Array.isArray((vendorSource as { serviceArea?: unknown }).serviceArea))
+      ? ((vendorSource as { serviceArea?: ServiceArea[] }).serviceArea ?? [])
+      : [],
   }
 
+  const venueSource = (Array.isArray((listing.listingItem as unknown)) ? (listing.listingItem as unknown[])[0] : undefined) as unknown
+  const venueLoc = (venueSource && typeof (venueSource as { location?: unknown }).location === "object" && (venueSource as { location?: unknown }).location !== null)
+    ? ((venueSource as { location: Partial<Location> }).location)
+    : {}
   const defaultVenue: VenueForm = {
     location: {
-      address: (listing.listingItem as any)?.[0]?.location?.address || "",
-      city: (listing.listingItem as any)?.[0]?.location?.city || "",
-      state: (listing.listingItem as any)?.[0]?.location?.state || "",
-      latitude: (listing.listingItem as any)?.[0]?.location?.latitude || "",
-      longitude: (listing.listingItem as any)?.[0]?.location?.longitude || "",
+      address: typeof (venueLoc as { address?: unknown }).address === "string" ? (venueLoc as { address?: string }).address || "" : "",
+      city: typeof (venueLoc as { city?: unknown }).city === "string" ? (venueLoc as { city?: string }).city || "" : "",
+      state: typeof (venueLoc as { state?: unknown }).state === "string" ? (venueLoc as { state?: string }).state || "" : "",
+      latitude: typeof (venueLoc as { latitude?: unknown }).latitude === "string" ? (venueLoc as { latitude?: string }).latitude || "" : "",
+      longitude: typeof (venueLoc as { longitude?: unknown }).longitude === "string" ? (venueLoc as { longitude?: string }).longitude || "" : "",
     },
-    capacity: (listing.listingItem as any)?.[0]?.capacity ?? undefined,
-    bookingDurationType: (listing.listingItem as any)?.[0]?.bookingDurationType || "",
-    bookingDuration: (listing.listingItem as any)?.[0]?.bookingDuration ?? undefined,
-    amneties: ((listing.listingItem as any)?.[0]?.amneties || []) as { text: string }[],
+    capacity: (venueSource && typeof (venueSource as { capacity?: unknown }).capacity === "number")
+      ? (venueSource as { capacity?: number }).capacity
+      : undefined,
+    bookingDurationType: (venueSource && typeof (venueSource as { bookingDurationType?: unknown }).bookingDurationType === "string")
+      ? ((venueSource as { bookingDurationType?: VenueForm["bookingDurationType"] }).bookingDurationType || "")
+      : "",
+    bookingDuration: (venueSource && typeof (venueSource as { bookingDuration?: unknown }).bookingDuration === "number")
+      ? (venueSource as { bookingDuration?: number }).bookingDuration
+      : undefined,
+    amneties: (venueSource && Array.isArray((venueSource as { amneties?: unknown }).amneties))
+      ? ((venueSource as { amneties?: { text: string }[] }).amneties ?? [])
+      : [],
   }
 
   // Use two separate forms based on type
@@ -82,9 +98,13 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
           about: values.about,
           experienceYears: values.experienceYears,
           serviceArea: (values.serviceArea || []).map((sa) => {
-            const transformed: any = { ...sa }
+            type Relation = { connect: string[] }
+            type ServiceAreaPayload = { city?: Relation; state?: Relation; latitude?: string; longitude?: string }
+            const transformed: ServiceAreaPayload = {}
             if (sa.city) transformed.city = { connect: [sa.city] }
             if (sa.state) transformed.state = { connect: [sa.state] }
+            if (sa.latitude) transformed.latitude = sa.latitude
+            if (sa.longitude) transformed.longitude = sa.longitude
             return transformed
           }),
         },
@@ -92,8 +112,9 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
       await updateListing(listing.documentId, { data: { listingItem } })
       toast.success("Vendor details updated")
       onSaved?.()
-    } catch (e: any) {
-      toast.error(e?.message || "Failed to update vendor details")
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to update vendor details"
+      toast.error(message)
     } finally {
       setSubmitting(false)
     }
@@ -102,7 +123,15 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
   const onSubmitVenue = async (values: VenueForm) => {
     setSubmitting(true)
     try {
-      const next: any = {
+      type VenuePayload = {
+        __component: "dynamic-blocks.venue"
+        location?: Location
+        capacity?: number
+        bookingDurationType?: VenueForm["bookingDurationType"]
+        bookingDuration?: number
+        amneties?: { text: string }[]
+      }
+      const next: VenuePayload = {
         __component: "dynamic-blocks.venue",
       }
       if (values.location) next.location = { ...values.location }
@@ -114,8 +143,9 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
       await updateListing(listing.documentId, { data: { listingItem: [next] } })
       toast.success("Venue details updated")
       onSaved?.()
-    } catch (e: any) {
-      toast.error(e?.message || "Failed to update venue details")
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to update venue details"
+      toast.error(message)
     } finally {
       setSubmitting(false)
     }
@@ -251,7 +281,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                 label="Booking Duration Type"
                 disabled={submitting}
                 value={venueRHF.watch("bookingDurationType") || ""}
-                onChange={(e) => venueRHF.setValue("bookingDurationType", e.target.value as any, { shouldDirty: true })}
+                onChange={(e) => venueRHF.setValue("bookingDurationType", e.target.value as VenueForm["bookingDurationType"], { shouldDirty: true })}
                 options={[{ label: "Select Duration Type", value: "" }, { label: "Per Day", value: "Per Day" }, { label: "Per Hour", value: "Per Hour" }]}
               />
             </div>

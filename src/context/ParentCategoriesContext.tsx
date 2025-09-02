@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { fetchParentCategories } from '@/services/common';
 import { category } from '@/types/pagesTypes';
+import { useLocale } from 'next-intl';
 
 interface ParentCategoriesContextProps {
   parentCategories: category[];
@@ -15,12 +16,13 @@ const ParentCategoriesProvider: React.FC<React.PropsWithChildren<object>> = ({ c
   const [parentCategories, setParentCategories] = useState<category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const locale = useLocale();
 
   useEffect(() => {
     const fetchParentCategoriesAsync = async () => {
       setIsLoading(true);
       try {
-        const data = await fetchParentCategories();
+        const data = await fetchParentCategories(locale);
         setParentCategories(data);
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -33,7 +35,7 @@ const ParentCategoriesProvider: React.FC<React.PropsWithChildren<object>> = ({ c
       }
     };
     fetchParentCategoriesAsync();
-  }, []);
+  }, [locale]);
 
   return (
     <ParentCategoriesContext.Provider value={{ parentCategories, isLoading, error }}>

@@ -22,9 +22,9 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
     formState: { errors },
   } = useForm<ContactForm>({
     defaultValues: {
-      email: (listing.contact as any)?.email || "",
-      phone: (listing.contact as any)?.phone || "",
-      address: (listing.contact as any)?.address || "",
+      email: (listing.contact)?.email || "",
+      phone: (listing.contact)?.phone || "",
+      address: (listing.contact)?.address || "",
     },
   })
 
@@ -34,8 +34,8 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
       await updateListing(listing.documentId, { data: { contact: values } })
       toast.success("Contact updated")
       onSaved?.()
-    } catch (e: any) {
-      toast.error(e?.message || "Failed to update contact")
+    } catch (e: unknown) {
+      toast.error((e as Error)?.message || "Failed to update contact")
     } finally {
       setSubmitting(false)
     }

@@ -1,13 +1,14 @@
+"use client";
 import React from "react";
+import { useTranslations } from "next-intl";
 
 function ReviewsTab() {
+  const t = useTranslations('Profile.ReviewsTab')
   return (
     <div className="p-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Reviews</h1>
-        <p className="text-gray-600 mt-2">
-          View and manage your property reviews.
-        </p>
+        <h1 className="text-2xl font-bold text-gray-800">{t('title')}</h1>
+        <p className="text-gray-600 mt-2">{t('subtitle')}</p>
       </div>
 
       <div className="space-y-6">
@@ -41,7 +42,7 @@ function ReviewsTab() {
             throughout our stay.&quot;
           </p>
           <div className="text-sm text-gray-600">
-            <span className="font-medium">Property:</span> Modern Downtown
+            <span className="font-medium">{t('propertyLabel')}</span> Modern Downtown
             Apartment
           </div>
         </div>
@@ -83,7 +84,7 @@ function ReviewsTab() {
             addressed.&quot;
           </p>
           <div className="text-sm text-gray-600">
-            <span className="font-medium">Property:</span> Cozy Studio in
+            <span className="font-medium">{t('propertyLabel')}</span> Cozy Studio in
             Midtown
           </div>
         </div>
