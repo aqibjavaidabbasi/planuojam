@@ -21,9 +21,10 @@ interface FiltersAndMapProps {
     setList: (venues: ListingItem[]) => void;
     initialFilterValues?: Record<string, string>;
     locations: Location[]
+    fetcher?: (appliedFilters: Record<string, unknown>) => Promise<ListingItem[]>;
 }
 
-const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, initialFilterValues, locations }) => {
+const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, initialFilterValues, locations, fetcher }) => {
     const [selectedPlace, setSelectedPlace] = useState<{
         geometry: {
             location: {
@@ -107,7 +108,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
     const handleApply = async () => {
         setIsLoading(true);
         console.log(appliedFilters)
-        const res = await fetchListings(type, appliedFilters);
+        const res = fetcher ? await fetcher(appliedFilters) : await fetchListings(type, appliedFilters);
         setList(res);
         setIsLoading(false);
     };
@@ -116,7 +117,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
         setIsLoading(true);
         setTempFilterValues({});
         setAppliedFilters({});
-        const res = await fetchListings(type);
+        const res = fetcher ? await fetcher({}) : await fetchListings(type);
         setList(res);
         setIsLoading(false);
     };

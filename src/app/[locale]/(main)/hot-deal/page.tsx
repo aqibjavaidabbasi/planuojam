@@ -1,12 +1,12 @@
 import DynamicZoneRenderer from '@/components/global/DynamicZoneRenderer';
-import { fetchPageLocalized } from '@/services/pagesApi'
+import { fetchPageById } from '@/services/pagesApi'
 import { page } from '@/types/pagesTypes';
 import React from 'react'
 import ClientHotDealWrapper from './ClientHotDealWrapper';
 
 async function HotDealsPage({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;
-    const hotDealPageData: page = await fetchPageLocalized('hot-deal', locale);
+    const hotDealPageData: page = await fetchPageById('h7ycc611qvimjg3prccyvm3n', locale);
 
     const heroBlock = hotDealPageData.blocks.filter(block => block.__component === 'dynamic-blocks.hero-banner');
     const faqBlock = hotDealPageData.blocks.filter(block => block.__component === 'dynamic-blocks.faqs');

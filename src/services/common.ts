@@ -5,8 +5,8 @@ import { DEFAULT_LOCALE } from "@/config/i18n";
 // Generic fetch with locale fallback: try requested locale -> DEFAULT_LOCALE -> base (no locale)
 async function fetchWithLocaleFallback(
     resource: string,
-    populate: Record<string, any>,
-    filters?: Record<string, any>,
+    populate: Record<string, unknown>,
+    filters?: Record<string, unknown>,
     locale?: string
 ) {
     // 1) Try the requested locale
@@ -29,12 +29,36 @@ async function fetchWithLocaleFallback(
     return resBase;
 }
 
-export async function fetchChildCategories(slug: string) {
+// Fetch listings by parent category slug (localized). Uses populate like other listings.
+export async function fetchListingsByParentSlug(
+  parentSlug: string,
+  appliedFilters: Record<string, unknown> = {},
+  locale?: string
+) {
+  const populate = LISTING_ITEM_POP_STRUCTURE;
+  const filters = {
+    filters: {
+      category: {
+        parentCategory: {
+          slug: { $eq: parentSlug },
+        },
+      },
+      ...appliedFilters,
+    },
+  };
+  console.log(filters)
+  const query = createQuery(populate, locale ? { locale } : undefined);
+  const res = await fetchAPI('listings', query, filters);
+  return res;
+}
+
+
+export async function fetchChildCategories(docId: string, locale?: string) {
     const filter = {
         filters: {
             parentCategory: {
-                slug: {
-                    $eq: slug,
+                documentId: {
+                    $eq: docId,
                 },
             },
         }
@@ -45,9 +69,7 @@ export async function fetchChildCategories(slug: string) {
             populate: '*'
         }
     }
-    const query = createQuery(populate);
-    const res = await fetchAPI(`categories`, query, filter);
-    return res;
+    return await fetchWithLocaleFallback('categories', populate, filter, locale);
 }
 export async function fetchParentCategories(locale?: string) {
     const filter = {
@@ -72,7 +94,7 @@ export async function fetchEventTypes(locale?: string) {
     return await fetchWithLocaleFallback('event-types', populate, undefined, locale);
 }
 
-export async function fetchListings(type: 'venue' | 'vendor', appliedFilters = {}) {
+export async function fetchListings(type: 'venue' | 'vendor', appliedFilters = {}, locale?: string) {
     const populate = LISTING_ITEM_POP_STRUCTURE;
     const filters = {
         filters: {
@@ -80,7 +102,7 @@ export async function fetchListings(type: 'venue' | 'vendor', appliedFilters = {
             ...appliedFilters
         }
     }
-    const query = createQuery(populate);
+    const query = createQuery(populate, locale ? { locale } : undefined);
     const res = await fetchAPI('listings', query, filters);
     return res;
 }
@@ -95,7 +117,7 @@ export async function fetchStates(locale?: string) {
     return await fetchWithLocaleFallback('states', populate, undefined, locale);
 }
 
-export async function fetchListingsPerEvents(passedEvent: string) {
+export async function fetchListingsPerEvents(docId: string) {
     const populate = {
         eventTypes: {
             populate: '*'
@@ -107,7 +129,7 @@ export async function fetchListingsPerEvents(passedEvent: string) {
     const filters = {
         filters: {
             eventTypes: {
-                eventName: passedEvent
+                documentId: docId
             }
         }
     }

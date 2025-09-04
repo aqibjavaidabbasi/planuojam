@@ -8,6 +8,7 @@ import { useLocale } from 'next-intl';
 interface EventTypesContextProps {
   eventTypes: EventTypes[];
   getEventTypeBySlug: (slug: string) => EventTypes | undefined;
+  getEventTypeByDocId: (docId: string) => EventTypes | undefined;
 }
 
 const EventTypesContext = createContext<EventTypesContextProps | undefined>(undefined);
@@ -34,8 +35,10 @@ export const EventTypesProvider = ({ children }: { children: ReactNode }) => {
   const getEventTypeBySlug = (slug: string) =>
     eventTypes.find((type) => type.slug === slug);
 
+  const getEventTypeByDocId = (docId: string) => eventTypes.find(type => type.documentId === docId);
+
   return (
-    <EventTypesContext.Provider value={{ eventTypes, getEventTypeBySlug }}>
+    <EventTypesContext.Provider value={{ eventTypes, getEventTypeBySlug, getEventTypeByDocId }}>
       {children}
     </EventTypesContext.Provider>
   );

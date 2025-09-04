@@ -7,34 +7,36 @@ import Heading from '@/components/custom/heading';
 import Loader from '@/components/custom/Loader';
 import { useEventTypes } from '@/context/EventTypesContext';
 import { fetchListingsPerEvents } from '@/services/common';
-import { fetchPageLocalized } from '@/services/pagesApi';
+import { fetchPageById } from '@/services/pagesApi';
 import { category, DynamicBlocks, TitleDescriptionBlock } from '@/types/pagesTypes';
 import { useParams } from 'next/navigation';
 import { useRouter } from '@/i18n/navigation';
 import React, { useEffect, useState } from 'react'
 import { useLocale } from 'next-intl';
+import { useParentCategories } from '@/context/ParentCategoriesContext';
 
 function ClientEventTypeWrapper() {
-    const { getEventTypeBySlug } = useEventTypes();
+    const { getEventTypeByDocId } = useEventTypes();
     const params = useParams();
-    const slug = typeof params.slug === 'string' ? params.slug : Array.isArray(params.slug) ? params.slug[0] : '';
-    const eventType = getEventTypeBySlug(slug);
+    const docId = typeof params.docId === 'string' ? params.docId : Array.isArray(params.docId) ? params.docId[0] : '';
+    const eventType = getEventTypeByDocId(docId);
     const [eventBlock, setEventBlocks] = useState<DynamicBlocks[]>([]);
     const router = useRouter();
     const [categories, setCategories] = useState<category[]>([]);
     const [loading, setLoading] = useState(false);
     const locale = useLocale();
+    const { VENDOR_DOC_ID, VENUE_DOC_ID } = useParentCategories();
 
     useEffect(() => {
         async function fetchData() {
             setLoading(true);
           if (eventType && eventType.page) {
             // Fetch page data
-            const pageRes = await fetchPageLocalized(eventType.page.slug, locale);
+            const pageRes = await fetchPageById(eventType.page.documentId, locale);
             setEventBlocks(pageRes.blocks);
-      
+
             // Fetch categories
-            const listingsRes = await fetchListingsPerEvents(eventType.eventName);
+            const listingsRes = await fetchListingsPerEvents(eventType.documentId);
             const allCategories: category[] = listingsRes
               .map((listing: { category: category }) => listing?.category)
               .filter((cat: { documentId: string }): cat is category => !!cat && !!cat.documentId);
@@ -76,23 +78,17 @@ function ClientEventTypeWrapper() {
         block => block.__component === 'general.title-description'
     );
     function isVenueBlock(block: TitleDescriptionBlock) {
-        return block.sectionDescription?.toLowerCase().includes('venue') ||
-            block.heading?.headingPiece?.some(piece =>
-                piece.text.toLowerCase().includes('venue')
-            );
+        return block.listingType === 'venue'
     }
 
     function isVendorBlock(block: TitleDescriptionBlock) {
-        return block.sectionDescription?.toLowerCase().includes('vendor') ||
-            block.heading?.headingPiece?.some(piece =>
-                piece.text.toLowerCase().includes('vendor')
-            );
+        return block.listingType === 'vendor'
     }
 
     const venueTitleBlock = titleDescriptionBlocks.find(isVenueBlock);
     const vendorTitleBlock = titleDescriptionBlocks.find(isVendorBlock);
-    const vendorCategories = categories.filter(cat => cat.parentCategory.name === 'vendor');
-    const venueCategories = categories.filter(cat => cat.parentCategory.name === 'venue');
+    const vendorCategories = categories.filter(cat => cat.parentCategory.documentId === VENDOR_DOC_ID);
+    const venueCategories = categories.filter(cat => cat.parentCategory.documentId === VENUE_DOC_ID);
 
     return (
         <div>

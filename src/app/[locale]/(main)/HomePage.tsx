@@ -1,10 +1,11 @@
 import DynamicZoneRenderer from '@/components/global/DynamicZoneRenderer';
-import { fetchPage } from '@/services/pagesApi'
-import { page } from '@/types/pagesTypes';
+import { fetchPageById } from '@/services/pagesApi'
+import { page, } from '@/types/pagesTypes';
 import React from 'react'
 
-export default async function HomePage() {
-    const homePageData: page = await fetchPage('home');
+export default async function HomePage({ params }: { params: { locale: string } }) {
+    const { locale } = params;
+    const homePageData: page = await fetchPageById('k97xf2g2fdn14vlubd26wupu', locale);
 
     return <DynamicZoneRenderer blocks={homePageData.blocks} />
 }

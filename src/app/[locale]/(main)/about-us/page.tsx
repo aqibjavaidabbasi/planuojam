@@ -1,11 +1,17 @@
 import DynamicZoneRenderer from '@/components/global/DynamicZoneRenderer';
-import { fetchPageLocalized } from '@/services/pagesApi';
+import { fetchPageById } from '@/services/pagesApi';
 import { page } from '@/types/pagesTypes';
-import React from 'react'
+import React from 'react';
 
-export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  const aboutUsData: page = await fetchPageLocalized('about-us', locale);
+interface AboutPageProps {
+  params: Promise<{
+    locale: string;
+  }>;
+}
+
+export default async function AboutPage({ params }: AboutPageProps) {
+  const { locale } = await params 
+  const aboutUsData: page = await fetchPageById('w9xmo2id7rjddo44es246xzl', locale);
     if (!aboutUsData) return null;
     return (
     <div>

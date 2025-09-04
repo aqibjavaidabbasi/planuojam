@@ -23,14 +23,12 @@ function Header({ headerData }: { headerData: HeaderType }) {
     const router = useRouter();
     const pathname = usePathname();
     const dispatch = useAppDispatch();
-    const isNavActive = (url: string) => pathname === url;
-    const isHotDealActive = () => pathname === '/hot-deal';
-    const isMapActive = () => pathname === '/map';
-    const isEventTypeActive = (slug: string) => pathname === `/event-types/${slug}`;
+    const isHotDealActive = () => pathname.endsWith('/hot-deal');
+    const isMapActive = () => pathname.endsWith('/map');
+    const isEventTypeActive = (slug: string) => pathname.endsWith(`/event-types/${slug}`);
     const user = useAppSelector((state) => state.auth.user);
     const [loading, setLoading] = useState(false);
     const [selectedLocale, setSelectedLocale] = useState<string>(DEFAULT_LOCALE);
-
 
     useEffect(() => {
         const validateUser = async () => {
@@ -113,17 +111,18 @@ function Header({ headerData }: { headerData: HeaderType }) {
 
                     {/* Desktop Nav */}
                     <nav className="hidden md:flex items-center gap-3 md:ml-10">
-                        {headerData?.nav.item.map((navItem) => {
-                            const isActive = isNavActive(navItem.relativeUrl);
+                        {headerData?.nav.categories.map((navItem) => {
+                            const href = `/service/${navItem.documentId}`;
+                            const isActive = pathname.endsWith(href);
 
                             return (
                                 <Link
                                     key={navItem.id}
-                                    href={navItem.relativeUrl}
+                                    href={href}
                                     className={`cursor-pointer px-3 py-2 rounded-sm transition-colors text-sm md:text-base capitalize 
                                         ${isActive ? "bg-primary text-white" : "text-primary bg-white hover:bg-primary hover:text-white"}`}
                                 >
-                                    {navItem.label}
+                                    {navItem.name}
                                 </Link>
                             );
                         })}
@@ -184,16 +183,17 @@ function Header({ headerData }: { headerData: HeaderType }) {
                             </div>
                             <nav className="flex flex-col gap-2">
                                 {/* Main Navigation */}
-                                {headerData?.nav.item.map(navItem => {
-                                    const isActive = isNavActive(navItem.relativeUrl);
+                                {headerData?.nav.categories.map(navItem => {
+                                    const href = `/service/${navItem.documentId}`;
+                                    const isActive = pathname.endsWith(href);
                                     return (
                                         <Link
-                                            href={navItem.relativeUrl}
+                                            href={href}
                                             className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-white hover:bg-primary hover:text-white
                                                 ${isActive ? "bg-primary text-white" : ""}`}
                                             key={navItem.id}
                                         >
-                                            {navItem.label}
+                                            {navItem.name}
                                         </Link>
                                     );
                                 })}
@@ -206,10 +206,10 @@ function Header({ headerData }: { headerData: HeaderType }) {
                                             Event Types
                                         </p>
                                         {headerData.eventTypes.map(({ id, eventType }) => {
-                                            const isActive = isEventTypeActive(eventType.slug);
+                                            const isActive = isEventTypeActive(eventType.documentId);
                                             return (
                                                 <Link
-                                                    href={`/event-types/${eventType.slug}`}
+                                                    href={`/event-types/${eventType.documentId}`}
                                                     className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white
                                                         ${isActive ? "bg-primary text-white" : ""}`}
                                                     key={id}
@@ -272,11 +272,11 @@ function Header({ headerData }: { headerData: HeaderType }) {
             {Array.isArray(headerData?.eventTypes) && headerData.eventTypes.length > 0 && (
                 <div className="hidden md:flex w-full bg-gray-50 border-t border-b border-border px-4 py-2 gap-2 z-20">
                     {headerData.eventTypes.map(({ id, eventType }) => {
-                        const isActive = isEventTypeActive(eventType.slug);
+                        const isActive = isEventTypeActive(eventType.documentId);
                         return (
                             <Link
                                 key={id}
-                                href={`/event-types/${eventType.slug}`}
+                                href={`/event-types/${eventType.documentId}`}
                                 className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors
                                     ${isActive ? "bg-primary text-white" : "text-primary hover:bg-primary hover:text-white"}`}
                             >

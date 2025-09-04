@@ -1,0 +1,375 @@
+{
+  "Auth": {
+    "Login": {
+      "title": "Witamy ponownie",
+      "subtitle": "Zaloguj się na swoje konto",
+      "noAccount": "Nie masz konta?",
+      "signUpHere": "Zarejestruj się tutaj",
+      "loggingIn": "Logowanie...",
+      "loggedIn": "Pomyślnie zalogowano!",
+      "loginFailed": "Logowanie nie powiodło się. Spróbuj ponownie.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Wpisz swój email",
+      "emailRequired": "Email jest wymagany",
+      "emailInvalid": "Nieprawidłowy email",
+      "passwordLabel": "Hasło",
+      "passwordPlaceholder": "Wpisz swoje hasło",
+      "passwordRequired": "Hasło jest wymagane",
+      "forgotPassword": "Zapomniałeś hasła?",
+      "signIn": "Zaloguj się"
+    },
+    "Register": {
+      "title": "Utwórz konto",
+      "subtitle": "Dołącz do naszej społeczności już dziś",
+      "registering": "Rejestrowanie danych...",
+      "registered": "Pomyślnie zarejestrowano!",
+      "registerFailed": "Rejestracja nie powiodła się. Spróbuj ponownie.",
+      "joinAs": "Chcę dołączyć jako:",
+      "roleRequired": "Wybierz rolę",
+      "roleBuyer": "Kupujący",
+      "roleBuyerDesc": "Znajdź usługi",
+      "roleProvider": "Dostawca usług",
+      "roleProviderDesc": "Oferuj usługi",
+      "chooseService": "Wybierz usługę",
+      "serviceRequired": "Usługa jest wymagana",
+      "usernameLabel": "Nazwa użytkownika",
+      "usernamePlaceholder": "Wpisz swoją nazwę użytkownika",
+      "usernameRequired": "Wpisz nazwę użytkownika",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Wpisz swój email",
+      "emailRequired": "Email jest wymagany",
+      "emailInvalid": "Nieprawidłowy email",
+      "passwordLabel": "Hasło",
+      "passwordPlaceholder": "Wpisz silne hasło",
+      "passwordRequired": "Hasło jest wymagane",
+      "confirmPasswordLabel": "Potwierdź hasło",
+      "confirmPasswordPlaceholder": "Potwierdź swoje hasło",
+      "confirmPasswordRequired": "Potwierdzenie hasła jest wymagane",
+      "tosAgree": "Zgadzam się z Regulaminem i Polityką prywatności",
+      "tosRequired": "Przeczytaj i zaakceptuj Regulamin oraz Politykę prywatności",
+      "registerCta": "Zarejestruj się",
+      "alreadyHaveAccount": "Masz już konto?",
+      "signInHere": "Zaloguj się tutaj"
+    },
+    "ResetPassword": {
+      "title": "Resetuj hasło",
+      "resetting": "Resetowanie hasła...",
+      "resetSuccessToast": "Hasło zostało pomyślnie zresetowane! Możesz się teraz zalogować",
+      "resetFailed": "Nie udało się zresetować hasła. Spróbuj ponownie.",
+      "resetSuccess": "Hasło pomyślnie zresetowane!",
+      "youCanLogin": "Możesz teraz zalogować się nowym hasłem.",
+      "goToLogin": "Przejdź do logowania",
+      "newPasswordPlaceholder": "Nowe hasło",
+      "passwordRequired": "Hasło jest wymagane",
+      "passwordMinLength": "Hasło musi mieć co najmniej 8 znaków",
+      "confirmNewPasswordPlaceholder": "Potwierdź nowe hasło",
+      "confirmPasswordRequired": "Potwierdzenie hasła jest wymagane",
+      "passwordsDoNotMatch": "Hasła nie są takie same",
+      "resetCta": "Resetuj hasło",
+      "backToLogin": "Powrót do logowania"
+    },
+    "EmailConfirmation": {
+      "title": "Potwierdzenie adresu email",
+      "instruction": "Potwierdź swój adres email, aby aktywować konto.",
+      "resendHint": "Jeśli nie otrzymałeś wiadomości z potwierdzeniem, możesz wysłać ją ponownie poniżej.",
+      "resendLoading": "Wysyłanie wiadomości z potwierdzeniem...",
+      "resendSuccess": "Wiadomość z potwierdzeniem została wysłana!",
+      "resendFailed": "Nie udało się wysłać wiadomości z potwierdzeniem. Spróbuj ponownie.",
+      "confirming": "Potwierdzanie adresu email...",
+      "confirmed": "Email został potwierdzony! Możesz się zalogować, aby kontynuować",
+      "confirmFailed": "Nie udało się potwierdzić emaila. Spróbuj ponownie.",
+      "success": "Email pomyślnie potwierdzony!",
+      "youCanLogin": "Możesz teraz zalogować się na swoje konto.",
+      "login": "Zaloguj się",
+      "tokenLabel": "Token potwierdzający",
+      "tokenPlaceholder": "Wpisz token z wiadomości email",
+      "tokenRequired": "Token potwierdzający jest wymagany",
+      "confirmCta": "Potwierdź email",
+      "resendCta": "Wyślij ponownie email potwierdzający"
+    }
+  },
+  "Contact": {
+    "chatWithUs": {
+      "title": "Porozmawiaj z nami",
+      "liveChat": "Rozpocznij czat na żywo",
+      "email": "Napisz do nas email",
+      "messageOnX": "Napisz do nas na X"
+    },
+    "callUs": {
+      "title": "Zadzwoń do nas",
+      "hours": "Zadzwoń do naszego zespołu od poniedziałku do piątku w godz. 8:00–17:00.",
+      "phone": "+1 (555) 000–0000"
+    },
+    "visitUs": {
+      "title": "Odwiedź nas",
+      "description": "Porozmawiaj z nami osobiście w naszej siedzibie w Melbourne.",
+      "address": "100 Smith Street, Collingwood VIC 3066"
+    },
+    "Form": {
+      "title": "Skontaktuj się z naszym zespołem",
+      "description": "Masz pytania dotyczące produktu lub skalowania na naszej platformie? Jesteśmy tu, aby pomóc. Skontaktuj się z naszym przyjaznym zespołem 24/7 i rozpocznij w mniej niż 5 minut.",
+      "firstName": "Imię",
+      "lastName": "Nazwisko",
+      "emailPlaceholder": "you@company.com",
+      "country": {
+        "lt": "LT",
+        "ru": "RU"
+      },
+      "phonePlaceholder": "+1 (555) 000-0000",
+      "messagePlaceholder": "Zostaw nam wiadomość...",
+      "send": "Wyślij wiadomość"
+    }
+  },
+  "Common": {
+    "errors": {
+      "failedToLoad": "Nie udało się wczytać",
+      "notFound": "Nie znaleziono"
+    },
+    "loading": "Wczytywanie..."
+  },
+  "Map": {
+    "loading": "Ładowanie mapy...",
+    "errors": {
+      "failedToLoadLocations": "Nie udało się wczytać lokalizacji"
+    },
+    "fallback": {
+      "unnamedVenue": "Miejsce bez nazwy",
+      "unknownUser": "Nieznany",
+      "uncategorized": "Bez kategorii",
+      "noAddress": "Brak adresu"
+    }
+  },
+  "Listing": {
+    "Edit": {
+      "preview": "Podgląd ogłoszenia",
+      "editing": "Edycja",
+      "listingFallback": "Ogłoszenie",
+      "documentId": "ID dokumentu",
+      "status": "Status",
+      "tabs": {
+        "basic": "Podstawowe informacje",
+        "vv": "Dane dostawcy/miejsca",
+        "deal": "Gorąca oferta",
+        "images": "Obrazy",
+        "contact": "Kontakt",
+        "social": "Linki społecznościowe",
+        "pricing": "Cennik",
+        "faqs": "FAQ"
+      }
+    },
+    "Details": {
+      "overview": "Przegląd",
+      "rating": "Ocena",
+      "hotDeal": "Gorąca oferta",
+      "flatRate": "Stała cena",
+      "percentOff": "taniej",
+      "valid": "Ważne",
+      "reviews": "Opinie",
+      "noReviews": "Brak opinii",
+      "faqs": "FAQ"
+    },
+    "Hero": {
+      "by": "przez {username}",
+      "hotDealBadge": "GORĄCA OFERTA",
+      "percentageOffLimited": "{percent}% TANIEJ - Oferta ograniczona",
+      "getTicketCta": "Kup bilet",
+      "visitWebsite": "Odwiedź stronę"
+    }
+  },
+  "Profile": {
+    "loginPrompt": "Zaloguj się, aby zobaczyć swój profil. Przekierowywanie...",
+    "tabs": {
+      "profile": "Profil",
+      "myListings": "Moje ogłoszenia",
+      "favouriteListings": "Ulubione ogłoszenia",
+      "messages": "Wiadomości",
+      "reviews": "Opinie"
+    },
+    "ProfileTab": {
+      "title": "Ustawienia profilu",
+      "subtitle": "Zarządzaj swoimi danymi osobowymi i hasłem.",
+      "logout": "Wyloguj",
+      "usernameLabel": "Nazwa użytkownika",
+      "usernamePlaceholder": "Nazwa użytkownika",
+      "saveUsername": "Zapisz nazwę",
+      "errors": {
+        "usernameEmpty": "Nazwa użytkownika nie może być pusta",
+        "userNotFound": "Nie znaleziono użytkownika"
+      },
+      "toasts": {
+        "updatingUsername": "Aktualizowanie nazwy użytkownika...",
+        "usernameUpdated": "Nazwa użytkownika zaktualizowana",
+        "usernameUpdateFailed": "Nie udało się zaktualizować nazwy użytkownika",
+        "updatingPassword": "Aktualizowanie hasła...",
+        "passwordUpdated": "Hasło zaktualizowane",
+        "passwordUpdateFailed": "Nie udało się zaktualizować hasła"
+      },
+      "password": {
+        "updateTitle": "Zmień hasło",
+        "currentLabel": "Aktualne hasło",
+        "currentPlaceholder": "Wpisz aktualne hasło",
+        "newLabel": "Nowe hasło",
+        "newPlaceholder": "Wpisz nowe hasło",
+        "confirmLabel": "Potwierdź hasło",
+        "confirmPlaceholder": "Potwierdź nowe hasło",
+        "updateCta": "Zmień hasło",
+        "errors": {
+          "currentRequired": "Aktualne hasło jest wymagane",
+          "newRequired": "Nowe hasło jest wymagane",
+          "confirmRequired": "Potwierdzenie hasła jest wymagane",
+          "minLength": "Hasło musi mieć co najmniej 8 znaków",
+          "noMatch": "Hasła nie są zgodne"
+        }
+      }
+    },
+    "FavouriteListings": {
+      "title": "Ulubione ogłoszenia",
+      "subtitle": "Twoje zapisane i ulubione oferty.",
+      "empty": "Brak ulubionych ogłoszeń do wyświetlenia"
+    },
+    "MyListings": {
+      "title": "Moje ogłoszenia",
+      "subtitle": "Zarządzaj wszystkimi swoimi ogłoszeniami.",
+      "filterLabel": "Filtruj według statusu",
+      "allStatuses": "Wszystkie statusy",
+      "create": "Dodaj ogłoszenie",
+      "empty": "Brak ogłoszeń do wyświetlenia. Zacznij od utworzenia pierwszego",
+      "status": {
+        "draft": "Szkic",
+        "published": "Opublikowane",
+        "pending": "Oczekuje na weryfikację",
+        "archived": "Zarchiwizowane"
+      }
+    },
+    "Messages": {
+      "title": "Wiadomości",
+      "subtitle": "Wkrótce – bądź na bieżąco!",
+      "comingSoonTitle": "Wiadomości wkrótce",
+      "comingSoonDesc": "Pracujemy nad systemem wiadomości, aby ułatwić kontakt z właścicielami i najemcami."
+    },
+    "ReviewsTab": {
+      "title": "Opinie",
+      "subtitle": "Przeglądaj i zarządzaj opiniami o nieruchomościach.",
+      "propertyLabel": "Nieruchomość:"
+    }
+  },
+  "Vendors": {
+    "filters": {
+      "chooseVendor": "Wybierz dostawcę",
+      "selectPricing": "Wybierz cenę",
+      "pickEventType": "Wybierz typ wydarzenia",
+      "withPricingOnly": "Tylko z ceną",
+      "withoutPricingOnly": "Tylko bez ceny"
+    },
+    "noVendorsFound": "Nie znaleziono dostawców"
+  },
+  "Venues": {
+    "filters": {
+      "chooseVenue": "Wybierz miejsce",
+      "selectPricing": "Wybierz cenę",
+      "chooseEventType": "Wybierz typ wydarzenia",
+      "withPricingOnly": "Tylko z ceną",
+      "withoutPricingOnly": "Tylko bez ceny"
+    },
+    "noVenuesFound": "Nie znaleziono miejsc"
+  },
+  "Custom": {
+    "ImageUploader": {
+      "selectImages": "Wybierz obrazy",
+      "uploadImages": "Prześlij {count} obrazów",
+      "toasts": {
+        "uploadSuccess": "Obrazy przesłane pomyślnie",
+        "uploadFailed": "Nie udało się przesłać obrazów"
+      }
+    },
+    "NoDataCard": {
+      "expandSearchHint": "Spróbuj zwiększyć promień wyszukiwania lub wybierz inną lokalizację."
+    },
+    "VendorCard": {
+      "title": "Szczegóły dostawcy",
+      "experienceYears": "Doświadczenie: {years} lat",
+      "serviceArea": "Obszar usług:",
+      "notSpecified": "Nie określono"
+    },
+    "VenueCard": {
+      "title": "Szczegóły miejsca",
+      "capacity": "Pojemność: {count}",
+      "location": "Lokalizacja"
+    }
+  },
+  "Global": {
+    "SubscriptionForm": {
+      "emailPlaceholder": "Wpisz swój email",
+      "subscribe": "Subskrybuj"
+    }
+  },
+  "NotFound": {
+    "title": "Ups! Coś poszło nie tak",
+    "description": "Nie możemy znaleźć strony, której szukasz."
+  },
+  "Modals": {
+    "ForgotPassword": {
+      "title": "Resetuj hasło",
+      "description": "Wpisz swój adres email, a wyślemy link do resetu hasła",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Wpisz swój email",
+      "sendResetLink": "Wyślij link resetujący",
+      "errors": {
+        "emailRequired": "Email jest wymagany",
+        "emailInvalid": "Nieprawidłowy adres email"
+      },
+      "toasts": {
+        "sending": "Wysyłanie emaila...",
+        "sent": "Email został wysłany!",
+        "errorDefault": "Nie udało się wysłać emaila. Spróbuj ponownie."
+      }
+    },
+    "LoginNavigate": {
+      "title": "Zaloguj się, aby polubić to ogłoszenie",
+      "description": "Po zalogowaniu możesz zapisać to ogłoszenie do ulubionych i otrzymywać aktualizacje o jego dostępności.",
+      "loginCta": "Zaloguj się"
+    },
+    "Logout": {
+      "title": "Wyloguj",
+      "confirmTitle": "Czy na pewno chcesz się wylogować?",
+      "confirmDesc": "Zostaniesz wylogowany i przekierowany na stronę logowania.",
+      "cancel": "Anuluj",
+      "logoutCta": "Wyloguj",
+      "toasts": {
+        "loggedOut": "Pomyślnie wylogowano!"
+      }
+    },
+    "ListingItem": {
+      "errors": {
+        "noImage": "Prześlij co najmniej jeden obraz",
+        "invalidServiceType": "Wybierz prawidłowy typ usługi"
+      }
+    }
+  },
+  "Dynamic": {
+    "ListingCard": {
+      "toasts": {
+        "adding": "Dodawanie do ulubionych...",
+        "removed": "Usunięto z ulubionych!",
+        "removing": "Usuwanie z ulubionych...",
+        "added": "Dodano do ulubionych!",
+        "addFailed": "Nie udało się dodać do ulubionych",
+        "removeFailed": "Nie udało się usunąć z ulubionych"
+      },
+      "hot": "GORĄCA",
+      "deal": "OFERTA",
+      "imageAlt": "Zdjęcie miejsca {index}",
+      "placeholderAlt": "zastępczy",
+      "unrated": "Bez oceny",
+      "noLocation": "Brak lokalizacji",
+      "noVenueLocation": "Brak lokalizacji miejsca",
+      "price": "Cena",
+      "contactForPricing": "Skontaktuj się w sprawie ceny",
+      "edit": "Edytuj",
+      "view": "Podgląd"
+    },
+    "SelectedCategories": {
+      "noCategoriesFound": "Nie znaleziono kategorii"
+    }
+  }
+}

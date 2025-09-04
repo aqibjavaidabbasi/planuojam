@@ -6,6 +6,7 @@ import Button from '../custom/Button';
 import { category, ListingItem } from '@/types/pagesTypes';
 import { fetchChildCategories, fetchHotDealListings } from '@/services/common';
 import { useEventTypes } from '@/context/EventTypesContext';
+import { useLocale } from 'next-intl';
 
 type FilterConfig = {
     name: string;
@@ -28,13 +29,14 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
     const [subCategory, setSubCategory] = useState('');
     const [subcategoryOptions, setSubcategoryOptions] = useState<FilterConfig>();
     const [appliedFilters, setAppliedFilters] = useState({});
+    const locale = useLocale();
 
     const eventTypeNames: string[] = []
     eventTypes.map(event => eventTypeNames.push(event.eventName));
 
     useEffect(function () {
         async function fetchChildren() {
-            const childCategories: category[] = await fetchChildCategories(subCategory);
+            const childCategories: category[] = await fetchChildCategories(subCategory, locale);
             setSubcategoryOptions({
                 name: 'subCategory',
                 placeholder: 'Choose a sub Category',
@@ -42,7 +44,7 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
             })
         }
         fetchChildren();
-    }, [subCategory])
+    }, [subCategory, locale])
 
     const handleFilterChange = (name: string, value: string) => {
         //subCategory filter setup

@@ -1,0 +1,488 @@
+{
+  "Auth": {
+    "Login": {
+      "title": "Tere tulemast tagasi",
+      "subtitle": "Logi oma kontole",
+      "noAccount": "Kas sul pole kontot?",
+      "signUpHere": "Registreeru siin",
+      "loggingIn": "Sisselogimine...",
+      "loggedIn": "Sisselogimine õnnestus!",
+      "loginFailed": "Sisselogimine ebaõnnestus. Palun proovi uuesti.",
+      "emailLabel": "E-post",
+      "emailPlaceholder": "Sisesta oma e-post",
+      "emailRequired": "E-post on kohustuslik",
+      "emailInvalid": "Vigane e-post",
+      "passwordLabel": "Parool",
+      "passwordPlaceholder": "Sisesta oma parool",
+      "passwordRequired": "Parool on kohustuslik",
+      "forgotPassword": "Unustasid parooli?",
+      "signIn": "Logi sisse"
+    },
+    "Register": {
+      "title": "Loo konto",
+      "subtitle": "Liitu meie kogukonnaga täna",
+      "registering": "Registreerime sinu andmeid...",
+      "registered": "Registreerimine õnnestus!",
+      "registerFailed": "Registreerimine ebaõnnestus. Palun proovi uuesti.",
+      "joinAs": "Soovin liituda kui:",
+      "roleRequired": "Palun vali roll",
+      "roleBuyer": "Ostja",
+      "roleBuyerDesc": "Leia teenuseid",
+      "roleProvider": "Teenusepakkuja",
+      "roleProviderDesc": "Paku teenuseid",
+      "chooseService": "Vali teenus",
+      "serviceRequired": "Teenus on kohustuslik",
+      "usernameLabel": "Kasutajanimi",
+      "usernamePlaceholder": "Sisesta oma kasutajanimi",
+      "usernameRequired": "Palun sisesta kasutajanimi",
+      "emailLabel": "E-post",
+      "emailPlaceholder": "Sisesta oma e-post",
+      "emailRequired": "E-post on kohustuslik",
+      "emailInvalid": "Vigane e-post",
+      "passwordLabel": "Parool",
+      "passwordPlaceholder": "Sisesta tugev parool",
+      "passwordRequired": "Parool on kohustuslik",
+      "confirmPasswordLabel": "Kinnita parool",
+      "confirmPasswordPlaceholder": "Kinnita oma parool",
+      "confirmPasswordRequired": "Parooli kinnitamine on kohustuslik",
+      "tosAgree": "Nõustun kasutustingimuste ja privaatsuspoliitikaga",
+      "tosRequired": "Palun loe ja nõustu kasutustingimuste ning privaatsuspoliitikaga",
+      "registerCta": "Registreeru",
+      "alreadyHaveAccount": "Kas konto on juba olemas?",
+      "signInHere": "Logi sisse siin"
+    },
+    "ResetPassword": {
+      "title": "Parooli lähtestamine",
+      "resetting": "Parooli lähtestamine...",
+      "resetSuccessToast": "Parool on edukalt lähtestatud! Nüüd saad sisse logida",
+      "resetFailed": "Parooli lähtestamine ebaõnnestus. Palun proovi uuesti.",
+      "resetSuccess": "Parool lähtestatud edukalt!",
+      "youCanLogin": "Nüüd saad sisse logida uue parooliga.",
+      "goToLogin": "Mine sisselogimisele",
+      "newPasswordPlaceholder": "Uus parool",
+      "passwordRequired": "Parool on kohustuslik",
+      "passwordMinLength": "Parool peab olema vähemalt 8 tähemärki",
+      "confirmNewPasswordPlaceholder": "Kinnita uus parool",
+      "confirmPasswordRequired": "Palun kinnita parool",
+      "passwordsDoNotMatch": "Paroolid ei ühti",
+      "resetCta": "Lähtesta parool",
+      "backToLogin": "Tagasi sisselogimisele"
+    },
+    "EmailConfirmation": {
+      "title": "E-posti kinnitamine",
+      "instruction": "Palun kinnita oma e-posti aadress, et konto aktiveerida.",
+      "resendHint": "Kui sa ei saanud kinnituskirja, võid selle allpool uuesti saata.",
+      "resendLoading": "Kinnituskirja saatmine...",
+      "resendSuccess": "Kinnituskiri on edukalt saadetud!",
+      "resendFailed": "Kinnituskirja saatmine ebaõnnestus. Palun proovi uuesti.",
+      "confirming": "E-posti kinnitamine...",
+      "confirmed": "E-post on edukalt kinnitatud! Saad sisse logida, et jätkata",
+      "confirmFailed": "E-posti kinnitamine ebaõnnestus. Palun proovi uuesti.",
+      "success": "E-post kinnitatud edukalt!",
+      "youCanLogin": "Nüüd saad oma kontole sisse logida.",
+      "login": "Logi sisse",
+      "tokenLabel": "Kinnituskood",
+      "tokenPlaceholder": "Sisesta e-kirjas olev kinnituskood",
+      "tokenRequired": "Kinnituskood on kohustuslik",
+      "confirmCta": "Kinnita e-post",
+      "resendCta": "Saada kinnituskiri uuesti"
+    }
+  },
+  "Contact": {
+    "chatWithUs": {
+      "title": "Vestle meiega",
+      "liveChat": "Alusta vestlust",
+      "email": "Kirjuta meile e-postiga",
+      "messageOnX": "Kirjuta meile X-is"
+    },
+    "callUs": {
+      "title": "Helista meile",
+      "hours": "Helista meie tiimile E–R 8–17.",
+      "phone": "+1 (555) 000–0000"
+    },
+    "visitUs": {
+      "title": "Külasta meid",
+      "description": "Kohtu meiega isiklikult meie Melbourne'i peakontoris.",
+      "address": "100 Smith Street, Collingwood VIC 3066"
+    },
+    "Form": {
+      "title": "Võta meie tiimiga ühendust",
+      "description": "Kas sul on küsimusi toote või platvormil kasvamise kohta? Oleme abiks. Vestle meie sõbraliku tiimiga 24/7 ja alusta vähem kui 5 minutiga.",
+      "firstName": "Eesnimi",
+      "lastName": "Perekonnanimi",
+      "emailPlaceholder": "you@company.com",
+      "country": {
+        "lt": "LT",
+        "ru": "RU"
+      },
+      "phonePlaceholder": "+1 (555) 000-0000",
+      "messagePlaceholder": "Jäta meile sõnum...",
+      "send": "Saada sõnum"
+    }
+  },
+  "Common": {
+    "errors": {
+      "failedToLoad": "Laadimine ebaõnnestus",
+      "notFound": "Ei leitud"
+    },
+    "loading": "Laadimine..."
+  },
+  "Map": {
+    "loading": "Kaardi laadimine...",
+    "errors": {
+      "failedToLoadLocations": "Asukohtade laadimine ebaõnnestus"
+    },
+    "fallback": {
+      "unnamedVenue": "Nimetu koht",
+      "unknownUser": "Teadmata",
+      "uncategorized": "Kategoriseerimata",
+      "noAddress": "Aadressi ei ole"
+    }
+  },
+  "Listing": {
+    "Edit": {
+      "preview": "Kuulutuse eelvaade",
+      "editing": "Redigeerimine",
+      "listingFallback": "Kuulutus",
+      "documentId": "Dokumendi ID",
+      "status": "Olek",
+      "tabs": {
+        "basic": "Põhiandmed",
+        "vv": "Teenusepakkuja/Koha andmed",
+        "deal": "Kuum pakkumine",
+        "images": "Pildid",
+        "contact": "Kontakt",
+        "social": "Sotsiaalmeedia lingid",
+        "pricing": "Hinnad",
+        "faqs": "KKK"
+      }
+    },
+    "Details": {
+      "overview": "Ülevaade",
+      "rating": "Hinnang",
+      "hotDeal": "Kuum pakkumine",
+      "flatRate": "Fikseeritud hind",
+      "percentOff": "soodustus",
+      "valid": "Kehtib",
+      "reviews": "Arvustused",
+      "noReviews": "Arvustusi veel pole",
+      "faqs": "KKK"
+    },
+    "Hero": {
+      "by": "autor {username}",
+      "hotDealBadge": "KUUM PAKKUMINE",
+      "percentageOffLimited": "{percent}% SOODUSTUST - Piiratud aeg",
+      "getTicketCta": "Osta pilet",
+      "visitWebsite": "Külasta veebisaiti"
+    }
+  },
+  "Profile": {
+    "loginPrompt": "Palun logi sisse, et vaadata oma profiili. Suunamine...",
+    "tabs": {
+      "profile": "Profiil",
+      "myListings": "Minu kuulutused",
+      "favouriteListings": "Lemmikkuulutused",
+      "messages": "Sõnumid",
+      "reviews": "Arvustused"
+    },
+    "ProfileTab": {
+      "title": "Profiili seaded",
+      "subtitle": "Halda oma isikuandmeid ja parooli.",
+      "logout": "Logi välja",
+      "usernameLabel": "Kasutajanimi",
+      "usernamePlaceholder": "Kasutajanimi",
+      "saveUsername": "Salvesta nimi",
+      "errors": {
+        "usernameEmpty": "Kasutajanimi ei tohi olla tühi",
+        "userNotFound": "Kasutajat ei leitud"
+      },
+      "toasts": {
+        "updatingUsername": "Kasutajanime uuendamine...",
+        "usernameUpdated": "Kasutajanimi on uuendatud",
+        "usernameUpdateFailed": "Kasutajanime uuendamine ebaõnnestus",
+        "updatingPassword": "Parooli uuendamine...",
+        "passwordUpdated": "Parool uuendatud",
+        "passwordUpdateFailed": "Parooli uuendamine ebaõnnestus"
+      },
+      "password": {
+        "updateTitle": "Uuenda parooli",
+        "currentLabel": "Praegune parool",
+        "currentPlaceholder": "Sisesta oma praegune parool",
+        "newLabel": "Uus parool",
+        "newPlaceholder": "Sisesta uus parool",
+        "confirmLabel": "Kinnita parool",
+        "confirmPlaceholder": "Kinnita uus parool",
+        "updateCta": "Uuenda parool",
+        "errors": {
+          "currentRequired": "Praegune parool on kohustuslik",
+          "newRequired": "Uus parool on kohustuslik",
+          "confirmRequired": "Parooli kinnitamine on kohustuslik",
+          "minLength": "Parool peab olema vähemalt 8 tähemärki",
+          "noMatch": "Paroolid ei ühti"
+        }
+      }
+    },
+    "FavouriteListings": {
+      "title": "Lemmikkuulutused",
+      "subtitle": "Sinu salvestatud ja lemmikpakkumised.",
+      "empty": "Pole lemmikkuulutusi, mida näidata"
+    },
+    "MyListings": {
+      "title": "Minu kuulutused",
+      "subtitle": "Halda kõiki oma kuulutusi.",
+      "filterLabel": "Filtreeri oleku järgi",
+      "allStatuses": "Kõik olekud",
+      "create": "Loo kuulutus",
+      "empty": "Kuulutusi pole. Alusta oma esimese loomisega",
+      "status": {
+        "draft": "Mustand",
+        "published": "Avaldatud",
+        "pending": "Läbivaatamisel",
+        "archived": "Arhiveeritud"
+      }
+    },
+    "Messages": {
+      "title": "Sõnumid",
+      "subtitle": "Varsti tulekul – püsi lainel!",
+      "comingSoonTitle": "Sõnumid peagi",
+      "comingSoonDesc": "Töötame sõnumisüsteemi kallal, et saaksid suhelda omanike ja üürnikega."
+    },
+    "ReviewsTab": {
+      "title": "Arvustused",
+      "subtitle": "Vaata ja halda oma kinnisvara arvustusi.",
+      "propertyLabel": "Kinnisvara:"
+    }
+  },
+  "Vendors": {
+    "filters": {
+      "chooseVendor": "Vali pakkuja",
+      "selectPricing": "Vali hind",
+      "pickEventType": "Vali sündmuse tüüp",
+      "withPricingOnly": "Ainult hinnakirjaga",
+      "withoutPricingOnly": "Ainult ilma hinnakirjata"
+    },
+    "noVendorsFound": "Pakkujaid ei leitud"
+  },
+  "Venues": {
+    "filters": {
+      "chooseVenue": "Vali koht",
+      "selectPricing": "Vali hind",
+      "chooseEventType": "Vali sündmuse tüüp",
+      "withPricingOnly": "Ainult hinnakirjaga",
+      "withoutPricingOnly": "Ainult ilma hinnakirjata"
+    },
+    "noVenuesFound": "Kohti ei leitud"
+  },
+  "Custom": {
+    "ImageUploader": {
+      "selectImages": "Vali pildid",
+      "uploadImages": "Laadi üles {count} pilti",
+      "toasts": {
+        "uploadSuccess": "Pildid laaditi üles edukalt",
+        "uploadFailed": "Piltide üleslaadimine ebaõnnestus"
+      }
+    },
+    "NoDataCard": {
+      "expandSearchHint": "Proovi laiendada otsinguraadiust või vali teine asukoht."
+    },
+    "VendorCard": {
+      "title": "Pakkuja üksikasjad",
+      "experienceYears": "Kogemus: {years} aastat",
+      "serviceArea": "Teeninduspiirkond:",
+      "notSpecified": "Pole määratud"
+    },
+    "VenueCard": {
+      "title": "Koha üksikasjad",
+      "capacity": "Mahutavus: {count}",
+      "location": "Asukoht"
+    }
+  },
+  "Global": {
+    "SubscriptionForm": {
+      "emailPlaceholder": "Sisesta oma e-post",
+      "subscribe": "Telli"
+    }
+  },
+  "NotFound": {
+    "title": "Oih! Midagi läks valesti",
+    "description": "Ei leia otsitud lehte."
+  },
+  "Modals": {
+    "ForgotPassword": {
+      "title": "Parooli lähtestamine",
+      "description": "Sisesta oma e-posti aadress ja saadame sulle lingi parooli lähtestamiseks",
+      "emailLabel": "E-post",
+      "emailPlaceholder": "Sisesta oma e-post",
+      "sendResetLink": "Saada lähtestuslink",
+      "errors": {
+        "emailRequired": "E-post on kohustuslik",
+        "emailInvalid": "Vigane e-posti aadress"
+      },
+      "toasts": {
+        "sending": "E-kirja saatmine...",
+        "sent": "E-kiri on saadetud!",
+        "errorDefault": "E-kirja saatmine ebaõnnestus. Palun proovi uuesti."
+      }
+    },
+    "LoginNavigate": {
+      "title": "Logi sisse, et sellele kuulutusele meeldimist lisada",
+      "description": "Sisselogimisega saad salvestada kuulutuse lemmikutesse ja saada teavitusi selle saadavusest.",
+      "loginCta": "Logi sisse"
+    },
+    "Logout": {
+      "title": "Logi välja",
+      "confirmTitle": "Kas soovid kindlasti välja logida?",
+      "confirmDesc": "Sind logitakse kontolt välja ja suunatakse sisselogimise lehele.",
+      "cancel": "Tühista",
+      "logoutCta": "Logi välja",
+      "toasts": {
+        "loggedOut": "Väljalogimine õnnestus!"
+      }
+    },
+    "ListingItem": {
+      "title": "Loo kuulutus",
+      "buttons": {
+        "cancel": "Tühista",
+        "create": "Loo",
+        "saving": "Salvestamine...",
+        "fetchCoordinates": "Hangi koordinaadid",
+        "remove": "Eemalda"
+      },
+      "sections": {
+        "basicDetails": "Põhiandmed",
+        "vendorDetails": "Teenusepakkuja andmed",
+        "venueDetails": "Koha andmed"
+      },
+      "fields": {
+        "title": {
+          "label": "Pealkiri",
+          "required": "Pealkiri on kohustuslik"
+        },
+        "type": {
+          "placeholder": "Vali tüüp",
+          "required": "Tüüp on kohustuslik"
+        },
+        "listingStatus": {
+          "placeholder": "Vali olek",
+          "required": "Olek on kohustuslik",
+          "options": {
+            "draft": "Mustand",
+            "published": "Avaldatud",
+            "pendingReview": "Läbivaatamisel",
+            "archived": "Arhiveeritud"
+          }
+        },
+        "price": {
+          "label": "Hind",
+          "errors": {
+            "min": "Hind ei tohi olla negatiivne",
+            "max": "Hind on liiga suur"
+          }
+        },
+        "featured": {
+          "label": "Esile tõstetud"
+        },
+        "description": {
+          "label": "Kirjeldus",
+          "placeholder": "Kirjelda oma kuulutust",
+          "required": "Kirjeldus on kohustuslik"
+        },
+        "websiteLink": {
+          "label": "Veebilehe link",
+          "errors": {
+            "invalid": "Sisesta kehtiv URL (algab http(s)://)"
+          }
+        },
+        "workingHours": {
+          "label": "Tööaeg (t)",
+          "errors": {
+            "min": "Tundide arv peab olema vähemalt 1",
+            "max": "Tundide arv ei tohi ületada 24"
+          }
+        },
+        "about": {
+          "label": "Teenuse kirjeldus"
+        },
+        "experienceYears": {
+          "label": "Kogemusaastad"
+        },
+        "city": {
+          "label": "Linn",
+          "placeholder": "Vali linn"
+        },
+        "state": {
+          "label": "Maakond",
+          "placeholder": "Vali maakond"
+        },
+        "latitude": {
+          "label": "Laiuskraad"
+        },
+        "longitude": {
+          "label": "Pikkuskraad"
+        },
+        "address": {
+          "label": "Aadress"
+        },
+        "capacity": {
+          "label": "Mahutavus"
+        },
+        "bookingDurationType": {
+          "label": "Broneeringu tüüp",
+          "placeholder": "Vali tüüp",
+          "options": {
+            "perDay": "Päeva kaupa",
+            "perHour": "Tunni kaupa"
+          }
+        },
+        "bookingDuration": {
+          "label": "Broneeringu kestus"
+        }
+      },
+      "serviceArea": {
+        "helpText": "Lisa teeninduspiirkonnad, kus pakud teenust",
+        "title": "Teeninduspiirkond",
+        "add": "Lisa piirkond"
+      },
+      "amenities": {
+        "title": "Mugavused",
+        "add": "Lisa mugavus",
+        "itemLabel": "Mugavus"
+      },
+      "toasts": {
+        "created": "Kuulutus loodud!",
+        "failed": "Midagi läks valesti",
+        "fixErrors": "Paranda vead ja proovi uuesti"
+      },
+      "errors": {
+        "noImage": "Laadi üles vähemalt üks pilt",
+        "invalidServiceType": "Palun vali sobiv teenuse tüüp"
+      }
+    }
+  },
+  "Dynamic": {
+    "ListingCard": {
+      "toasts": {
+        "adding": "Lisamine lemmikutesse...",
+        "removed": "Eemaldatud lemmikutest!",
+        "removing": "Eemaldamine lemmikutest...",
+        "added": "Lisatud lemmikutesse!",
+        "addFailed": "Lemmikutesse lisamine ebaõnnestus",
+        "removeFailed": "Lemmikutest eemaldamine ebaõnnestus"
+      },
+      "hot": "KUUM",
+      "deal": "PAKKUMINE",
+      "imageAlt": "Koha pilt {index}",
+      "placeholderAlt": "kohatäide",
+      "unrated": "Hinnang puudub",
+      "noLocation": "Asukoht puudub",
+      "noVenueLocation": "Koha asukoht puudub",
+      "price": "Hind",
+      "contactForPricing": "Küsi hinda",
+      "edit": "Muuda",
+      "view": "Vaata"
+    },
+    "SelectedCategories": {
+      "noCategoriesFound": "Kategooriaid ei leitud"
+    }
+  }
+}

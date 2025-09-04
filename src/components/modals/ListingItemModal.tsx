@@ -100,11 +100,11 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
 
   useEffect(() => {
     async function fetchChildren() {
-      const res = await fetchChildCategories(form.type)
+      const res = await fetchChildCategories(form.type, locale)
       setChildCategories(res)
     }
     fetchChildren()
-  }, [form.type])
+  }, [form.type, locale])
 
   const isVendor = useMemo(() => (form?.type || "vendor").toLowerCase() === "vendor", [form?.type])
 

@@ -4,16 +4,16 @@ import Heading from '../custom/heading';
 import ListingCard from './ListingCard';
 
 function TopListingItem({ data }: { data: topListingItemsBlock }) {
-    if (!data || !data.topListings || !data.topListings.listingsComponent) {
+    if (!data || !data.topListings || !data.topListings.listings) {
         return <div>No listings available.</div>;
     }
 
-    const listings = data.topListings.listingsComponent;
+    const listings = data.topListings.listings;
 
     const seenDocumentIds = new Set<string>();
     const filteredListings = listings.filter(item => {
-        const isTypeMatch = item.listingItem.type === data.listingType;
-        const docId = item.listingItem.documentId;
+        const isTypeMatch = item.type === data.listingType;
+        const docId = item.documentId;
         if (!isTypeMatch || !docId) return false;
         if (seenDocumentIds.has(docId)) return false;
         seenDocumentIds.add(docId);
@@ -32,7 +32,7 @@ function TopListingItem({ data }: { data: topListingItemsBlock }) {
                 ) : (
                     <div className='flex flex-wrap items-center justify-center gap-4'>
                         {filteredListings.map(item => (
-                            <ListingCard key={item.listingItem.documentId} item={item.listingItem} />
+                            <ListingCard key={item.documentId} item={item} />
                         ))}
                     </div>
                 )}

@@ -3,22 +3,35 @@ import { fetchAPI, createQuery } from "./api";
 import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
 import { DEFAULT_LOCALE } from "@/config/i18n";
 
-export async function fetchPage(pageSlug: string) {
-    const populate = PAGES_DYNAMIC_ZONE;
-    const filters = {
-        filters: {
-            slug: { $eq: pageSlug }
-        }
-    };
-    const query = createQuery(populate);
-    const res = await fetchAPI("pages", query, filters);
-    return res[0];
+export async function fetchPage(pageSlug: string, locale?: string) {
+    // Delegate to the locale-aware implementation for consistency
+    return fetchPageLocalized(pageSlug, locale);
 }
+
+
 
 /**
  * Locale-aware page fetch with fallback to DEFAULT_LOCALE if missing.
  */
+export async function fetchPageById(docId: string, locale?: string) {
+    const populate = PAGES_DYNAMIC_ZONE;
+    // Try requested locale first (if provided)
+    if (locale) {
+        const queryWithLocale = createQuery(populate, { locale });
+        const resLocale = await fetchAPI(`pages/${docId}`, queryWithLocale, {});
+        return resLocale;
+    }
+
+    // Fallback to default locale
+    const queryDefault = createQuery(populate, { locale: DEFAULT_LOCALE });
+    const resDefault = await fetchAPI(`pages/${docId}`, queryDefault, {});
+    return resDefault;
+}
+/**
+ * Locale-aware page fetch with fallback to DEFAULT_LOCALE if missing.
+ */
 export async function fetchPageLocalized(pageSlug: string, locale?: string) {
+    console.log("homepage locale", locale)
     const populate = PAGES_DYNAMIC_ZONE;
 
     const filters = {
@@ -26,14 +39,10 @@ export async function fetchPageLocalized(pageSlug: string, locale?: string) {
             slug: { $eq: pageSlug }
         }
     } as const;
-
-    console.log("locale", locale)
     // Try requested locale first (if provided)
     if (locale) {
         const queryWithLocale = createQuery(populate, { locale });
         const resLocale = await fetchAPI("pages", queryWithLocale, filters);
-
-        console.log("resLocale", resLocale);
         if (resLocale && resLocale[0]) return resLocale[0];
     }
 
@@ -43,7 +52,7 @@ export async function fetchPageLocalized(pageSlug: string, locale?: string) {
     return resDefault?.[0];
 }
 
-export async function fetchHeader() {
+export async function fetchHeader(locale?: string) {
     const populate = {
         nav: {
             populate: "*"
@@ -58,30 +67,36 @@ export async function fetchHeader() {
             }
         }
     };
-    const query = createQuery(populate);
-    const res = await fetchAPI("header", query);
-    return res;
+    // Try requested locale first if provided, then fallback to default locale
+    if (locale) {
+        const queryWithLocale = createQuery(populate, { locale });
+        const resLocale = await fetchAPI("header", queryWithLocale);
+        if (resLocale) return resLocale;
+    }
+
+    const queryDefault = createQuery(populate, { locale: DEFAULT_LOCALE });
+    const resDefault = await fetchAPI("header", queryDefault);
+    return resDefault;
 }
 
-export async function fetchFooter() {
+export async function fetchFooter(locale?: string) {
     const populate = {
         footerlinkSection: { populate: "*" },
         extraLinks: { populate: "*" }
     };
-    const query = createQuery(populate);
-    const res = await fetchAPI("footer", query);
-    return res;
+    if (locale) {
+        const queryWithLocale = createQuery(populate, { locale });
+        const resLocale = await fetchAPI("footer", queryWithLocale);
+        if (resLocale) return resLocale;
+    }
+
+    const queryDefault = createQuery(populate, { locale: DEFAULT_LOCALE });
+    const resDefault = await fetchAPI("footer", queryDefault);
+    return resDefault;
 } 
-export async function fetchListingItemPerSlug(slug: string) {
-    const populate = LISTING_ITEM_POP_STRUCTURE;
-    const filters = {
-        filters: {
-            slug: { $eq: slug }
-        }
-    };
-    const query = createQuery(populate);
-    const res = await fetchAPI("listings", query, filters);
-    return res[0];
+export async function fetchListingItemPerSlug(slug: string, locale?: string) {
+    // Delegate to the locale-aware implementation for consistency
+    return fetchListingItemPerSlugLocalized(slug, locale);
 }
 
 /**

@@ -168,30 +168,26 @@ export const PAGES_DYNAMIC_ZONE = {
                     },
                     'topListings': {
                         populate: {
-                            'listingsComponent': { 
+                            'listings': {
                                 populate: {
                                     'listingItem': {
-                                        populate: {
-                                            'listingItem': {
-                                                populate: '*'
-                                            },
-                                            'contact': {
-                                                populate: '*'
-                                            },
-                                            'socialLinks':{
-                                                populate: '*'
-                                            },
-                                            'pricingPackages':{
-                                                populate: '*'
-                                            },
-                                            'FAQs':{
-                                                populate: '*'
-                                            },
-                                            'hotDeal': {
-                                                populate: '*'
-                                            }
-                                        }
-                                    } 
+                                        populate: '*'
+                                    },
+                                    'contact': {
+                                        populate: '*'
+                                    },
+                                    'socialLinks': {
+                                        populate: '*'
+                                    },
+                                    'pricingPackages': {
+                                        populate: '*'
+                                    },
+                                    'FAQs': {
+                                        populate: '*'
+                                    },
+                                    'hotDeal': {
+                                        populate: '*'
+                                    }
                                 }
                             }
                         }
@@ -218,7 +214,7 @@ export const PAGES_DYNAMIC_ZONE = {
                             }
                         }
                     },
-                    'parentCategory':{
+                    'parentCategory': {
                         populate: {
                             'parent': {
                                 populate: '*'
@@ -249,7 +245,7 @@ export const PAGES_DYNAMIC_ZONE = {
                     }
                 }
             },
-            'dynamic-blocks.rich-text-area':{
+            'dynamic-blocks.rich-text-area': {
                 populate: '*'
             }
         }

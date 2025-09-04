@@ -13,7 +13,7 @@ export interface header {
   locale: string;
   nav: {
     id: number;
-    item: navObj[]
+    categories: category[];
   };
   eventTypes: {
     id: number;
@@ -29,6 +29,7 @@ export interface EventTypes {
   slug: string;
   page: {
     slug: string;
+    documentId: string;
   }
 }
 
@@ -36,11 +37,23 @@ export interface EventTypes {
 export interface footer {
   id: number;
   copyRightText: string;
-  extraLinks: navObj[];
+  extraLinks: {
+    id: number;
+    pages: {
+      title: string;
+      documentId: string;
+    }[]
+  };
   footerlinkSection: {
     id: number;
     title: string;
-    navItem: navObj[]
+    linksType: string;
+    categories: category[];
+    pages: {
+      title: string;
+      documentId: string;
+    }[]
+    event_types: EventTypes[]
   }[]
 }
 export interface navObj {
@@ -123,6 +136,7 @@ export interface TitleDescriptionBlock {
   __component: 'general.title-description';
   id: number;
   sectionDescription: string;
+  listingType: string;
   heading: {
     id: number;
     headingPiece: headingPiece[];
@@ -214,10 +228,7 @@ export interface topListingItemsBlock {
   sectionheader: TitleDescriptionBlock;
   topListings: {
     id: number;
-    listingsComponent: {
-      id: number;
-      listingItem: ListingItem;
-    }[]
+    listings: ListingItem[];
   }
 }
 

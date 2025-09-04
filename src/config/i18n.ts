@@ -4,7 +4,9 @@ export const SUPPORTED_LOCALES = (process.env.NEXT_PUBLIC_SUPPORTED_LOCALES || '
 export const LOCALE_LABELS: Record<string, string> = {
   en: 'English',
   lt: 'Lietuvių',
-  ru: 'Russian'
+  ru: 'Russian',
+  'pl-PL': 'Polish',
+  et: 'Estonian',
 };
 
 // Convenience: options for selects based on supported locales
