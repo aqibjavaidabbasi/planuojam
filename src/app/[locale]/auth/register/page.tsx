@@ -25,42 +25,53 @@ type FormValues = {
   password: string;
   confirmPassword: string;
   terms: boolean;
+  agreement: boolean;
 };
 
 function RegisterPage() {
   const { siteSettings } = useSiteSettings();
-  const { formState: { errors, isSubmitting }, handleSubmit, register, watch } = useForm<FormValues>();
+  const {
+    formState: { errors, isSubmitting },
+    handleSubmit,
+    register,
+    watch,
+  } = useForm<FormValues>();
   const { parentCategories } = useParentCategories();
   const dispatch = useAppDispatch();
   const router = useRouter();
   const t = useTranslations("Auth.Register");
 
-    const onSubmit: SubmitHandler<FormValues> = async (data) => {
-      //filter role, terms, confirm
-      const filteredData = {
-        serviceType: data.serviceType ?? null,
-        username: data.username,
-        email: data.email,
-        password: data.password,
-      }
-      await toast.promise(
-        dispatch(registerUser(filteredData))
-          .unwrap()
-          .then(() => {
-            router.push(`/auth/email-confirmation`);
-          }),
-        {
-          loading: t('registering'),
-          success: t('registered'),
-          error: (err) => {
-            // err is exactly what rejectWithValue() returned in the thunk
-            if (typeof err === "string") return err;
-            if (err && typeof err === "object" && "message" in err) return String(err.message);
-            return t('registerFailed');
-          },
-        }
-      );
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    if (!data.agreement) {
+      toast.error("Please Accept Terms of service and Privacy Policy");
+      return;
+    }
+    //filter role, terms, confirm
+    const filteredData = {
+      serviceType: data.serviceType ?? null,
+      username: data.username,
+      email: data.email,
+      password: data.password,
     };
+    await toast.promise(
+      dispatch(registerUser(filteredData))
+        .unwrap()
+        .then(() => {
+          router.push(`/auth/email-confirmation`);
+        }),
+      {
+        loading: t("registering"),
+        success: t("registered"),
+        error: (err) => {
+          // err is exactly what rejectWithValue() returned in the thunk
+          if (typeof err === "string") return err;
+          if (err && typeof err === "object" && "message" in err)
+            return String(err.message);
+          return t("registerFailed");
+        },
+      }
+    );
+  };
 
   return (
     <div className="flex items-center justify-center w-screen">
@@ -74,15 +85,19 @@ function RegisterPage() {
               height={80}
             />
           </div>
-          <h1 className="text-2xl font-bold text-gray-800">{t('title')}</h1>
-          <p className="text-gray-600 mt-2">{t('subtitle')}</p>
+          <h1 className="text-2xl font-bold text-gray-800">{t("title")}</h1>
+          <p className="text-gray-600 mt-2">{t("subtitle")}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
-              <label className={`block text-sm font-medium mb-3 ${errors.role ? "text-red-500" : "text-gray-700"}`}>
-                {errors.role ? t('roleRequired') : t('joinAs')}
+              <label
+                className={`block text-sm font-medium mb-3 ${
+                  errors.role ? "text-red-500" : "text-gray-700"
+                }`}
+              >
+                {errors.role ? t("roleRequired") : t("joinAs")}
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <label className="relative">
@@ -90,17 +105,28 @@ function RegisterPage() {
                     type="radio"
                     value="public"
                     className="sr-only"
-                    {...register('role', { required: true })}
+                    {...register("role", { required: true })}
                     disabled={isSubmitting}
                   />
-                  <div className={`border-2 border-gray-200 rounded-lg p-4 ${isSubmitting ? "cursor-not-allowed opacity-60" : "cursor-pointer"} transition-all duration-200 hover:border-primary ${watch('role') === 'public' && "border-primary bg-primary/15"}`}>
+                  <div
+                    className={`border-2 border-gray-200 rounded-lg p-4 ${
+                      isSubmitting
+                        ? "cursor-not-allowed opacity-60"
+                        : "cursor-pointer"
+                    } transition-all duration-200 hover:border-primary ${
+                      watch("role") === "public" &&
+                      "border-primary bg-primary/15"
+                    }`}
+                  >
                     <div className="text-center">
                       <div className="w-8 h-8 mx-auto mb-2 text-gray-600">
                         <BsCart3 size={20} />
                       </div>
-                      <div className="font-medium text-gray-800">{t('roleBuyer')}</div>
+                      <div className="font-medium text-gray-800">
+                        {t("roleBuyer")}
+                      </div>
                       <div className="text-xs text-gray-500 mt-1">
-                        {t('roleBuyerDesc')}
+                        {t("roleBuyerDesc")}
                       </div>
                     </div>
                   </div>
@@ -110,17 +136,28 @@ function RegisterPage() {
                     type="radio"
                     value="provider"
                     className="sr-only"
-                    {...register('role', { required: true })}
+                    {...register("role", { required: true })}
                     disabled={isSubmitting}
                   />
-                  <div className={`border-2 border-gray-200 rounded-lg p-4 ${isSubmitting ? "cursor-not-allowed opacity-60" : "cursor-pointer"} transition-all duration-200 hover:border-primary ${watch('role') === 'provider' && "border-primary bg-primary/15"}`}>
+                  <div
+                    className={`border-2 border-gray-200 rounded-lg p-4 ${
+                      isSubmitting
+                        ? "cursor-not-allowed opacity-60"
+                        : "cursor-pointer"
+                    } transition-all duration-200 hover:border-primary ${
+                      watch("role") === "provider" &&
+                      "border-primary bg-primary/15"
+                    }`}
+                  >
                     <div className="text-center">
                       <div className="w-8 h-8 mx-auto mb-2 text-gray-600">
                         <TbTools size={20} />
                       </div>
-                      <div className="font-medium text-gray-800">{t('roleProvider')}</div>
+                      <div className="font-medium text-gray-800">
+                        {t("roleProvider")}
+                      </div>
                       <div className="text-xs text-gray-500 mt-1">
-                        {t('roleProviderDesc')}
+                        {t("roleProviderDesc")}
                       </div>
                     </div>
                   </div>
@@ -128,75 +165,97 @@ function RegisterPage() {
               </div>
             </div>
 
-            {
-              watch('role') === 'provider' &&
-              <div className="flex flex-col gap-2.5"  
+            {watch("role") === "provider" && (
+              <div
+                className="flex flex-col gap-2.5"
                 style={{ transition: "max-height 0.7s linear" }}
-              > 
-                <label htmlFor="serviceType">{t('chooseService')}</label>
+              >
+                <label htmlFor="serviceType">{t("chooseService")}</label>
                 <Select
-                  options={parentCategories.map(cat => ({
+                  options={parentCategories.map((cat) => ({
                     value: cat.name,
                     label: cat.name,
                   }))}
                   disabled={isSubmitting}
-                  {...register('serviceType', { required: true })}
+                  {...register("serviceType", { required: true })}
                 />
-                {errors.serviceType && <p className="text-red-500">{t('serviceRequired')}</p>}
+                {errors.serviceType && (
+                  <p className="text-red-500">{t("serviceRequired")}</p>
+                )}
               </div>
-            }
+            )}
 
             <div className="flex flex-col gap-2.5">
               <Input
                 type="text"
-                placeholder={t('usernamePlaceholder')}
-                label={t('usernameLabel')}
+                placeholder={t("usernamePlaceholder")}
+                label={t("usernameLabel")}
                 disabled={isSubmitting}
-                {...register('username', { required: true })}
+                {...register("username", { required: true })}
               />
-              {errors.username && <p className="text-red-500">{t('usernameRequired')}</p>}
+              {errors.username && (
+                <p className="text-red-500">{t("usernameRequired")}</p>
+              )}
               <Input
                 type="email"
-                placeholder={t('emailPlaceholder')}
-                label={t('emailLabel')}
+                placeholder={t("emailPlaceholder")}
+                label={t("emailLabel")}
                 disabled={isSubmitting}
                 {...register("email", {
-                  required: t('emailRequired'),
-                  pattern: { value: /^\S+@\S+$/, message: t('emailInvalid') },
+                  required: t("emailRequired"),
+                  pattern: { value: /^\S+@\S+$/, message: t("emailInvalid") },
                 })}
               />
-              {errors.email && <p className="text-red-500">{errors?.email?.message}</p>}
+              {errors.email && (
+                <p className="text-red-500">{errors?.email?.message}</p>
+              )}
               <Input
                 type="password"
-                placeholder={t('passwordPlaceholder')}
-                label={t('passwordLabel')}
+                placeholder={t("passwordPlaceholder")}
+                label={t("passwordLabel")}
                 disabled={isSubmitting}
                 {...register("password", {
-                  required: t('passwordRequired'),
+                  required: t("passwordRequired"),
                   minLength: 8,
                 })}
               />
-              {errors.password && <p className="text-red-500">{errors?.password?.message}</p>}
+              {errors.password && (
+                <p className="text-red-500">{errors?.password?.message}</p>
+              )}
               <Input
                 type="password"
-                placeholder={t('confirmPasswordPlaceholder')}
-                label={t('confirmPasswordLabel')}
+                placeholder={t("confirmPasswordPlaceholder")}
+                label={t("confirmPasswordLabel")}
                 disabled={isSubmitting}
                 {...register("confirmPassword", {
-                  required: t('confirmPasswordRequired'),
+                  required: t("confirmPasswordRequired"),
                   minLength: 8,
                   validate: (value) => value === watch("password"),
                 })}
               />
-              {errors.confirmPassword && <p className="text-red-500">{errors?.confirmPassword?.message}</p>}
+              {errors.confirmPassword && (
+                <p className="text-red-500">
+                  {errors?.confirmPassword?.message}
+                </p>
+              )}
             </div>
 
             <div className="">
-              <Checkbox label={errors.terms ? t('tosRequired') : t('tosAgree')} disabled={isSubmitting} />
+              <Checkbox
+                label={errors.terms ? t("tosRequired") : t("tosAgree")}
+                {...register("agreement", {
+                  required: true,
+                })}
+                disabled={isSubmitting}
+              />
             </div>
 
-            <Button style="primary" type="submit" extraStyles="!rounded-md !w-full">
-              {t('registerCta')}
+            <Button
+              style="primary"
+              type="submit"
+              extraStyles="!rounded-md !w-full"
+            >
+              {t("registerCta")}
             </Button>
           </form>
 
@@ -215,12 +274,12 @@ function RegisterPage() {
 
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">
-              {t('alreadyHaveAccount')}
+              {t("alreadyHaveAccount")}
               <Link
                 href={`/auth/login`}
                 className="text-primary hover:underline font-medium transition-all ml-2"
               >
-                {t('signInHere')}
+                {t("signInHere")}
               </Link>
             </p>
           </div>

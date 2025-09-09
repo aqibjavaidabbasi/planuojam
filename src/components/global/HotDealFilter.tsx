@@ -6,7 +6,7 @@ import Button from '../custom/Button';
 import { category, ListingItem } from '@/types/pagesTypes';
 import { fetchChildCategories, fetchHotDealListings } from '@/services/common';
 import { useEventTypes } from '@/context/EventTypesContext';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 type FilterConfig = {
     name: string;
@@ -30,6 +30,7 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
     const [subcategoryOptions, setSubcategoryOptions] = useState<FilterConfig>();
     const [appliedFilters, setAppliedFilters] = useState({});
     const locale = useLocale();
+    const t = useTranslations("hotdeal");
 
     const eventTypeNames: string[] = []
     eventTypes.map(event => eventTypeNames.push(event.eventName));
@@ -43,8 +44,8 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
                 options: childCategories.map(cat => cat.name)
             })
         }
-        fetchChildren();
-    }, [subCategory, locale])
+     fetchChildren();
+    }, [subCategory,locale])
 
     const handleFilterChange = (name: string, value: string) => {
         //subCategory filter setup
@@ -99,7 +100,7 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
                         handleFilterChange(categoryOptions.name, e.target.value)
                     }}
                     options={categoryOptions.options.map((opt) => ({ label: opt, value: opt }))}
-                    placeholder="Select category"
+                    placeholder={t("selectCategory")}
                     disabled={isLoading}
                 />
 
@@ -109,7 +110,7 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
                         value={tempFilterValues[subcategoryOptions.name] || ''}
                         onChange={(e) => handleFilterChange(subcategoryOptions.name, e.target.value)}
                         options={subcategoryOptions.options.map((opt) => ({ label: opt, value: opt }))}
-                        placeholder="Select subcategory"
+                        placeholder={t("SelectsubCategory")}
                         disabled={!tempFilterValues['category'] || isLoading}
                     />}
 
@@ -118,17 +119,17 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
                     value={tempFilterValues['eventType'] || ''}
                     onChange={(e) => handleFilterChange('eventType', e.target.value)}
                     options={eventTypeNames.map((opt) => ({ label: opt, value: opt }))}
-                    placeholder='Choose Event Type'
+                    placeholder={t('ChooseEventType')}
                     disabled={isLoading}
                 />
-            </div>
+            </div>,
 
             <div className="flex gap-2">
                 <Button style="secondary" onClick={handleApply} disabled={isLoading}>
-                    Apply
+                   {t('Apply')}
                 </Button>
                 <Button style="secondary" onClick={handleClear} disabled={isLoading}>
-                    Clear
+                    {t('Clear')}
                 </Button>
             </div>
         </div>

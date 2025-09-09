@@ -28,7 +28,6 @@ export async function fetchListingByDocumentId(documentId: string, locale?: stri
             }
         }
     };
-
     // Try requested locale first
     if (locale) {
         const queryWithLocale = createQuery(populate, { locale });

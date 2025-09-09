@@ -1,6 +1,7 @@
 import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
 import { createQuery, fetchAPI } from "./api";
 import { DEFAULT_LOCALE } from "@/config/i18n";
+import { ListingItem } from "@/types/pagesTypes";
 
 // Generic fetch with locale fallback: try requested locale -> DEFAULT_LOCALE -> base (no locale)
 async function fetchWithLocaleFallback(
@@ -116,8 +117,8 @@ export async function fetchStates(locale?: string) {
     const populate = { populate: '*' };
     return await fetchWithLocaleFallback('states', populate, undefined, locale);
 }
-
-export async function fetchListingsPerEvents(docId: string) {
+// Fetch listing by Events with necessary relations populated
+export async function fetchListingsPerEvents(docId: string,locale?:string) {
     const populate = {
         eventTypes: {
             populate: '*'
@@ -129,10 +130,20 @@ export async function fetchListingsPerEvents(docId: string) {
     const filters = {
         filters: {
             eventTypes: {
-                documentId: docId
+                documentId:  docId
             }
         }
     }
+    if(locale){
+        const queryWithLocal= createQuery(populate,{locale});
+        const dataLocal= await fetchAPI('listings',queryWithLocal,filters);
+
+
+    if (Array.isArray(dataLocal) && dataLocal.length > 0) {
+      return dataLocal as ListingItem[];
+    }
+  }
+
     const query = createQuery(populate)
     const res = await fetchAPI('listings', query, filters);
     return res;

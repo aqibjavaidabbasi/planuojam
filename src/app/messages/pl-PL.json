@@ -371,5 +371,12 @@
     "SelectedCategories": {
       "noCategoriesFound": "Nie znaleziono kategorii"
     }
+  },
+    "hotdeal":{
+    "selectCategory": "Wybierz kategorię",
+    "SelectsubCategory":"Wybierz podkategorię",
+    "ChooseEventType": "Wybierz Typ zdarzenia",
+    "Apply": "Stosować",
+    "Clear": "Jasne"
   }
 }

@@ -363,5 +363,12 @@
     "SelectedCategories": {
       "noCategoriesFound": "Kategorijų nerasta"
     }
+  },
+    "hotdeal":{
+    "selectCategory": "Pasirinkite kategoriją",
+    "SelectsubCategory":"Pasirinkite subkategoriją",
+    "ChooseEventType": "Pasirinkite Įvykio tipas",
+    "Apply": "Taikyti",
+    "Clear": "Aišku"
   }
 }

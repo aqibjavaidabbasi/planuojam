@@ -484,5 +484,12 @@
     "SelectedCategories": {
       "noCategoriesFound": "Kategooriaid ei leitud"
     }
+  },
+    "hotdeal":{
+    "selectCategory": "Valige Kategooria",
+    "SelectsubCategory":"Valige alamkategooria",
+    "ChooseEventType": "Valige Sündmuse tüüp",
+    "Apply": "Rakenda",
+    "Clear": "Selge"
   }
 }
