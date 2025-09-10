@@ -238,12 +238,242 @@
         "loggedOut": "Вы успешно вышли!"
       }
     },
-    "ListingItem": {
-      "errors": {
-        "noImage": "Пожалуйста, загрузите хотя бы одно изображение",
-        "invalidServiceType": "Пожалуйста, выберите корректный тип услуги"
+  "ListingItem": {
+    "errors": {
+      "noImage": "Пожалуйста, загрузите хотя бы одно изображение",
+      "invalidServiceType": "Пожалуйста, выберите правильный тип услуги"
+    },
+    "toasts": {
+      "created": "Объявление успешно создано",
+      "failed": "Не удалось создать объявление",
+      "fixErrors": "В форме есть ошибки, пожалуйста, исправьте их"
+    },
+    "title": "Создать объявление",
+    "buttons": {
+      "cancel": "Отмена",
+      "saving": "Сохранение...",
+      "create": "Создать объявление",
+      "fetchCoordinates": "Получить координаты",
+      "remove": "Удалить"
+    },
+    "sections": {
+      "basicDetails": "Основные сведения",
+      "vendorDetails": "Данные поставщика",
+      "venueDetails": "Данные о месте",
+      "category": "Категория"
+    },
+    "fields": {
+      "title": {
+        "label": "Заголовок",
+        "required": "Заголовок обязателен"
+      },
+      "type": {
+        "placeholder": "Выберите тип",
+        "required": "Пожалуйста, выберите тип"
+      },
+      "listingStatus": {
+        "placeholder": "Выберите статус объявления",
+        "required": "Статус объявления обязателен",
+        "options": {
+          "draft": "Черновик",
+          "published": "Опубликовано",
+          "pendingReview": "Ожидает проверки",
+          "archived": "Архивировано"
+        }
+      },
+      "price": {
+        "label": "Цена",
+        "errors": {
+          "min": "Цена не может быть меньше 0",
+          "max": "Цена не может превышать 1000000"
+        }
+      },
+      "featured": {
+        "label": "Рекомендуемое?"
+      },
+      "description": {
+        "label": "Описание",
+        "placeholder": "Добавьте описание вашей услуги",
+        "required": "Описание обязательно"
+      },
+      "websiteLink": {
+        "label": "Ссылка на сайт",
+        "errors": {
+          "invalid": "Пожалуйста, добавьте правильную ссылку"
+        }
+      },
+      "workingHours": {
+        "label": "Рабочие часы",
+        "errors": {
+          "min": "Рабочие часы не могут быть равны 0 или отрицательными",
+          "max": "Рабочие часы не могут быть больше 24"
+        }
+      },
+      "about": {
+        "label": "О себе"
+      },
+      "experienceYears": {
+        "label": "Опыт (лет)"
+      },
+      "city": {
+        "label": "Город",
+        "placeholder": "Выберите город"
+      },
+      "state": {
+        "label": "Регион",
+        "placeholder": "Выберите регион"
+      },
+      "latitude": {
+        "label": "Широта"
+      },
+      "longitude": {
+        "label": "Долгота"
+      },
+      "capacity": {
+        "label": "Вместимость"
+      },
+      "bookingDurationType": {
+        "label": "Тип продолжительности бронирования",
+        "placeholder": "Выберите тип бронирования",
+        "options": {
+          "perDay": "За день",
+          "perHour": "За час"
+        }
+      },
+      "bookingDuration": {
+        "label": "Продолжительность бронирования"
+      },
+      "email": {
+        "label": "Email",
+        "message": "Неверный формат email"
+      },
+      "phone": {
+        "label": "Телефон",
+        "message": "Номер телефона обязателен"
+      },
+      "address": {
+        "label": "Адрес",
+        "message": "Адрес обязателен"
+      },
+      "platform": {
+        "label": "Платформа",
+        "placeholder": "Выберите платформу",
+        "fb": "Facebook",
+        "ld": "Linkedin",
+        "twt": "Twitter",
+        "thd": "Threads",
+        "ig": "Instagram",
+        "tt": "Tiktok",
+        "yt": "Youtube",
+        "pt": "Pinterest",
+        "rd": "Reddit"
+      },
+      "link": {
+        "label": "Ссылка"
+      },
+      "showIcons": {
+        "label": "Показывать эту иконку",
+        "options": {
+          "yes": "Да",
+          "no": "Нет"
+        }
+      },
+      "questions": {
+        "label": "Вопрос"
+      },
+      "answer": {
+        "label": "Ответ"
+      },
+      "chooseEventType": {
+        "label": "Выберите тип события"
+      },
+      "chooseCategory": {
+        "label": "Выберите категорию",
+        "placeholder": "Выберите категорию"
+      },
+      "name": {
+        "label": "Имя"
+      },
+      "popular": {
+        "label": "Популярное:"
+      },
+      "customCTA": {
+        "title": "Добавить пользовательскую кнопку призыва к действию:",
+        "text": {
+          "label": "Текст кнопки"
+        },
+        "buttonUrl": {
+          "label": "URL кнопки"
+        },
+        "style": {
+          "label": "Стиль кнопки",
+          "options": {
+            "primary": "Основной",
+            "secondary": "Второстепенный"
+          }
+        }
+      },
+      "addon": {
+        "statement": {
+          "label": "Доп. описание"
+        },
+        "price": {
+          "label": "Цена дополнения"
+        }
       }
+    },
+    "serviceArea": {
+      "helpText": "Выберите город или регион и нажмите кнопку получения координат, либо введите вручную",
+      "title": "Зона обслуживания",
+      "add": "Добавить зону обслуживания"
+    },
+    "amenities": {
+      "title": "Удобства",
+      "add": "Добавить удобство",
+      "itemLabel": "Элемент"
+    },
+    "hotDeal": {
+      "title": "Горячее предложение",
+      "yes": "Да",
+      "no": "Нет",
+      "startDate": "Дата начала",
+      "lastDate": "Дата окончания",
+      "dealNote": "Примечание к акции",
+      "discountType": "Тип скидки",
+      "flatRate": "Фиксированная сумма",
+      "percentage": "Процент",
+      "flatRatePrice": "Фиксированная цена"
+    },
+    "portfolio": {
+      "title": "Добавить изображения портфолио",
+      "imageUploaded": "Изображения были загружены"
+    },
+    "contact": {
+      "title": "Контакты"
+    },
+    "socialLinks": {
+      "title": "Социальные сети",
+      "sectionTitle": "Заголовок раздела",
+      "add": "+ Добавить социальную ссылку"
+    },
+    "faq": {
+      "title": "Часто задаваемые вопросы",
+      "sectionTitle": "Заголовок раздела",
+      "add": "+ Добавить вопрос-ответ"
+    },
+    "eventTypes": {
+      "title": "Типы событий"
+    },
+    "pricingPackages": {
+      "title": "Пакеты цен",
+      "sectionTitle": "Заголовок раздела",
+      "featuresList": "Список функций:",
+      "addFeature": "+ Добавить функцию",
+      "add": "+ Добавить план",
+      "optAddons": "Дополнительные опции:",
+      "addOptAddon": "+ Добавить дополнительную опцию"
     }
+  }
   },
   "Custom": {
     "ImageUploader": {

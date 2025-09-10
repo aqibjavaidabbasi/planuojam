@@ -343,6 +343,236 @@
       "errors": {
         "noImage": "Please upload at least one image",
         "invalidServiceType": "Please select a valid service type"
+      },
+      "toasts": {
+        "created": "Listing Created Successfully",
+        "failed": "Failed to create listing",
+        "fixErrors": "There are errors in the form, Please fix them"
+      },
+      "title": "Create Listing",
+      "buttons": {
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "create": "Create Listing",
+        "fetchCoordinates": "Fetch Coordinates",
+        "remove": "Remove"
+      },
+      "sections": {
+        "basicDetails": "Basic Details",
+        "vendorDetails": "Vendor Details",
+        "venueDetails": "Venue Details",
+        "category": "Category"
+      },
+      "fields": {
+        "title": {
+          "label": "Title",
+          "required": "Title is required"
+        },
+        "type": {
+          "placeholder": "Choose a type",
+          "required": "Please select a type"
+        },
+        "listingStatus": {
+          "placeholder": "Choose a listing status",
+          "required": "Listing status is required",
+          "options": {
+            "draft": "Draft",
+            "published": "Published",
+            "pendingReview": "Pending Review",
+            "archived": "Archived"
+          }
+        },
+        "price": {
+          "label": "Price",
+          "errors": {
+            "min": "Price can not be less than 0",
+            "max": "Price can not be more than 1000000"
+          }
+        },
+        "featured": {
+          "label": "Is Featured?"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Add description about your service",
+          "required": "Description is required"
+        },
+        "websiteLink": {
+          "label": "Website Link",
+          "errors": {
+            "invalid": "Please add a valid link"
+          }
+        },
+        "workingHours": {
+          "label": "Working Hours",
+          "errors": {
+            "min": "Working hour can not be 0 or negative",
+            "max": "Working hour can not be more than 24"
+          }
+        },
+        "about": {
+          "label": "About"
+        },
+        "experienceYears": {
+          "label": "Experience Years"
+        },
+        "city": {
+          "label": "City",
+          "placeholder": "Choose a city"
+        },
+        "state": {
+          "label": "State",
+          "placeholder": "Choose a State"
+        },
+        "latitude": {
+          "label": "Latitude"
+        },
+        "longitude": {
+          "label": "Longitude"
+        },
+        "capacity": {
+          "label": "Capacity"
+        },
+        "bookingDurationType": {
+          "label": "Booking Duration Type",
+          "placeholder": "Choose a booking duration type",
+          "options": {
+            "perDay": "Per Day",
+            "perHour": "Per Hour"
+          }
+        },
+        "bookingDuration": {
+          "label": "Booking Duration"
+        },
+        "email": {
+          "label": "Email",
+          "message": "Invalid email format"
+        },
+        "phone": {
+          "label": "Phone",
+          "message": "Phone number is required"
+        },
+        "address": {
+          "label": "Address",
+          "message": "Address number is required"
+        },
+        "platform": {
+          "label": "Platform",
+          "placeholder": "Select Platform",
+          "fb": "Facebook",
+          "ld": "Linkedin",
+          "twt": "Twitter",
+          "thd": "Threads",
+          "ig": "Instagram",
+          "tt": "Tiktok",
+          "yt": "Youtube",
+          "pt": "Pinterest",
+          "rd": "Reddit"
+        },
+        "link": {
+          "label": "Link"
+        },
+        "showIcons": {
+          "label": "Show this Icon",
+          "options": {
+            "yes": "Yes",
+            "no": "No"
+          }
+        },
+        "questions": {
+          "label": "Question"
+        },
+        "answer": {
+          "label": "Answer"
+        },
+        "chooseEventType": {
+          "label": "Choose event types"
+        },
+        "chooseCategory": {
+          "label": "Choose category",
+          "placeholder": "Choose category"
+        },
+        "name": {
+          "label": "Name"
+        },
+        "popular": {
+          "label": "Popular:"
+        },
+        "customCTA": {
+          "title": "Add Custom CTA (Call To Action) button:",
+          "text": {
+            "label": "CTA Body Text"
+          },
+          "buttonUrl": {
+            "label": "CTA Button URL"
+          },
+          "style": {
+            "label": "CTA Style",
+            "options": {
+              "primary": "Primary",
+              "secondary": "Secondary"
+            }
+          }
+        },
+        "addon": {
+          "statement": {
+            "label": "Addon Statment"
+          },
+          "price": {
+            "label": "Addon Price"
+          }
+        }
+      },
+      "serviceArea": {
+        "helpText": "Choose a city or state and use fetch coordinates button to fetch coordinates or you can also add manually",
+        "title": "Service Area",
+        "add": "Add Service area"
+      },
+      "amenities": {
+        "title": "Amenities",
+        "add": "Add Amenities",
+        "itemLabel": "Item"
+      },
+      "hotDeal": {
+        "title": "Hot Deal",
+        "yes": "Yes",
+        "no": "No",
+        "startDate": "Start Date",
+        "lastDate": "Last Date",
+        "dealNote": "Deal Note",
+        "discountType": "Discount Type",
+        "flatRate": "Flat Rate",
+        "percentage": "Percentage",
+        "flatRatePrice": "Flat Rate Price"
+      },
+      "portfolio": {
+        "title": "Add Portfolio Images",
+        "imageUploaded": "Images have ben uploaded"
+      },
+      "contact": {
+        "title": "Contact"
+      },
+      "socialLinks": {
+        "title": "Social Links",
+        "sectionTitle": "Section Title",
+        "add": "+ Add Social Link"
+      },
+      "faq": {
+        "title": "FAQs",
+        "sectionTitle": "Section Title",
+        "add": "+ Add FAQ"
+      },
+      "eventTypes": {
+        "title": "Event Types"
+      },
+      "pricingPackages": {
+        "title": "Pricing Packages",
+        "sectionTitle": "Section Title",
+        "featuresList": "Features List:",
+        "addFeature": " + Add Feature",
+        "add": "+ Add Plan",
+        "optAddons": "Optional Addons:",
+        "addOptAddon": "+ Add Optional Addon"
       }
     }
   },
@@ -383,19 +613,19 @@
     "HotDeal": "Hot Deal",
     "Map": "Map"
   },
-  "Login":{
-    "login":"Login"
+  "Login": {
+    "login": "Login"
   },
-  "Search":{
-    "search":"Search Here"
+  "Search": {
+    "search": "Search Here"
   },
-  "ContactUs":{
-    "contact":"Contact",
-    "hotdeal":"Hot Deal"
+  "ContactUs": {
+    "contact": "Contact",
+    "hotdeal": "Hot Deal"
   },
-  "VenueInfo":{
-    "searchPlace":"Search a Place",
-    "apply":"Apply",
-    "clear":"Clear"
+  "VenueInfo": {
+    "searchPlace": "Search a Place",
+    "apply": "Apply",
+    "clear": "Clear"
   }
 }

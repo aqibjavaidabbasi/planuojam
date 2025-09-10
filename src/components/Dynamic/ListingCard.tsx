@@ -56,8 +56,6 @@ function ListingCard({ item }: { item: ListingItem }) {
     )
   }
 
-  console.log(item)
-
   return (
     <div
       className="rounded-lg bg-white relative max-w-full sm:max-w-[300px] overflow-hidden border border-border"
@@ -214,7 +212,7 @@ function ListingCard({ item }: { item: ListingItem }) {
               {t('edit')} <IoNavigateOutline />
             </Button>
           ) : (
-            <Button style="secondary" size="small" onClick={() => router.push(`/listing/${item.slug}`)}>
+            <Button style="secondary" size="small" onClick={() => router.push(`/listing/${item.documentId}`)}>
               {t('view')} <IoNavigateOutline />
             </Button>
           )}

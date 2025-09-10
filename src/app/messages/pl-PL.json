@@ -341,8 +341,238 @@
     },
     "ListingItem": {
       "errors": {
-        "noImage": "Prześlij co najmniej jeden obraz",
-        "invalidServiceType": "Wybierz prawidłowy typ usługi"
+        "noImage": "Proszę przesłać co najmniej jedno zdjęcie",
+        "invalidServiceType": "Proszę wybrać prawidłowy typ usługi"
+      },
+      "toasts": {
+        "created": "Ogłoszenie zostało pomyślnie utworzone",
+        "failed": "Nie udało się utworzyć ogłoszenia",
+        "fixErrors": "Formularz zawiera błędy, proszę je poprawić"
+      },
+      "title": "Utwórz ogłoszenie",
+      "buttons": {
+        "cancel": "Anuluj",
+        "saving": "Zapisywanie...",
+        "create": "Utwórz ogłoszenie",
+        "fetchCoordinates": "Pobierz współrzędne",
+        "remove": "Usuń"
+      },
+      "sections": {
+        "basicDetails": "Podstawowe informacje",
+        "vendorDetails": "Informacje o dostawcy",
+        "venueDetails": "Informacje o miejscu",
+        "category": "Kategoria"
+      },
+      "fields": {
+        "title": {
+          "label": "Tytuł",
+          "required": "Tytuł jest wymagany"
+        },
+        "type": {
+          "placeholder": "Wybierz typ",
+          "required": "Proszę wybrać typ"
+        },
+        "listingStatus": {
+          "placeholder": "Wybierz status ogłoszenia",
+          "required": "Status ogłoszenia jest wymagany",
+          "options": {
+            "draft": "Szkic",
+            "published": "Opublikowane",
+            "pendingReview": "Oczekuje na weryfikację",
+            "archived": "Zarchiwizowane"
+          }
+        },
+        "price": {
+          "label": "Cena",
+          "errors": {
+            "min": "Cena nie może być mniejsza niż 0",
+            "max": "Cena nie może być większa niż 1000000"
+          }
+        },
+        "featured": {
+          "label": "Polecane?"
+        },
+        "description": {
+          "label": "Opis",
+          "placeholder": "Dodaj opis swojej usługi",
+          "required": "Opis jest wymagany"
+        },
+        "websiteLink": {
+          "label": "Link do strony",
+          "errors": {
+            "invalid": "Proszę dodać prawidłowy link"
+          }
+        },
+        "workingHours": {
+          "label": "Godziny pracy",
+          "errors": {
+            "min": "Godziny pracy nie mogą wynosić 0 ani być ujemne",
+            "max": "Godziny pracy nie mogą być większe niż 24"
+          }
+        },
+        "about": {
+          "label": "O mnie"
+        },
+        "experienceYears": {
+          "label": "Lata doświadczenia"
+        },
+        "city": {
+          "label": "Miasto",
+          "placeholder": "Wybierz miasto"
+        },
+        "state": {
+          "label": "Województwo",
+          "placeholder": "Wybierz województwo"
+        },
+        "latitude": {
+          "label": "Szerokość geograficzna"
+        },
+        "longitude": {
+          "label": "Długość geograficzna"
+        },
+        "capacity": {
+          "label": "Pojemność"
+        },
+        "bookingDurationType": {
+          "label": "Rodzaj czasu rezerwacji",
+          "placeholder": "Wybierz rodzaj rezerwacji",
+          "options": {
+            "perDay": "Za dzień",
+            "perHour": "Za godzinę"
+          }
+        },
+        "bookingDuration": {
+          "label": "Czas rezerwacji"
+        },
+        "email": {
+          "label": "Email",
+          "message": "Nieprawidłowy format adresu email"
+        },
+        "phone": {
+          "label": "Telefon",
+          "message": "Numer telefonu jest wymagany"
+        },
+        "address": {
+          "label": "Adres",
+          "message": "Adres jest wymagany"
+        },
+        "platform": {
+          "label": "Platforma",
+          "placeholder": "Wybierz platformę",
+          "fb": "Facebook",
+          "ld": "Linkedin",
+          "twt": "Twitter",
+          "thd": "Threads",
+          "ig": "Instagram",
+          "tt": "Tiktok",
+          "yt": "Youtube",
+          "pt": "Pinterest",
+          "rd": "Reddit"
+        },
+        "link": {
+          "label": "Link"
+        },
+        "showIcons": {
+          "label": "Pokazuj tę ikonę",
+          "options": {
+            "yes": "Tak",
+            "no": "Nie"
+          }
+        },
+        "questions": {
+          "label": "Pytanie"
+        },
+        "answer": {
+          "label": "Odpowiedź"
+        },
+        "chooseEventType": {
+          "label": "Wybierz typ wydarzenia"
+        },
+        "chooseCategory": {
+          "label": "Wybierz kategorię",
+          "placeholder": "Wybierz kategorię"
+        },
+        "name": {
+          "label": "Imię"
+        },
+        "popular": {
+          "label": "Popularne:"
+        },
+        "customCTA": {
+          "title": "Dodaj własny przycisk CTA (Call To Action):",
+          "text": {
+            "label": "Treść przycisku CTA"
+          },
+          "buttonUrl": {
+            "label": "URL przycisku CTA"
+          },
+          "style": {
+            "label": "Styl CTA",
+            "options": {
+              "primary": "Podstawowy",
+              "secondary": "Drugorzędny"
+            }
+          }
+        },
+        "addon": {
+          "statement": {
+            "label": "Dodatkowa informacja"
+          },
+          "price": {
+            "label": "Cena dodatku"
+          }
+        }
+      },
+      "serviceArea": {
+        "helpText": "Wybierz miasto lub województwo i użyj przycisku pobierania współrzędnych, albo wprowadź je ręcznie",
+        "title": "Obszar usług",
+        "add": "Dodaj obszar usług"
+      },
+      "amenities": {
+        "title": "Udogodnienia",
+        "add": "Dodaj udogodnienie",
+        "itemLabel": "Element"
+      },
+      "hotDeal": {
+        "title": "Gorąca oferta",
+        "yes": "Tak",
+        "no": "Nie",
+        "startDate": "Data rozpoczęcia",
+        "lastDate": "Data zakończenia",
+        "dealNote": "Notatka do oferty",
+        "discountType": "Rodzaj zniżki",
+        "flatRate": "Stawka stała",
+        "percentage": "Procent",
+        "flatRatePrice": "Cena stała"
+      },
+      "portfolio": {
+        "title": "Dodaj zdjęcia do portfolio",
+        "imageUploaded": "Zdjęcia zostały przesłane"
+      },
+      "contact": {
+        "title": "Kontakt"
+      },
+      "socialLinks": {
+        "title": "Linki społecznościowe",
+        "sectionTitle": "Tytuł sekcji",
+        "add": "+ Dodaj link społecznościowy"
+      },
+      "faq": {
+        "title": "FAQ",
+        "sectionTitle": "Tytuł sekcji",
+        "add": "+ Dodaj pytanie i odpowiedź"
+      },
+      "eventTypes": {
+        "title": "Typy wydarzeń"
+      },
+      "pricingPackages": {
+        "title": "Pakiety cenowe",
+        "sectionTitle": "Tytuł sekcji",
+        "featuresList": "Lista funkcji:",
+        "addFeature": "+ Dodaj funkcję",
+        "add": "+ Dodaj plan",
+        "optAddons": "Opcjonalne dodatki:",
+        "addOptAddon": "+ Dodaj opcjonalny dodatek"
       }
     }
   },
@@ -372,9 +602,9 @@
       "noCategoriesFound": "Nie znaleziono kategorii"
     }
   },
-    "hotdeal":{
+  "hotdeal": {
     "selectCategory": "Wybierz kategorię",
-    "SelectsubCategory":"Wybierz podkategorię",
+    "SelectsubCategory": "Wybierz podkategorię",
     "ChooseEventType": "Wybierz Typ zdarzenia",
     "Apply": "Stosować",
     "Clear": "Jasne"
@@ -383,19 +613,19 @@
     "HotDeal": "gorąca oferta",
     "Map": "mapa"
   },
-  "Login":{
-    "login":"Login"
+  "Login": {
+    "login": "Login"
   },
-  "Search":{
-    "search":"Szukaj tutaj"
+  "Search": {
+    "search": "Szukaj tutaj"
   },
-  "ContactUs":{
-    "contact":"Kontakt",
-    "hotdeal":"Gorąca oferta"
+  "ContactUs": {
+    "contact": "Kontakt",
+    "hotdeal": "Gorąca oferta"
   },
-  "VenueInfo":{
-    "searchPlace":"Wyszukaj miejsce",
-    "apply":"stosować",
-    "clear":"jasne"
+  "VenueInfo": {
+    "searchPlace": "Wyszukaj miejsce",
+    "apply": "stosować",
+    "clear": "jasne"
   }
 }

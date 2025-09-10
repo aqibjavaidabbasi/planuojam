@@ -340,18 +340,28 @@
       }
     },
     "ListingItem": {
+      "errors": {
+        "noImage": "Palun laadige üles vähemalt üks pilt",
+        "invalidServiceType": "Palun valige sobiv teenuse tüüp"
+      },
+      "toasts": {
+        "created": "Kuulutus on edukalt loodud",
+        "failed": "Kuulutuse loomine ebaõnnestus",
+        "fixErrors": "Vormis on vigu, palun parandage need"
+      },
       "title": "Loo kuulutus",
       "buttons": {
         "cancel": "Tühista",
-        "create": "Loo",
         "saving": "Salvestamine...",
+        "create": "Loo kuulutus",
         "fetchCoordinates": "Hangi koordinaadid",
         "remove": "Eemalda"
       },
       "sections": {
         "basicDetails": "Põhiandmed",
         "vendorDetails": "Teenusepakkuja andmed",
-        "venueDetails": "Koha andmed"
+        "venueDetails": "Koha andmed",
+        "category": "Kategooria"
       },
       "fields": {
         "title": {
@@ -360,51 +370,51 @@
         },
         "type": {
           "placeholder": "Vali tüüp",
-          "required": "Tüüp on kohustuslik"
+          "required": "Palun valige tüüp"
         },
         "listingStatus": {
-          "placeholder": "Vali olek",
-          "required": "Olek on kohustuslik",
+          "placeholder": "Vali kuulutuse staatus",
+          "required": "Kuulutuse staatus on kohustuslik",
           "options": {
             "draft": "Mustand",
             "published": "Avaldatud",
-            "pendingReview": "Läbivaatamisel",
+            "pendingReview": "Ootab ülevaatust",
             "archived": "Arhiveeritud"
           }
         },
         "price": {
           "label": "Hind",
           "errors": {
-            "min": "Hind ei tohi olla negatiivne",
-            "max": "Hind on liiga suur"
+            "min": "Hind ei tohi olla väiksem kui 0",
+            "max": "Hind ei tohi ületada 1000000"
           }
         },
         "featured": {
-          "label": "Esile tõstetud"
+          "label": "Esile tõstetud?"
         },
         "description": {
           "label": "Kirjeldus",
-          "placeholder": "Kirjelda oma kuulutust",
+          "placeholder": "Lisa oma teenuse kirjeldus",
           "required": "Kirjeldus on kohustuslik"
         },
         "websiteLink": {
           "label": "Veebilehe link",
           "errors": {
-            "invalid": "Sisesta kehtiv URL (algab http(s)://)"
+            "invalid": "Palun lisa kehtiv link"
           }
         },
         "workingHours": {
-          "label": "Tööaeg (t)",
+          "label": "Tööaeg",
           "errors": {
-            "min": "Tundide arv peab olema vähemalt 1",
-            "max": "Tundide arv ei tohi ületada 24"
+            "min": "Tööaeg ei tohi olla 0 ega negatiivne",
+            "max": "Tööaeg ei tohi ületada 24 tundi"
           }
         },
         "about": {
-          "label": "Teenuse kirjeldus"
+          "label": "Teave"
         },
         "experienceYears": {
-          "label": "Kogemusaastad"
+          "label": "Aastad kogemust"
         },
         "city": {
           "label": "Linn",
@@ -420,42 +430,149 @@
         "longitude": {
           "label": "Pikkuskraad"
         },
-        "address": {
-          "label": "Aadress"
-        },
         "capacity": {
           "label": "Mahutavus"
         },
         "bookingDurationType": {
-          "label": "Broneeringu tüüp",
-          "placeholder": "Vali tüüp",
+          "label": "Broneeringu kestuse tüüp",
+          "placeholder": "Vali kestuse tüüp",
           "options": {
-            "perDay": "Päeva kaupa",
-            "perHour": "Tunni kaupa"
+            "perDay": "Päeva kohta",
+            "perHour": "Tunni kohta"
           }
         },
         "bookingDuration": {
           "label": "Broneeringu kestus"
+        },
+        "email": {
+          "label": "E-post",
+          "message": "Vale e-posti vorming"
+        },
+        "phone": {
+          "label": "Telefon",
+          "message": "Telefoninumber on kohustuslik"
+        },
+        "address": {
+          "label": "Aadress",
+          "message": "Aadress on kohustuslik"
+        },
+        "platform": {
+          "label": "Platvorm",
+          "placeholder": "Vali platvorm",
+          "fb": "Facebook",
+          "ld": "Linkedin",
+          "twt": "Twitter",
+          "thd": "Threads",
+          "ig": "Instagram",
+          "tt": "Tiktok",
+          "yt": "Youtube",
+          "pt": "Pinterest",
+          "rd": "Reddit"
+        },
+        "link": {
+          "label": "Link"
+        },
+        "showIcons": {
+          "label": "Näita seda ikooni",
+          "options": {
+            "yes": "Jah",
+            "no": "Ei"
+          }
+        },
+        "questions": {
+          "label": "Küsimus"
+        },
+        "answer": {
+          "label": "Vastus"
+        },
+        "chooseEventType": {
+          "label": "Vali ürituse tüüp"
+        },
+        "chooseCategory": {
+          "label": "Vali kategooria",
+          "placeholder": "Vali kategooria"
+        },
+        "name": {
+          "label": "Nimi"
+        },
+        "popular": {
+          "label": "Populaarne:"
+        },
+        "customCTA": {
+          "title": "Lisa kohandatud CTA (Kutse tegevusele) nupp:",
+          "text": {
+            "label": "CTA teksti sisu"
+          },
+          "buttonUrl": {
+            "label": "CTA nupu URL"
+          },
+          "style": {
+            "label": "CTA stiil",
+            "options": {
+              "primary": "Peamine",
+              "secondary": "Teisene"
+            }
+          }
+        },
+        "addon": {
+          "statement": {
+            "label": "Lisainfo"
+          },
+          "price": {
+            "label": "Lisatasu hind"
+          }
         }
       },
       "serviceArea": {
-        "helpText": "Lisa teeninduspiirkonnad, kus pakud teenust",
+        "helpText": "Vali linn või maakond ja kasuta koordinaatide hankimise nuppu või sisesta käsitsi",
         "title": "Teeninduspiirkond",
-        "add": "Lisa piirkond"
+        "add": "Lisa teeninduspiirkond"
       },
       "amenities": {
         "title": "Mugavused",
         "add": "Lisa mugavus",
-        "itemLabel": "Mugavus"
+        "itemLabel": "Element"
       },
-      "toasts": {
-        "created": "Kuulutus loodud!",
-        "failed": "Midagi läks valesti",
-        "fixErrors": "Paranda vead ja proovi uuesti"
+      "hotDeal": {
+        "title": "Eripakkumine",
+        "yes": "Jah",
+        "no": "Ei",
+        "startDate": "Alguskuupäev",
+        "lastDate": "Lõppkuupäev",
+        "dealNote": "Pakkumise märkus",
+        "discountType": "Soodustuse tüüp",
+        "flatRate": "Fikseeritud hind",
+        "percentage": "Protsent",
+        "flatRatePrice": "Fikseeritud hind"
       },
-      "errors": {
-        "noImage": "Laadi üles vähemalt üks pilt",
-        "invalidServiceType": "Palun vali sobiv teenuse tüüp"
+      "portfolio": {
+        "title": "Lisa portfoolio pildid",
+        "imageUploaded": "Pildid on üles laaditud"
+      },
+      "contact": {
+        "title": "Kontakt"
+      },
+      "socialLinks": {
+        "title": "Sotsiaalmeedia lingid",
+        "sectionTitle": "Sektsiooni pealkiri",
+        "add": "+ Lisa sotsiaalmeedia link"
+      },
+      "faq": {
+        "title": "KKK",
+        "sectionTitle": "Sektsiooni pealkiri",
+        "add": "+ Lisa küsimus-vastus"
+      },
+      "eventTypes": {
+        "title": "Ürituse tüübid"
+      },
+      "pricingPackages": {
+        "title": "Hinnapaketid",
+        "sectionTitle": "Sektsiooni pealkiri",
+        "featuresList": "Funktsioonide nimekiri:",
+        "addFeature": "+ Lisa funktsioon",
+        "add": "+ Lisa pakett",
+        "optAddons": "Valikulised lisad:",
+        "addOptAddon": "+ Lisa valikuline lisa"
       }
     }
   },
@@ -502,13 +619,13 @@
   "Search": {
     "search": "Otsi siit"
   },
-  "ContactUs":{
-    "contact":"Võtke ühendust",
-    "hotdeal":"Kuum pakkumine"
+  "ContactUs": {
+    "contact": "Võtke ühendust",
+    "hotdeal": "Kuum pakkumine"
   },
-  "VenueInfo":{
-    "searchPlace":"Otsige kohta",
-    "apply":"kohaldada",
-    "clear":"selge"
+  "VenueInfo": {
+    "searchPlace": "Otsige kohta",
+    "apply": "kohaldada",
+    "clear": "selge"
   }
 }

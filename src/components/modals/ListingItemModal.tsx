@@ -775,10 +775,10 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           {/* Hot Deal  */}
           <div className="border-b-2 border-primary/20 py-4 hidden">
             <div className="flex justify-between items-center w-full">
-              <h3 className="text-lg font-semibold mb-2">Hot Deal</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('hotDeal.title')}</h3>
               <ToggleButton
-                onLabel="YES"
-                offLabel="NO"
+                onLabel={t('hotDeal.yes')}
+                offLabel={t('hotDeal.no')}
                 disabled={isWorking}
                 defaultOn={form.hotDeal?.enableHotDeal ?? false}
                 onToggle={(state) => updateField("hotDeal.enableHotDeal", state)}
@@ -789,14 +789,14 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
                     type="date"
-                    label="Start Date"
+                    label={t('hotDeal.startDate')}
                     disabled={isWorking}
                     value={form.hotDeal?.startDate || ""}
                     onChange={(e) => updateField("hotDeal.startDate", e.target.value)}
                   />
                   <Input
                     type="date"
-                    label="Last Date"
+                    label={t('hotDeal.lastDate')}
                     disabled={isWorking}
                     value={form.hotDeal?.lastDate || ""}
                     onChange={(e) => updateField("hotDeal.lastDate", e.target.value)}
@@ -805,14 +805,14 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
                   <Input
                     type="text"
-                    label="Deal Note"
+                    label={t('hotDeal.dealNote')}
                     disabled={isWorking}
                     value={form.hotDeal?.dealNote || ""}
                     onChange={(e) => updateField("hotDeal.dealNote", e.target.value)}
                   />
                   <div className="flex items-end">
                     <Select
-                      label="Discount Type"
+                      label={t('hotDeal.discountType')}
                       disabled={isWorking}
                       value={form.hotDeal?.discount?.discountType || "Flat Rate"}
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
@@ -822,15 +822,15 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                         )
                       }
                       options={[
-                        { label: "Flat Rate", value: "Flat Rate" },
-                        { label: "Percentage", value: "Percentage" },
+                      { label: t('hotDeal.flatRate'), value: "Flat Rate" },
+                        { label: t('hotDeal.percentage'), value: "Percentage" },
                       ]}
                     />
                   </div>
                   {form.hotDeal?.discount?.discountType === "Flat Rate" && (
                     <Input
                       type="number"
-                      label="Flat Rate Price"
+                      label={t('hotDeal.flatRatePrice')}
                       disabled={isWorking}
                       value={form.hotDeal?.discount?.flatRatePrice ?? ""}
                       onChange={(e) => updateField("hotDeal.discount.flatRatePrice", Number(e.target.value))}
@@ -839,7 +839,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   {form.hotDeal?.discount?.discountType === "Percentage" && (
                     <Input
                       type="number"
-                      label="Percentage"
+                      label={t('hotDeal.percentage')}
                       disabled={isWorking}
                       value={form.hotDeal?.discount?.percentage ?? ""}
                       onChange={(e) => updateField("hotDeal.discount.percentage", Number(e.target.value))}
@@ -855,36 +855,36 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
         <div>
           {/* images */}
           <div className="flex flex-col gap-2 border-b-2 border-t-2 border-primary/20 py-4">
-            <h3 className="text-lg font-semibold mb-2">Add Portfolio Images</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('portfolio.title')} </h3>
             <ImageUploader setImageIds={setImageIds} disabled={isWorking} />
-            {imageIds.length > 0 && <p className="text-gray-500 font-medium text-sm" >Images have ben uploaded</p> }
+            {imageIds.length > 0 && <p className="text-gray-500 font-medium text-sm" >{t('portfolio.imageUploaded')} </p> }
           </div>
           {/* Contact */}
           <div className="border-b-2 border-primary/20 py-4">
-            <h3 className="text-lg font-semibold mb-2">Contact</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('contact.title')} </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="col-span-2">
                 <Input
                   type="email"
-                  label="Email"
+                  label={t('fields.email.label')}
                   disabled={isWorking}
                   {...register("contact.email", {
                     required: "Email is required",
-                    pattern: { value: /^\S+@\S+$/i, message: "Invalid email format" },
+                    pattern: { value: /^\S+@\S+$/i, message: t('fields.email.message') },
                   })}
                 />
                 <ErrorMessage error={errors.contact?.email} />
               </div>
               <div>
-                <Input type="text" label="Phone" disabled={isWorking} {...register("contact.phone", { required: "Phone is required" })} />
+                <Input type="text" label={t('fields.phone.label')} disabled={isWorking} {...register("contact.phone", { required: t('fields.phone.message') })} />
                 <ErrorMessage error={errors.contact?.phone} />
               </div>
               <div className="col-span-3">
                 <Input
                   type="text"
                   disabled={isWorking}
-                  label="Address"
-                  {...register("contact.address", { required: "Address is required" })}
+                  label={t('fields.address.label')}
+                  {...register("contact.address", { required: t('fields.address.message')})}
                 />
                 <ErrorMessage error={errors.contact?.address} />
               </div>
@@ -893,10 +893,10 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
 
           {/* Social Links */}
           <div className="border-b-2 border-primary/20 py-4 hidden">
-            <h3 className="text-lg font-semibold mb-2">Social Links</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('socialLinks.title')} </h3>
             <Input
               type="text"
-              label="Section Title"
+              label={t('socialLinks.sectionTitle')}
               disabled={isWorking}
               value={form.socialLinks?.optionalSectionTitle || ""}
               onChange={(e) => updateField("socialLinks.optionalSectionTitle", e.target.value)}
@@ -906,7 +906,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 <div key={idx} className="grid grid-cols-1 md:grid-cols-8 gap-3 items-end">
                   <div className="col-span-3">
                     <Select
-                      label="Platform"
+                      label={t('fields.platform.label')}
                       disabled={isWorking}
                       value={s.platform || ""}
                       onChange={(e) => {
@@ -927,23 +927,23 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                         updateField("socialLinks.socialLink", list)
                       }}
                       options={[
-                        { label: "Select Platform", value: "" },
-                        { label: "Facebook", value: "facebook" },
-                        { label: "LinkedIn", value: "linkedin" },
-                        { label: "YouTube", value: "youtube" },
-                        { label: "Instagram", value: "instagram" },
-                        { label: "TikTok", value: "tiktok" },
-                        { label: "Pinterest", value: "pinterest" },
-                        { label: "Twitter", value: "twitter" },
-                        { label: "Thread", value: "thread" },
-                        { label: "Reddit", value: "reddit" },
+                        { label: t('fields.platform.placeholder'), value: "" },
+                        { label: t('fields.platform.fb'), value: "facebook" },
+                        { label: t('fields.platform.ld'), value: "linkedin" },
+                        { label: t('fields.platform.yt'), value: "youtube" },
+                        { label: t('fields.platform.ig'), value: "instagram" },
+                        { label: t('fields.platform.tt'), value: "tiktok" },
+                        { label: t('fields.platform.pt'), value: "pinterest" },
+                        { label: t('fields.platform.twt'), value: "twitter" },
+                        { label:t('fields.platform.thd'), value: "thread" },
+                        { label: t('fields.platform.rd'), value: "reddit" },
                       ]}
                     />
                   </div>
                   <div className="col-span-2">
                     <Input
                       type="url"
-                      label="Link"
+                      label={t('fields.link.label')}
                       disabled={isWorking}
                       value={s.link || ""}
                       onChange={(e) => {
@@ -955,7 +955,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   </div>
                   <div className="col-span-2">
                     <Select
-                      label="Show this icon"
+                      label={t('fields.showIcon.label')}
                       disabled={isWorking}
                       value={String(s.visible ?? true)}
                       onChange={(e) => {
@@ -964,8 +964,8 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                         updateField("socialLinks.socialLink", list)
                       }}
                       options={[
-                        { label: "Yes", value: "true" },
-                        { label: "No", value: "false" },
+                        { label: t('fields.showIcon.options.yes'), value: "true" },
+                        { label: t('fields.showIcon.options.no'), value: "false" },
                       ]}
                     />
                   </div>
@@ -994,17 +994,17 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                     })
                   }
                 >
-                  + Add Social Link
+                  {t('socialLinks.add')}
                 </Button>
               </div>
             </div>
           </div>
           {/* FAQs */}
           <div className="border-b-2 border-primary/20 py-4 hidden">
-            <h3 className="text-lg font-semibold mb-2">FAQs</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('faq.title')} </h3>
             <Input
               type="text"
-              label="Section Title"
+              label={t('faq.sectionTitle')}
               disabled={isWorking}
               value={form.FAQs?.sectionTitle || ""}
               onChange={(e) => updateField("FAQs.sectionTitle", e.target.value)}
@@ -1015,7 +1015,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   <div className="col-span-2">
                     <Input
                       type="text"
-                      label="Question"
+                      label={t('fields.question.label')}
                       disabled={isWorking}
                       value={f.question || ""}
                       onChange={(e) => {
@@ -1040,7 +1040,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   </Button>
                   <div className="col-span-3">
                     <TextArea
-                      label="Answer"
+                      label={t('fields.answer.label')}
                       disabled={isWorking}
                       rows={5}
                       value={f.answer || ""}
@@ -1059,21 +1059,21 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               ))}
               <div>
                 <Button style="secondary"disabled={isWorking} onClick={() => addArrayItem("FAQs.items", { question: "", answer: "" })}>
-                  + Add FAQ
+                  {t('faq.add')}
                 </Button>
               </div>
             </div>
           </div>
           {/* Event Types (IDs or documentIds depending on your API) */}
           <div className="border-b-2 border-primary/20 py-4">
-            <h3 className="text-lg font-semibold mb-2">Event Types</h3>
+            <h3 className="text-lg font-semibold mb-2"> {t('eventTypes.title')} </h3>
             <div className="flex flex-col gap-3">
               <MultiSelect
               disabled={isWorking}
                 options={eventTypes.map((e) => ({ label: e.eventName, value: e.documentId }))}
                 value={eventTypesIds}
                 onChange={(selected) => setEventTypesIds(selected)}
-                placeholder="Choose event types"
+                placeholder={t('fields.chooseEventType.label')}
               />
               <ErrorMessage error={errors.eventTypes} />
             </div>
@@ -1081,24 +1081,24 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
 
           {/* Category (free text or id depending on your API) */}
           <div className="border-b-2 border-primary/20 py-4">
-            <h3 className="text-lg font-semibold mb-2">Category</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('sections.category')}</h3>
             <Select
               options={childCategories.map((c) => ({ label: c.name, value: c.documentId }))}
               value={selectedCategory}
               disabled={isWorking}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCategory(e.target.value)}
-              label="Choose category"
-              placeholder="Choose category"
+              label={t('fields.chooseCategory.label')}
+              placeholder={t('fields.chooseCategory.placeholder')}
             />
             <ErrorMessage error={errors.category} />
           </div>
 
           {/* Pricing Packages */}
           <div className="border-b-2 border-primary/20 py-4 hidden">
-            <h3 className="text-lg font-semibold mb-2">Pricing Packages</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('pricingPackages.title')}</h3>
             <Input
               type="text"
-              label="Section Title"
+              label={t('pricingPackages.sectionTitle')}
               disabled={isWorking}
               value={form.pricingPackages?.sectionTitle || ""}
               onChange={(e) => updateField("pricingPackages.sectionTitle", e.target.value)}
@@ -1109,7 +1109,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   <div className="col-span-2">
                     <Input
                       type="text"
-                      label="Name"
+                      label={t('fields.name.label')}
                       disabled={isWorking}
                       value={p.name || ""}
                       onChange={(e) => {
@@ -1121,7 +1121,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   </div>
                   <Input
                     type="number"
-                    label="Price"
+                    label={t('fields.price.label')}
                     disabled={isWorking}
                     value={p.price ?? ""}
                     onChange={(e) => {
@@ -1131,7 +1131,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                     }}
                   />
                   <div className="col-span-1 flex items-center justify-end gap-2">
-                    <p>Popular:</p>
+                    <p>{t('fields.popular.label')} </p>
                     <ToggleButton
                       defaultOn={!!p.isPopular}
                       disabled={isWorking}
@@ -1143,13 +1143,13 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                     />
                   </div>
                   <div className="col-span-4 mt-3">
-                    <p className="text-gray-500 font-medium tracking-wide">Add Custom CTA (Call To Action) button:</p>
+                    <p className="text-gray-500 font-medium tracking-wide">{t('fields.customCTA.title')} </p>
                   </div>
                   <div className="col-span-4 grid grid-cols-1 md:grid-cols-3 items-end gap-3">
                     <Input
                       type="text"
                       disabled={isWorking}
-                      label="CTA Body Text"
+                      label={t('fields.customCTA.text.label')}
                       value={p.cta?.bodyText || ""}
                       onChange={(e) => {
                         const list = [...(form.pricingPackages?.plans || [])]
@@ -1162,7 +1162,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                     />
                     <Input
                       type="text"
-                      label="CTA Button URL"
+                      label={t('fields.customCTA.buttonUrl.label')}
                       disabled={isWorking}
                       value={p.cta?.buttonUrl || ""}
                       onChange={(e) => {
@@ -1175,7 +1175,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       }}
                     />
                     <Select
-                      label="CTA Style"
+                      label={t('fields.customCTA.style.label')}
                       disabled={isWorking}
                       value={p.cta?.style || "primary"}
                       onChange={(e) => {
@@ -1187,20 +1187,19 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                         updateField("pricingPackages.plans", list)
                       }}
                       options={[
-                        { label: "Primary", value: "primary" },
-                        { label: "Secondary", value: "secondary" },
+                        { label: t('fields.customCTA.style.options.primary'), value: "primary" },
+                        { label: t('fields.customCTA.style.options.secondary'), value: "secondary" },
                       ]}
                     />
                   </div>
                   <div className="col-span-1 md:col-span-4">
-                    <h4 className="text-gray-500 font-medium tracking-wide">Features List:</h4>
+                    <h4 className="text-gray-500 font-medium tracking-wide">{t('pricingPackages.featuresList')}</h4>
                     {(p.featuresList || []).map((feature, fIdx) => (
                       <div key={fIdx} className="flex gap-2 mb-2 items-end w-full">
                         <div className="flex-1">
                           <Input
                             type="text"
                             disabled={isWorking}
-                            label={`Feature ${fIdx + 1}`}
                             value={feature.statement || ""}
                             onChange={(e) => {
                               const list = [...(form.pricingPackages?.plans || [])]
@@ -1240,7 +1239,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                         updateField("pricingPackages.plans", list)
                       }}
                     >
-                      + Add Feature
+                     {t('pricingPackages.addFeature')}
                     </Button>
                     <Button
                       style="ghost"
@@ -1271,17 +1270,17 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   })
                 }
               >
-                + Add Plan
+                {t('pricingPackages.add')}
               </Button>
             </div>
             <div className="mt-4">
-              <h4 className="text-gray-500 font-medium tracking-wide">Optional Addons:</h4>
+              <h4 className="text-gray-500 font-medium tracking-wide">{t('pricingPackages.optAddons')}</h4>
               {(form.pricingPackages?.optionalAddons || []).map((addon, idx) => (
                 <div key={idx} className="flex gap-2 mb-2 items-end">
                   <Input
                     type="text"
                     disabled={isWorking}
-                    label={`Addon Statement ${idx + 1}`}
+                    label={t('fields.addon.statement.label')}
                     value={addon.statement || ""}
                     onChange={(e) => {
                       const list = [...(form.pricingPackages?.optionalAddons || [])]
@@ -1292,7 +1291,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   <Input
                     type="number"
                     disabled={isWorking}
-                    label={`Addon Price ${idx + 1}`}
+                    label={t('fields.addon.price.label')}
                     value={addon.price ?? ""}
                     onChange={(e) => {
                       const list = [...(form.pricingPackages?.optionalAddons || [])]
@@ -1321,7 +1320,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   })
                 }
               >
-                + Add Optional Addon
+                {t('pricingPackages.addOptAddon')}
               </Button>
             </div>
           </div>

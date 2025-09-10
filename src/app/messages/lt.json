@@ -240,12 +240,250 @@
     },
     "ListingItem": {
       "errors": {
-        "noImage": "Įkelkite bent vieną nuotrauką",
-        "invalidServiceType": "Pasirinkite tinkamą paslaugos tipą"
+        "noImage": "Prašome įkelti bent vieną nuotrauką",
+        "invalidServiceType": "Prašome pasirinkti tinkamą paslaugos tipą"
+      },
+      "toasts": {
+        "created": "Skelbimas sėkmingai sukurtas",
+        "failed": "Nepavyko sukurti skelbimo",
+        "fixErrors": "Formoje yra klaidų, prašome jas ištaisyti"
+      },
+      "title": "Sukurti skelbimą",
+      "buttons": {
+        "cancel": "Atšaukti",
+        "saving": "Saugoma...",
+        "create": "Sukurti skelbimą",
+        "fetchCoordinates": "Gauti koordinates",
+        "remove": "Pašalinti"
+      },
+      "sections": {
+        "basicDetails": "Pagrindinė informacija",
+        "vendorDetails": "Tiekėjo informacija",
+        "venueDetails": "Vietos informacija",
+        "category": "Kategorija"
+      },
+      "fields": {
+        "title": {
+          "label": "Pavadinimas",
+          "required": "Pavadinimas yra privalomas"
+        },
+        "type": {
+          "placeholder": "Pasirinkite tipą",
+          "required": "Prašome pasirinkti tipą"
+        },
+        "listingStatus": {
+          "placeholder": "Pasirinkite skelbimo būseną",
+          "required": "Skelbimo būsena yra privaloma",
+          "options": {
+            "draft": "Juodraštis",
+            "published": "Paskelbtas",
+            "pendingReview": "Laukia peržiūros",
+            "archived": "Archyvuotas"
+          }
+        },
+        "price": {
+          "label": "Kaina",
+          "errors": {
+            "min": "Kaina negali būti mažesnė nei 0",
+            "max": "Kaina negali būti didesnė nei 1000000"
+          }
+        },
+        "featured": {
+          "label": "Rekomenduojamas?"
+        },
+        "description": {
+          "label": "Aprašymas",
+          "placeholder": "Pridėkite paslaugos aprašymą",
+          "required": "Aprašymas yra privalomas"
+        },
+        "websiteLink": {
+          "label": "Svetainės nuoroda",
+          "errors": {
+            "invalid": "Prašome pridėti galiojančią nuorodą"
+          }
+        },
+        "workingHours": {
+          "label": "Darbo valandos",
+          "errors": {
+            "min": "Darbo valandos negali būti 0 ar neigiamos",
+            "max": "Darbo valandos negali viršyti 24"
+          }
+        },
+        "about": {
+          "label": "Apie"
+        },
+        "experienceYears": {
+          "label": "Patirtis (metais)"
+        },
+        "city": {
+          "label": "Miestas",
+          "placeholder": "Pasirinkite miestą"
+        },
+        "state": {
+          "label": "Regionas",
+          "placeholder": "Pasirinkite regioną"
+        },
+        "latitude": {
+          "label": "Platuma"
+        },
+        "longitude": {
+          "label": "Ilguma"
+        },
+        "capacity": {
+          "label": "Talpa"
+        },
+        "bookingDurationType": {
+          "label": "Užsakymo trukmės tipas",
+          "placeholder": "Pasirinkite trukmės tipą",
+          "options": {
+            "perDay": "Per dieną",
+            "perHour": "Per valandą"
+          }
+        },
+        "bookingDuration": {
+          "label": "Užsakymo trukmė"
+        },
+        "email": {
+          "label": "El. paštas",
+          "message": "Neteisingas el. pašto formatas"
+        },
+        "phone": {
+          "label": "Telefonas",
+          "message": "Telefono numeris yra privalomas"
+        },
+        "address": {
+          "label": "Adresas",
+          "message": "Adresas yra privalomas"
+        },
+        "platform": {
+          "label": "Platforma",
+          "placeholder": "Pasirinkite platformą",
+          "fb": "Facebook",
+          "ld": "Linkedin",
+          "twt": "Twitter",
+          "thd": "Threads",
+          "ig": "Instagram",
+          "tt": "Tiktok",
+          "yt": "Youtube",
+          "pt": "Pinterest",
+          "rd": "Reddit"
+        },
+        "link": {
+          "label": "Nuoroda"
+        },
+        "showIcons": {
+          "label": "Rodyti šią piktogramą",
+          "options": {
+            "yes": "Taip",
+            "no": "Ne"
+          }
+        },
+        "questions": {
+          "label": "Klausimas"
+        },
+        "answer": {
+          "label": "Atsakymas"
+        },
+        "chooseEventType": {
+          "label": "Pasirinkite renginio tipą"
+        },
+        "chooseCategory": {
+          "label": "Pasirinkite kategoriją",
+          "placeholder": "Pasirinkite kategoriją"
+        },
+        "name": {
+          "label": "Vardas"
+        },
+        "popular": {
+          "label": "Populiarus:"
+        },
+        "customCTA": {
+          "title": "Pridėti individualų CTA (Kvietimo veikti) mygtuką:",
+          "text": {
+            "label": "CTA teksto turinys"
+          },
+          "buttonUrl": {
+            "label": "CTA mygtuko URL"
+          },
+          "style": {
+            "label": "CTA stilius",
+            "options": {
+              "primary": "Pagrindinis",
+              "secondary": "Antrinis"
+            }
+          }
+        },
+        "addon": {
+          "statement": {
+            "label": "Papildoma pastaba"
+          },
+          "price": {
+            "label": "Papildoma kaina"
+          }
+        }
+      },
+      "serviceArea": {
+        "helpText": "Pasirinkite miestą arba regioną ir naudokite koordinatų gavimo mygtuką, arba įveskite rankiniu būdu",
+        "title": "Paslaugų zona",
+        "add": "Pridėti paslaugų zoną"
+      },
+      "amenities": {
+        "title": "Patogumai",
+        "add": "Pridėti patogumą",
+        "itemLabel": "Elementas"
+      },
+      "hotDeal": {
+        "title": "Karštas pasiūlymas",
+        "yes": "Taip",
+        "no": "Ne",
+        "startDate": "Pradžios data",
+        "lastDate": "Pabaigos data",
+        "dealNote": "Pasiūlymo pastaba",
+        "discountType": "Nuolaidos tipas",
+        "flatRate": "Fiksuotas tarifas",
+        "percentage": "Procentai",
+        "flatRatePrice": "Fiksuota kaina"
+      },
+      "portfolio": {
+        "title": "Pridėti portfelio nuotraukas",
+        "imageUploaded": "Nuotraukos buvo įkeltos"
+      },
+      "contact": {
+        "title": "Kontaktai"
+      },
+      "socialLinks": {
+        "title": "Socialiniai tinklai",
+        "sectionTitle": "Skyriaus pavadinimas",
+        "add": "+ Pridėti socialinę nuorodą"
+      },
+      "faq": {
+        "title": "DUK",
+        "sectionTitle": "Skyriaus pavadinimas",
+        "add": "+ Pridėti klausimą-atsakymą"
+      },
+      "eventTypes": {
+        "title": "Renginių tipai"
+      },
+      "pricingPackages": {
+        "title": "Kainų paketai",
+        "sectionTitle": "Skyriaus pavadinimas",
+        "featuresList": "Funkcijų sąrašas:",
+        "addFeature": "+ Pridėti funkciją",
+        "add": "+ Pridėti planą",
+        "optAddons": "Papildomos parinktys:",
+        "addOptAddon": "+ Pridėti papildomą parinktį"
       }
     }
   },
   "Profile": {
+    "loginPrompt": "Norėdami peržiūrėti savo profilį, prisijunkite. Peradresuojama...",
+    "tabs": {
+      "profile": "Profilis",
+      "myListings": "Mano sąrašai",
+      "favouriteListings": "Mėgstamiausi sąrašai",
+      "messages": "Pranešimas",
+      "reviews": "Apžvalgos"
+    },
     "ReviewsTab": {
       "title": "Atsiliepimai",
       "subtitle": "Peržiūrėkite ir tvarkykite savo turto atsiliepimus.",
@@ -364,9 +602,9 @@
       "noCategoriesFound": "Kategorijų nerasta"
     }
   },
-    "hotdeal":{
+  "hotdeal": {
     "selectCategory": "Pasirinkite kategoriją",
-    "SelectsubCategory":"Pasirinkite subkategoriją",
+    "SelectsubCategory": "Pasirinkite subkategoriją",
     "ChooseEventType": "Pasirinkite Įvykio tipas",
     "Apply": "Taikyti",
     "Clear": "Aišku"
@@ -375,19 +613,19 @@
     "HotDeal": "karštas sandoris",
     "Map": "žemėlapis"
   },
-  "Login":{
-    "login":"Prisijungti"
+  "Login": {
+    "login": "Prisijungti"
   },
-  "Search":{
-    "search":"Ieškoti čia"
+  "Search": {
+    "search": "Ieškoti čia"
   },
-  "ContactUs":{
-    "contact":"Susisiekite",
-    "hotdeal":"Karštas pasiūlymas"
+  "ContactUs": {
+    "contact": "Susisiekite",
+    "hotdeal": "Karštas pasiūlymas"
   },
-  "VenueInfo":{
-    "searchPlace":"Ieškokite vietos",
-    "apply":"taikyti",
-    "clear":"aišku"
+  "VenueInfo": {
+    "searchPlace": "Ieškokite vietos",
+    "apply": "taikyti",
+    "clear": "aišku"
   }
 }

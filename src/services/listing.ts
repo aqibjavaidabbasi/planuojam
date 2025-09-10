@@ -18,36 +18,19 @@ export async function deleteListing(id: string) {
     return res;
 }
 
-// Fetch listing by documentId with necessary relations populated
-export async function fetchListingByDocumentId(documentId: string, locale?: string): Promise<ListingItem | undefined> {
+export async function fetchListingByDocumentId(documentId: string, locale?: string) {
     const populate = LISTING_ITEM_POP_STRUCTURE;
-    const filters: Record<string, unknown> = {
-        filters: {
-            documentId: {
-                $eq: documentId
-            }
-        }
-    };
     // Try requested locale first
     if (locale) {
         const queryWithLocale = createQuery(populate, { locale });
-        const dataLocale = await fetchAPI('listings', queryWithLocale, filters);
-        if (Array.isArray(dataLocale) ? dataLocale.length > 0 : !!dataLocale) {
-            return Array.isArray(dataLocale) ? (dataLocale[0] as ListingItem | undefined) : (dataLocale as ListingItem | undefined);
-        }
-    }
-
-    // Fallback to default locale
-    const queryDefault = createQuery(populate, { locale: DEFAULT_LOCALE });
-    const dataDefault = await fetchAPI('listings', queryDefault, filters);
-    if (Array.isArray(dataDefault) ? dataDefault.length > 0 : !!dataDefault) {
-        return Array.isArray(dataDefault) ? (dataDefault[0] as ListingItem | undefined) : (dataDefault as ListingItem | undefined);
+        const dataLocale = await fetchAPI(`listings/${documentId}`, queryWithLocale, {});
+        return dataLocale
     }
 
     // Final fallback: no locale constraint
     const queryBase = createQuery(populate);
-    const dataBase = await fetchAPI('listings', queryBase, filters);
-    return Array.isArray(dataBase) ? (dataBase[0] as ListingItem | undefined) : (dataBase as ListingItem | undefined);
+    const dataBase = await fetchAPI(`listings/${documentId}`, queryBase, {});
+    return dataBase
 }
 
 

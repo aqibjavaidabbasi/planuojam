@@ -6,7 +6,6 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { ListingItem } from "@/types/pagesTypes";
-import { fetchListingItemPerSlugLocalized } from "@/services/pagesApi";
 import Faqitem from "@/components/Dynamic/Faqitem";
 import Loader from "@/components/custom/Loader";
 import ListingDetailHero from "@/components/custom/ListingDetailHero";
@@ -20,12 +19,13 @@ import NoDataCard from "@/components/custom/NoDataCard";
 import PricingPlans from "@/components/custom/PricingPlans";
 import { useLocale } from "next-intl";
 import { useTranslations } from "next-intl";
+import { fetchListingByDocumentId } from "@/services/listing";
 
 export default function ListingDetailsPage() {
   const [listing, setListing] = useState<ListingItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { slug } = useParams();
+  const { docId } = useParams();
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
   const locale = useLocale();
   const t = useTranslations("Listing.Details");
@@ -35,7 +35,7 @@ export default function ListingDetailsPage() {
   useEffect(() => {
     async function loadListing() {
       try {
-        const res = await fetchListingItemPerSlugLocalized(String(slug), locale);
+        const res = await fetchListingByDocumentId(String(docId), locale);
         setListing(res);
       } catch (err) {
         console.log(err);
@@ -45,7 +45,7 @@ export default function ListingDetailsPage() {
       }
     }
     loadListing();
-  }, [slug, locale,tCommon]);
+  }, [docId, locale,tCommon]);
 
   if (loading) return <Loader />;
 
@@ -88,10 +88,15 @@ export default function ListingDetailsPage() {
               </h2>
               <p className="text-secondary my-4">{listing.description}</p>
               {/* gallery */}
-              <ListingGallery
+              {
+                listing.portfolio && listing.portfolio.length > 0 && (
+                <ListingGallery
                 portfolio={listing.portfolio}
                 title={listing.title}
               />
+                )
+              }
+          
             </div>
           </div>
 

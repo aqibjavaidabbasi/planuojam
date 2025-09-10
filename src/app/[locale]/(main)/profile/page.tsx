@@ -48,7 +48,7 @@ function ProfilePage() {
           >
             <div className="flex justify-between items-center lg:justify-center mx-2 mb-2">
               <div className="bg-gray-50 rounded-xl p-6">
-                <div className="flex flex-col items-center space-y-2">
+                <div className="flex flex-row lg:flex-col items-center space-y-2 gap-2.5 lg:gap-0">
                   <div className="w-15 h-15 bg-primary rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-2xl">
                       {user?.username?.slice(0, 2)}
@@ -67,7 +67,7 @@ function ProfilePage() {
                   </div>
                 </div>
               </div>
-              <div className="lg:hidden">
+              <div className="lg:hidden" onClick={()=>setSidebarOpen(!sidebarOpen)}>
                 <Button style="secondary">
                   <FaArrowCircleDown
                     size={20}
