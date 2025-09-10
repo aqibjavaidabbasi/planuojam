@@ -19,6 +19,7 @@ import {
   SUPPORTED_LOCALES,
   LOCALE_OPTIONS,
 } from "@/config/i18n";
+import { useTranslations } from "next-intl";
 
 function Header({ headerData }: { headerData: HeaderType }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -38,6 +39,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
   const handleSelect = (val:string) => {
     setSelected(val);
   };
+  const t=useTranslations("hotdealstatic")
   useEffect(() => {
     const validateUser = async () => {
       const token = localStorage.getItem("token");
@@ -255,7 +257,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                           `}
                           href="/hot-deal"
                         >
-                          Hot Deal
+                          {t('HotDeal')}
                         </Link>
                  
                       
@@ -266,7 +268,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                              `}
                           href="/map"
                         >
-                          Map
+                          {t('Map')}
                         </Link>
 
                       
@@ -343,7 +345,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
               }`}
               href="/hot-deal"
             >
-              Hot Deal
+             {t('HotDeal')}
             </Link>
             <Link
               className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${
@@ -353,7 +355,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
               }`}
               href="/map"
             >
-              Map
+             {t('Map')}
             </Link>
           </div>
         )}

@@ -1,16 +1,18 @@
 'use client'
+import { useTranslations } from 'next-intl';
 import React, { useState } from 'react'
 import { IoSearchOutline } from 'react-icons/io5'
 
 function Search() {
     const [isFocused, setIsFocused] = useState(false);
+    const t=useTranslations("Search");
 
     return (
         <div className='relative w-full'>
             <input
                 type="search"
                 className="bg-white w-full p-1 border border-border rounded-lg h-9 pl-8 focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="Search here"
+                placeholder={t('search')}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
             />

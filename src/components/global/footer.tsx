@@ -1,6 +1,7 @@
 'use client' //for interactivity that might be added later
 import { Link } from '@/i18n/navigation';
 import { footer } from '@/types/pagesTypes';
+import { useTranslations } from 'next-intl';
 
 const IMP_IDS = {
     'privacy': "fvrfcj6up74ua7y459jbxt6t",
@@ -9,6 +10,7 @@ const IMP_IDS = {
 }
 
 function Footer({ footerData }: { footerData: footer }) {
+    const t=useTranslations("ContactUs")
 
     return (
         <div className='bg-footer-background w-screen text-primary p-5' >
@@ -29,7 +31,7 @@ function Footer({ footerData }: { footerData: footer }) {
                             {section.event_types.map(item => (<Link className='hover:underline capitalize' href={`/event-types/${item.documentId}`} key={item.id}>
                                 {item.eventName}
                             </Link>))}
-                            <Link href={'/hot-deal'} >Hot Deal</Link>
+                            <Link href={'/hot-deal'} >{t("hotdeal")}</Link>
                         </div>}
 
                         {/* page */}
@@ -37,7 +39,7 @@ function Footer({ footerData }: { footerData: footer }) {
                             {section.pages.map(item => (<Link className='hover:underline capitalize' href={item.documentId === IMP_IDS.privacy ? '/privacy-policy' : item.documentId === IMP_IDS.tos ? '/terms-of-service' : item.documentId === IMP_IDS.about ? '/about' : '/'} key={item.documentId}>
                                 {item.title}
                             </Link>))}
-                            <Link href={'/contact-us'} >Contact Us</Link>
+                            <Link href={'/contact-us'} >{t('contact')}</Link>
                         </div>}
                     </div>))}
             </div>

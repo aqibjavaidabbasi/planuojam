@@ -370,5 +370,24 @@
     "ChooseEventType": "Pasirinkite Įvykio tipas",
     "Apply": "Taikyti",
     "Clear": "Aišku"
+  },
+  "hotdealstatic": {
+    "HotDeal": "karštas sandoris",
+    "Map": "žemėlapis"
+  },
+  "Login":{
+    "login":"Prisijungti"
+  },
+  "Search":{
+    "search":"Ieškoti čia"
+  },
+  "ContactUs":{
+    "contact":"Susisiekite",
+    "hotdeal":"Karštas pasiūlymas"
+  },
+  "VenueInfo":{
+    "searchPlace":"Ieškokite vietos",
+    "apply":"taikyti",
+    "clear":"aišku"
   }
 }

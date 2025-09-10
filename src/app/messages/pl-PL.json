@@ -378,5 +378,24 @@
     "ChooseEventType": "Wybierz Typ zdarzenia",
     "Apply": "Stosować",
     "Clear": "Jasne"
+  },
+  "hotdealstatic": {
+    "HotDeal": "gorąca oferta",
+    "Map": "mapa"
+  },
+  "Login":{
+    "login":"Login"
+  },
+  "Search":{
+    "search":"Szukaj tutaj"
+  },
+  "ContactUs":{
+    "contact":"Kontakt",
+    "hotdeal":"Gorąca oferta"
+  },
+  "VenueInfo":{
+    "searchPlace":"Wyszukaj miejsce",
+    "apply":"stosować",
+    "clear":"jasne"
   }
 }

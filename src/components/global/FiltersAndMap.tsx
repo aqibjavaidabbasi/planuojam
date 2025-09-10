@@ -7,6 +7,7 @@ import Select from '../custom/Select';
 import Button from '../custom/Button';
 import { fetchListings } from '@/services/common';
 import { ListingItem } from '@/types/pagesTypes';
+import { useTranslations } from 'next-intl';
 
 
 type FilterConfig = {
@@ -122,11 +123,11 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
         setIsLoading(false);
     };
 
-
+    const t=useTranslations("VenueInfo")
     return (
         <div>
             <div className="mb-4 flex flex-col gap-2.5">
-                <MapboxSearch onPlaceSelect={onPlaceSelect} placeholder="Search for a place" />
+                <MapboxSearch onPlaceSelect={onPlaceSelect} placeholder={t("searchPlace")} />
                 <div className='flex gap-2 items-center justify-center flex-col lg:flex-row'>
                     {filters.map(({ name, options, placeholder }) => (
                         <Select
@@ -140,8 +141,8 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
                         />
                     ))}
                     <div className="flex gap-2">
-                        <Button style='secondary' onClick={handleApply} disabled={isLoading}>Apply</Button>
-                        <Button style='secondary' onClick={handleClear} disabled={isLoading} >Clear</Button>
+                        <Button style='secondary' onClick={handleApply} disabled={isLoading}>{t("apply")}</Button>
+                        <Button style='secondary' onClick={handleClear} disabled={isLoading} >{t("clear")}</Button>
                     </div>
                 </div>
             </div>

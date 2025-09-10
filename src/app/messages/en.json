@@ -372,11 +372,30 @@
       "noCategoriesFound": "No Categories Found"
     }
   },
-  "hotdeal":{
+  "hotdeal": {
     "selectCategory": "Select Category",
-    "SelectsubCategory":"Select Sub Category",
+    "SelectsubCategory": "Select Sub Category",
     "ChooseEventType": "Select Event Type",
     "Apply": "Apply",
     "Clear": "Clear"
+  },
+  "hotdealstatic": {
+    "HotDeal": "Hot Deal",
+    "Map": "Map"
+  },
+  "Login":{
+    "login":"Login"
+  },
+  "Search":{
+    "search":"Search Here"
+  },
+  "ContactUs":{
+    "contact":"Contact",
+    "hotdeal":"Hot Deal"
+  },
+  "VenueInfo":{
+    "searchPlace":"Search a Place",
+    "apply":"Apply",
+    "clear":"Clear"
   }
 }

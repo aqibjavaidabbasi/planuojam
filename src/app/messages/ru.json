@@ -378,5 +378,24 @@
     "ChooseEventType": "Выберите тип события",
     "Apply": "Применять",
     "Clear": "Прозрачный"
+  },
+  "hotdealstatic": {
+    "HotDeal": "горячая сделка",
+    "Map": "Карта"
+  },
+  "Login":{
+    "login":"Авторизоваться"
+  },
+  "Search":{
+    "search":"Искать здесь"
+  },
+  "ContactUs":{
+    "contact":"Контакт",
+    "hotdeal":"Горячее предложение"
+  },
+  "VenueInfo":{
+    "searchPlace":"Поиск места",
+    "apply":"применять",
+    "clear":"прозрачный"
   }
 }

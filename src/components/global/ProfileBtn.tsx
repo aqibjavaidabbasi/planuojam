@@ -5,9 +5,11 @@ import { FaRegUser } from 'react-icons/fa';
 import { RiLoginCircleLine } from 'react-icons/ri';
 import Loader from '../custom/Loader';
 import { User } from '@/types/common';
+import { useTranslations } from 'use-intl';
 
 function ProfileBtn({loading, user}: {loading: boolean, user: User | null}) {
   const router = useRouter();
+  const t=useTranslations("Login")
 
   return (
     <div
@@ -25,7 +27,7 @@ function ProfileBtn({loading, user}: {loading: boolean, user: User | null}) {
       ) : (
         <div className="flex items-center gap-2" onClick={() => router.push('/auth/login')}>
           <RiLoginCircleLine className="text-primary group-hover:text-white text-sm md:text-base" />
-          <span className="capitalize text-sm md:text-base group-hover:text-white font-medium">Login</span>
+          <span className="capitalize text-sm md:text-base group-hover:text-white font-medium">{t('login')}</span>
         </div>
       )}
     </div>

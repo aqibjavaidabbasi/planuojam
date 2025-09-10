@@ -56,6 +56,8 @@ function ListingCard({ item }: { item: ListingItem }) {
     )
   }
 
+  console.log(item)
+
   return (
     <div
       className="rounded-lg bg-white relative max-w-full sm:max-w-[300px] overflow-hidden border border-border"
@@ -160,18 +162,32 @@ function ListingCard({ item }: { item: ListingItem }) {
         <ul className="ml-4 list-disc text-sm text-secondary">
           {item.listingItem?.length > 0 && (
             <li className="truncate list-disc">
+             {item.listingItem[0].__component === 'dynamic-blocks.vendor' && (
+  <span>
+    {item.listingItem[0].serviceArea?.length > 0 ? (
+      (() => {
+        const locations = item.listingItem[0].serviceArea
+          .map(area => {
+            const city = area?.city?.name ?? '';
+            const state = area?.state?.name ?? '';
+            return city || state ? `${city} ${state}`.trim() : '';
+          })
+          .filter(Boolean);
+
+        return locations.length > 0 ? locations.join(', ') : t('noLocation');
+      })()
+    ) : (
+      t('noLocation')
+    )}
+  </span>
+)}
+
+                { item.listingItem[0].__component === 'dynamic-blocks.venue' && 
               <span>
-                {item.listingItem[0].__component === 'dynamic-blocks.vendor' && item.listingItem[0].serviceArea?.length > 0
-                  ? item.listingItem[0].serviceArea
-                    .map(area => `${area?.city?.name ?? ''}  ${area?.state?.name ?? ''}`)
-                    .filter(Boolean)
-                    .join(', ')
-                  : t('noLocation')}
+                {item.listingItem[0].location
+                  ? item.listingItem[0].location.address : t('noVenueLocation')}
               </span>
-              <span>
-                {item.listingItem[0].__component === 'dynamic-blocks.venue' && item.listingItem[0].location
-                  ? item.listingItem[0].location.country : t('noVenueLocation')}
-              </span>
+              }
             </li>
           )}
           {item.category?.name && <li className="truncate">{item.category.name}</li>}

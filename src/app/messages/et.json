@@ -485,11 +485,30 @@
       "noCategoriesFound": "Kategooriaid ei leitud"
     }
   },
-    "hotdeal":{
+  "hotdeal": {
     "selectCategory": "Valige Kategooria",
-    "SelectsubCategory":"Valige alamkategooria",
+    "SelectsubCategory": "Valige alamkategooria",
     "ChooseEventType": "Valige Sündmuse tüüp",
     "Apply": "Rakenda",
     "Clear": "Selge"
+  },
+  "hotdealstatic": {
+    "HotDeal": "kuum tehing",
+    "Map": "kaart"
+  },
+  "Login": {
+    "login": "Logi sisse"
+  },
+  "Search": {
+    "search": "Otsi siit"
+  },
+  "ContactUs":{
+    "contact":"Võtke ühendust",
+    "hotdeal":"Kuum pakkumine"
+  },
+  "VenueInfo":{
+    "searchPlace":"Otsige kohta",
+    "apply":"kohaldada",
+    "clear":"selge"
   }
 }
