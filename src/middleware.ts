@@ -1,11 +1,13 @@
 import createMiddleware from 'next-intl/middleware';
-import {routing} from './i18n/routing';
- 
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/config/i18n';
+
 export default createMiddleware({
-  ...routing,
-  // Always redirect to default locale
-  defaultLocale: routing.defaultLocale,
-  localePrefix: 'always'
+  // Define locales explicitly instead of using routing
+  locales: SUPPORTED_LOCALES,
+  defaultLocale: DEFAULT_LOCALE,
+  localePrefix: 'always',
+  // Disable locale detection
+  localeDetection: false
 });
  
 export const config = {

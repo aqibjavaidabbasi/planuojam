@@ -71,24 +71,26 @@ function Header({ headerData }: { headerData: HeaderType }) {
       .catch(() => {});
   }, [dispatch, user?.documentId]);
 
-  // Initialize selected locale from localStorage or URL segment
+  // Initialize selected locale
   useEffect(() => {
-    const stored =
-      typeof window !== "undefined" ? localStorage.getItem("locale") : null;
+    // First check localStorage
+    const stored = localStorage.getItem("locale");
     if (stored && SUPPORTED_LOCALES.includes(stored)) {
       setSelectedLocale(stored);
       return;
     }
-    // Detect from URL: '/{locale}/...' => first segment
-    const seg =
-      typeof window !== "undefined"
-        ? window.location.pathname.split("/")[1]
-        : "";
+    
+    // Then check URL segment
+    const seg = window.location.pathname.split("/")[1];
     if (seg && SUPPORTED_LOCALES.includes(seg)) {
       setSelectedLocale(seg);
-    } else {
-      setSelectedLocale(DEFAULT_LOCALE);
+      localStorage.setItem("locale", seg);
+      return;
     }
+    
+    // Fallback to default
+    setSelectedLocale(DEFAULT_LOCALE);
+    localStorage.setItem("locale", DEFAULT_LOCALE);
   }, []);
 
   // Keep selector in sync if user navigates to a different locale elsewhere
