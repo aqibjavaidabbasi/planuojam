@@ -15,25 +15,24 @@ import geocodeLocations from "@/utils/mapboxLocation";
 import { useParentCategories } from "@/context/ParentCategoriesContext";
 
 export type ListingWrapperProps = {
-  serviceDocId: string;
+  service: string;
 };
 
-function ClientListingWrapper({ serviceDocId }: ListingWrapperProps) {
+function ClientListingWrapper({ service }: ListingWrapperProps) {
   const [list, setList] = useState<ListingItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const { eventTypes } = useEventTypes();
+  const { localizedEventTypes } = useEventTypes();
   const searchParams = useSearchParams();
   const locale = useLocale();
-  const { getServiceTypeFromParentId } = useParentCategories();
-
-  const serviceType = useMemo(() => getServiceTypeFromParentId(serviceDocId), [getServiceTypeFromParentId, serviceDocId]);
-  // Fetch child categories (names) for this parent slug
+  const { getServiceCategoryBySlug } = useParentCategories();
+  const serviceCategory = useMemo(() => getServiceCategoryBySlug(service), [getServiceCategoryBySlug, service]);
   const [categoryNames, setCategoryNames] = useState<string[]>([]);
   const [loadingCats, setLoadingCats] = useState(false);
-  const i18nNs = serviceType === "vendor" ? "Vendors" : serviceType === "venue" ? "Venues" : undefined;
-  const t = useTranslations(i18nNs);
+  // Get translations based on service type
+  const vendorsT = useTranslations("Vendors");
+  const venuesT = useTranslations("Venues");
 
-  const eventTypeNames: string[] = eventTypes.map((event) => event.eventName);
+  const eventTypeNames: string[] = localizedEventTypes.map((event) => event.eventName);
 
   const categoryFromUrl = searchParams.get("cat");
   const eventTypeFromUrl = searchParams.get("eventType");
@@ -45,31 +44,36 @@ function ClientListingWrapper({ serviceDocId }: ListingWrapperProps) {
     return obj;
   }, [categoryFromUrl, eventTypeFromUrl]);
 
-  const placeholders = {
-    chooseCategory: serviceType === "vendor" ? "filters.chooseVendor" : "filters.chooseVenue",
+  // Helper function to get the correct translation based on service type
+  const getTranslation = useCallback((key: string) => {
+    return service === "vendor" ? vendorsT(key) : venuesT(key);
+  }, [service, vendorsT, venuesT]);
+
+  const placeholders = useMemo(() => ({
+    chooseCategory: service === "vendor" ? "filters.chooseVendor" : "filters.chooseVenue",
     selectPricing: "filters.selectPricing",
-    chooseEventType: serviceType === "vendor" ? "filters.pickEventType" : "filters.chooseEventType",
-    emptyList: serviceType === "vendor" ? "noVendorsFound" : "noVenuesFound",
-  }
+    chooseEventType: service === "vendor" ? "filters.pickEventType" : "filters.chooseEventType",
+    emptyList: service === "vendor" ? "noVendorsFound" : "noVenuesFound",
+  }), [service]);
 
   const fetcher = useCallback(
     async (appliedFilters: Record<string, unknown>) => {
       // Delegate to service function filtered by parent slug and locale
       return await fetchListings(
-        serviceType as "vendor" | "venue",
+        service as "vendor" | "venue",
         appliedFilters,
         locale
       );
     },
-    [serviceType, locale]
+    [service, locale]
   );
 
   const translatedPricingFilters = useMemo(
     () => [
-      t("filters.withPricingOnly"),
-      t("filters.withoutPricingOnly"),
+      getTranslation("filters.withPricingOnly"),
+      getTranslation("filters.withoutPricingOnly"),
     ],
-    [t]
+    [getTranslation]
   );
 
   const filters = useMemo(
@@ -77,20 +81,20 @@ function ClientListingWrapper({ serviceDocId }: ListingWrapperProps) {
       {
         name: "category",
         options: categoryNames,
-        placeholder: t(placeholders.chooseCategory),
+        placeholder: getTranslation(placeholders.chooseCategory),
       },
       {
         name: "price",
         options: translatedPricingFilters,
-        placeholder: t(placeholders.selectPricing),
+        placeholder: getTranslation(placeholders.selectPricing),
       },
       {
         name: "eventType",
         options: eventTypeNames,
-        placeholder: t(placeholders.chooseEventType),
+        placeholder: getTranslation(placeholders.chooseEventType),
       },
     ],
-    [categoryNames, eventTypeNames, translatedPricingFilters, t, placeholders.chooseCategory, placeholders.selectPricing, placeholders.chooseEventType]
+    [categoryNames, eventTypeNames, translatedPricingFilters, getTranslation, placeholders]
   );
 
   // Fetch listings when URL filters change
@@ -114,8 +118,7 @@ function ClientListingWrapper({ serviceDocId }: ListingWrapperProps) {
           };
         }
         try {
-          const res = fetcher ? await fetcher(filters) : await fetchListings(serviceType as 'vendor' | 'venue', filters);
-          console.log(res);
+          const res = fetcher ? await fetcher(filters) : await fetchListings(service as 'vendor' | 'venue', filters,locale);
           setList(res);
         } catch (err) {
           console.error(err);
@@ -124,7 +127,7 @@ function ClientListingWrapper({ serviceDocId }: ListingWrapperProps) {
       }
       fetchItems();
     },
-    [serviceType, categoryFromUrl, eventTypeFromUrl, fetcher]
+    [service, categoryFromUrl, eventTypeFromUrl, fetcher, locale]
   );
 
   // Derive locations from current list based on type/__component
@@ -134,9 +137,9 @@ function ClientListingWrapper({ serviceDocId }: ListingWrapperProps) {
     const run = async () => {
       try {
         let res: Location[] = [];
-        if (serviceType === "vendor") {
+        if (service === "vendor") {
           res = await geocodeLocations(list);
-        } else if (serviceType === "venue") {
+        } else if (service === "venue") {
           res = deriveVenueLocations(list);
         } else {
           // Fallback: detect by __component on first item
@@ -154,15 +157,15 @@ function ClientListingWrapper({ serviceDocId }: ListingWrapperProps) {
     return () => {
       mounted = false;
     };
-  }, [list, serviceType]);
+  }, [list, service]);
 
   useEffect(() => {
     let canceled = false;
     async function run() {
-      if (!serviceDocId) return;
+      if (!serviceCategory) return;
       setLoadingCats(true);
       try {
-        const cats = await fetchChildCategories(serviceDocId, locale);
+        const cats = await fetchChildCategories(serviceCategory.documentId, locale);
         if (!canceled) {
           const names = (cats || []).map((c: { name: string; }) => c.name).filter(Boolean);
           setCategoryNames(names);
@@ -178,7 +181,7 @@ function ClientListingWrapper({ serviceDocId }: ListingWrapperProps) {
     return () => {
       canceled = true;
     };
-  }, [serviceDocId, locale]);
+  }, [serviceCategory, locale]);
 
   if (loading || loadingCats)
     return (
@@ -191,7 +194,7 @@ function ClientListingWrapper({ serviceDocId }: ListingWrapperProps) {
     <div>
       <FiltersAndMap
         filters={filters}
-        type={serviceType as 'vendor' | 'venue'}
+        type={service as 'vendor' | 'venue'}
         setList={setList}
         initialFilterValues={initialFilters}
         locations={locations}
@@ -199,7 +202,7 @@ function ClientListingWrapper({ serviceDocId }: ListingWrapperProps) {
       />
       <div className="flex items-center gap-5 my-10 flex-wrap">
         {list.length === 0 ? (
-          <NoDataCard>{t(placeholders.emptyList)}</NoDataCard>
+          <NoDataCard>{getTranslation(placeholders.emptyList)}</NoDataCard>
         ) : (
           list.map((item) => <ListingCard key={item.documentId} item={item} />)
         )}

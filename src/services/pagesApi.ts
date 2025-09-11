@@ -31,8 +31,9 @@ export async function fetchPageById(docId: string, locale?: string) {
  * Locale-aware page fetch with fallback to DEFAULT_LOCALE if missing.
  */
 export async function fetchPageLocalized(pageSlug: string, locale?: string) {
-    console.log("homepage locale", locale)
     const populate = PAGES_DYNAMIC_ZONE;
+
+    console.log("Fetching page for slug:", pageSlug, "with locale:", locale);
 
     const filters = {
         filters: {
@@ -55,13 +56,22 @@ export async function fetchPageLocalized(pageSlug: string, locale?: string) {
 export async function fetchHeader(locale?: string) {
     const populate = {
         nav: {
-            populate: "*"
+            populate: {
+                'categories': {
+                    populate: '*'
+                }
+            }
         },
         'eventTypes': {
             populate: {
                 'eventType': {
                     populate: {
-                        'page': true,
+                        'page': {
+                                populate: '*'
+                        },
+                        'localizations': {
+                            populate: '*'
+                        }
                     },
                 }
             }

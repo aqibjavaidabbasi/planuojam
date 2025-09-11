@@ -9,6 +9,7 @@ interface EventTypesContextProps {
   eventTypes: EventTypes[];
   getEventTypeBySlug: (slug: string) => EventTypes | undefined;
   getEventTypeByDocId: (docId: string) => EventTypes | undefined;
+  localizedEventTypes: EventTypes[];
 }
 
 const EventTypesContext = createContext<EventTypesContextProps | undefined>(undefined);
@@ -25,20 +26,33 @@ export const EventTypesProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const fetchEvent = async () => {
-     const res = await fetchEventTypes(locale);
+     const res = await fetchEventTypes('en'); //always fetch data in english for ease of use
       setEventTypes(res);
     };
 
     fetchEvent();
   }, [locale]);
 
-  const getEventTypeBySlug = (slug: string) =>
-    eventTypes.find((type) => type.slug === slug);
+  const getEventTypeBySlug = (slug: string) =>{
+    return eventTypes.find(type => type.slug === slug);
+  }
 
-  const getEventTypeByDocId = (docId: string) => eventTypes.find(type => type.documentId === docId);
+  const getEventTypeByDocId = (docId: string) => {
+   return eventTypes.find(type => type.documentId === docId);
+  }
+
+  const localizedEventTypes = eventTypes.map(eventType => {
+    const localized = eventType.localizations.find(loc => loc.locale === locale);
+    return localized ? { ...eventType, ...localized } : eventType;
+  });
 
   return (
-    <EventTypesContext.Provider value={{ eventTypes, getEventTypeBySlug, getEventTypeByDocId }}>
+    <EventTypesContext.Provider value={{ 
+      eventTypes, 
+      getEventTypeBySlug, 
+      getEventTypeByDocId,
+      localizedEventTypes
+    }}>
       {children}
     </EventTypesContext.Provider>
   );

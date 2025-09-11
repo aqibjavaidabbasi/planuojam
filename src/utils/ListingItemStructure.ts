@@ -71,5 +71,8 @@ export const LISTING_ITEM_POP_STRUCTURE = {
                 populate: '*'
             }
         }
+    },
+    localizations: {
+        populate: '*'
     }
 }   

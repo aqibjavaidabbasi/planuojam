@@ -6,7 +6,7 @@ export default async function ServicePage({ params }: { params: Promise<{ servic
 
   return (
     <ClientListingWrapper
-      serviceDocId={service}
+      service={service}
     />
   );
 }

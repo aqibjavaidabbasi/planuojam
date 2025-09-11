@@ -80,7 +80,11 @@ export async function fetchParentCategories(locale?: string) {
             }
         }
     }
-    const populate = {};
+    const populate = {
+        localizations: {
+            populate: '*'
+        },
+    };
     return await fetchWithLocaleFallback('categories', populate, filter, locale);
 }
 export async function fetchEventTypes(locale?: string) {
@@ -90,6 +94,9 @@ export async function fetchEventTypes(locale?: string) {
         },
         page: {
             populate: true
+        },
+        localizations: {
+            populate: '*'
         }
     }
     return await fetchWithLocaleFallback('event-types', populate, undefined, locale);

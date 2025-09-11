@@ -27,10 +27,22 @@ export interface EventTypes {
   locale: string;
   eventName: string;
   slug: string;
+  image: strapiImage;
   page: {
     slug: string;
     documentId: string;
   }
+  localizations: {
+    locale: string;
+    slug: string;
+    documentId: string;
+    id: number;
+    eventName: string;
+    page: {
+      slug: string;
+      documentId: string;
+    }
+  }[]
 }
 
 
@@ -284,6 +296,7 @@ export interface ListingItem {
     dealNote: string;
     discount: Discount;
   }
+  localizations: ListingItem[]
 }
 export interface Discount {
   discountType: 'Flat Rate' | 'Percentage'
@@ -350,6 +363,13 @@ export interface category {
   name: string;
   parentCategory: category;
   slug: string;
+  localizations: {
+    id: number;
+    locale: string;
+    name: string;
+    documentId: string;
+    slug: string;
+  }[]
 }
 
 export interface EventTypesBlock {
@@ -358,17 +378,9 @@ export interface EventTypesBlock {
   sectionheader: TitleDescriptionBlock;
   eventTypeItem: {
     id: number;
-    eventType: eventType;
+    eventType: EventTypes;
     contentPlacement: string;
   }[]
-}
-
-export interface eventType {
-  documentId: string;
-  id: number;
-  eventName: string;
-  image: strapiImage;
-  externalUrl?: string;
 }
 export interface RichTextAreaBlock {
   __component: "dynamic-blocks.rich-text-area";

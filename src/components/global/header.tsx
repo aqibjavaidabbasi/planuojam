@@ -31,16 +31,14 @@ function Header({ headerData }: { headerData: HeaderType }) {
   const dispatch = useAppDispatch();
   const isHotDealActive = () => pathname.endsWith("/hot-deal");
   const isMapActive = () => pathname.endsWith("/map");
-  const isEventTypeActive = (slug: string) =>
-    pathname.endsWith(`/event-types/${slug}`);
   const user = useAppSelector((state: RootState) => state.auth.user);
   const [loading, setLoading] = useState(false);
   const [selectedLocale, setSelectedLocale] = useState<string>(DEFAULT_LOCALE);
   const [selected, setSelected] = useState("");
-  const handleSelect = (val:string) => {
+  const handleSelect = (val: string) => {
     setSelected(val);
   };
-  const t=useTranslations("hotdealstatic")
+  const t = useTranslations("hotdealstatic")
   useEffect(() => {
     const validateUser = async () => {
       const token = localStorage.getItem("token");
@@ -68,7 +66,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
     // Fetch liked listings when user id becomes available
     dispatch(fetchLikedListing(user.documentId))
       .unwrap()
-      .catch(() => {});
+      .catch(() => { });
   }, [dispatch, user?.documentId]);
 
   // Initialize selected locale
@@ -79,7 +77,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
       setSelectedLocale(stored);
       return;
     }
-    
+
     // Then check URL segment
     const seg = window.location.pathname.split("/")[1];
     if (seg && SUPPORTED_LOCALES.includes(seg)) {
@@ -87,7 +85,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
       localStorage.setItem("locale", seg);
       return;
     }
-    
+
     // Fallback to default
     setSelectedLocale(DEFAULT_LOCALE);
     localStorage.setItem("locale", DEFAULT_LOCALE);
@@ -110,10 +108,41 @@ function Header({ headerData }: { headerData: HeaderType }) {
     setSelectedLocale(next);
     try {
       localStorage.setItem("locale", next);
-    } catch {}
+    } catch { }
     // Navigate to same path under the new locale
     router.replace(pathname, { locale: next });
   };
+
+  function getServiceUrl(docId: string){
+    const category = headerData?.nav.categories.find((cat) => cat.documentId === docId);
+    if (!category) return;
+    if( category.locale === 'en' ) return `/service/${category.slug}`;
+    if (category.locale !== 'en') {
+      const enEntry = category.localizations.find(loc => loc.locale === 'en');
+      return enEntry ? `/service/${enEntry.slug}` : `/service/${category.slug}`;
+    }
+  }
+
+
+  function getEventTypeUrl(docId: string) {
+    const eventType = headerData?.eventTypes.find((et) => et.eventType.documentId === docId);
+    if (!eventType) return;
+    if( eventType.eventType.locale === 'en' ) return `/event-types/${eventType.eventType.slug}`;
+    if (eventType.eventType.locale !== 'en') {
+      const enEntry = eventType.eventType.localizations.find(loc => loc.locale === 'en');
+      return enEntry ? `/event-types/${enEntry.slug}` : `/event-types/${eventType.eventType.slug}`;
+    }
+  }
+
+    const isEventTypeActive = (docId: string) => {
+      const eventType = headerData?.eventTypes.find((et) => et.eventType.documentId === docId);
+      if (!eventType) return false;
+      if( eventType.eventType.locale === 'en' ) return pathname.endsWith(`/event-types/${eventType.eventType.slug}`);
+      if (eventType.eventType.locale !== 'en') {
+        const enEntry = eventType.eventType.localizations.find(loc => loc.locale === 'en');
+        return enEntry ? pathname.endsWith(`/event-types/${enEntry.slug}`) : pathname.endsWith(`/event-types/${eventType.eventType.slug}`);
+      }
+    };
 
   return (
     <header className="sticky top-0 z-30">
@@ -133,19 +162,17 @@ function Header({ headerData }: { headerData: HeaderType }) {
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-3 md:ml-10">
             {headerData?.nav.categories.map((navItem) => {
-              const href = `/service/${navItem.documentId}`;
+              const href = getServiceUrl(navItem.documentId) as string;
               const isActive = pathname.endsWith(href);
 
               return (
                 <Link
                   key={navItem.id}
                   href={href}
-                  className={`cursor-pointer px-3 py-2 rounded-sm transition-colors text-sm md:text-base capitalize 
-                                        ${
-                                          isActive
-                                            ? "bg-primary text-white"
-                                            : "text-primary bg-white hover:bg-primary hover:text-white"
-                                        }`}
+                  className={`cursor-pointer px-3 py-2 rounded-sm transition-colors text-sm md:text-base capitalize ${isActive
+                      ? "bg-primary text-white"
+                      : "text-primary bg-white hover:bg-primary hover:text-white"
+                    }`}
                 >
                   {navItem.name}
                 </Link>
@@ -209,17 +236,15 @@ function Header({ headerData }: { headerData: HeaderType }) {
               <nav className="flex flex-col gap-2">
                 {/* Main Navigation */}
                 {headerData?.nav.categories.map((navItem) => {
-                  const href = `/service/${navItem.documentId}`;
+                  const href = getServiceUrl(navItem.documentId) as string;
                   const isActive = pathname.endsWith(href);
                   return (
                     <Link
                       href={href}
-                      className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-white hover:bg-primary hover:text-white
-                                                ${
-                                                  isActive
-                                                    ? "bg-primary text-white"
-                                                    : ""
-                                                }`}
+                      className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-white hover:bg-primary hover:text-white ${isActive
+                          ? "bg-primary text-white"
+                          : ""
+                        }`}
                       key={navItem.id}
                     >
                       {navItem.name}
@@ -236,45 +261,41 @@ function Header({ headerData }: { headerData: HeaderType }) {
                         Event Types
                       </p>
                       {headerData.eventTypes.map(({ id, eventType }) => {
-                        const isActive = isEventTypeActive(
-                          eventType.documentId
-                        );
+                        const isActive = isEventTypeActive(eventType.documentId);
                         return (
-                          <Link onClick={()=> handleSelect("")}
-                            href={`/event-types/${eventType.documentId}`}
-                            className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${isActive? "bg-primary text-white": ""}`}
+                          <Link onClick={() => handleSelect("")}
+                            href={getEventTypeUrl(eventType.documentId) as string}
+                            className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${isActive ? "bg-primary text-white" : ""}`}
                             key={id}
                           >
                             {eventType.eventName}
                           </Link>
                         );
                       })}
-                     
-                        <Link onClick={()=> handleSelect("Hot Deal")}
-                          className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${
-                            selected == "Hot Deal"
-                              ? "bg-primary text-white"
-                              : ""
+
+                      <Link onClick={() => handleSelect("Hot Deal")}
+                        className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Hot Deal"
+                            ? "bg-primary text-white"
+                            : ""
                           }
                              
                           `}
-                          href="/hot-deal"
-                        >
-                          {t('HotDeal')}
-                        </Link>
-                 
-                      
-                        <Link  onClick={()=> handleSelect("Map")}
-                          className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${
-                            selected == "Map" ? "bg-primary text-white" : ""
+                        href="/hot-deal"
+                      >
+                        {t('HotDeal')}
+                      </Link>
+
+
+                      <Link onClick={() => handleSelect("Map")}
+                        className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Map" ? "bg-primary text-white" : ""
                           }
                              `}
-                          href="/map"
-                        >
-                          {t('Map')}
-                        </Link>
+                        href="/map"
+                      >
+                        {t('Map')}
+                      </Link>
 
-                      
+
                     </>
                   )}
               </nav>
@@ -328,37 +349,34 @@ function Header({ headerData }: { headerData: HeaderType }) {
               return (
                 <Link
                   key={id}
-                  href={`/event-types/${eventType.documentId}`}
+                  href={getEventTypeUrl(eventType.documentId) as string}
                   className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors
-                                    ${
-                                      isActive
-                                        ? "bg-primary text-white"
-                                        : "text-primary hover:bg-primary hover:text-white"
-                                    }`}
+                                    ${isActive
+                      ? "bg-primary text-white"
+                      : "text-primary hover:bg-primary hover:text-white"
+                    }`}
                 >
                   {eventType.eventName}
                 </Link>
               );
             })}
             <Link
-              className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${
-                isHotDealActive()
+              className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${isHotDealActive()
                   ? "bg-primary text-white"
                   : "text-primary hover:bg-primary hover:text-white"
-              }`}
+                }`}
               href="/hot-deal"
             >
-             {t('HotDeal')}
+              {t('HotDeal')}
             </Link>
             <Link
-              className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${
-                isMapActive()
+              className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${isMapActive()
                   ? "bg-primary text-white"
                   : "text-primary hover:bg-primary hover:text-white"
-              }`}
+                }`}
               href="/map"
             >
-             {t('Map')}
+              {t('Map')}
             </Link>
           </div>
         )}

@@ -16,6 +16,8 @@ interface ParentCategoriesContextProps {
   getServiceTypeFromSlug: (slug: string) => ServiceType | undefined;
   VENUE_DOC_ID: string;
   VENDOR_DOC_ID: string;
+  getServiceCategoryBySlug: (slug: string) => category | undefined;
+  getServiceCategoryByDocId: (docId: string) => category | undefined;
 }
 
 const VENUE_DOC_ID = "cvf586kao1521ew8lb1vl540";
@@ -40,7 +42,7 @@ const ParentCategoriesProvider: React.FC<React.PropsWithChildren<object>> = ({ c
     const fetchParentCategoriesAsync = async () => {
       setIsLoading(true);
       try {
-        const data = await fetchParentCategories(locale);
+        const data = await fetchParentCategories('en'); // Always fetch parent categories in English
         setParentCategories(data);
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -69,8 +71,27 @@ const ParentCategoriesProvider: React.FC<React.PropsWithChildren<object>> = ({ c
     return SERVICE_TYPE_BY_PARENT_ID[parent.documentId];
   };
 
+  const getServiceCategoryBySlug = (slug: string) : category | undefined =>{
+    return parentCategories.find(type => type.slug === slug);
+  }
+
+  const getServiceCategoryByDocId = (docId: string): category | undefined => {
+   return parentCategories.find(type => type.documentId === docId);
+  }
+
   return (
-    <ParentCategoriesContext.Provider value={{ parentCategories, isLoading, error, parentBySlug, getServiceTypeFromParentId, getServiceTypeFromSlug, VENUE_DOC_ID, VENDOR_DOC_ID   }}>
+    <ParentCategoriesContext.Provider value={{ 
+      parentCategories, 
+      isLoading,
+      error, 
+      parentBySlug, 
+      getServiceTypeFromParentId, 
+      getServiceTypeFromSlug, 
+      VENUE_DOC_ID, 
+      VENDOR_DOC_ID, 
+      getServiceCategoryBySlug, 
+      getServiceCategoryByDocId 
+    }}>
       {children}
     </ParentCategoriesContext.Provider>
   );

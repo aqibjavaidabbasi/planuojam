@@ -18,19 +18,24 @@ export async function deleteListing(id: string) {
     return res;
 }
 
-export async function fetchListingByDocumentId(documentId: string, locale?: string) {
+export async function fetchListingBySlug(slug: string, locale?: string) {
     const populate = LISTING_ITEM_POP_STRUCTURE;
+    const filters = {
+        filters : {
+            slug: { $eq: slug }
+        }
+    }
     // Try requested locale first
     if (locale) {
         const queryWithLocale = createQuery(populate, { locale });
-        const dataLocale = await fetchAPI(`listings/${documentId}`, queryWithLocale, {});
-        return dataLocale
+        const dataLocale = await fetchAPI(`listings`, queryWithLocale, filters);
+        return dataLocale[0]
     }
 
     // Final fallback: no locale constraint
     const queryBase = createQuery(populate);
-    const dataBase = await fetchAPI(`listings/${documentId}`, queryBase, {});
-    return dataBase
+    const dataBase = await fetchAPI(`listings`, queryBase, filters);
+    return dataBase[0]
 }
 
 

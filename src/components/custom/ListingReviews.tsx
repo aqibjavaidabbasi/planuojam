@@ -56,7 +56,7 @@ function ListingReviews({ reviews }: { reviews: Review[] }) {
                   }}
                 >
                   <span className="text-white font-bold text-lg">
-                    {review.author?.username?.charAt(0).toUpperCase() || "?"}
+                    {review.author?.username?.charAt(0).toUpperCase() || "A"}
                   </span>
                 </div>
                 <p className="text-secondary font-semibold">

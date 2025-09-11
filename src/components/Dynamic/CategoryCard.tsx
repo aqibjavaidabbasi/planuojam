@@ -1,4 +1,5 @@
 'use client'
+import { useParentCategories } from '@/context/ParentCategoriesContext'
 import { category } from '@/types/pagesTypes'
 import { getCompleteImageUrl } from '@/utils/helpers'
 import Image from 'next/image'
@@ -6,8 +7,15 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 
 function CategoryCard({category}: {category: category}) {
+    const { getServiceCategoryByDocId } = useParentCategories();
      const imageUrl = category.image?.url ? getCompleteImageUrl(category.image.url) : '/placeholder.png'
      const router = useRouter();
+
+     const cat = getServiceCategoryByDocId(category.parentCategory.documentId);
+     function getUrlPath(){
+        if(!cat) return '/';
+        return `/service/${encodeURIComponent(cat.name.trim())}?cat=${encodeURIComponent(category.name.trim())}`;
+     }
   return (
     <div
         className='flex flex-col gap-1.5 w-[300px] transition-all duration-300 ease-in hover:scale-105 cursor-pointer rounded-lg'
@@ -15,7 +23,7 @@ function CategoryCard({category}: {category: category}) {
         backgroundColor: '#fff',
         boxShadow: '0px 0px 4px rgba(0,0,0,0.2)',
     }}
-    onClick={()=>router.push(`/${category.parentCategory.name}s?cat=${category.name}`)}
+    onClick={()=>router.push(getUrlPath())}
 >
     <div className='relative w-[300px] h-[250px]'>
         <Image

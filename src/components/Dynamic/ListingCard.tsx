@@ -56,6 +56,15 @@ function ListingCard({ item }: { item: ListingItem }) {
     )
   }
 
+  function getListingItemUrl(){
+    if(item.listingItem.length === 0) return '#';
+    if (item.locale === 'en') return `/listing/${item.slug}`;
+    if (item.locale !== 'en') {
+      const entry = item.localizations.find(loc => loc.locale === 'en');
+      return entry ? `/listing/${entry.slug}` : '#';
+    }
+  }
+
   return (
     <div
       className="rounded-lg bg-white relative max-w-full sm:max-w-[300px] overflow-hidden border border-border"
@@ -207,12 +216,12 @@ function ListingCard({ item }: { item: ListingItem }) {
             <Button
               style="secondary"
               size="small"
-              onClick={() => router.push(`/listing/${item.documentId}/edit`)}
+              onClick={() => router.push(`${getListingItemUrl() as string}/edit`)}
             >
               {t('edit')} <IoNavigateOutline />
             </Button>
           ) : (
-            <Button style="secondary" size="small" onClick={() => router.push(`/listing/${item.documentId}`)}>
+            <Button style="secondary" size="small" onClick={() => router.push(getListingItemUrl() as string)}>
               {t('view')} <IoNavigateOutline />
             </Button>
           )}

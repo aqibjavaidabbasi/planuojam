@@ -4,12 +4,12 @@ import { useEffect, useMemo, useState } from "react"
 import { useParams } from "next/navigation"
 import { useRouter } from "@/i18n/navigation"
 import { useAppSelector } from "@/store/hooks"
-import { fetchListingByDocumentId } from "@/services/listing"
 import type { ListingItem } from "@/types/pagesTypes"
 import EditListingForm from "@/components/forms/EditListingForm"
 import Button from "@/components/custom/Button"
 import { IoMdArrowRoundBack } from "react-icons/io"
 import { useTranslations } from "next-intl"
+import { fetchListingBySlug } from "@/services/listing"
 
 export default function EditListingPage() {
   const router = useRouter()
@@ -30,7 +30,7 @@ export default function EditListingPage() {
       setLoading(true)
       setError(null)
       try {
-        const data = await fetchListingByDocumentId(String(listingId))
+        const data = await fetchListingBySlug(String(listingId))
         if (!active) return
         if (!data) {
           setError("Listing not found")

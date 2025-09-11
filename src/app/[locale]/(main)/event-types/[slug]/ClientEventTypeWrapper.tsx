@@ -20,15 +20,10 @@ import { useLocale } from "next-intl";
 import { useParentCategories } from "@/context/ParentCategoriesContext";
 
 function ClientEventTypeWrapper() {
-  const { getEventTypeByDocId } = useEventTypes();
+  const { getEventTypeBySlug } = useEventTypes();
   const params = useParams();
-  const docId =
-    typeof params.docId === "string"
-      ? params.docId
-      : Array.isArray(params.docId)
-      ? params.docId[0]
-      : "";
-  const eventType = getEventTypeByDocId(docId);
+  const  { slug } = params;
+  const eventType = getEventTypeBySlug(slug as string);
   const [eventBlock, setEventBlocks] = useState<DynamicBlocks[]>([]);
   const router = useRouter();
   const [categories, setCategories] = useState<category[]>([]);
