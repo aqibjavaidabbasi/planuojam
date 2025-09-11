@@ -1,4 +1,4 @@
-export const DEFAULT_LOCALE = process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'en';
+export const DEFAULT_LOCALE = process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'lt';
 export const SUPPORTED_LOCALES = (process.env.NEXT_PUBLIC_SUPPORTED_LOCALES || 'en').split(',').map(l => l.trim());
 // Human-readable labels for locales
 export const LOCALE_LABELS: Record<string, string> = {

@@ -26,9 +26,9 @@ export default async function LocaleLayout({
   params
 }: Readonly<{
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }>) {
-  const { locale } = params;
+  const { locale } = await params;
   setRequestLocale(locale);
   // Rely on next-intl request config to provide messages
   const messages = await getMessages();

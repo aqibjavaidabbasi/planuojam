@@ -20,6 +20,7 @@ import {
   LOCALE_OPTIONS,
 } from "@/config/i18n";
 import { useTranslations } from "next-intl";
+import { RootState } from "@/store";
 
 function Header({ headerData }: { headerData: HeaderType }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -32,7 +33,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
   const isMapActive = () => pathname.endsWith("/map");
   const isEventTypeActive = (slug: string) =>
     pathname.endsWith(`/event-types/${slug}`);
-  const user = useAppSelector((state) => state.auth.user);
+  const user = useAppSelector((state: RootState) => state.auth.user);
   const [loading, setLoading] = useState(false);
   const [selectedLocale, setSelectedLocale] = useState<string>(DEFAULT_LOCALE);
   const [selected, setSelected] = useState("");

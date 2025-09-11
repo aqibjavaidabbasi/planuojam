@@ -1,24 +1,20 @@
 import React from "react";
 
-interface CheckboxProps {
+interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
-  disabled?: boolean;
   error?: boolean;
-  checked?: boolean;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-function Checkbox({ label, disabled = false, error = false , checked = false, onChange }: CheckboxProps) {
+function Checkbox({ label, disabled = false, error = false, className, ...props }: CheckboxProps) {
   return (
     <label
       className={`flex items-center ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
     >
       <input
         type="checkbox"
-        className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+        className={`w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary ${className || ''}`}
         disabled={disabled}
-        checked={checked}
-        onChange={onChange}
+        {...props}
       />
       <span
         className={`ml-2 text-sm capitalize ${
