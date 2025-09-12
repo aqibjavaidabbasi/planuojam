@@ -30,7 +30,7 @@ export default function EditListingPage() {
       setLoading(true)
       setError(null)
       try {
-        const data = await fetchListingBySlug(String(listingId))
+        const data = await fetchListingBySlug(String(listingId), 'en')
         if (!active) return
         if (!data) {
           setError("Listing not found")

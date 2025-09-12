@@ -109,8 +109,8 @@ function Header({ headerData }: { headerData: HeaderType }) {
     try {
       localStorage.setItem("locale", next);
     } catch { }
-    // Navigate to same path under the new locale
-    router.replace(pathname, { locale: next });
+    // Force a full page reload to the new locale path
+    window.location.href = `/${next}${pathname}`;
   };
 
   function getServiceUrl(docId: string){

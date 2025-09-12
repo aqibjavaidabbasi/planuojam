@@ -4,7 +4,7 @@ import Button from '../custom/Button'
 import Image from 'next/image'
 import { HeroBannerBlock } from '@/types/pagesTypes'
 import { getCompleteImageUrl } from '@/utils/helpers'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
 
 interface NormalBannerProps {
     data: HeroBannerBlock;
@@ -18,8 +18,7 @@ function NormalBanner({data, imagePosition}: NormalBannerProps) {
     const imageOrder = imagePosition === 'left' ? 'order-1 md:order-1' : 'order-1 md:order-2';
     const contentOrder = imagePosition === 'left' ? 'order-2 md:order-2' : 'order-2 md:order-1';
 
-    console.log("NormalBanner",data)
-  return (
+    return (
     <section className="grid md:grid-cols-2 w-screen">
     {/* Image comes first on mobile, order depends on imagePosition on desktop */}
     <div className={`w-full h-60 md:h-[400px] relative ${imageOrder}`}>

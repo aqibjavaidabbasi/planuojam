@@ -242,7 +242,7 @@ function RegisterPage() {
 
             <div className="">
               <Checkbox
-                label={isChecked ? t("tosRequired") : t("tosAgree")}
+                label={!isChecked ? t("tosRequired") : t("tosAgree")}
                 onChange={(e)=>setIsChecked(e.target.checked)}
                 checked={isChecked}
                 disabled={isSubmitting}

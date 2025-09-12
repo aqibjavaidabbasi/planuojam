@@ -1,9 +1,9 @@
 'use client'
 import { useParentCategories } from '@/context/ParentCategoriesContext'
+import { useRouter } from '@/i18n/navigation'
 import { category } from '@/types/pagesTypes'
 import { getCompleteImageUrl } from '@/utils/helpers'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import React from 'react'
 
 function CategoryCard({category}: {category: category}) {

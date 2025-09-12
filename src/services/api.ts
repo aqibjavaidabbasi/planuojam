@@ -41,7 +41,7 @@ export async function fetchAPI(
       })}`
     : `${API_URL}/api/${endpoint}?${query}`;
 
-  console.log("fetching from :: ", url);
+  // console.log("fetching from :: ", url);
 
   const response = await fetch(url, FETCH_OPTIONS);
 
@@ -79,7 +79,7 @@ export async function fetchAPIWithToken(
       })}`
     : `${API_URL}/api/${endpoint}?${query}`;
 
-  console.log("fetching with token from :: ", url);
+  // console.log("fetching with token from :: ", url);
 
   const fetchOptions: RequestInit = {
     ...FETCH_OPTIONS,
@@ -129,14 +129,14 @@ export async function postAPI(
   // Ensure headers are not overwritten by ...options
   fetchOptions.headers = mergedHeaders;
 
-  console.log(
-    "posting to :: ",
-    url,
-    "with body ::",
-    body,
-    "and headers ::",
-    mergedHeaders
-  );
+  // console.log(
+  //   "posting to :: ",
+  //   url,
+  //   "with body ::",
+  //   body,
+  //   "and headers ::",
+  //   mergedHeaders
+  // );
 
   const response = await fetch(url, fetchOptions);
   if (!response.ok) {
@@ -188,14 +188,14 @@ export async function postAPIWithToken(
   // Ensure headers are not overwritten by ...options
   fetchOptions.headers = mergedHeaders;
 
-  console.log(
-    "posting with token to :: ",
-    url,
-    "with body ::",
-    body,
-    "and headers ::",
-    mergedHeaders
-  );
+  // console.log(
+  //   "posting with token to :: ",
+  //   url,
+  //   "with body ::",
+  //   body,
+  //   "and headers ::",
+  //   mergedHeaders
+  // );
 
   const response = await fetch(url, fetchOptions);
   if (!response.ok) {
@@ -247,14 +247,14 @@ export async function putAPI(
   // Ensure headers are not overwritten by ...options
   fetchOptions.headers = mergedHeaders;
 
-  console.log(
-    "updating to :: ",
-    url,
-    "with body ::",
-    body,
-    "and headers ::",
-    mergedHeaders
-  );
+  // console.log(
+  //   "updating to :: ",
+  //   url,
+  //   "with body ::",
+  //   body,
+  //   "and headers ::",
+  //   mergedHeaders
+  // );
 
   const response = await fetch(url, fetchOptions);
   if (!response.ok) {
@@ -303,12 +303,12 @@ export async function deleteAPI(
   // Ensure headers are not overwritten by ...options
   fetchOptions.headers = mergedHeaders;
 
-  console.log(
-    "deleting from :: ",
-    url,
-    "with headers ::",
-    mergedHeaders
-  );
+  // console.log(
+  //   "deleting from :: ",
+  //   url,
+  //   "with headers ::",
+  //   mergedHeaders
+  // );
 
   const response = await fetch(url, fetchOptions);
   if (!response.ok) {
@@ -320,8 +320,6 @@ export async function deleteAPI(
         `Strapi API DELETE error! status: ${response.status}`
     );
   }
-
-  console.log("response status::", response.status)
 
   // Check for unexpected response statuses
   if (response.status !== 200 && response.status !== 204) {

@@ -4,7 +4,7 @@ import React from 'react'
 import Heading from '../custom/heading';
 import { getCompleteImageUrl } from '@/utils/helpers';
 import NoDataCard from '../custom/NoDataCard';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 
 function EventTypesList({ data }: { data: EventTypesBlock }) {
 

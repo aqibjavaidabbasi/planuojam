@@ -35,6 +35,7 @@ function Mylistings() {
     setError(null);
     try {
       const data = await fetchListingsByUser(user.documentId, statusFilter);
+      console.log('Fetched listings:', data);
       setListings(data);
     } catch (e: unknown) {
       const message =

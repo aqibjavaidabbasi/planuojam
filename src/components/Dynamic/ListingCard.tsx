@@ -12,13 +12,13 @@ import { FaHeart, FaSpinner } from 'react-icons/fa'
 import { CiHeart } from 'react-icons/ci'
 import Button from '../custom/Button'
 import { IoNavigateOutline } from 'react-icons/io5'
-import { useRouter } from 'next/navigation'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import LoginNavigateModal from '../modals/LoginNavigateModal'
 import { addToLikedListing, removeFromLikedListing } from '@/store/thunks/likedListing'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
+import { useRouter } from '@/i18n/navigation'
 
 function ListingCard({ item }: { item: ListingItem }) {
   const router = useRouter();

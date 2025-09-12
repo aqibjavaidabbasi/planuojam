@@ -6,8 +6,8 @@ import { useAppDispatch } from "@/store/hooks";
 import toast from "react-hot-toast";
 import { logout } from "@/store/slices/authSlice";
 import { TbLogout } from "react-icons/tb";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 
 function LogoutModalChildren() {
   const t = useTranslations('Modals.Logout')

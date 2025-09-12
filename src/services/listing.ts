@@ -1,6 +1,5 @@
 import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
 import { createQuery, deleteAPI, fetchAPI, postAPIWithToken, putAPI } from "./api";
-import { DEFAULT_LOCALE } from "@/config/i18n";
 import type { ListingItem } from "@/types/pagesTypes";
 
 export async function createListing(data: Record<string, unknown>) {
@@ -58,11 +57,6 @@ export async function fetchListingsByUser(documentId: string, status?: string, l
         const dataLocale = await fetchAPI('listings', queryWithLocale, baseFilters);
         if (Array.isArray(dataLocale) && dataLocale.length) return dataLocale as ListingItem[];
     }
-
-    // Fallback to default locale
-    const queryDefault = createQuery(populate, { locale: DEFAULT_LOCALE });
-    const dataDefault = await fetchAPI('listings', queryDefault, baseFilters);
-    if (Array.isArray(dataDefault) && dataDefault.length) return dataDefault as ListingItem[];
 
     // Final fallback: no locale constraint
     const queryBase = createQuery(populate);

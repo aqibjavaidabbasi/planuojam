@@ -1,45 +1,33 @@
 import {getRequestConfig} from 'next-intl/server';
 import {hasLocale} from 'next-intl';
-import {routing} from './routing';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/config/i18n';
 
 export default getRequestConfig(async ({requestLocale}) => {
-  // Force the default locale for root path and unsupported locales
-  const pathname = typeof window !== 'undefined' 
-    ? window.location.pathname 
-    : '/';
-    
-  // If we're at the root path or have an unsupported locale, use default
-  if (pathname === '/' || !(await requestLocale)) {
-    return {
-      locale: DEFAULT_LOCALE,
-      messages: (await import(`../app/messages/${DEFAULT_LOCALE}.json`)).default
-    };
-  }
-  
   // For other paths, verify the locale
   const requested = await Promise.resolve(requestLocale);
   const locale = hasLocale(SUPPORTED_LOCALES, requested) ? requested : DEFAULT_LOCALE;
-  
-  console.log('Default locale:', DEFAULT_LOCALE);
-  console.log('Requested locale:', requested);
-  console.log('Final locale:', locale);
 
   // Load translation messages for the resolved locale
   let messages: Record<string, unknown> = {};
+  
   try {
     messages = (await import(`../app/messages/${locale}.json`)).default;
-  } catch {
-    // If the messages for the requested locale are not found,
-    // try to load the default locale messages
-    if (locale !== routing.defaultLocale) {
+  } catch (error) {
+    console.warn(`Failed to load messages for locale: ${locale}`, error);
+    
+    // // Only try fallback if we're not already on the default locale
+    if (locale !== DEFAULT_LOCALE) {
       try {
-        messages = (await import(`../app/messages/${routing.defaultLocale}.json`)).default;
-      } catch {
-        // If no messages file is found, leave as empty
+        messages = (await import(`../app/messages/${DEFAULT_LOCALE}.json`)).default;
+        console.log(`Loaded fallback messages for locale: ${DEFAULT_LOCALE}`);
+      } catch (fallbackError) {
+        console.error(`Failed to load fallback messages`, fallbackError);
       }
     }
   }
+
+  // Explicitly set the locale in the messages object
+  messages._locale = locale;
 
   return {
     locale,

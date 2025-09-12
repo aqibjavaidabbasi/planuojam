@@ -1,8 +1,8 @@
 // components/MapInfoWindow.tsx
 import React from 'react';
 import { Location } from './MapboxMap'; // adjust path if needed
-import { useRouter } from 'next/navigation';
 import Button from '../custom/Button';
+import { useRouter } from '@/i18n/navigation';
 
 type Props = {
   selectedLocation: Location;

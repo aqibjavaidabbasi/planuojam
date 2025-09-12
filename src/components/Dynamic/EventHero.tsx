@@ -4,7 +4,7 @@ import Button from '../custom/Button'
 import Image from 'next/image'
 import { HeroBannerBlock } from '@/types/pagesTypes'
 import { getCompleteImageUrl } from '@/utils/helpers'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
 
 function EventHero({data}: {data: HeroBannerBlock}) {
     const heroImage = getCompleteImageUrl(data.heroImage.formats.medium.url);
