@@ -10,7 +10,7 @@ import { registerUser } from "@/store/thunks/authThunks";
 import { getCompleteImageUrl } from "@/utils/helpers";
 import Image from "next/image";
 import { Link, useRouter } from "@/i18n/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { BsCart3 } from "react-icons/bs";
@@ -24,7 +24,6 @@ type FormValues = {
   email: string;
   password: string;
   confirmPassword: string;
-  terms: boolean;
   agreement: boolean;
 };
 
@@ -40,9 +39,10 @@ function RegisterPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const t = useTranslations("Auth.Register");
+  const [isChecked, setIsChecked] = useState(false);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (!data.agreement) {
+    if (!isChecked) {
       toast.error("Please Accept Terms of service and Privacy Policy");
       return;
     }
@@ -242,10 +242,9 @@ function RegisterPage() {
 
             <div className="">
               <Checkbox
-                label={errors.terms ? t("tosRequired") : t("tosAgree")}
-                {...register("agreement", {
-                  required: true,
-                })}
+                label={isChecked ? t("tosRequired") : t("tosAgree")}
+                onChange={(e)=>setIsChecked(e.target.checked)}
+                checked={isChecked}
                 disabled={isSubmitting}
               />
             </div>
