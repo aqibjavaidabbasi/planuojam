@@ -184,11 +184,7 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
   }, [serviceCategory, locale]);
 
   if (loading || loadingCats)
-    return (
-      <div>
-        <Loader />
-      </div>
-    );
+    return ( <Loader />);
 
   return (
     <div>

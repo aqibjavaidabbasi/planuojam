@@ -28,7 +28,7 @@ function EventTypesList({ data }: { data: EventTypesBlock }) {
                             return (
                                 <div
                                     key={item.id}
-                                    onClick={()=>router.push(`/venues?eventType=${item.eventType.eventName}`)}
+                                    onClick={()=>router.push(`/service/venue?eventType=${item.eventType.eventName}`)}
                                     className={`md:w-[300px] h-52 md:h-64 lg:h-72 rounded-lg flex p-4 overflow-hidden relative transition-all duration-300 ease-in hover:scale-105 cursor-pointer ${item.contentPlacement === 'center'
                                         ? 'items-center justify-center'
                                         : item.contentPlacement === 'top-left'

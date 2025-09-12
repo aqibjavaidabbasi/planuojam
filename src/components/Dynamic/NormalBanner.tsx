@@ -17,6 +17,8 @@ function NormalBanner({data, imagePosition}: NormalBannerProps) {
     // Both: image comes first on mobile
     const imageOrder = imagePosition === 'left' ? 'order-1 md:order-1' : 'order-1 md:order-2';
     const contentOrder = imagePosition === 'left' ? 'order-2 md:order-2' : 'order-2 md:order-1';
+
+    console.log("NormalBanner",data)
   return (
     <section className="grid md:grid-cols-2 w-screen">
     {/* Image comes first on mobile, order depends on imagePosition on desktop */}
