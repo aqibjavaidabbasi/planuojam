@@ -61,6 +61,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
       center: [LONGITUDE, LATITUDE],
       zoom: 6,
       attributionControl: false,
+      cooperativeGestures: true, //uses ctrl/command for zooming
     });
 
     // Add navigation controls
