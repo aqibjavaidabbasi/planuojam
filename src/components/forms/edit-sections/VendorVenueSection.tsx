@@ -12,6 +12,7 @@ import type { ListingItem } from "@/types/pagesTypes"
 import { useCities } from "@/context/CitiesContext"
 import { useStates } from "@/context/StatesContext"
 import { geocodePlace } from "@/utils/mapboxLocation"
+import { useTranslations } from "next-intl"
 
 // Vendor form
 type ServiceArea = { city?: string; state?: string; latitude?: string; longitude?: string }
@@ -175,9 +176,10 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
     }
   }
 
+   const t=useTranslations("vendorvenueSection")
   return (
     <div className="py-4">
-      <h3 className="text-lg font-semibold mb-4">{isVendor ? "Vendor" : "Venue"} Details</h3>
+      <h3 className="text-lg font-semibold mb-4">{isVendor ? "Vendor" : "Venue"}{t("details")}</h3>
       {isVendor ? (
         <form onSubmit={submitVendor(onSubmitVendor)} className="flex flex-col gap-4">
           <TextArea label="About" disabled={submitting} {...vendorRegister("about")} />
@@ -194,20 +196,20 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
               <div key={field.id} className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
                 <div className="col-span-2">
                   <Select
-                    label="City"
+                    label={t("citylabel")}
                     disabled={submitting}
                     value={vendorRHF.watch(`serviceArea.${idx}.city`) || ""}
                     onChange={(e) => vendorRHF.setValue(`serviceArea.${idx}.city`, e.target.value, { shouldDirty: true })}
-                    options={[{ label: "Select City", value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
+                    options={[{ label: t("selectcity"), value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
                   />
                 </div>
                 <div className="col-span-2">
                   <Select
-                    label="State"
+                    label={t("statelabel")}
                     disabled={submitting}
                     value={vendorRHF.watch(`serviceArea.${idx}.state`) || ""}
                     onChange={(e) => vendorRHF.setValue(`serviceArea.${idx}.state`, e.target.value, { shouldDirty: true })}
-                    options={[{ label: "Select State", value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
+                    options={[{ label: t("selectstate"), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
                   />
                 </div>
                 <div className="col-span-1">
@@ -238,11 +240,11 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
         <form onSubmit={submitVenue(onSubmitVenue)} className="flex flex-col gap-4">
           <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
             <div className="col-span-2">
-              <Input type="text" label="Address" disabled={submitting} {...venueRegister("location.address")} />
+              <Input type="text" label={t("address")} disabled={submitting} {...venueRegister("location.address")} />
             </div>
             <div className="col-span-2">
               <Select
-                label="City"
+                label={t("city")}
                 disabled={submitting}
                 value={venueRHF.watch("location.city") || ""}
                 onChange={(e) => venueRHF.setValue("location.city", e.target.value, { shouldDirty: true })}
@@ -251,7 +253,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
             </div>
             <div className="col-span-2">
               <Select
-                label="State"
+                label={t("state")}
                 disabled={submitting}
                 value={venueRHF.watch("location.state") || ""}
                 onChange={(e) => venueRHF.setValue("location.state", e.target.value, { shouldDirty: true })}
@@ -261,24 +263,24 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
           </div>
           <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
             <div className="col-span-2">
-              <Input type="text" label="Latitude" disabled={submitting} {...venueRegister("location.latitude")} />
+              <Input type="text" label={t("latitude")} disabled={submitting} {...venueRegister("location.latitude")} />
             </div>
             <div className="col-span-2">
-              <Input type="text" label="Longitude" disabled={submitting} {...venueRegister("location.longitude")} />
+              <Input type="text" label={t("longitude")} disabled={submitting} {...venueRegister("location.longitude")} />
             </div>
             <div className="col-span-2">
               <Button type="button" style="secondary" disabled={submitting} onClick={onFetchVenueCoords}>
-                Fetch coordinates
+                {t("fetchcoordinates")}
               </Button>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
             <div className="col-span-2">
-              <Input type="number" label="Capacity" disabled={submitting} {...venueRegister("capacity", { valueAsNumber: true })} />
+              <Input type="number" label={t("capacity")} disabled={submitting} {...venueRegister("capacity", { valueAsNumber: true })} />
             </div>
             <div className="col-span-2">
               <Select
-                label="Booking Duration Type"
+                label={t("bookingdurationtype")}
                 disabled={submitting}
                 value={venueRHF.watch("bookingDurationType") || ""}
                 onChange={(e) => venueRHF.setValue("bookingDurationType", e.target.value as VenueForm["bookingDurationType"], { shouldDirty: true })}
@@ -288,15 +290,15 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
             <div className="col-span-2">
-              <Input type="number" label="Booking Duration" disabled={submitting} {...venueRegister("bookingDuration", { valueAsNumber: true })} />
+              <Input type="number" label={t("bookingduration")} disabled={submitting} {...venueRegister("bookingDuration", { valueAsNumber: true })} />
             </div>
           </div>
 
           <div>
             <div className="flex justify-between items-center mb-2">
-              <h4 className="font-medium">Amenities</h4>
+              <h4 className="font-medium">{t("amenities")}</h4>
               <Button type="button" style="secondary" disabled={submitting} onClick={() => appendAmenity({ text: "" })}>
-                Add Amenity
+              {t("adamenity")}
               </Button>
             </div>
             {amenities.map((field, idx) => (
@@ -305,7 +307,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                   <Input type="text" label={`Amenity ${idx + 1}`} disabled={submitting} {...venueRegister(`amneties.${idx}.text` as const)} />
                 </div>
                 <Button type="button" style="ghost" disabled={submitting} onClick={() => removeAmenity(idx)} extraStyles="text-red-600 hover:text-red-700">
-                  Remove
+                  {t("remove")}
                 </Button>
               </div>
             ))}
@@ -313,7 +315,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
 
           <div className="flex justify-end">
             <Button style="primary" type="submit" disabled={submitting}>
-              {submitting ? "Saving..." : "Save Changes"}
+              {submitting ? t("saving...") : t("savechanges")}
             </Button>
           </div>
         </form>

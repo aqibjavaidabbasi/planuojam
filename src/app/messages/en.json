@@ -627,5 +627,75 @@
     "searchPlace": "Search a Place",
     "apply": "Apply",
     "clear": "Clear"
+  },
+  "basicSelectionForm": {
+    "basicDetails": "Basic Details",
+    "title": "Title",
+    "price": "Price",
+    "featured": "Featured",
+    "description": "Description",
+    "websitelinks": "Website Links",
+    "workinghours(perday)": "Working Hour (Per Day)",
+    "titleDescription": "Title Description",
+    "saving": "Saving",
+    "savechanges": "Save  Changes"
+  },
+  "ImageSection": {
+    "addportfolioimages": "Add  Portfolio Images",
+    "saving": "Saving",
+    "saveImages": "Save  Images"
+  },
+  "vendorvenueSection": {
+    "details": "Details",
+    "city": "City",
+    "state": "State",
+    "latitude": "Latitude",
+    "longitude": " Longitude",
+    "capacity": "Capacity",
+    "bookingdurationtype": "Booking Duration Type",
+    "bookingduration": "Booking Duration",
+    "amenities": "Amenities",
+    "saving": "Saving",
+    "savechanges": "Save  Changes",
+    "adamenity": "Adamenity",
+    "fetchcoordinates": "Fetch Coordinates",
+    "address": "Address",
+    "remove": "Remove",
+    "citylabel": "City ",
+    "statelabel": "State",
+    "selectstate": "Select State",
+    "selectcity": "Select City"
+  },
+  "contactSections": {
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "saving": "Saving",
+    "savechanges": "Save  Changes"
+  },
+  "socialLinkSection": {
+    "sectiontitle": "Section Title",
+    "link": "Link",
+    "visible": "Visible",
+    "+addsociallink": "+ Add Social Link",
+    "saving": "Saving",
+    "savechanges": "Save Changes"
+  },
+  "pricingSection": {
+    "+addoptionaladdon": "+ Add Optional Addon",
+    "+addplan": "+ Add Plan",
+    "+addfeature": "+ Add Feature",
+    "saving": "Saving",
+    "savechanges": "Save  Changes",
+    "sectiontitle": "Section Title",
+    "optionaladdons": "Optional Addons"
+  },
+  "FAQsSection": {
+    "sectiontitle": "Section Title",
+    "saving": "Saving",
+    "savechanges": "Save Changes",
+    "+addFAQ": "+addFAQ",
+    "answer": "Answer",
+    "question": "Question"
   }
 }

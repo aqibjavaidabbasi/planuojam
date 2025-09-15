@@ -627,5 +627,75 @@
     "searchPlace": "Поиск места",
     "apply": "Применить",
     "clear": "Очистить"
+  },
+  "basicSelectionForm": {
+    "basicDetails": "Основные детали",
+    "title": "заголовок",
+    "price": "цена",
+    "featured": "избранный",
+    "description": "описание",
+    "websitelinks": "ссылки на веб-сайты",
+    "workinghours(perday)": "рабочие часы (в день)",
+    "saving": "экономия",
+    "savechanges": "сохранить изменения",
+    "titleDescription": "названиеОписание"
+  },
+  "ImageSection": {
+    "addportfolioimages": "ДобавитьИзображенияПортфолио",
+    "saving": "экономия",
+    "saveImages": "сохранить изображения"
+  },
+  "vendorvenueSection": {
+    "details": " подробности",
+    "city": "город",
+    "state": "состояние",
+    "latitude": "широта",
+    "longitude": " долгота",
+    "capacity": "емкость",
+    "bookingdurationtype": "Тип бронирования",
+    "bookingduration": "продолжительность бронирования",
+    "amenities": "удобства",
+    "saving": "экономия",
+    "savechanges": "сохранить изменения ",
+    "fetchcoordinates": "получить координаты",
+    "adamenity": "непримиримость",
+    "address": "адрес",
+    "remove": "удалять",
+    "citylabel": "метка города",
+    "statelabel": "метка штата",
+    "selectstate": "выбрать состояние",
+    "selectcity": "выбрать город"
+  },
+  "contactSections": {
+    "email": "электронная почта",
+    "phone": "телефон",
+    "address": "адрес",
+    "saving": "экономия",
+    "savechanges": "сохранить изменения"
+  },
+  "socialLinkSection": {
+    "sectiontitle": "название раздела",
+    "link": "связь",
+    "visible": "видимый",
+    "+addsociallink": "+ добавить социальную ссылку",
+    "saving": "экономия",
+    "savechanges": "сохранить изменения"
+  },
+  "pricingSection": {
+    "+addoptionaladdon": "+ дополнительныйаддон",
+    "+addplan": "+ добавить план",
+    "+addfeature": "+ добавить функцию",
+    "saving": "экономия",
+    "savechanges": "сохранить изменения",
+    "sectiontitle": "название раздела ",
+    "optionaladdons": "дополнительные надстройки "
+  },
+  "FAQsSection": {
+    "sectiontitle": "название раздела",
+    "saving": "экономия",
+    "savechanges": "сохранить изменения",
+    "+addFAQ": "+добавитьFAQ",
+    "answer": "отвечать",
+    "question": "вопрос"
   }
 }

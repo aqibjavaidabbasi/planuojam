@@ -627,5 +627,75 @@
     "searchPlace": "Ieškokite vietos",
     "apply": "taikyti",
     "clear": "aišku"
+  },
+  "basicSelectionForm": {
+    "basicDetails": "pagrindinės detalės",
+    "title": "titulą",
+    "price": "kaina",
+    "featured": "rodomas",
+    "description": "aprašymas",
+    "websitelinks": "svetainių nuorodos",
+    "workinghours(perday)": "darbo valandos (per dieną)",
+    "titleDescription": "pavadinimas Aprašymas",
+    "saving": "taupymas",
+    "savechanges": "išsaugoti pakeitimus"
+  },
+  "ImageSection": {
+    "addportfolioimages": "Pridėti portfelio vaizdus",
+    "saving": "taupymas",
+    "saveImages": "išsaugoti paveikslėlius"
+  },
+  "vendorvenueSection": {
+    "details": " detales",
+    "city": "miestas",
+    "state": "valstybė",
+    "latitude": "platumos",
+    "longitude": "ilguma",
+    "capacity": "talpa",
+    "bookingdurationtype": "  užsakymo trukmės tipas",
+    "bookingduration": "užsakymo trukmė",
+    "amenities": "patogumai",
+    "saving": "taupymas",
+    "savechanges": "išsaugoti pakeitimus",
+    "fetchcoordinates": "gauti koordinates",
+    "adamenity": "paklusnumas",
+    "address": "adresu",
+    "remove": "pašalinti",
+    "citylabel": "miesto ženklas",
+    "statelabel": "valstybės etiketė",
+    "selectstate": "pasirinkite būseną",
+    "selectcity": "pasirinkimo miestas"
+  },
+  "contactSections": {
+    "email": "paštu",
+    "phone": "telefonas",
+    "address": "adresu",
+    "saving": "taupymas",
+    "savechanges": " išsaugoti pakeitimus"
+  },
+  "socialLinkSection": {
+    "sectiontitle": "skyriaus pavadinimas",
+    "link": "nuoroda",
+    "visible": "matomas",
+    "+addsociallink": "+ pridėti socialinę nuorodą",
+    "saving": "taupymas",
+    "savechanges": "išsaugoti pakeitimus"
+  },
+  "pricingSection": {
+    "+addoptionaladdon": "+ papildomas priedas",
+    "+addplan": "+ pridėti planą",
+    "+addfeature": "+ papildoma funkcija",
+    "saving": "taupymas",
+    "savechanges": "išsaugoti pakeitimus",
+    "sectiontitle": "skyriaus pavadinimas",
+    "optionaladdons": "pasirinktiniai papildymai"
+  },
+  "FAQsSection": {
+    "sectiontitle": "skyriaus pavadinimas ",
+    "saving": "taupymas",
+    "savechanges": "išsaugoti pakeitimus",
+    "+addFAQ": "+pridėti DUK",
+    "answer": "atsakyti",
+    "question": "klausimas"
   }
 }

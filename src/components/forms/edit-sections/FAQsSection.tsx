@@ -8,6 +8,7 @@ import { FaRegTrashAlt } from "react-icons/fa"
 import { toast } from "react-hot-toast"
 import { updateListing } from "@/services/listing"
 import type { ListingItem } from "@/types/pagesTypes"
+import { useTranslations } from "next-intl"
 
 export type FAQItem = { question: string; answer: string }
 export type FAQsForm = { sectionTitle?: string; items: FAQItem[] }
@@ -45,22 +46,22 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
       setSubmitting(false)
     }
   }
-
+ const t=useTranslations("FAQsSection")
   return (
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-2">FAQs</h3>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <Input type="text" label="Section Title" disabled={submitting} {...register("sectionTitle")} />
+        <Input type="text" label={t("sectiontitle")} disabled={submitting} {...register("sectionTitle")} />
 
         <div className="flex flex-col gap-3">
           {fields.map((field, idx) => (
             <div key={field.id} className="grid grid-cols-12 gap-3 items-end">
               <div className="col-span-5">
-                <Input type="text" label={`Question ${idx + 1}`} disabled={submitting} {...register(`items.${idx}.question` as const, { required: "Required" })} />
+                <Input type="text" label={`${t("question")} ${idx + 1}`} disabled={submitting} {...register(`items.${idx}.question` as const, { required: "Required" })} />
                 {errors.items?.[idx]?.question && <p className="text-red-500 text-sm mt-1">{errors.items[idx]?.question?.message}</p>}
               </div>
               <div className="col-span-6">
-                <Input type="text" label={`Answer ${idx + 1}`} disabled={submitting} {...register(`items.${idx}.answer` as const, { required: "Required" })} />
+                <Input type="text" label={`${t("answer")} ${idx + 1}`} disabled={submitting} {...register(`items.${idx}.answer` as const, { required: "Required" })} />
                 {errors.items?.[idx]?.answer && <p className="text-red-500 text-sm mt-1">{errors.items[idx]?.answer?.message}</p>}
               </div>
               <div className="col-span-1 flex justify-end">
@@ -71,13 +72,13 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
             </div>
           ))}
           <Button type="button" style="secondary" disabled={submitting} onClick={() => append({ question: "", answer: "" })}>
-            + Add FAQ
+           {t("+addFAQ")}
           </Button>
         </div>
 
         <div className="flex justify-end">
           <Button style="primary" type="submit" disabled={submitting}>
-            {submitting ? "Saving..." : "Save Changes"}
+            {submitting ? t("saving...") : t("savechanges")}
           </Button>
         </div>
       </form>

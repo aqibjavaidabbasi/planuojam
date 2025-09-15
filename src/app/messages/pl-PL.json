@@ -627,5 +627,75 @@
     "searchPlace": "Wyszukaj miejsce",
     "apply": "stosować",
     "clear": "jasne"
+  },
+  "basicSelectionForm": {
+    "basicDetails": "Podstawowe szczegóły",
+    "title": "tytuł",
+    "price": "cena",
+    "featured": "wyróżniony",
+    "description": "opis",
+    "websitelinks": "linki do stron internetowych",
+    "workinghours(perday)": "godziny pracy (dziennie)",
+    "titleDescription": "tytułOpis",
+    "saving": "экономия",
+    "savechanges": "zapisuje zmiany"
+  },
+  "ImageSection": {
+    "addportfolioimages": "Dodaj obrazy portfolio",
+    "saving": "экономия",
+    "saveImages": "zapisz obrazy"
+  },
+  "vendorvenueSection": {
+    "details": "Bliższe dane",
+    "city": "miasto",
+    "state": "państwo",
+    "latitude": "szerokość",
+    "longitude": "długość geograficzna",
+    "capacity": "pojemność",
+    "bookingdurationtype": "typ trwania rezerwacji",
+    "bookingduration": "czas rezerwacji",
+    "amenities": "udogodnienia",
+    "saving": "экономия",
+    "savechanges": "zapisuje zmiany",
+    "adamenity": "bezkompromisowość",
+    "fetchcoordinates": "pobierz współrzędne",
+    "address": "adres",
+    "remove": "usunąć",
+    "citylabel": "etykieta miasta",
+    "statelabel": "etykieta stanu",
+    "selectstate": "wybierz stan",
+    "selectcity": "wybierz miasto"
+  },
+  "contactSections": {
+    "email": "e-mail",
+    "phone": "telefon",
+    "address": "adres",
+    "saving": "oszczędność",
+    "savechanges": "zapisuje zmiany"
+  },
+  "socialLinkSection": {
+    "sectiontitle": "tytuł sekcji",
+    "link": "połączyć",
+    "visible": "widoczny",
+    "+addsociallink": "+ dodajlink społecznościowy",
+    "saving": "oszczędność",
+    "savechanges": "zapisuje zmiany"
+  },
+  "pricingSection": {
+    "+addoptionaladdon": "+dodaj opcjonalny dodatek",
+    "+addplan": "+dodatekplan",
+    "+addfeature": "+dodatkowa funkcja",
+    "saving": "oszczędność",
+    "savechanges": "zapisuje zmiany",
+    "sectiontitle": "tytuł sekcji",
+    "optionaladdons": "opcjonalne dodatki"
+  },
+  "FAQsSection": {
+    "sectiontitle": "tytuł sekcji",
+    "saving": "oszczędność",
+    "savechanges": "zapisuje zmiany",
+    "+addFAQ": "+добавитьFAQ",
+    "answer": "odpowiedź",
+    "question": "pytanie"
   }
 }

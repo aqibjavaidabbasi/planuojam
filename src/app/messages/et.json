@@ -627,5 +627,75 @@
     "searchPlace": "Otsige kohta",
     "apply": "kohaldada",
     "clear": "selge"
+  },
+  "basicSelectionForm": {
+    "basicDetails": "põhilised üksikasjad",
+    "title": "pealkiri",
+    "price": "hind",
+    "featured": "esile tõstetud",
+    "description": "kirjeldus",
+    "websitelinks": "veebisaidi lingid",
+    "workinghours(perday)": "töötunnid (päevas)",
+    "saving": "säästmine",
+    "savechanges": "salvesta muudatused",
+    "titleDescription": "pealkiriKirjeldus"
+  },
+  "ImageSection": {
+    "addportfolioimages": "LisaPortfolioImages",
+    "saving": "säästmine",
+    "saveImages": "salvesta pilte"
+  },
+  "vendorvenueSection": {
+    "details": "üksikasjad",
+    "city": "linn",
+    "state": "olek",
+    "latitude": "laiuskraad",
+    "longitude": "pikkuskraad",
+    "capacity": "mahutavus",
+    "bookingdurationtype": "broneerimise kestuse tüüp",
+    "bookingduration": " broneerimise kestus",
+    "amenities": "mugavused",
+    "saving": "säästmine",
+    "savechanges": " salvesta muudatused",
+    "fetchcoordinates": "tooge koordinaadid",
+    "adamenity": "järjekindlus",
+    "address": "aadress",
+    "remove": "eemaldada",
+    "citylabel": "linnamärk",
+    "statelabel": "riigimärgis",
+    "selectstate": "vali olek",
+    "selectcity": "valitud linn"
+  },
+  "contactSections": {
+    "email": "meili",
+    "phone": "telefon",
+    "address": "aadress",
+    "saving": "säästmine",
+    "savechanges": "salvesta muudatused"
+  },
+  "socialLinkSection": {
+    "sectiontitle": "jaotise pealkiri",
+    "link": "link",
+    "visible": "nähtav",
+    "+addsociallink": "+ lisa sotsiaallink",
+    "saving": "säästmine",
+    "savechanges": "salvesta muudatused"
+  },
+  "pricingSection": {
+    "+addoptionaladdon": "+ lisalisand",
+    "+addplan": "+ lisaplaan",
+    "+addfeature": "+ lisafunktsioon",
+    "saving": "säästmine",
+    "savechanges": "salvesta muudatused",
+    "sectiontitle": "jaotise pealkiri",
+    "optionaladdons": "valikulised alad"
+  },
+  "FAQsSection": {
+    "sectiontitle": "jaotise pealkiri",
+    "saving": "säästmine",
+    "savechanges": "salvesta muudatused ",
+    "+addFAQ": "+lisa KKK",
+    "answer": "vastama",
+    "question": "küsimus"
   }
 }

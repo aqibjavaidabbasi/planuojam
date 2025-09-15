@@ -10,6 +10,7 @@ import { FaRegTrashAlt } from "react-icons/fa"
 import { toast } from "react-hot-toast"
 import { updateListing } from "@/services/listing"
 import type { ListingItem } from "@/types/pagesTypes"
+import { useTranslations } from "next-intl"
 
 export type PlanFeature = { statement: string }
 export type PlanCTA = { bodyText?: string; buttonUrl?: string; style?: "primary" | "secondary" | "ghost" }
@@ -96,12 +97,12 @@ export default function PricingSection({
   const isWorking = submitting
   const plans = form.getValues("plans") || []
   const addons = form.getValues("optionalAddons") || []
-
+  const t=useTranslations("pricingSection")
   return (
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-2">Pricing Packages</h3>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <Input type="text" label="Section Title" disabled={isWorking} {...form.register("sectionTitle")} />
+        <Input type="text" label={t("sectiontitle")} disabled={isWorking} {...form.register("sectionTitle")} />
 
         <div className="flex flex-col gap-4 mt-2">
           {plans.map((p, idx) => (
@@ -222,7 +223,7 @@ export default function PricingSection({
                       list[idx] = { ...list[idx], featuresList: features }
                       form.setValue("plans", list, { shouldDirty: true })
                     }}>
-                      + Add Feature
+                     {t("+addfeature")}
                     </Button>
                   </div>
                 </div>
@@ -256,12 +257,12 @@ export default function PricingSection({
               })
             }
           >
-            + Add Plan
+            {t("+addplan")}
           </Button>
         </div>
 
         <div className="mt-4">
-          <h4 className="text-gray-500 font-medium tracking-wide">Optional Addons:</h4>
+          <h4 className="text-gray-500 font-medium tracking-wide">{t("optionaladdons")}:</h4>
           {addons.map((addon, idx) => (
             <div key={idx} className="flex gap-2 mb-2 items-end">
               <Input
@@ -302,13 +303,13 @@ export default function PricingSection({
               })
             }
           >
-            + Add Optional Addon
+            {t("+addoptionaladdon")}
           </Button>
         </div>
 
         <div className="flex justify-end mt-6">
           <Button style="primary" disabled={isWorking} type="submit">
-            {submitting ? "Saving..." : "Save Changes"}
+            {submitting ? t("saving...") : t("savechanges")}
           </Button>
         </div>
       </form>

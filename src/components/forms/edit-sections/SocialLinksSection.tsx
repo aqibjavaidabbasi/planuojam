@@ -9,6 +9,7 @@ import { FaRegTrashAlt } from "react-icons/fa"
 import { toast } from "react-hot-toast"
 import { updateListing } from "@/services/listing"
 import type { ListingItem } from "@/types/pagesTypes"
+import { useTranslations } from "next-intl"
 
 type SocialLink = {
   platform:
@@ -93,14 +94,14 @@ export default function SocialLinksSection({
   }
 
   const isWorking = submitting
-
+  const t=useTranslations("socialLinkSection")
   return (
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-2">Social Links</h3>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
         <Input
           type="text"
-          label="Section Title"
+          label={t("sectiontitle")}
           disabled={isWorking}
           {...register("optionalSectionTitle")}
         />
@@ -135,7 +136,7 @@ export default function SocialLinksSection({
               <div className="col-span-3">
                 <Input
                   type="url"
-                  label="Link"
+                  label={t("link")}
                   disabled={isWorking}
                   value={s.link}
                   onChange={(e) => {
@@ -148,7 +149,7 @@ export default function SocialLinksSection({
               </div>
               <div className="col-span-1">
                 <Select
-                  label="Visible"
+                  label={t("visible")}
                   disabled={isWorking}
                   value={String(s.visible ?? true)}
                   onChange={(e) => {
@@ -182,14 +183,14 @@ export default function SocialLinksSection({
               type="button"
               onClick={() => addSocialLink({ platform: "", link: "", visible: true })}
             >
-              + Add Social Link
+              {t("+addsociallink")}
             </Button>
           </div>
         </div>
 
         <div className="flex justify-end mt-6">
           <Button style="primary" disabled={isWorking} type="submit">
-            {submitting ? "Saving..." : "Save Changes"}
+            {submitting ? t("saving...") : t("savechanges")}
           </Button>
         </div>
       </form>
