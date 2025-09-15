@@ -1,6 +1,6 @@
 "use client";
 import NoDataCard from "@/components/custom/NoDataCard";
-import CategoryCard from "@/components/Dynamic/CategoryCard";
+import ListingCard from "@/components/Dynamic/ListingCard";
 import DynamicZoneRenderer from "@/components/global/DynamicZoneRenderer";
 import Button from "@/components/custom/Button";
 import Heading from "@/components/custom/heading";
@@ -9,8 +9,8 @@ import { useEventTypes } from "@/context/EventTypesContext";
 import { fetchListingsPerEvents } from "@/services/common";
 import { fetchPageById } from "@/services/pagesApi";
 import {
-  category,
   DynamicBlocks,
+  ListingItem,
   TitleDescriptionBlock,
 } from "@/types/pagesTypes";
 import { useParams } from "next/navigation";
@@ -26,7 +26,8 @@ function ClientEventTypeWrapper() {
   const eventType = getEventTypeBySlug(slug as string);
   const [eventBlock, setEventBlocks] = useState<DynamicBlocks[]>([]);
   const router = useRouter();
-  const [categories, setCategories] = useState<category[]>([]);
+  // Type assertion for now since we know the API returns compatible data
+  const [listings, setListings] = useState<ListingItem[]>([]);
   const [loading, setLoading] = useState(false);
   const locale = useLocale();
   const { VENDOR_DOC_ID, VENUE_DOC_ID } = useParentCategories();
@@ -39,21 +40,12 @@ function ClientEventTypeWrapper() {
         const pageRes = await fetchPageById(eventType.page.documentId, locale);
         setEventBlocks(pageRes.blocks);
 
-        // Fetch categories
+        // Fetch listings
         const listingsRes = await fetchListingsPerEvents(
           eventType.documentId,
           locale
         );
-        const allCategories: category[] = listingsRes
-          .map((listing: { category: category }) => listing?.category)
-          .filter(
-            (cat: { documentId: string }): cat is category =>
-              !!cat && !!cat.documentId
-          );
-        const uniqueCategories: category[] = Array.from(
-          new Map(allCategories.map((cat) => [cat.documentId, cat])).values()
-        );
-        setCategories(uniqueCategories);
+        setListings(listingsRes);
       }
       setLoading(false);
     }
@@ -108,11 +100,11 @@ function ClientEventTypeWrapper() {
 
   const venueTitleBlock = titleDescriptionBlocks.find(isVenueBlock);
   const vendorTitleBlock = titleDescriptionBlocks.find(isVendorBlock);
-  const vendorCategories = categories.filter(
-    (cat) => cat.parentCategory.documentId === VENDOR_DOC_ID
+  const vendorListings = listings.filter(
+    (listing) => listing.category?.parentCategory?.documentId === VENDOR_DOC_ID
   );
-  const venueCategories = categories.filter(
-    (cat) => cat.parentCategory.documentId === VENUE_DOC_ID
+  const venueListings = listings.filter(
+    (listing) => listing.category?.parentCategory?.documentId === VENUE_DOC_ID
   );
 
   return (
@@ -120,7 +112,7 @@ function ClientEventTypeWrapper() {
       {/* hero block on the top */}
       <DynamicZoneRenderer blocks={heroBlock} />
 
-      {/* venue categories */}
+      {/* venue listings */}
       <div className="w-full py-5 md:py-10 px-3 md:px-6 max-w-[1400px] mx-auto">
         <div className="flex flex-col items-center justify-center gap-2">
           {venueTitleBlock?.heading?.headingPiece && (
@@ -131,10 +123,10 @@ function ClientEventTypeWrapper() {
           )}
         </div>
         <div className="flex items-center justify-center gap-3 mt-10 flex-wrap">
-          {venueCategories.length > 0 ? (
-            venueCategories.map((category) => {
+          {venueListings.length > 0 ? (
+            venueListings.map((listing) => {
               return (
-                <CategoryCard key={category.documentId} category={category} />
+                <ListingCard key={listing.documentId} item={listing} />
               );
             })
           ) : (
@@ -142,7 +134,7 @@ function ClientEventTypeWrapper() {
           )}
         </div>
       </div>
-      {/* vendor categories */}
+      {/* vendor listings */}
       <div className="w-full py-5 md:py-10 px-3 md:px-6 max-w-[1400px] mx-auto">
         <div className="flex flex-col items-center justify-center gap-2">
           {vendorTitleBlock?.heading?.headingPiece && (
@@ -156,10 +148,10 @@ function ClientEventTypeWrapper() {
           )}
         </div>
         <div className="flex items-center justify-center gap-3 mt-10 flex-wrap">
-          {vendorCategories.length > 0 ? (
-            vendorCategories.map((category) => {
+          {vendorListings.length > 0 ? (
+            vendorListings.map((listing) => {
               return (
-                <CategoryCard key={category.documentId} category={category} />
+                <ListingCard key={listing.documentId} item={listing} />
               );
             })
           ) : (

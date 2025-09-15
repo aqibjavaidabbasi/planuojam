@@ -67,7 +67,7 @@ function ListingCard({ item }: { item: ListingItem }) {
 
   return (
     <div
-      className="rounded-lg bg-white relative max-w-full sm:max-w-[300px] overflow-hidden border border-border"
+      className="rounded-lg bg-white relative w-full sm:w-[300px] overflow-hidden border border-border"
       style={{
         boxShadow:
           '2px 0px 4px rgba(0,0,0,0.1), 0px 2px 4px rgba(0,0,0,0.1), 0px -2px 4px rgba(0,0,0,0.1), -2px 0px 4px rgba(0,0,0,0.1)'
@@ -157,48 +157,56 @@ function ListingCard({ item }: { item: ListingItem }) {
       {/* Content */}
       <div className="p-3 space-y-2">
         {/* Title and Rating */}
-        <div className="flex justify-between items-center">
-          <strong className="text-base md:text-lg">{item.title}</strong>
-          <div className="flex gap-1 text-primary items-center text-sm">
+        <div className="flex justify-between items-center gap-2">
+          <strong className="text-base md:text-lg truncate max-w-[180px]">{item.title}</strong>
+          <div className="flex gap-1 text-primary items-center text-sm flex-shrink-0">
             <span>{item.averageRating ?? t('unrated')}</span>
             <span>({item.ratingsCount ?? 0})</span>
           </div>
         </div>
 
         {/* Location, Category, Event Type */}
-        <ul className="ml-4 list-disc text-sm text-secondary">
-          {item.listingItem?.length > 0 && (
-            <li className="truncate list-disc">
-              {item.listingItem[0].__component === 'dynamic-blocks.vendor' && (
-                <span>
-                  {item.listingItem[0].serviceArea?.length > 0 ? (
-                    (() => {
-                      const locations = item.listingItem[0].serviceArea
-                        .map(area => {
-                          const city = area?.city?.name ?? '';
-                          const state = area?.state?.name ?? '';
-                          return city || state ? `${city} ${state}`.trim() : '';
-                        })
-                        .filter(Boolean);
+        <div className="min-h-[40px] max-h-[48px] overflow-hidden">
+          <ul className="space-y-1 text-sm text-secondary">
+            {item.listingItem?.length > 0 && (
+              <li className="flex items-start ml-3">
+                <span className="truncate block max-w-[210px]">
+                  {item.listingItem[0].__component === 'dynamic-blocks.vendor' && (
+                    <>
+                      {item.listingItem[0].serviceArea?.length > 0 ? (
+                        (() => {
+                          const locations = item.listingItem[0].serviceArea
+                            .map(area => {
+                              const city = area?.city?.name ?? '';
+                              const state = area?.state?.name ?? '';
+                              return city || state ? `${city} ${state}`.trim() : '';
+                            })
+                            .filter(Boolean);
 
-                      return locations.length > 0 ? locations.join(', ') : t('noLocation');
-                    })()
-                  ) : (
-                    t('noLocation')
+                          return locations.length > 0 ? locations.join(', ') : t('noLocation');
+                        })()
+                      ) : (
+                        t('noLocation')
+                      )}
+                    </>
                   )}
-                </span>
-              )}
 
-              {item.listingItem[0].__component === 'dynamic-blocks.venue' &&
-                <span>
-                  {item.listingItem[0].location
-                    ? item.listingItem[0].location.address : t('noVenueLocation')}
+                  {item.listingItem[0].__component === 'dynamic-blocks.venue' &&
+                    <>
+                      {item.listingItem[0].location
+                        ? item.listingItem[0].location.address : t('noVenueLocation')}
+                    </>
+                  }
                 </span>
-              }
-            </li>
-          )}
-          {item.category?.name && <li className="truncate">{item.category.name}</li>}
-        </ul>
+              </li>
+            )}
+            {item.category?.name && (
+              <li className="flex items-start ml-3">
+                <span className="truncate block max-w-[210px]">{item.category.name}</span>
+              </li>
+            )}
+          </ul>
+        </div>
 
         {/* Pricing and Button */}
         <div className="flex justify-between items-center">

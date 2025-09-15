@@ -126,14 +126,7 @@ export async function fetchStates(locale?: string) {
 }
 // Fetch listing by Events with necessary relations populated
 export async function fetchListingsPerEvents(docId: string,locale?:string) {
-    const populate = {
-        eventTypes: {
-            populate: '*'
-        },
-        category: {
-            populate: '*'
-        }
-    }
+    const populate = LISTING_ITEM_POP_STRUCTURE;
     const filters = {
         filters: {
             eventTypes: {
