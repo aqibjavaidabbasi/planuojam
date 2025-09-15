@@ -3,11 +3,13 @@ import React from "react";
 import { useAppSelector } from "@/store/hooks";
 import ListingCard from "../Dynamic/ListingCard";
 import NoDataCard from "../custom/NoDataCard";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 function FavouriteListings() {
   const { items } = useAppSelector((state) => state.likedListings);
   const t = useTranslations('Profile.FavouriteListings');
+  const locale = useLocale();
+
   return (
     <div className="p-8">
       <div className="mb-6">
@@ -16,9 +18,15 @@ function FavouriteListings() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {items.length > 0 ? items.map((item) => (
-          <ListingCard key={item.documentId} item={item.listing} />
-        ))
+        {items.length > 0 ? items.map((item) => {
+          if (item.listing.locale === 'en' && locale === 'en') {
+            return <ListingCard key={item.documentId} item={item.listing} />
+          }
+          const entry = item.listing.localizations.find(loc => loc.locale === locale);
+          if (entry) {
+            return <ListingCard key={item.documentId} item={entry} />
+          }
+          return null;})
           : <div className="col-span-3">
             <NoDataCard>{t('empty')}</NoDataCard>
           </div>

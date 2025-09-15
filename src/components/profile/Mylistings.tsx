@@ -7,7 +7,7 @@ import Select from "../custom/Select";
 import { fetchListingsByUser } from "@/services/listing";
 import type { ListingItem } from "@/types/pagesTypes";
 import ListingCard from "@/components/Dynamic/ListingCard";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 function Mylistings() {
   const [open, setOpen] = useState(false);
@@ -18,6 +18,7 @@ function Mylistings() {
   const user = useAppSelector((state) => state.auth.user);
   const t = useTranslations('Profile.MyListings');
   const tCommon = useTranslations('Common');
+  const locale = useLocale()
 
   const statusOptions = useMemo(
     () => [
@@ -34,8 +35,7 @@ function Mylistings() {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchListingsByUser(user.documentId, statusFilter);
-      console.log('Fetched listings:', data);
+      const data = await fetchListingsByUser(user.documentId, statusFilter, locale);
       setListings(data);
     } catch (e: unknown) {
       const message =

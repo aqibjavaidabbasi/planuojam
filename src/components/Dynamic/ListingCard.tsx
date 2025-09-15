@@ -56,8 +56,8 @@ function ListingCard({ item }: { item: ListingItem }) {
     )
   }
 
-  function getListingItemUrl(){
-    if(item.listingItem.length === 0) return '#';
+  function getListingItemUrl() {
+    if (item.listingItem.length === 0) return '#';
     if (item.locale === 'en') return `/listing/${item.slug}`;
     if (item.locale !== 'en') {
       const entry = item.localizations.find(loc => loc.locale === 'en');
@@ -141,7 +141,7 @@ function ListingCard({ item }: { item: ListingItem }) {
               </div>
             </SwiperSlide>
           )
-        }) : [1,2,3].map((_, idx)=> <SwiperSlide key={idx}>
+        }) : [1, 2, 3].map((_, idx) => <SwiperSlide key={idx}>
           <div className="relative w-full h-40 md:h-56 lg:h-64">
             <Image
               src={"/placeholder.png"}
@@ -169,31 +169,31 @@ function ListingCard({ item }: { item: ListingItem }) {
         <ul className="ml-4 list-disc text-sm text-secondary">
           {item.listingItem?.length > 0 && (
             <li className="truncate list-disc">
-             {item.listingItem[0].__component === 'dynamic-blocks.vendor' && (
-  <span>
-    {item.listingItem[0].serviceArea?.length > 0 ? (
-      (() => {
-        const locations = item.listingItem[0].serviceArea
-          .map(area => {
-            const city = area?.city?.name ?? '';
-            const state = area?.state?.name ?? '';
-            return city || state ? `${city} ${state}`.trim() : '';
-          })
-          .filter(Boolean);
+              {item.listingItem[0].__component === 'dynamic-blocks.vendor' && (
+                <span>
+                  {item.listingItem[0].serviceArea?.length > 0 ? (
+                    (() => {
+                      const locations = item.listingItem[0].serviceArea
+                        .map(area => {
+                          const city = area?.city?.name ?? '';
+                          const state = area?.state?.name ?? '';
+                          return city || state ? `${city} ${state}`.trim() : '';
+                        })
+                        .filter(Boolean);
 
-        return locations.length > 0 ? locations.join(', ') : t('noLocation');
-      })()
-    ) : (
-      t('noLocation')
-    )}
-  </span>
-)}
+                      return locations.length > 0 ? locations.join(', ') : t('noLocation');
+                    })()
+                  ) : (
+                    t('noLocation')
+                  )}
+                </span>
+              )}
 
-                { item.listingItem[0].__component === 'dynamic-blocks.venue' && 
-              <span>
-                {item.listingItem[0].location
-                  ? item.listingItem[0].location.address : t('noVenueLocation')}
-              </span>
+              {item.listingItem[0].__component === 'dynamic-blocks.venue' &&
+                <span>
+                  {item.listingItem[0].location
+                    ? item.listingItem[0].location.address : t('noVenueLocation')}
+                </span>
               }
             </li>
           )}

@@ -64,7 +64,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
   useEffect(() => {
     if (!user?.documentId) return;
     // Fetch liked listings when user id becomes available
-    dispatch(fetchLikedListing(user.documentId))
+    dispatch(fetchLikedListing({userId: user.documentId, locale: 'en'}))
       .unwrap()
       .catch(() => { });
   }, [dispatch, user?.documentId]);

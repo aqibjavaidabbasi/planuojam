@@ -3,13 +3,15 @@ import { getLikedListings } from "@/services/likedListing"
 import { getStrapiErrorMessage } from "@/utils/helpers"
 import { RootState } from "../index"
 import { createLikedListing, deleteLikedListing } from "@/services/likedListing"
-
 // Async thunks for server sync
 export const fetchLikedListing = createAsyncThunk(
     'wishlist/fetchLikedListing',
-    async (userId: string, thunkApi) => {
+    async (
+      { userId, locale }: { userId: string; locale: string },
+      thunkApi
+    ) => {
       try {
-        const res = await getLikedListings(userId)
+        const res = await getLikedListings(userId, locale)
         return res.data
       } catch (err: unknown) {
         return thunkApi.rejectWithValue(getStrapiErrorMessage(err))

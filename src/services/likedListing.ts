@@ -1,3 +1,4 @@
+import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
 import { createQuery, deleteAPI, fetchAPIWithToken, postAPIWithToken } from "./api";
 
 
@@ -31,14 +32,14 @@ export async function deleteLikedListing(id: string) {
     }
 }
 
-export async function getLikedListings(userId: string) {
+export async function getLikedListings(userId: string, locale: string) {
     const jwt = localStorage.getItem('token');
     if (!jwt) {
         throw new Error('No authentication token found. Please log in.');
     }
     const populate = {
         listing: {
-            populate: '*'
+            populate: LISTING_ITEM_POP_STRUCTURE
         },
         user: {
             populate: '*'
@@ -52,6 +53,12 @@ export async function getLikedListings(userId: string) {
             }
         }
     }
+    if (locale) {
+    const query = createQuery(populate, { locale });
+    const res = await fetchAPIWithToken('liked-listings', query, filters, jwt);
+    return res;
+    }
+
     const query = createQuery(populate);
     const res = await fetchAPIWithToken('liked-listings', query, filters, jwt);
     return res;
