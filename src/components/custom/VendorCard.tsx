@@ -24,10 +24,10 @@ function VendorCard({ item }: VendorCardProps) {
                 {t('serviceArea')}{" "}
                 {[
                   item.serviceArea.length > 0
-                    ? item.serviceArea.map((s) => s.state.name).join(", ")
+                    ? item.serviceArea.map((s) => s?.state?.name).join(", ")
                     : null,
                   item.serviceArea.length > 0
-                    ? item.serviceArea.map((c) => c.city.name).join(", ")
+                    ? item.serviceArea.map((c) => c?.city?.name).join(", ")
                     : null,
                 ]
                   .filter(Boolean)
