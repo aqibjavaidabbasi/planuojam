@@ -187,6 +187,9 @@ export const PAGES_DYNAMIC_ZONE = {
                                     },
                                     'hotDeal': {
                                         populate: '*'
+                                    },
+                                    'localizations': {
+                                        populate: '*'
                                     }
                                 }
                             }
