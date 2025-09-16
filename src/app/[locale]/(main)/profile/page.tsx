@@ -1,6 +1,7 @@
 "use client";
 
 import FavouriteListings from "@/components/profile/FavouriteListings";
+import MyBookings from "@/components/profile/MyBookings";
 import Messages from "@/components/profile/Messages";
 import Mylistings from "@/components/profile/Mylistings";
 import ProfileTab from "@/components/profile/ProfileTab";
@@ -9,32 +10,51 @@ import Button from "@/components/custom/Button";
 import { useAppSelector } from "@/store/hooks";
 import React, { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
-import { FaArrowCircleDown, FaList } from "react-icons/fa";
+import { FaArrowCircleDown, FaList, FaCalendarAlt } from "react-icons/fa";
 import { LuMessageSquareText } from "react-icons/lu";
 import { MdOutlineFavorite, MdStarBorderPurple500 } from "react-icons/md";
-import { useRouter } from "@/i18n/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import ManageBookings from "@/components/profile/ManageBookings";
 
 function ProfilePage() {
   const t = useTranslations("Profile");
-  const [activeTab, setActiveTab] = useState("profile");
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const initialTab = searchParams?.get("tab") || "profile";
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const user = useAppSelector((state) => state.auth.user);
   const router = useRouter()
   const showTab = (tabName: string) => {
     setActiveTab(tabName);
+    // reflect tab in URL without full reload
+    if (pathname) {
+      const url = `${pathname}?tab=${encodeURIComponent(tabName)}`;
+      router.push(url);
+    }
     // Close sidebar on mobile after selecting a tab
     if (window.innerWidth < 1024) {
       setSidebarOpen(false);
     }
   };
 
-  // Check if user is logged in
+  // Check if user is logged in. If there's a token, wait for hydration instead of redirecting.
   useEffect(() => {
-    if (!user) {
-      router.push("/");
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (!user && !token) {
+      router.push("/auth/login");
     }
   }, [user, router]);
+
+  // Keep activeTab in sync with the URL query string
+  useEffect(() => {
+    const tab = searchParams?.get("tab");
+    if (tab && tab !== activeTab) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   return (
     <div className="bg-gray-50 min-h-screen font-inter">
@@ -110,17 +130,43 @@ function ProfilePage() {
                 </button>
               )}
 
+              {user?.serviceType !== null && (
                 <button
-                  onClick={() => showTab("favourite-listings")}
+                  onClick={() => showTab("manage-bookings")}
                   className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${
-                    activeTab === "favourite-listings"
+                    activeTab === "manage-bookings"
                       ? "text-white bg-[#cc922f]"
                       : "text-gray-600 hover:text-[#cc922f] hover:bg-gray-50"
                   }`}
                 >
-                  <MdOutlineFavorite size={20} className="mr-3" />
-                  {t("tabs.favouriteListings")}
+                  <FaCalendarAlt size={20} className="mr-3" />
+                  {t("tabs.manageBookings", { default: "Manage Bookings" })}
                 </button>
+              )}
+
+              <button
+                onClick={() => showTab("bookings")}
+                className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${
+                  activeTab === "bookings"
+                    ? "text-white bg-[#cc922f]"
+                    : "text-gray-600 hover:text-[#cc922f] hover:bg-gray-50"
+                }`}
+              >
+                <FaCalendarAlt size={20} className="mr-3" />
+                {t("tabs.bookings", { default: "Bookings" })}
+              </button>
+
+              <button
+                onClick={() => showTab("favourite-listings")}
+                className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${
+                  activeTab === "favourite-listings"
+                    ? "text-white bg-[#cc922f]"
+                    : "text-gray-600 hover:text-[#cc922f] hover:bg-gray-50"
+                }`}
+              >
+                <MdOutlineFavorite size={20} className="mr-3" />
+                {t("tabs.favouriteListings")}
+              </button>
 
               <button
                 onClick={() => showTab("messages")}
@@ -154,6 +200,8 @@ function ProfilePage() {
           <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100">
             {activeTab === "profile" && <ProfileTab user={user} />}
             {activeTab === "my-listings" && <Mylistings />}
+            {activeTab === "manage-bookings" && <ManageBookings />}
+            {activeTab === "bookings" && <MyBookings />}
             {activeTab === "favourite-listings" && <FavouriteListings />}
             {activeTab === "messages" && <Messages />}
             {activeTab === "reviews" && <ReviewsTab />}

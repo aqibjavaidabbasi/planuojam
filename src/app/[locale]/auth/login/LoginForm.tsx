@@ -32,8 +32,13 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
     await toast.promise(
       dispatch(loginUser(data))
         .unwrap()
-        .then(() => {
-          router.push('/');
+        .then((user: any) => {
+          // Redirect based on role
+          if (user?.serviceType === null) {
+            router.push('/profile?tab=bookings');
+          } else {
+            router.push('/profile?tab=my-listings');
+          }
         }),
       {
         loading: t("loggingIn"),
@@ -49,7 +54,7 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
     );
   };
   return (
-    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+    <form className="space-y-6" id="loginForm" onSubmit={handleSubmit(onSubmit)}>
       <div>
         <Input
           type="email"
@@ -95,6 +100,7 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
         style="primary"
         extraStyles="!rounded-md w-full"
         type="submit"
+        form="loginForm"
         disabled={isSubmitting}
       >
         {t("signIn")}

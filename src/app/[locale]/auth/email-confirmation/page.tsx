@@ -84,6 +84,7 @@ function EmailConfirmationPage() {
             <div>
               <form
                 action=""
+                id="emailConfirmationForm"
                 onSubmit={handleSubmit(onSubmit)}
                 className="space-y-6"
               >
@@ -100,7 +101,7 @@ function EmailConfirmationPage() {
                     {errors.confirmation.message as string}
                   </p>
                 )}
-                <Button type="submit" style="primary" extraStyles="!w-full mt-4">
+                <Button type="submit" style="primary" extraStyles="!w-full mt-4" form="emailConfirmationForm">
                   {t("confirmCta")}
                 </Button>
               </form>

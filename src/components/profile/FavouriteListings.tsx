@@ -17,7 +17,7 @@ function FavouriteListings() {
         <p className="text-gray-600 mt-2">{t('subtitle')}</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex flex-wrap gap-6">
         {items.length > 0 ? items.map((item) => {
           if (item.listing.locale === 'en' && locale === 'en') {
             return <ListingCard key={item.documentId} item={item.listing} />

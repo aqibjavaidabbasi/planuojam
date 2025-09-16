@@ -1,0 +1,172 @@
+import { createQuery, deleteAPI, fetchAPIWithToken, postAPIWithToken, putAPI } from "./api";
+import { getUsersByDocumentIds, MinimalUserInfo } from "./auth";
+
+// Types for booking entities kept minimal to avoid tight coupling
+export interface BookingPayload {
+  listing: string; // listing documentId
+  userDocumentId: string; // user documentId (no relation)
+  startDateTime: string; // ISO string
+  endDateTime: string;   // ISO string
+  bookingStatus?: "pending" | "confirmed" | "cancelled" | "rejected";
+}
+
+// Get bookings for a provider (owner of listings) and enrich with user info
+export async function getProviderBookingsWithUsers(providerDocumentId: string, locale?: string, status?: "pending" | "confirmed" | "cancelled" | "rejected" | "all") {
+  try {
+    const jwt = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    if (!jwt) throw new Error("No authentication token found. Please log in.");
+
+    // Populate listing (which includes its user relation); filter by listing.user.documentId
+    const populate = {
+      listing: { populate: "*" },
+    };
+    const baseFilters: Record<string, any> = {
+      filters: { listing: { user: { documentId: { $eq: providerDocumentId } } } },
+    };
+    if (status && status !== "all") {
+      baseFilters.filters = {
+        $and: [
+          { listing: { user: { documentId: { $eq: providerDocumentId } } } },
+          { bookingStatus: { $eq: status } },
+        ],
+      };
+    }
+    const query = createQuery(populate, locale ? { locale } : {});
+    const res = await fetchAPIWithToken("bookings", query, baseFilters, jwt);
+    const bookings = Array.isArray(res?.data) ? res.data : res || [];
+
+    // Collect unique booking.userDocumentId values to fetch user info
+    const userDocIds: string[] = Array.from(
+      new Set(
+        (bookings as any[])
+          .map((b: any) => b?.userDocumentId)
+          .filter((id: any): id is string => typeof id === "string" && !!id)
+      )
+    );
+
+    const users: MinimalUserInfo[] = await getUsersByDocumentIds(userDocIds);
+    const usersMap = new Map(users.map((u) => [u.documentId, u]));
+
+    // Enrich bookings
+    const enriched = (bookings || []).map((b: any) => ({
+      ...b,
+      userInfo: usersMap.get(b.userDocumentId) || null,
+    }));
+    return enriched;
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to load provider bookings. Please try again later.");
+  }
+}
+
+export interface BookingItem {
+  id: number;
+  documentId: string;
+  startDateTime: string;
+  endDateTime: string;
+  bookingStatus: "pending" | "confirmed" | "cancelled" | "rejected";
+  listing?: any;
+}
+
+// Create a booking
+export async function createBooking(data: BookingPayload) {
+  // Send body with data wrapper; populate listing only
+  const populate = {
+    listing: { populate: "*" },
+  };
+  const query = createQuery(populate);
+  try {
+    const body: Record<string, unknown> = { data };
+    const res = await postAPIWithToken("bookings", body, {}, query);
+    return res;
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to create booking. Please try again later.");
+  }
+}
+
+// Get bookings for a specific listing; optionally check for overlap of [startDateTime, endDateTime); excludes cancelled by default
+export async function getListingBookings(listingDocumentId: string, startISO?: string, endISO?: string, locale?: string) {
+  try {
+    const jwt = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    if (!jwt) throw new Error("No authentication token found. Please log in.")
+
+    const populate = { listing: { populate: "*" } };
+    // Base filters
+    let filters: Record<string, any> = {
+      filters: {
+        listing: { documentId: { $eq: listingDocumentId } },
+        bookingStatus: { $ne: "cancelled" },
+      },
+    };
+    // If start/end provided, find any booking where (existing.start < end) AND (existing.end > start)
+    if (startISO && endISO) {
+      filters = {
+        filters: {
+          $and: [
+            { listing: { documentId: { $eq: listingDocumentId } } },
+            { bookingStatus: { $ne: "cancelled" } },
+            { startDateTime: { $lt: endISO } },
+            { endDateTime: { $gt: startISO } },
+          ],
+        },
+      };
+    }
+    const query = createQuery(populate, locale ? { locale } : {});
+    const res = await fetchAPIWithToken("bookings", query, filters, jwt);
+    return Array.isArray(res?.data) ? res.data : res;
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to load listing bookings. Please try again later.");
+  }
+}
+
+// Get bookings; if userId provided, filter by that user documentId
+export async function getBookings(userDocumentId?: string, locale?: string, status?: "pending" | "confirmed" | "cancelled" | "rejected" | "all") {
+  try {
+    const jwt = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    if (!jwt) throw new Error("No authentication token found. Please log in.");
+
+    const populate = {
+      listing: { populate: "*" },
+    }
+    const baseFilters: Record<string, any> = {};
+    if (userDocumentId) {
+      baseFilters.filters = { userDocumentId: { $eq: userDocumentId } };
+    }
+    if (status && status !== "all") {
+      baseFilters.filters = baseFilters.filters
+        ? { $and: [baseFilters.filters, { bookingStatus: { $eq: status } }] }
+        : { bookingStatus: { $eq: status } };
+    }
+    const query = createQuery(populate, locale ? { locale } : {});
+    const res = await fetchAPIWithToken("bookings", query, baseFilters, jwt);
+    return res.data;
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to load bookings. Please try again later.");
+  }
+}
+
+// Update a booking by id (document id)
+export async function updateBooking(id: string, data: Partial<BookingPayload>) {
+  try {
+    const body: Record<string, unknown> = { data };
+    const res = await putAPI(`bookings/${id}`, body);
+    return res;
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to update booking. Please try again later.");
+  }
+}
+
+// Delete a booking by id (document id)
+export async function deleteBooking(id: string) {
+  try {
+    const res = await deleteAPI(`bookings/${id}`);
+    return res;
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to delete booking. Please try again later.");
+  }
+}

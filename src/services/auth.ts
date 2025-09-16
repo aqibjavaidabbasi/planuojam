@@ -109,3 +109,25 @@ export async function updateUserPassword(data: Record<string, unknown>) {
     throw new Error("Failed to update password, please try again later!");
   }
 }
+
+// --- Minimal user info helpers ---
+export interface MinimalUserInfo {
+  id: number;
+  documentId: string;
+  username: string;
+  email: string;
+}
+
+export async function getUsersByDocumentIds(documentIds: string[]): Promise<MinimalUserInfo[]> {
+  if (!Array.isArray(documentIds) || documentIds.length === 0) return [];
+  const jwt = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  if (!jwt) throw new Error("No authentication token found. Please log in.");
+
+  const fields = { fields: ["documentId", "username", "email"] } as const;
+  const filters = {
+    filters: { documentId: { $in: documentIds } },
+  } as const;
+  const query = createQuery(fields);
+  const res = await fetchAPIWithToken('users', query, filters, jwt);
+  return Array.isArray(res?.data) ? res.data : res;
+}

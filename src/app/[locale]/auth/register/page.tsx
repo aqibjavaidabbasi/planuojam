@@ -90,7 +90,7 @@ function RegisterPage() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <form className="space-y-6" id="registerForm" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label
                 className={`block text-sm font-medium mb-3 ${
@@ -252,6 +252,7 @@ function RegisterPage() {
             <Button
               style="primary"
               type="submit"
+              form="registerForm"
               extraStyles="!rounded-md !w-full"
             >
               {t("registerCta")}

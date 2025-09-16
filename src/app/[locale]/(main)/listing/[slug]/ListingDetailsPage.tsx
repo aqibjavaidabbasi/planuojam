@@ -30,6 +30,7 @@ export default function ListingDetailsPage() {
   const locale = useLocale();
   const t = useTranslations("Listing.Details");
   const tCommon = useTranslations("Common");
+  
 
   // Fetch listing data
   useEffect(() => {
@@ -80,6 +81,7 @@ export default function ListingDetailsPage() {
             price={renderingContent.price}
             hotDeal={renderingContent.hotDeal}
             websiteLink={renderingContent.websiteLink}
+            listingDocumentId={renderingContent.documentId}
           />
         </section>
 

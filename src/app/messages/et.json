@@ -172,7 +172,7 @@
       "by": "autor {username}",
       "hotDealBadge": "KUUM PAKKUMINE",
       "percentageOffLimited": "{percent}% SOODUSTUST - Piiratud aeg",
-      "getTicketCta": "Osta pilet",
+      "getTicketCta": "Broneeri nüüd",
       "visitWebsite": "Külasta veebisaiti"
     }
   },
@@ -183,7 +183,9 @@
       "myListings": "Minu kuulutused",
       "favouriteListings": "Lemmikkuulutused",
       "messages": "Sõnumid",
-      "reviews": "Arvustused"
+      "reviews": "Arvustused",
+      "bookings": "Broneeringud",
+      "manageBookings": "Halda broneeringuid"
     },
     "ProfileTab": {
       "title": "Profiili seaded",
@@ -697,5 +699,88 @@
     "+addFAQ": "+lisa KKK",
     "answer": "vastama",
     "question": "küsimus"
+  },
+  "Booking": {
+    "Modal": {
+      "errors": {
+        "requiredDateTime": "Palun vali kuupäev ja kellaaeg.",
+        "futureOnly": "Palun vali tulevikus olev kuupäev ja kellaaeg.",
+        "invalidRange": "Lõppaeg peab olema hiljem kui algusaeg.",
+        "slotUnavailable": "Valitud ajavahemik ei ole saadaval."
+      },
+      "toasts": {
+        "creating": "Broneeringu loomine...",
+        "created": "Broneering loodud edukalt.",
+        "failedCreate": "Broneeringu loomine ebaõnnestus."
+      },
+      "actions": {
+        "cancel": "Tühista",
+        "checking": "Kontrollime saadavust...",
+        "creating": "Luuakse...",
+        "create": "Loo broneering"
+      }
+    },
+    "MyBookings": {
+      "title": "Minu broneeringud",
+      "labels": {
+        "listing": "Kuulutus",
+        "status": "Olek",
+        "dateTime": "Kuupäev/Kellaaeg",
+        "start": "Algus",
+        "end": "Lõpp"
+      },
+      "messages": {
+        "loginToView": "Logi sisse, et vaadata oma broneeringuid.",
+        "none": "Broneeringuid pole."
+      },
+      "toasts": {
+        "updating": "Broneeringu uuendamine...",
+        "updated": "Broneering on uuendatud.",
+        "updateFailed": "Broneeringu uuendamine ebaõnnestus.",
+        "deleting": "Broneeringu kustutamine...",
+        "deleted": "Broneering kustutatud.",
+        "deleteFailed": "Broneeringu kustutamine ebaõnnestus."
+      },
+      "errors": {
+        "slotUnavailable": "Valitud ajavahemik ei ole saadaval.",
+        "load": "Broneeringute laadimine ebaõnnestus."
+      },
+      "confirm": {
+        "delete": "Kas kustutada see broneering?",
+        "acceptTitle": "Kas kinnitada broneering?",
+        "rejectTitle": "Kas tühistada broneering?",
+        "accept": "Kas oled kindel, et soovid selle broneeringu kinnitada? Kinnita ainult juhul, kui saad seda hallata.",
+        "reject": "Kas oled kindel, et soovid selle broneeringu tagasi lükata (tühistada)?",
+        "cancelTitle": "Kas tühistada see broneering?",
+        "cancel": "Kas oled kindel, et soovid selle broneeringu tühistada?"
+      },
+      "actions": {
+        "saving": "Salvestamine...",
+        "save": "Salvesta",
+        "cancel": "Tühista",
+        "reschedule": "Muuda aega",
+        "delete": "Kustuta",
+        "review": "Arvustus",
+        "accept": "Kinnita",
+        "reject": "Lükka tagasi"
+      },
+      "filters": {
+        "status": "Filtreeri oleku järgi",
+        "all": "Kõik"
+      },
+      "status": {
+        "pending": "Ootel",
+        "confirmed": "Kinnitatud",
+        "cancelled": "Tühistatud",
+        "rejected": "Tagasi lükatud"
+      },
+      "stats": {
+        "total": "Kokku",
+        "pending": "Ootel",
+        "confirmed": "Kinnitatud",
+        "cancelled": "Tühistatud",
+        "rejected": "Tagasi lükatud"
+      }
+    }
   }
 }

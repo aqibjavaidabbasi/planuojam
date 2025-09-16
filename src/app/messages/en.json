@@ -172,7 +172,7 @@
       "by": "by {username}",
       "hotDealBadge": "HOT DEAL",
       "percentageOffLimited": "{percent}% OFF - Limited Time",
-      "getTicketCta": "Get Your Ticket Now",
+      "getTicketCta": "Book Now",
       "visitWebsite": "Visit Website"
     }
   },
@@ -183,7 +183,9 @@
       "myListings": "My Listings",
       "favouriteListings": "Favourite Listings",
       "messages": "Messages",
-      "reviews": "Reviews"
+      "reviews": "Reviews",
+      "bookings": "Bookings",
+      "manageBookings": "Manage Bookings"
     },
     "ProfileTab": {
       "title": "Profile Settings",
@@ -697,5 +699,88 @@
     "+addFAQ": "+addFAQ",
     "answer": "Answer",
     "question": "Question"
+  },
+  "Booking": {
+    "Modal": {
+      "errors": {
+        "requiredDateTime": "Please select a date and time.",
+        "futureOnly": "Please choose a future date and time.",
+        "invalidRange": "End time must be after start time.",
+        "slotUnavailable": "Selected time slot is not available."
+      },
+      "toasts": {
+        "creating": "Creating booking...",
+        "created": "Booking created successfully.",
+        "failedCreate": "Failed to create booking."
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "checking": "Checking availability...",
+        "creating": "Creating...",
+        "create": "Create Booking"
+      }
+    },
+    "MyBookings": {
+      "title": "My Bookings",
+      "labels": {
+        "listing": "Listing",
+        "status": "Status",
+        "dateTime": "Date/Time",
+        "start": "Start",
+        "end": "End"
+      },
+      "messages": {
+        "loginToView": "Please log in to view your bookings.",
+        "none": "No bookings yet."
+      },
+      "toasts": {
+        "updating": "Updating booking...",
+        "updated": "Booking updated.",
+        "updateFailed": "Failed to update booking.",
+        "deleting": "Deleting booking...",
+        "deleted": "Booking deleted.",
+        "deleteFailed": "Failed to delete booking."
+      },
+      "errors": {
+        "slotUnavailable": "Selected time slot is not available.",
+        "load": "Failed to load bookings."
+      },
+      "confirm": {
+        "delete": "Delete this booking?",
+        "acceptTitle": "Accept booking?",
+        "rejectTitle": "Reject booking?",
+        "accept": "Are you sure you want to accept this booking? Only accept if you can manage it.",
+        "reject": "Are you sure you want to reject (cancel) this booking?",
+        "cancelTitle": "Cancel this booking?",
+        "cancel": "Are you sure you want to cancel this booking?"
+      },
+      "actions": {
+        "saving": "Saving...",
+        "save": "Save",
+        "cancel": "Cancel",
+        "reschedule": "Reschedule",
+        "delete": "Delete",
+        "review": "Review",
+        "accept": "Accept",
+        "reject": "Reject"
+      },
+      "filters": {
+        "status": "Filter by status",
+        "all": "All"
+      },
+      "status": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "cancelled": "Cancelled",
+        "rejected": "Rejected"
+      },
+      "stats": {
+        "total": "Total",
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "cancelled": "Cancelled",
+        "rejected": "Rejected"
+      }
+    }
   }
 }

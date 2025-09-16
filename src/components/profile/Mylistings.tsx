@@ -89,7 +89,7 @@ function Mylistings() {
       )}
 
       {!loading && !error && listings.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-wrap gap-6">
           {listings.map((l) => (
             <ListingCard key={l.documentId} item={l} />
           ))}

@@ -160,7 +160,7 @@
       "by": "autorius {username}",
       "hotDealBadge": "KARŠTAS PASIŪLYMAS",
       "percentageOffLimited": "{percent}% NUOLAIDA - Ribotas laikas",
-      "getTicketCta": "Įsigyti bilietą",
+      "getTicketCta": "Rezervuoti dabar",
       "visitWebsite": "Apsilankyti svetainėje"
     }
   },
@@ -482,7 +482,9 @@
       "myListings": "Mano sąrašai",
       "favouriteListings": "Mėgstamiausi sąrašai",
       "messages": "Pranešimas",
-      "reviews": "Apžvalgos"
+      "reviews": "Apžvalgos",
+      "bookings": "Užsakymai",
+      "manageBookings": "Tvarkyti užsakymus"
     },
     "ReviewsTab": {
       "title": "Atsiliepimai",
@@ -697,5 +699,88 @@
     "+addFAQ": "+pridėti DUK",
     "answer": "atsakyti",
     "question": "klausimas"
+  },
+  "Booking": {
+    "Modal": {
+      "errors": {
+        "requiredDateTime": "Prašome pasirinkti datą ir laiką.",
+        "futureOnly": "Prašome pasirinkti ateities datą ir laiką.",
+        "invalidRange": "Pabaigos laikas turi būti vėlesnis nei pradžios laikas.",
+        "slotUnavailable": "Pasirinktas laiko intervalas nepasiekiamas."
+      },
+      "toasts": {
+        "creating": "Kuriamas užsakymas...",
+        "created": "Užsakymas sėkmingai sukurtas.",
+        "failedCreate": "Nepavyko sukurti užsakymo."
+      },
+      "actions": {
+        "cancel": "Atšaukti",
+        "checking": "Tikrinamas pasiekiamumas...",
+        "creating": "Kuriama...",
+        "create": "Sukurti užsakymą"
+      }
+    },
+    "MyBookings": {
+      "title": "Mano užsakymai",
+      "labels": {
+        "listing": "Įrašas",
+        "status": "Būsena",
+        "dateTime": "Data/Laikas",
+        "start": "Pradžia",
+        "end": "Pabaiga"
+      },
+      "messages": {
+        "loginToView": "Prisijunkite, kad peržiūrėtumėte savo užsakymus.",
+        "none": "Dar nėra užsakymų."
+      },
+      "toasts": {
+        "updating": "Atnaujinamas užsakymas...",
+        "updated": "Užsakymas atnaujintas.",
+        "updateFailed": "Nepavyko atnaujinti užsakymo.",
+        "deleting": "Šalinamas užsakymas...",
+        "deleted": "Užsakymas pašalintas.",
+        "deleteFailed": "Nepavyko pašalinti užsakymo."
+      },
+      "errors": {
+        "slotUnavailable": "Pasirinktas laiko intervalas nepasiekiamas.",
+        "load": "Nepavyko įkelti užsakymų."
+      },
+      "confirm": {
+        "delete": "Pašalinti šį užsakymą?",
+        "acceptTitle": "Patvirtinti užsakymą?",
+        "rejectTitle": "Atmesti užsakymą?",
+        "accept": "Ar tikrai norite patvirtinti šį užsakymą? Patvirtinkite tik tuo atveju, jei galite jį valdyti.",
+        "reject": "Ar tikrai norite atmesti (atšaukti) šį užsakymą?",
+        "cancelTitle": "Atšaukti šį užsakymą?",
+        "cancel": "Ar tikrai norite atšaukti šį užsakymą?"
+      },
+      "actions": {
+        "saving": "Saugoma...",
+        "save": "Išsaugoti",
+        "cancel": "Atšaukti",
+        "reschedule": "Perkelti laiką",
+        "delete": "Pašalinti",
+        "review": "Atsiliepimas",
+        "accept": "Patvirtinti",
+        "reject": "Atmesti"
+      },
+      "filters": {
+        "status": "Filtruoti pagal būseną",
+        "all": "Visi"
+      },
+      "status": {
+        "pending": "Laukiama",
+        "confirmed": "Patvirtinta",
+        "cancelled": "Atšaukta",
+        "rejected": "Atmesta"
+      },
+      "stats": {
+        "total": "Iš viso",
+        "pending": "Laukiama",
+        "confirmed": "Patvirtinta",
+        "cancelled": "Atšaukta",
+        "rejected": "Atmesta"
+      }
+    }
   }
 }

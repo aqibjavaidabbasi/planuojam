@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
           </div>
         ) : (
           <>
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="flex flex-col gap-4" id="resetPasswordForm" onSubmit={handleSubmit(onSubmit)}>
               <Input
                 type="password"
                 placeholder={t("newPasswordPlaceholder")}
@@ -105,6 +105,7 @@ export default function ResetPasswordPage() {
               <Button
                 type="submit"
                 style="primary"
+                form="resetPasswordForm"
                 extraStyles="!w-full !rounded-md"
                 disabled={isSubmitting}
               >

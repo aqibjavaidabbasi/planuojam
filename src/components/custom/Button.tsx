@@ -8,6 +8,7 @@ interface ButtonProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
+  form?: string;
 }
 
 function Button({
@@ -17,7 +18,8 @@ function Button({
   extraStyles = '',
   onClick = () => { },
   type = 'button',
-  disabled = false
+  disabled = false,
+  form = ""
 }: ButtonProps) {
   const styles = {
     primary: 'rounded-full bg-primary text-white hover:bg-black',
@@ -38,6 +40,7 @@ function Button({
       onClick={onClick}
       type={type}
       disabled={disabled}
+      form={form}
       className={`flex items-center capitalize justify-center gap-1.5 font-medium ${styles[style]} ${sizes[size]} ${extraStyles} ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none whitespace-nowrap' : 'cursor-pointer'}`}
     >
       {children}

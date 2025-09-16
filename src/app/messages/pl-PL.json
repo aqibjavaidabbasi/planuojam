@@ -172,7 +172,7 @@
       "by": "przez {username}",
       "hotDealBadge": "GORĄCA OFERTA",
       "percentageOffLimited": "{percent}% TANIEJ - Oferta ograniczona",
-      "getTicketCta": "Kup bilet",
+      "getTicketCta": "Zarezerwuj teraz",
       "visitWebsite": "Odwiedź stronę"
     }
   },
@@ -183,7 +183,9 @@
       "myListings": "Moje ogłoszenia",
       "favouriteListings": "Ulubione ogłoszenia",
       "messages": "Wiadomości",
-      "reviews": "Opinie"
+      "reviews": "Opinie",
+      "bookings": "Rezerwacje",
+      "manageBookings": "Zarządzaj rezerwacjami"
     },
     "ProfileTab": {
       "title": "Ustawienia profilu",
@@ -697,5 +699,88 @@
     "+addFAQ": "+добавитьFAQ",
     "answer": "odpowiedź",
     "question": "pytanie"
+  },
+  "Booking": {
+    "Modal": {
+      "errors": {
+        "requiredDateTime": "Wybierz datę i godzinę.",
+        "futureOnly": "Wybierz datę i godzinę w przyszłości.",
+        "invalidRange": "Czas zakończenia musi być po czasie rozpoczęcia.",
+        "slotUnavailable": "Wybrany przedział czasowy jest niedostępny."
+      },
+      "toasts": {
+        "creating": "Tworzenie rezerwacji...",
+        "created": "Rezerwacja została utworzona.",
+        "failedCreate": "Nie udało się utworzyć rezerwacji."
+      },
+      "actions": {
+        "cancel": "Anuluj",
+        "checking": "Sprawdzanie dostępności...",
+        "creating": "Tworzenie...",
+        "create": "Utwórz rezerwację"
+      }
+    },
+    "MyBookings": {
+      "title": "Moje rezerwacje",
+      "labels": {
+        "listing": "Ogłoszenie",
+        "status": "Status",
+        "dateTime": "Data/Godzina",
+        "start": "Początek",
+        "end": "Koniec"
+      },
+      "messages": {
+        "loginToView": "Zaloguj się, aby zobaczyć swoje rezerwacje.",
+        "none": "Brak rezerwacji."
+      },
+      "toasts": {
+        "updating": "Aktualizowanie rezerwacji...",
+        "updated": "Rezerwacja zaktualizowana.",
+        "updateFailed": "Nie udało się zaktualizować rezerwacji.",
+        "deleting": "Usuwanie rezerwacji...",
+        "deleted": "Rezerwacja usunięta.",
+        "deleteFailed": "Nie udało się usunąć rezerwacji."
+      },
+      "errors": {
+        "slotUnavailable": "Wybrany przedział czasowy jest niedostępny.",
+        "load": "Nie udało się wczytać rezerwacji."
+      },
+      "confirm": {
+        "delete": "Usunąć tę rezerwację?",
+        "acceptTitle": "Zaakceptować rezerwację?",
+        "rejectTitle": "Odrzucić rezerwację?",
+        "accept": "Czy na pewno chcesz zaakceptować tę rezerwację? Akceptuj tylko, jeśli możesz ją obsłużyć.",
+        "reject": "Czy na pewno chcesz odrzucić (anulować) tę rezerwację?",
+        "cancelTitle": "Anulować tę rezerwację?",
+        "cancel": "Czy na pewno chcesz anulować tę rezerwację?"
+      },
+      "actions": {
+        "saving": "Zapisywanie...",
+        "save": "Zapisz",
+        "cancel": "Anuluj",
+        "reschedule": "Przełóż termin",
+        "delete": "Usuń",
+        "review": "Oceń",
+        "accept": "Akceptuj",
+        "reject": "Odrzuć"
+      },
+      "filters": {
+        "status": "Filtruj według statusu",
+        "all": "Wszystkie"
+      },
+      "status": {
+        "pending": "Oczekujące",
+        "confirmed": "Potwierdzone",
+        "cancelled": "Anulowane",
+        "rejected": "Odrzucone"
+      },
+      "stats": {
+        "total": "Razem",
+        "pending": "Oczekujące",
+        "confirmed": "Potwierdzone",
+        "cancelled": "Anulowane",
+        "rejected": "Odrzucone"
+      }
+    }
   }
 }

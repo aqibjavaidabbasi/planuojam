@@ -1,10 +1,13 @@
 "use client";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { Discount } from "@/types/pagesTypes";
-import React from "react";
+import React, { useState } from "react";
 import { MdOutlineEmail, MdOutlineLocalPhone } from "react-icons/md";
 import Button from "../custom/Button";
 import { useTranslations } from "next-intl";
+import { useAppSelector } from "@/store/hooks";
+import BookingModal from "@/components/modals/BookingModal";
+import LoginNavigateModal from "@/components/modals/LoginNavigateModal";
 
 interface ListingDetailHeroProps {
   category: string;
@@ -23,6 +26,7 @@ interface ListingDetailHeroProps {
     lastDate: string;
     discount: Discount;
   };
+  listingDocumentId: string;
 }
 
 function ListingDetailHero({
@@ -33,9 +37,13 @@ function ListingDetailHero({
   price,
   hotDeal,
   websiteLink,
+  listingDocumentId,
 }: ListingDetailHeroProps) {
   const { siteSettings } = useSiteSettings();
   const t = useTranslations('Listing.Hero');
+  const user = useAppSelector((s) => s.auth.user);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const startDate = hotDeal && new Date(hotDeal.startDate);
   const lastDate = hotDeal && new Date(hotDeal.lastDate);
   const isDealActive =
@@ -111,7 +119,15 @@ function ListingDetailHero({
                     </div>
                   )}
 
-                <Button style="secondary">{t('getTicketCta')}</Button>
+                <Button
+                  style="secondary"
+                  onClick={() => {
+                    if (!user) setShowLoginModal(true);
+                    else setShowBookingModal(true);
+                  }}
+                >
+                  {t('getTicketCta')}
+                </Button>
               </div>
             )}
             {/* Website Link */}
@@ -139,6 +155,15 @@ function ListingDetailHero({
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <BookingModal
+        showModal={showBookingModal}
+        setShowModal={setShowBookingModal}
+        listingDocumentId={listingDocumentId}
+        userDocumentId={user?.documentId || ""}
+      />
+      <LoginNavigateModal showModal={showLoginModal} setShowModal={setShowLoginModal} />
     </div>
   );
 }
