@@ -67,7 +67,7 @@ function ListingCard({ item }: { item: ListingItem }) {
 
   return (
     <div
-      className="rounded-lg bg-white relative w-full sm:w-[300px] overflow-hidden border border-border"
+      className="rounded-lg bg-white relative w-full max-w-[300px] mx-auto overflow-hidden border border-border"
       style={{
         boxShadow:
           '2px 0px 4px rgba(0,0,0,0.1), 0px 2px 4px rgba(0,0,0,0.1), 0px -2px 4px rgba(0,0,0,0.1), -2px 0px 4px rgba(0,0,0,0.1)'
