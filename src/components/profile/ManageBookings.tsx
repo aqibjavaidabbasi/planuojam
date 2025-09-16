@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import { useAppSelector } from "@/store/hooks";
-import { getProviderBookingsWithUsers, updateBooking } from "@/services/booking";
+import { EnrichedBooking, BookingStatusFilter, getProviderBookingsWithUsers, updateBooking } from "@/services/booking";
 import NoDataCard from "@/components/custom/NoDataCard";
 import Button from "@/components/custom/Button";
 import Modal from "@/components/custom/Modal";
@@ -23,13 +23,13 @@ const ManageBookings: React.FC = () => {
   const t = useTranslations("Booking.MyBookings");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<EnrichedBooking[]>([]);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [confirmModal, setConfirmModal] = useState<{ open: boolean; id?: string; action?: "confirm" | "cancel" }>({ open: false });
 
   const isProvider = useMemo(() => user?.serviceType !== null, [user?.serviceType]);
-  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "confirmed" | "cancelled" | "rejected">("all");
+  const [statusFilter, setStatusFilter] = useState<BookingStatusFilter>("all");
 
   // Stats
   const stats = useMemo(() => {
@@ -48,8 +48,15 @@ const ManageBookings: React.FC = () => {
         setLoading(true);
         const data = await getProviderBookingsWithUsers(user.documentId, undefined, statusFilter);
         setItems(data || []);
-      } catch (err: any) {
-        const msg = err?.message || t("errors.load", { default: "Failed to load bookings." });
+      } catch (err: unknown) {
+        let msg: string;
+        if (typeof err === "string") {
+          msg = err;
+        } else if (err && typeof err === "object" && "message" in err) {
+          msg = String((err).message);
+        } else {
+          msg = t("toasts.failedCreate", { default: "Failed to create booking." });
+        }
         setError(msg);
         toast.error(msg);
       } finally {
@@ -57,13 +64,13 @@ const ManageBookings: React.FC = () => {
       }
     }
     load();
-  }, [user?.documentId, statusFilter]);
+  }, [user?.documentId, statusFilter, t]);
 
-  const onAccept = (b: any) => {
+  const onAccept = (b: EnrichedBooking) => {
     setConfirmModal({ open: true, id: b.documentId, action: "confirm" });
   };
 
-  const onReject = async (b: any) => {
+  const onReject = async (b: EnrichedBooking) => {
     setConfirmModal({ open: true, id: b.documentId, action: "cancel" });
   };
 
@@ -79,7 +86,7 @@ const ManageBookings: React.FC = () => {
           error: (err) => (typeof err === "string" ? err : err?.message || t("toasts.updateFailed", { default: "Failed to update booking." })),
         }
       );
-      setItems((prev) => prev.map((it) => (it.documentId === id ? { ...it, bookingStatus: "rejected" } : it)));
+      setItems((prev) => prev.map((it) => (it.documentId === id ? { ...it, bookingStatus: "rejected" } as EnrichedBooking : it)));
     } finally {
       setRejectingId(null);
       setConfirmModal({ open: false });
@@ -98,7 +105,7 @@ const ManageBookings: React.FC = () => {
           error: (err) => (typeof err === "string" ? err : err?.message || t("toasts.updateFailed", { default: "Failed to update booking." })),
         }
       );
-      setItems((prev) => prev.map((it) => (it.documentId === id ? { ...it, bookingStatus: "confirmed" } : it)));
+      setItems((prev) => prev.map((it) => (it.documentId === id ? { ...it, bookingStatus: "confirmed" } as EnrichedBooking : it)));
     } finally {
       setProcessingId(null);
       setConfirmModal({ open: false });
@@ -122,7 +129,7 @@ const ManageBookings: React.FC = () => {
           id="statusFilter"
           className="bg-white border border-border rounded-md h-9 px-2 text-sm"
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as any)}
+          onChange={(e) => setStatusFilter(e.target.value as BookingStatusFilter)}
         >
           <option value="all">{t("filters.all", { default: "All" })}</option>
           <option value="pending">{t("status.pending", { default: "Pending" })}</option>
@@ -163,19 +170,18 @@ const ManageBookings: React.FC = () => {
 
       {!loading && items.length > 0 && (
         <ul className="space-y-3">
-          {items.map((b) => {
+          {items.map((b: EnrichedBooking) => {
             const status = b.bookingStatus as string;
             const statusChip = (
               <span
-                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                  status === "confirmed"
+                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${status === "confirmed"
                     ? "bg-green-100 text-green-800"
                     : status === "pending"
-                    ? "bg-yellow-100 text-yellow-800"
-                    : status === "cancelled"
-                    ? "bg-gray-100 text-gray-800"
-                    : "bg-red-100 text-red-800"
-                }`}
+                      ? "bg-yellow-100 text-yellow-800"
+                      : status === "cancelled"
+                        ? "bg-gray-100 text-gray-800"
+                        : "bg-red-100 text-red-800"
+                  }`}
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
               </span>

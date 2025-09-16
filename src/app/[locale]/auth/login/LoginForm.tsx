@@ -32,7 +32,7 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
     await toast.promise(
       dispatch(loginUser(data))
         .unwrap()
-        .then((user: any) => {
+        .then((user) => {
           // Redirect based on role
           if (user?.serviceType === null) {
             router.push('/profile?tab=bookings');

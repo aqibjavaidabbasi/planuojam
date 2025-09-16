@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useAppSelector } from "@/store/hooks";
-import { getBookings, getListingBookings, updateBooking } from "@/services/booking";
+import { BookingItem, BookingStatusFilter, getBookings, getListingBookings, updateBooking } from "@/services/booking";
 import Button from "@/components/custom/Button";
 import NoDataCard from "@/components/custom/NoDataCard";
 import { useLocale, useTranslations } from "next-intl";
@@ -25,7 +25,7 @@ const MyBookings: React.FC = () => {
   const tCommon = useTranslations('Common');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<BookingItem[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>(""); // new start datetime-local
   const [editDurationMs, setEditDurationMs] = useState<number>(0);
@@ -33,7 +33,7 @@ const MyBookings: React.FC = () => {
   const [confirmModal, setConfirmModal] = useState<{ open: boolean; id?: string }>({ open: false });
   const locale = useLocale();
   const [cancelHours, setCancelHours] = useState<number>(24);
-  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "confirmed" | "cancelled" | "rejected">("all");
+  const [statusFilter, setStatusFilter] = useState<BookingStatusFilter>("all");
 
   const minDateTime = useMemo(() => {
     const now = new Date();
@@ -50,15 +50,23 @@ const MyBookings: React.FC = () => {
         setLoading(true);
         const res = await getBookings(user.documentId, locale, statusFilter);
         setItems(res || []);
-      } catch (err: any) {
-        setError(err?.message || t("errors.load", { default: "Failed to load bookings." }));
-        toast.error(err?.message || t("errors.load", { default: "Failed to load bookings." }));
+      } catch (err: unknown) {
+        let msg: string;
+        if (typeof err === "string") {
+          msg = err;
+        } else if (err && typeof err === "object" && "message" in err) {
+          msg = String((err).message);
+        } else {
+          msg = t("toasts.failedCreate", { default: "Failed to create booking." });
+        }
+        setError(msg);
+        toast.error(msg);
       } finally {
         setLoading(false);
       }
     }   
     load();
-  }, [user?.documentId, statusFilter]);
+  }, [user?.documentId, statusFilter,t,locale]);
 
   useEffect(() => {
     // fetch dynamic cancellation window (hours) from site settings
@@ -75,7 +83,7 @@ const MyBookings: React.FC = () => {
     })();
   }, []);
 
-  const startEdit = (b: any) => {
+  const startEdit = (b: BookingItem) => {
     if (b.bookingStatus === 'cancelled') return; // cannot reschedule cancelled booking
     // also do not allow editing if booking already ended
     if (new Date(b.endDateTime).getTime() <= Date.now()) return;
@@ -91,14 +99,14 @@ const MyBookings: React.FC = () => {
     setEditValue("");
   };
 
-  const saveEdit = async (b: any) => {
+  const saveEdit = async (b: BookingItem) => {
     try {
       setSaving(true);
       const newStartISO = new Date(editValue).toISOString();
       const newEndISO = new Date(new Date(editValue).getTime() + editDurationMs).toISOString();
       // Check availability for the listing at the new time range; allow if no bookings or only this booking occupies it
-      const existing = await getListingBookings(b?.listing?.documentId, newStartISO, newEndISO);
-      const conflict = Array.isArray(existing) && existing.some((bk: any) => bk.documentId !== b.documentId);
+      const existing = await getListingBookings(b?.listing?.documentId as string, newStartISO, newEndISO);
+      const conflict = Array.isArray(existing) && existing.some((bk: BookingItem) => bk.documentId !== b.documentId);
       if (conflict) {
         const msg = t("errors.slotUnavailable", { default: "Selected time slot is not available." });
         toast.error(msg);
@@ -118,14 +126,12 @@ const MyBookings: React.FC = () => {
       );
       setItems((prev) => prev.map((it) => ((it.documentId || String(it.id)) === (b.documentId) ? { ...it, startDateTime: newStartISO, endDateTime: newEndISO } : it)));
       cancelEdit();
-    } catch (err: any) {
-      // error already toasted
     } finally {
       setSaving(false);
     }
   };
 
-  const onCancelBooking = (b: any) => {
+  const onCancelBooking = (b: BookingItem) => {
     setConfirmModal({ open: true, id: b.documentId });
   };
 
@@ -145,8 +151,16 @@ const MyBookings: React.FC = () => {
       );
       // Optimistically update to cancelled
       setItems((prev) => prev.map((it) => it.documentId === id ? { ...it, bookingStatus: "cancelled" } : it));
-    } catch (err: any) {
-      // error already toasted
+    } catch (err: unknown) {
+      let msg: string;
+      if (typeof err === "string") {
+        msg = err;
+      } else if (err && typeof err === "object" && "message" in err) {
+        msg = String((err).message);
+      } else {
+        msg = t("toasts.failedCreate", { default: "Failed to create booking." });
+      }
+      setError(msg);
     } finally {
       setConfirmModal({ open: false });
     }
@@ -165,7 +179,7 @@ const MyBookings: React.FC = () => {
           id="statusFilter"
           className="bg-white border border-border rounded-md h-9 px-2 text-sm"
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as any)}
+          onChange={(e) => setStatusFilter(e.target.value as BookingStatusFilter)}
         >
           <option value="all">{t("filters.all", { default: "All" })}</option>
           <option value="pending">{t("status.pending", { default: "Pending" })}</option>

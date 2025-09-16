@@ -54,7 +54,7 @@ function ProfilePage() {
     if (tab && tab !== activeTab) {
       setActiveTab(tab);
     }
-  }, [searchParams]);
+  }, [searchParams, activeTab]);
 
   return (
     <div className="bg-gray-50 min-h-screen font-inter">

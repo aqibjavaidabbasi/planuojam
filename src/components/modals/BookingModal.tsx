@@ -13,7 +13,7 @@ interface BookingModalProps {
   setShowModal: (open: boolean) => void;
   listingDocumentId: string;
   userDocumentId: string;
-  onCreated?: (res: any) => void;
+  onCreated?: (res: unknown) => void;
 }
 
 function toISOFromLocal(dateTimeLocal: string) {
@@ -108,13 +108,20 @@ const BookingModal: React.FC<BookingModalProps> = ({
           },
           error: (err) => {
             if (typeof err === "string") return err;
-            if (err && typeof err === "object" && "message" in err) return String((err as any).message);
+            if (err && typeof err === "object" && "message" in err) return String((err).message);
             return t("toasts.failedCreate", { default: "Failed to create booking." });
           },
         }
       );
-    } catch (err: any) {
-      const msg = err?.message || t("toasts.failedCreate", { default: "Failed to create booking." });
+    } catch (err: unknown) {
+      let msg: string;
+      if (typeof err === "string") {
+        msg = err;
+      } else if (err && typeof err === "object" && "message" in err) {
+        msg = String((err).message);
+      } else {
+        msg = t("toasts.failedCreate", { default: "Failed to create booking." });
+      }
       setError(msg);
     } finally {
       setSubmitting(false);

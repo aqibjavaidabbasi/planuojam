@@ -10,8 +10,33 @@ export interface BookingPayload {
   bookingStatus?: "pending" | "confirmed" | "cancelled" | "rejected";
 }
 
+// Minimal shape for related listing we render in UI
+export interface ListingMinimal {
+  documentId?: string;
+  title?: string;
+}
+
+export interface BookingItem {
+  id: number;
+  documentId: string;
+  startDateTime: string;
+  endDateTime: string;
+  bookingStatus: "pending" | "confirmed" | "cancelled" | "rejected";
+  listing?: ListingMinimal;
+}
+
+export type BookingStatusFilter = "pending" | "confirmed" | "cancelled" | "rejected" | "all";
+
+export type EnrichedBooking = BookingItem & {
+  userInfo: MinimalUserInfo | null;
+};
+
 // Get bookings for a provider (owner of listings) and enrich with user info
-export async function getProviderBookingsWithUsers(providerDocumentId: string, locale?: string, status?: "pending" | "confirmed" | "cancelled" | "rejected" | "all") {
+export async function getProviderBookingsWithUsers(
+  providerDocumentId: string,
+  locale?: string,
+  status?: BookingStatusFilter
+): Promise<EnrichedBooking[]> {
   try {
     const jwt = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (!jwt) throw new Error("No authentication token found. Please log in.");
@@ -20,7 +45,7 @@ export async function getProviderBookingsWithUsers(providerDocumentId: string, l
     const populate = {
       listing: { populate: "*" },
     };
-    const baseFilters: Record<string, any> = {
+    const baseFilters: Record<string, unknown> = {
       filters: { listing: { user: { documentId: { $eq: providerDocumentId } } } },
     };
     if (status && status !== "all") {
@@ -33,14 +58,14 @@ export async function getProviderBookingsWithUsers(providerDocumentId: string, l
     }
     const query = createQuery(populate, locale ? { locale } : {});
     const res = await fetchAPIWithToken("bookings", query, baseFilters, jwt);
-    const bookings = Array.isArray(res?.data) ? res.data : res || [];
+    const bookings: BookingItem[] = Array.isArray(res?.data) ? (res.data as BookingItem[]) : [];
 
     // Collect unique booking.userDocumentId values to fetch user info
     const userDocIds: string[] = Array.from(
       new Set(
-        (bookings as any[])
-          .map((b: any) => b?.userDocumentId)
-          .filter((id: any): id is string => typeof id === "string" && !!id)
+        (bookings as Array<{ userDocumentId?: unknown }>)
+          .map((b) => b.userDocumentId)
+          .filter((id): id is string => typeof id === "string" && !!id)
       )
     );
 
@@ -48,24 +73,15 @@ export async function getProviderBookingsWithUsers(providerDocumentId: string, l
     const usersMap = new Map(users.map((u) => [u.documentId, u]));
 
     // Enrich bookings
-    const enriched = (bookings || []).map((b: any) => ({
+    const enriched: EnrichedBooking[] = (bookings || []).map((b) => ({
       ...b,
-      userInfo: usersMap.get(b.userDocumentId) || null,
+      userInfo: usersMap.get((b as unknown as { userDocumentId?: string }).userDocumentId || "") || null,
     }));
     return enriched;
   } catch (err) {
     console.error(err);
     throw new Error("Failed to load provider bookings. Please try again later.");
   }
-}
-
-export interface BookingItem {
-  id: number;
-  documentId: string;
-  startDateTime: string;
-  endDateTime: string;
-  bookingStatus: "pending" | "confirmed" | "cancelled" | "rejected";
-  listing?: any;
 }
 
 // Create a booking
@@ -86,14 +102,19 @@ export async function createBooking(data: BookingPayload) {
 }
 
 // Get bookings for a specific listing; optionally check for overlap of [startDateTime, endDateTime); excludes cancelled by default
-export async function getListingBookings(listingDocumentId: string, startISO?: string, endISO?: string, locale?: string) {
+export async function getListingBookings(
+  listingDocumentId: string,
+  startISO?: string,
+  endISO?: string,
+  locale?: string
+): Promise<BookingItem[]> {
   try {
     const jwt = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (!jwt) throw new Error("No authentication token found. Please log in.")
 
     const populate = { listing: { populate: "*" } };
     // Base filters
-    let filters: Record<string, any> = {
+    let filters: Record<string, unknown> = {
       filters: {
         listing: { documentId: { $eq: listingDocumentId } },
         bookingStatus: { $ne: "cancelled" },
@@ -114,7 +135,7 @@ export async function getListingBookings(listingDocumentId: string, startISO?: s
     }
     const query = createQuery(populate, locale ? { locale } : {});
     const res = await fetchAPIWithToken("bookings", query, filters, jwt);
-    return Array.isArray(res?.data) ? res.data : res;
+    return Array.isArray(res?.data) ? (res.data as BookingItem[]) : [];
   } catch (err) {
     console.error(err);
     throw new Error("Failed to load listing bookings. Please try again later.");
@@ -122,7 +143,11 @@ export async function getListingBookings(listingDocumentId: string, startISO?: s
 }
 
 // Get bookings; if userId provided, filter by that user documentId
-export async function getBookings(userDocumentId?: string, locale?: string, status?: "pending" | "confirmed" | "cancelled" | "rejected" | "all") {
+export async function getBookings(
+  userDocumentId?: string,
+  locale?: string,
+  status?: BookingStatusFilter
+): Promise<BookingItem[]> {
   try {
     const jwt = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (!jwt) throw new Error("No authentication token found. Please log in.");
@@ -130,7 +155,7 @@ export async function getBookings(userDocumentId?: string, locale?: string, stat
     const populate = {
       listing: { populate: "*" },
     }
-    const baseFilters: Record<string, any> = {};
+    const baseFilters: Record<string, unknown> = {};
     if (userDocumentId) {
       baseFilters.filters = { userDocumentId: { $eq: userDocumentId } };
     }
@@ -141,7 +166,7 @@ export async function getBookings(userDocumentId?: string, locale?: string, stat
     }
     const query = createQuery(populate, locale ? { locale } : {});
     const res = await fetchAPIWithToken("bookings", query, baseFilters, jwt);
-    return res.data;
+    return Array.isArray(res?.data) ? (res.data as BookingItem[]) : [];
   } catch (err) {
     console.error(err);
     throw new Error("Failed to load bookings. Please try again later.");
@@ -170,3 +195,4 @@ export async function deleteBooking(id: string) {
     throw new Error("Failed to delete booking. Please try again later.");
   }
 }
+
