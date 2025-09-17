@@ -57,7 +57,7 @@ function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
         <p className="text-sm">{t("description")}</p>
       </div>
 
-      <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+      <form className="space-y-6" id="forgot-password-form" onSubmit={handleSubmit(onSubmit)}>
         <Input
           type="email"
           label={t("emailLabel")}
@@ -81,6 +81,7 @@ function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
           style="secondary"
           type="submit"
           extraStyles="!w-full"
+          form="forgot-password-form"
           disabled={isSubmitting}
         >
           {t("sendResetLink")}

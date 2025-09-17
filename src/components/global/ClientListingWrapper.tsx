@@ -119,6 +119,8 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
         }
         try {
           const res = fetcher ? await fetcher(filters) : await fetchListings(service as 'vendor' | 'venue', filters,locale);
+
+          console.log(res);
           setList(res);
         } catch (err) {
           console.error(err);
@@ -187,7 +189,7 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
     return ( <Loader />);
 
   return (
-    <div>
+    <div className="py-2">
       <FiltersAndMap
         filters={filters}
         type={service as 'vendor' | 'venue'}
@@ -196,7 +198,7 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
         locations={locations}
         fetcher={fetcher}
       />
-      <div className="flex items-center gap-5 my-10 flex-wrap">
+      <div className="flex justify-center gap-5 my-10 flex-wrap lg:max-w-[1440px] mx-auto px-4">
         {list.length === 0 ? (
           <NoDataCard>{getTranslation(placeholders.emptyList)}</NoDataCard>
         ) : (

@@ -48,7 +48,7 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
         {imageIds.length > 0 && <p className="text-gray-500 font-medium text-sm">{imageIds.length} image(s) ready to save</p>}
         <div className="flex justify-end mt-2">
           <Button style="primary" onClick={onSubmit} disabled={submitting}>
-            {submitting ? t("saving..."): t("saveImages")}
+            {submitting ? t("saving"): t("saveImages")}
           </Button>
         </div>
       </div>

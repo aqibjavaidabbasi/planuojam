@@ -51,7 +51,6 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
       return;
     }
 
-    console.log("Initializing Mapbox map...");
     mapboxgl.accessToken = mapboxToken;
 
     // Initialize map immediately
@@ -98,8 +97,6 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
     // Wait for map to be loaded
     const addMarkers = () => {
       if (!map.current) return;
-
-      console.log(`Adding ${locations.length} markers to map`);
 
       // Remove existing markers
       const existingMarkers = document.querySelectorAll('.mapbox-marker');
@@ -156,11 +153,10 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
   }, [selectedPlace]);
 
   return (
-    <div className="w-full h-[400px] relative border border-gray-200 rounded-lg overflow-hidden">
+    <div className="w-full h-full relative border border-gray-200 rounded-lg overflow-hidden">
       <div 
         ref={mapContainer} 
         className="w-full h-full"
-        style={{ minHeight: '400px' }}
       />
     </div>
   );

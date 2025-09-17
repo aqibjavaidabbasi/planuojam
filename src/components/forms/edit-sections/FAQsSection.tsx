@@ -78,7 +78,7 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
 
         <div className="flex justify-end">
           <Button style="primary" type="submit" disabled={submitting}>
-            {submitting ? t("saving...") : t("savechanges")}
+            {submitting ? t("saving") : t("savechanges")}
           </Button>
         </div>
       </form>

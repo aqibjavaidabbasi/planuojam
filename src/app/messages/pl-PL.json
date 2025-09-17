@@ -640,11 +640,13 @@
     "workinghours(perday)": "godziny pracy (dziennie)",
     "titleDescription": "tytułOpis",
     "saving": "экономия",
+    "saving...": "Zapisywanie...",
     "savechanges": "zapisuje zmiany"
   },
   "ImageSection": {
     "addportfolioimages": "Dodaj obrazy portfolio",
     "saving": "экономия",
+    "saving...": "Zapisywanie...",
     "saveImages": "zapisz obrazy"
   },
   "vendorvenueSection": {
@@ -658,6 +660,7 @@
     "bookingduration": "czas rezerwacji",
     "amenities": "udogodnienia",
     "saving": "экономия",
+    "saving...": "Zapisywanie...",
     "savechanges": "zapisuje zmiany",
     "adamenity": "bezkompromisowość",
     "fetchcoordinates": "pobierz współrzędne",
@@ -673,6 +676,7 @@
     "phone": "telefon",
     "address": "adres",
     "saving": "oszczędność",
+    "saving...": "Zapisywanie...",
     "savechanges": "zapisuje zmiany"
   },
   "socialLinkSection": {
@@ -681,6 +685,7 @@
     "visible": "widoczny",
     "+addsociallink": "+ dodajlink społecznościowy",
     "saving": "oszczędność",
+    "saving...": "Zapisywanie...",
     "savechanges": "zapisuje zmiany"
   },
   "pricingSection": {
@@ -688,6 +693,7 @@
     "+addplan": "+dodatekplan",
     "+addfeature": "+dodatkowa funkcja",
     "saving": "oszczędność",
+    "saving...": "Zapisywanie...",
     "savechanges": "zapisuje zmiany",
     "sectiontitle": "tytuł sekcji",
     "optionaladdons": "opcjonalne dodatki"
@@ -695,6 +701,7 @@
   "FAQsSection": {
     "sectiontitle": "tytuł sekcji",
     "saving": "oszczędność",
+    "saving...": "Zapisywanie...",
     "savechanges": "zapisuje zmiany",
     "+addFAQ": "+добавитьFAQ",
     "answer": "odpowiedź",

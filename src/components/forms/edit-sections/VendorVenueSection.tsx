@@ -315,7 +315,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
 
           <div className="flex justify-end">
             <Button style="primary" type="submit" disabled={submitting}>
-              {submitting ? t("saving...") : t("savechanges")}
+              {submitting ? t("saving") : t("savechanges")}
             </Button>
           </div>
         </form>

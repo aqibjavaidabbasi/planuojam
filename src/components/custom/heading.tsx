@@ -10,7 +10,7 @@ interface HeadingProps {
 function Heading({ headingPiece, extraStyles, as = 'h2' }: HeadingProps) {
   const Tag = as;
   return (
-    <Tag className={`text-2xl md:text-4xl font-bold flex flex-wrap items-center justify-center ${extraStyles}`}>
+    <Tag className={`w-full text-center md:w-auto md:text-left text-2xl md:text-4xl font-bold flex flex-wrap items-center justify-center ${extraStyles}`}>
       {headingPiece.map((piece, i) => (
         <span key={i} className='mr-2' style={{ color: piece.color }}>
           {piece.text}

@@ -66,7 +66,7 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
         </div>
         <div className="col-span-3 flex justify-end mt-2">
           <Button style="primary" type="submit" disabled={submitting}>
-            {submitting ? t("saving...") : t("savechanges")}
+            {submitting ? t("saving") : t("savechanges")}
           </Button>
         </div>
       </form>

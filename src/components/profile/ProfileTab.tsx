@@ -23,10 +23,10 @@ function ProfileTab({ user }: { user: User | null }) {
   const [username, setUsername] = useState("");
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
-  const { register, handleSubmit, watch, formState: {errors}, reset } = useForm<PasswordForm>()
+  const { register, handleSubmit, watch, formState: { errors }, reset } = useForm<PasswordForm>()
   const t = useTranslations('Profile.ProfileTab');
 
-  useEffect(function(){
+  useEffect(function () {
     setUsername(user?.username ?? "");
   }, [user]);
 
@@ -97,16 +97,18 @@ function ProfileTab({ user }: { user: User | null }) {
         {/* Logout Button */}
         <Button
           style="destructive"
-          onClick={()=>setIsLogoutModalOpen(true)}
+          onClick={() => setIsLogoutModalOpen(true)}
           disabled={loading}
         >
-          <TbLogout size={20} className="mr-3" />
-          {t('logout')}
+          <TbLogout size={20} className="sm:mr-3" />
+          <span className="hidden sm:block" >
+            {t('logout')}
+          </span>
         </Button>
       </div>
 
       <div className="max-w-2xl">
-        <form className="flex gap-3 items-end w-full" onSubmit={updateUsername}>
+        <form className="flex gap-3 items-end w-full" id="usernameForm" onSubmit={updateUsername}>
           <div className="w-full">
             <Input
               type="text"
@@ -120,6 +122,7 @@ function ProfileTab({ user }: { user: User | null }) {
           <Button
             style="primary"
             type='submit'
+            form="usernameForm"
             extraStyles="!rounded-md !whitespace-nowrap"
             disabled={loading}
           >
@@ -131,7 +134,7 @@ function ProfileTab({ user }: { user: User | null }) {
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
             {t('password.updateTitle')}
           </h2>
-          <form className="space-y-4" onSubmit={handleSubmit(handlePasswordUpdate)}>
+          <form className="space-y-4" id="passwordForm" onSubmit={handleSubmit(handlePasswordUpdate)}>
             <Input
               type="password"
               label={t('password.currentLabel')}
@@ -192,6 +195,7 @@ function ProfileTab({ user }: { user: User | null }) {
               style="primary"
               extraStyles="!rounded-md"
               type="submit"
+              form="passwordForm"
               disabled={loading}
             >
               {t('password.updateCta')}
@@ -200,7 +204,7 @@ function ProfileTab({ user }: { user: User | null }) {
         </div>
       </div>
 
-      <LogoutModal isOpen={isLogoutModalOpen} onClose={()=>setIsLogoutModalOpen(false)} />
+      <LogoutModal isOpen={isLogoutModalOpen} onClose={() => setIsLogoutModalOpen(false)} />
     </div>
   );
 }

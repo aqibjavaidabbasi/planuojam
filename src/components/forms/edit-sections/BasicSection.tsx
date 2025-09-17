@@ -65,8 +65,8 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
           <Input type="text" label={t("title")} disabled={submitting} required {...register("title", { required: "Title is required" })} />
           {errors.title && (<p className="text-red-500 text-sm mt-1">{t("errors.title.message")}</p>)}
         </div>
-        <div>
-          <Select
+        <div className="flex items-end">
+          <Select 
             disabled={listing.listingStatus === "published" || listing.listingStatus === "rejected" || submitting}
             {...register("listingStatus", { required: "Listing status is required" })}
             options={[
@@ -100,7 +100,7 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
       </div>
       <div className="flex justify-end mt-4">
         <Button style="primary" onClick={handleSubmit(onSubmit)} disabled={submitting}>
-          {submitting ? t("saving...") : t("savechanges")}
+          {submitting ? t("saving") : t("savechanges")}
         </Button>
       </div>
     </div>

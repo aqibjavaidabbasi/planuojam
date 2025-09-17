@@ -15,18 +15,18 @@ function FaqBlock({ data }: { data: FAQComponentBlock }) {
 
   const gridClass =
     columns === 2
-      ? 'grid grid-cols-2 gap-4'
-      : 'grid grid-cols-1 gap-4 max-w-xl mx-auto'
+      ? 'grid-cols-2'
+      : 'grid-cols-1'
 
   if (!faqs.length) return null
 
   return (
-    <section className="my-12 px-4">
+    <section className="my-12 px-4 lg:max-w-[1440px] mx-auto">
       <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center text-primary">
         {data.sectionTitle}
       </h2>
 
-      <div className={gridClass}>
+      <div className={`grid gap-4 grid-cols-1 md:${gridClass} place-items-center w-full`}>
         {faqs.map((faq, idx) => {
           const isOpen = openIndexes.includes(idx)
 

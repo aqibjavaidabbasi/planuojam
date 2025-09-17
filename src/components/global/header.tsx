@@ -64,7 +64,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
   useEffect(() => {
     if (!user?.documentId) return;
     // Fetch liked listings when user id becomes available
-    dispatch(fetchLikedListing({userId: user.documentId, locale: 'en'}))
+    dispatch(fetchLikedListing({ userId: user.documentId, locale: 'en' }))
       .unwrap()
       .catch(() => { });
   }, [dispatch, user?.documentId]);
@@ -102,6 +102,11 @@ function Header({ headerData }: { headerData: HeaderType }) {
     }
   }, [pathname, selectedLocale]);
 
+  //lock body scroll when mobile nav opens
+  useEffect(function () {
+    document.body.style.overflow = mobileNavOpen ? "hidden" : "auto";
+  }, [mobileNavOpen])
+
   const handleLocaleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const next = e.target.value;
     if (!SUPPORTED_LOCALES.includes(next)) return;
@@ -113,10 +118,10 @@ function Header({ headerData }: { headerData: HeaderType }) {
     window.location.href = `/${next}${pathname}`;
   };
 
-  function getServiceUrl(docId: string){
+  function getServiceUrl(docId: string) {
     const category = headerData?.nav.categories.find((cat) => cat.documentId === docId);
     if (!category) return;
-    if( category.locale === 'en' ) return `/service/${category.slug}`;
+    if (category.locale === 'en') return `/service/${category.slug}`;
     if (category.locale !== 'en') {
       const enEntry = category.localizations.find(loc => loc.locale === 'en');
       return enEntry ? `/service/${enEntry.slug}` : `/service/${category.slug}`;
@@ -127,206 +132,207 @@ function Header({ headerData }: { headerData: HeaderType }) {
   function getEventTypeUrl(docId: string) {
     const eventType = headerData?.eventTypes.find((et) => et.eventType.documentId === docId);
     if (!eventType) return;
-    if( eventType.eventType.locale === 'en' ) return `/event-types/${eventType.eventType.slug}`;
+    if (eventType.eventType.locale === 'en') return `/event-types/${eventType.eventType.slug}`;
     if (eventType.eventType.locale !== 'en') {
       const enEntry = eventType.eventType.localizations.find(loc => loc.locale === 'en');
       return enEntry ? `/event-types/${enEntry.slug}` : `/event-types/${eventType.eventType.slug}`;
     }
   }
 
-    const isEventTypeActive = (docId: string) => {
-      const eventType = headerData?.eventTypes.find((et) => et.eventType.documentId === docId);
-      if (!eventType) return false;
-      if( eventType.eventType.locale === 'en' ) return pathname.endsWith(`/event-types/${eventType.eventType.slug}`);
-      if (eventType.eventType.locale !== 'en') {
-        const enEntry = eventType.eventType.localizations.find(loc => loc.locale === 'en');
-        return enEntry ? pathname.endsWith(`/event-types/${enEntry.slug}`) : pathname.endsWith(`/event-types/${eventType.eventType.slug}`);
-      }
-    };
+  const isEventTypeActive = (docId: string) => {
+    const eventType = headerData?.eventTypes.find((et) => et.eventType.documentId === docId);
+    if (!eventType) return false;
+    if (eventType.eventType.locale === 'en') return pathname.endsWith(`/event-types/${eventType.eventType.slug}`);
+    if (eventType.eventType.locale !== 'en') {
+      const enEntry = eventType.eventType.localizations.find(loc => loc.locale === 'en');
+      return enEntry ? pathname.endsWith(`/event-types/${enEntry.slug}`) : pathname.endsWith(`/event-types/${eventType.eventType.slug}`);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-30">
-      <div className="w-full bg-white shadow-sm px-4 py-2 flex items-center justify-between">
-        {/* Left: Logo and Nav */}
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <Image
-            src={imageUrl}
-            alt="Planuojam Logo"
-            width={100}
-            height={100}
-            onClick={() => router.push("/")}
-            className="w-10 h-10 md:w-[95px] md:h-[60px] object-contain cursor-pointer"
-            priority
-          />
+      <div className="w-full bg-white shadow-sm px-2.5 md:px-4 py-2 ">
+        <div className="max-w-screen lg:max-w-[1440px] mx-auto flex items-center justify-between">
+          {/* Left: Logo and Nav */}
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <Image
+              src={imageUrl}
+              alt="Planuojam Logo"
+              width={100}
+              height={100}
+              onClick={() => router.push("/")}
+              className="w-10 h-10 md:w-[95px] md:h-[60px] object-contain cursor-pointer"
+              priority
+            />
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-3 md:ml-10">
-            {headerData?.nav.categories.map((navItem) => {
-              const href = getServiceUrl(navItem.documentId) as string;
-              const isActive = pathname.endsWith(href);
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex items-center gap-3 md:ml-10">
+              {headerData?.nav.categories.map((navItem) => {
+                const href = getServiceUrl(navItem.documentId) as string;
+                const isActive = pathname.endsWith(href);
 
-              return (
-                <Link
-                  key={navItem.id}
-                  href={href}
-                  className={`cursor-pointer px-3 py-2 rounded-sm transition-colors text-sm md:text-base capitalize ${isActive
+                return (
+                  <Link
+                    key={navItem.id}
+                    href={href}
+                    className={`cursor-pointer px-3 py-2 rounded-sm transition-colors text-sm md:text-base capitalize ${isActive
                       ? "bg-primary text-white"
                       : "text-primary bg-white hover:bg-primary hover:text-white"
-                    }`}
-                >
-                  {navItem.name}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Right: Language, Search, User, Mobile Toggle */}
-        <div className="flex items-center gap-2 md:gap-3">
-          <select
-            className="bg-white border border-border rounded-md h-9 px-2 text-sm md:text-base"
-            value={selectedLocale}
-            onChange={handleLocaleChange}
-          >
-            {LOCALE_OPTIONS.map((opt: { code: string; label: string }) => (
-              <option key={opt.code} value={opt.code}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-
-          {/* Search: hidden on xs, visible from sm */}
-          <div className="hidden sm:block max-w-[160px] md:max-w-full">
-            <Search />
+                      }`}
+                  >
+                    {navItem.name}
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
 
-          {/* User Icon */}
-          <ProfileBtn loading={loading} user={user} />
+          {/* Right: Language, Search, User, Mobile Toggle */}
+          <div className="flex items-center gap-2 md:gap-3">
+            <select
+              className="bg-white border border-border rounded-md h-9 px-2 text-sm md:text-base"
+              value={selectedLocale}
+              onChange={handleLocaleChange}
+            >
+              {LOCALE_OPTIONS.map((opt: { code: string; label: string }) => (
+                <option key={opt.code} value={opt.code}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
 
-          {/* Mobile Nav Toggle */}
-          <button
-            className="md:hidden flex items-center justify-center p-2 rounded focus:outline-none"
-            aria-label="Open navigation menu"
-            onClick={() => setMobileNavOpen(true)}
-          >
-            <FaBars className="text-xl text-primary" />
-          </button>
-        </div>
+            {/* Search: hidden on xs, visible from sm */}
+            <div className="hidden sm:block max-w-[160px] md:max-w-full">
+              <Search />
+            </div>
 
-        {/* Mobile Nav Drawer */}
-        {mobileNavOpen && (
-          <div className="fixed inset-0 z-40 bg-black bg-opacity-40 flex">
-            <div className="bg-white w-4/5 max-w-xs h-full p-5 flex flex-col gap-4 animate-slide-in-left overflow-y-auto">
-              <div className="flex items-center justify-between mb-4">
-                <Image
-                  src={imageUrl}
-                  alt="Planuojam Logo"
-                  width={40}
-                  height={40}
-                  className="w-10 h-10 object-contain"
-                />
-                <button
-                  className="p-2 rounded hover:bg-gray-100"
-                  aria-label="Close navigation menu"
-                  onClick={() => setMobileNavOpen(false)}
-                >
-                  <IoMdClose className="text-2xl text-primary" />
-                </button>
-              </div>
-              <nav className="flex flex-col gap-2">
-                {/* Main Navigation */}
-                {headerData?.nav.categories.map((navItem) => {
-                  const href = getServiceUrl(navItem.documentId) as string;
-                  const isActive = pathname.endsWith(href);
-                  return (
-                    <Link
-                      href={href}
-                      className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-white hover:bg-primary hover:text-white ${isActive
-                          ? "bg-primary text-white"
+            {/* User Icon */}
+            <ProfileBtn loading={loading} user={user} />
+
+            {/* Mobile Nav Toggle */}
+            <button
+              className="md:hidden flex items-center justify-center p-2 rounded focus:outline-none"
+              aria-label="Open navigation menu"
+              onClick={() => setMobileNavOpen(true)}
+            >
+              <FaBars className="text-xl text-primary" />
+            </button>
+          </div>
+
+          {/* Mobile Nav Drawer */}
+          {mobileNavOpen && (
+            <div className="fixed inset-0 z-40 bg-black/40 flex overflow-y-hidden">
+              <div className="bg-white w-[90%] max-w-xs h-full p-5 flex flex-col gap-4 animate-slide-in-left overflow-y-auto">
+                <div className="flex items-center justify-between">
+                  <Image
+                    src={imageUrl}
+                    alt="Planuojam Logo"
+                    width={40}
+                    height={40}
+                    className="w-10 h-10 object-contain"
+                  />
+                  <button
+                    className="p-2 rounded hover:bg-gray-100"
+                    aria-label="Close navigation menu"
+                    onClick={() => setMobileNavOpen(false)}
+                  >
+                    <IoMdClose className="text-2xl text-primary" />
+                  </button>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Search />
+                </div>
+                <nav className="flex flex-col gap-1">
+                  {/* Main Navigation */}
+                  {headerData?.nav.categories.map((navItem) => {
+                    const href = getServiceUrl(navItem.documentId) as string;
+                    const isActive = pathname.endsWith(href);
+                    return (
+                      <Link
+                        href={href}
+                        onClick={() => {
+                          //close mobile menu
+                          setMobileNavOpen(false)
+                        }}
+                        className={`cursor-pointer px-2.5 py-1.5 rounded-sm transition-colors text-primary capitalize bg-white hover:bg-primary hover:text-white ${isActive
+                          ? "bg-primary"
                           : ""
-                        }`}
-                      key={navItem.id}
-                    >
-                      {navItem.name}
-                    </Link>
-                  );
-                })}
+                          }`}
+                        key={navItem.id}
+                      >
+                        {navItem.name}
+                      </Link>
+                    );
+                  })}
 
-                {/* Event Types Section */}
-                {Array.isArray(headerData?.eventTypes) &&
-                  headerData.eventTypes.length > 0 && (
-                    <>
-                      <hr className="my-3 border-gray-300" />
-                      <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide mb-1">
-                        Event Types
-                      </p>
-                      {headerData.eventTypes.map(({ id, eventType }) => {
-                        const isActive = isEventTypeActive(eventType.documentId);
-                        return (
-                          <Link onClick={() => handleSelect("")}
-                            href={getEventTypeUrl(eventType.documentId) as string}
-                            className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${isActive ? "bg-primary text-white" : ""}`}
-                            key={id}
-                          >
-                            {eventType.eventName}
-                          </Link>
-                        );
-                      })}
+                  {/* Event Types Section */}
+                  {Array.isArray(headerData?.eventTypes) &&
+                    headerData.eventTypes.length > 0 && (
+                      <>
+                        <hr className="my-3 border-gray-300" />
+                        <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide mb-1">
+                          Event Types
+                        </p>
+                        {headerData.eventTypes.map(({ id, eventType }) => {
+                          const isActive = isEventTypeActive(eventType.documentId);
+                          return (
+                            <Link
+                              onClick={() => {
+                                handleSelect("")
+                                //close mobile menu
+                                setMobileNavOpen(false)
+                              }}
+                              href={getEventTypeUrl(eventType.documentId) as string}
+                              className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${isActive ? "bg-primary text-white" : ""}`}
+                              key={id}
+                            >
+                              {eventType.eventName}
+                            </Link>
+                          );
+                        })}
 
-                      <Link onClick={() => handleSelect("Hot Deal")}
-                        className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Hot Deal"
+                        <Link onClick={() => {
+                          handleSelect("Hot Deal")
+                          //close mobile menu
+                          setMobileNavOpen(false)
+                        }}
+                          className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Hot Deal"
                             ? "bg-primary text-white"
                             : ""
-                          }
+                            }
                              
                           `}
-                        href="/hot-deal"
-                      >
-                        {t('HotDeal')}
-                      </Link>
+                          href="/hot-deal"
+                        >
+                          {t('HotDeal')}
+                        </Link>
 
 
-                      <Link onClick={() => handleSelect("Map")}
-                        className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Map" ? "bg-primary text-white" : ""
-                          }
+                        <Link onClick={() => {
+                          handleSelect("Map")
+                          //close mobile menu
+                          setMobileNavOpen(false)
+                        }}
+                          className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Map" ? "bg-primary text-white" : ""
+                            }
                              `}
-                        href="/map"
-                      >
-                        {t('Map')}
-                      </Link>
+                          href="/map"
+                        >
+                          {t('Map')}
+                        </Link>
 
 
-                    </>
-                  )}
-              </nav>
-
-              <div className="mt-4 flex flex-col gap-2">
-                <select
-                  className="bg-white border border-border rounded-md h-9 px-2 text-sm"
-                  value={selectedLocale}
-                  onChange={(e) => {
-                    handleLocaleChange(e);
-                    setMobileNavOpen(false);
-                  }}
-                >
-                  {LOCALE_OPTIONS.map(
-                    (opt: { code: string; label: string }) => (
-                      <option key={opt.code} value={opt.code}>
-                        {opt.label}
-                      </option>
-                    )
-                  )}
-                </select>
-                <Search />
+                      </>
+                    )}
+                </nav>
               </div>
+              {/* Click outside to close */}
+              <div className="flex-1" onClick={() => setMobileNavOpen(false)} />
             </div>
-            {/* Click outside to close */}
-            <div className="flex-1" onClick={() => setMobileNavOpen(false)} />
-          </div>
-        )}
+          )}
 
-        {/* Slide animation */}
-        <style jsx global>{`
+          {/* Slide animation */}
+          <style jsx global>{`
           @keyframes slide-in-left {
             from {
               transform: translateX(-100%);
@@ -339,45 +345,48 @@ function Header({ headerData }: { headerData: HeaderType }) {
             animation: slide-in-left 0.2s ease;
           }
         `}</style>
+        </div>
       </div>
       {/* Subnav Bar: Desktop only */}
       {Array.isArray(headerData?.eventTypes) &&
         headerData.eventTypes.length > 0 && (
           <div className="hidden md:flex w-full bg-gray-50 border-t border-b border-border px-4 py-2 gap-2 z-20">
-            {headerData.eventTypes.map(({ id, eventType }) => {
-              const isActive = isEventTypeActive(eventType.documentId);
-              return (
-                <Link
-                  key={id}
-                  href={getEventTypeUrl(eventType.documentId) as string}
-                  className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors
+            <div className="max-w-screen lg:max-w-[1440px] mx-auto">
+              {headerData.eventTypes.map(({ id, eventType }) => {
+                const isActive = isEventTypeActive(eventType.documentId);
+                return (
+                  <Link
+                    key={id}
+                    href={getEventTypeUrl(eventType.documentId) as string}
+                    className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors
                                     ${isActive
-                      ? "bg-primary text-white"
-                      : "text-primary hover:bg-primary hover:text-white"
-                    }`}
-                >
-                  {eventType.eventName}
-                </Link>
-              );
-            })}
-            <Link
-              className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${isHotDealActive()
+                        ? "bg-primary text-white"
+                        : "text-primary hover:bg-primary hover:text-white"
+                      }`}
+                  >
+                    {eventType.eventName}
+                  </Link>
+                );
+              })}
+              <Link
+                className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${isHotDealActive()
                   ? "bg-primary text-white"
                   : "text-primary hover:bg-primary hover:text-white"
-                }`}
-              href="/hot-deal"
-            >
-              {t('HotDeal')}
-            </Link>
-            <Link
-              className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${isMapActive()
+                  }`}
+                href="/hot-deal"
+              >
+                {t('HotDeal')}
+              </Link>
+              <Link
+                className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${isMapActive()
                   ? "bg-primary text-white"
                   : "text-primary hover:bg-primary hover:text-white"
-                }`}
-              href="/map"
-            >
-              {t('Map')}
-            </Link>
+                  }`}
+                href="/map"
+              >
+                {t('Map')}
+              </Link>
+            </div>
           </div>
         )}
     </header>

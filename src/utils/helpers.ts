@@ -62,3 +62,18 @@ export function slugify(input: string): string {
     .replace(/^-+|-+$/g, "") // trim leading/trailing dashes
     .replace(/-{2,}/g, "-"); // collapse multiple dashes
 }
+
+// Generate a short alphanumeric string suitable for appending to slugs
+// Uses crypto.getRandomValues when available for better randomness; falls back to Math.random.
+export function shortId(length: number = 6): string {
+  try {
+    if (typeof crypto !== 'undefined' && typeof (crypto as any).getRandomValues === 'function') {
+      const bytes = new Uint8Array(length);
+      (crypto as any).getRandomValues(bytes);
+      // Map bytes to base36 [0-9a-z]
+      return Array.from(bytes, (b) => (b % 36).toString(36)).join('');
+    }
+  } catch (_) {}
+  // Fallback
+  return Math.random().toString(36).slice(2, 2 + length);
+}

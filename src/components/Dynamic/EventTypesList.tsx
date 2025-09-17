@@ -15,10 +15,10 @@ function EventTypesList({ data }: { data: EventTypesBlock }) {
     );
 
     return (
-        <div className='w-screen max-w-screen lg:max-w-[1400px] mx-auto py-5 md:py-10 px-3 md:px-6'>
+        <div className='w-screen max-w-screen lg:max-w-[1440px] mx-auto py-5 md:py-10 px-3 md:px-6'>
             <div className='flex flex-col items-center justify-center gap-2'>
                 <Heading headingPiece={data.sectionheader.heading.headingPiece} />
-                <p>{data.sectionheader.sectionDescription}</p>
+                <p className='text-center max-w-prose'>{data.sectionheader.sectionDescription}</p>
             </div>
             <div className="w-full flex justify-center mt-10">
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5'>

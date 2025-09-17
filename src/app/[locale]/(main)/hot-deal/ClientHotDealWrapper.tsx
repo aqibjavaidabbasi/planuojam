@@ -36,7 +36,7 @@ function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: T
 
 
   return (
-    <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1400px] mx-auto'>
+    <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1440px] mx-auto'>
         <div className='flex flex-col items-center justify-center gap-2'>
             {titleDescriptionBlock[0]?.heading?.headingPiece && (
                 <Heading headingPiece={titleDescriptionBlock[0].heading.headingPiece} />

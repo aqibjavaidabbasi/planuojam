@@ -64,21 +64,21 @@ function ProfilePage() {
         <div className="flex flex-col lg:flex-row gap-8 min-h-[calc(100vh-200px)]">
           {/* Left Sidebar */}
           <div
-            className={`w-full lg:w-80 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 transition-all duration-300`}
+            className={`w-full lg:w-80 bg-white rounded-2xl shadow-sm border border-gray-100 p-3 md:p-6 transition-all duration-300`}
           >
             <div className="flex justify-between items-center lg:justify-center mx-2 mb-2">
               <div className="bg-gray-50 rounded-xl p-6">
                 <div className="flex flex-row lg:flex-col items-center space-y-2 gap-2.5 lg:gap-0">
-                  <div className="w-15 h-15 bg-primary rounded-full flex items-center justify-center">
+                  <div className="w-12 sm:w-15 h-12 sm:h-15 bg-primary rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-2xl">
                       {user?.username?.slice(0, 2)}
                     </span>
                   </div>
-                  <div className="flex flex-col gap-2 items-center">
+                  <div className="flex flex-col gap-1 sm:gap-2 items-center">
                     <h3 className="text-lg font-semibold text-gray-800">
                       {user?.username}
                     </h3>
-                    <p className="text-gray-600">{user?.email}</p>
+                    <p className="text-gray-600 hidden sm:block">{user?.email}</p>
                     {user?.serviceType !== null && (
                       <span className="inline-block bg-primary text-white px-3 py-1 rounded-full text-sm mt-2 w-fit">
                         {user?.serviceType}

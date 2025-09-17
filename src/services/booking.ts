@@ -1,3 +1,4 @@
+import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
 import { createQuery, deleteAPI, fetchAPIWithToken, postAPIWithToken, putAPI } from "./api";
 import { getUsersByDocumentIds, MinimalUserInfo } from "./auth";
 
@@ -14,6 +15,8 @@ export interface BookingPayload {
 export interface ListingMinimal {
   documentId?: string;
   title?: string;
+  locale?: string;
+  localizations?: ListingMinimal[];
 }
 
 export interface BookingItem {
@@ -43,7 +46,9 @@ export async function getProviderBookingsWithUsers(
 
     // Populate listing (which includes its user relation); filter by listing.user.documentId
     const populate = {
-      listing: { populate: "*" },
+      listing: {
+        populate: LISTING_ITEM_POP_STRUCTURE
+      },
     };
     const baseFilters: Record<string, unknown> = {
       filters: { listing: { user: { documentId: { $eq: providerDocumentId } } } },

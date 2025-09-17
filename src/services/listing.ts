@@ -2,8 +2,16 @@ import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
 import { createQuery, deleteAPI, fetchAPI, postAPIWithToken, putAPI } from "./api";
 import type { ListingItem } from "@/types/pagesTypes";
 
-export async function createListing(data: Record<string, unknown>) {
-    const res = await postAPIWithToken("listings", data);
+export async function createListing(data: Record<string, unknown>, locale?: string) {
+    const headers = locale
+        ? {
+            'X-Strapi-Locale': locale,
+            'Content-Language': locale,
+            'Accept-Language': locale,
+          }
+        : undefined;
+    const query = locale ? `locale=${encodeURIComponent(locale)}` : undefined;
+    const res = await postAPIWithToken("listings", data, { headers }, query);
     return res;
 }
 

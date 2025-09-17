@@ -639,12 +639,14 @@
     "websitelinks": "ссылки на веб-сайты",
     "workinghours(perday)": "рабочие часы (в день)",
     "saving": "экономия",
+    "saving...": "Сохранение...",
     "savechanges": "сохранить изменения",
     "titleDescription": "названиеОписание"
   },
   "ImageSection": {
     "addportfolioimages": "ДобавитьИзображенияПортфолио",
     "saving": "экономия",
+    "saving...": "Сохранение...",
     "saveImages": "сохранить изображения"
   },
   "vendorvenueSection": {
@@ -658,6 +660,7 @@
     "bookingduration": "продолжительность бронирования",
     "amenities": "удобства",
     "saving": "экономия",
+    "saving...": "Сохранение...",
     "savechanges": "сохранить изменения ",
     "fetchcoordinates": "получить координаты",
     "adamenity": "непримиримость",
@@ -673,6 +676,7 @@
     "phone": "телефон",
     "address": "адрес",
     "saving": "экономия",
+    "saving...": "Сохранение...",
     "savechanges": "сохранить изменения"
   },
   "socialLinkSection": {
@@ -681,6 +685,7 @@
     "visible": "видимый",
     "+addsociallink": "+ добавить социальную ссылку",
     "saving": "экономия",
+    "saving...": "Сохранение...",
     "savechanges": "сохранить изменения"
   },
   "pricingSection": {

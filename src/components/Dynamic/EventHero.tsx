@@ -11,7 +11,7 @@ function EventHero({data}: {data: HeroBannerBlock}) {
     const router = useRouter();
 
   return (
-    <section className="relative w-screen max-w-screen h-80 md:h-[450px] flex items-center justify-start overflow-hidden">
+    <section className="relative w-screen h-80 md:h-[450px] flex items-center justify-start overflow-hidden max-w-screen lg:max-w-[1440px] mx-auto">
        <Image
         src={heroImage}
         alt="Hero Image"

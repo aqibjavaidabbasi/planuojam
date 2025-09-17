@@ -58,7 +58,7 @@ function Mylistings() {
           <h1 className="text-2xl font-bold text-gray-800">{t('title')}</h1>
           <p className="text-gray-600 mt-2">{t('subtitle')}</p>
         </div>
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-center sm:items-end gap-3 w-full sm:w-auto">
           <div className="min-w-56">
             <Select
               label={t('filterLabel')}

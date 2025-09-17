@@ -23,7 +23,7 @@ import toast from "react-hot-toast"
 import { createListing } from "@/services/listing"
 import { useAppSelector } from "@/store/hooks"
 import { geocodePlace } from "@/utils/mapboxLocation"
-import { slugify } from "@/utils/helpers"
+import { slugify, shortId } from "@/utils/helpers"
 import { useLocale, useTranslations } from "next-intl"
 
 interface ListingItemModalProps {
@@ -79,15 +79,10 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
   const [selectedCategory, setSelectedCategory] = useState<string>("")
   const { user } = useAppSelector((state) => state.auth)
   const [isLoading, setIsLoading] = useState(false);
-  const [categoryOptions, setCategoryOptions] = useState<category[]>([]);
-
-  //filter parent categories and remove everything that is not as per user type
-  useEffect(() => {
-    if (user) {
-      const filteredCategories = parentCategories.filter((category) => category.name === user.serviceType)
-      setCategoryOptions(filteredCategories)
-    }
-  }, [parentCategories, user])
+  // Derive service type from the authenticated user; keep both raw and normalized forms
+  const serviceTypeRaw = user?.serviceType || ''
+  const serviceType = (serviceTypeRaw || 'vendor').toLowerCase() as 'vendor' | 'venue'
+  const serviceDocumentId = parentCategories.find((category) => category.name.trim() === serviceTypeRaw)?.documentId
 
   useEffect(() => {
     if (isOpen) {
@@ -98,13 +93,13 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
 
   useEffect(() => {
     async function fetchChildren() {
-      const res = await fetchChildCategories(form.type, locale)
+      const res = await fetchChildCategories(serviceDocumentId || 'vendor', locale)
       setChildCategories(res)
     }
     fetchChildren()
-  }, [form.type, locale])
+  }, [serviceDocumentId, locale])
 
-  const isVendor = useMemo(() => (form?.type || "vendor").toLowerCase() === "vendor", [form?.type])
+  const isVendor = useMemo(() => serviceType === "vendor", [serviceType])
 
   const updateListingItem = (field: string, value: unknown, itemIndex = 0) => {
     const currentItems = getValues("listingItem") || []
@@ -197,6 +192,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
     setIsLoading(true);
     try {
       const payload = getValues()
+      // Validate user service type and enforce into payload
+      const st = (user?.serviceType || '').toLowerCase()
+      if (st !== 'vendor' && st !== 'venue') {
+        throw new Error(t('errors.invalidServiceType'))
+      }
+      payload.type = st as 'vendor' | 'venue'
       if (user) {
         // Wrap user relation
         payload.user = user.documentId
@@ -224,23 +225,21 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
       if (form.workingHours && isNaN(form.workingHours)) {
         delete payload.workingHours
       }
-      //if user has selected a type add the type to the listing item as well
-      if (form.type) {
-        if (form.type === "vendor") {
+      // ensure listingItem component type matches the enforced type
+      if (payload.listingItem) {
+        if (serviceType === "vendor") {
           payload.listingItem.map((item) => (item.__component = "dynamic-blocks.vendor"))
-        } else if (form.type === "venue") {
+        } else {
           payload.listingItem.map((item) => (item.__component = "dynamic-blocks.venue"))
-        } else if (form.type !== "vendor" && form.type !== "venue") {
-          throw new Error(t('errors.invalidServiceType'))
         }
       }
 
-      if (form.type && payload.listingItem) {
+      if (payload.listingItem) {
         type ListingItemType = CreateListingFormTypes["listingItem"][number]
         payload.listingItem = payload.listingItem.map((item): ListingItemType => {
           let next: ListingItemType = {
             ...(item as ListingItemType),
-            __component: form.type === "vendor" ? "dynamic-blocks.vendor" : "dynamic-blocks.venue",
+            __component: serviceType === "vendor" ? "dynamic-blocks.vendor" : "dynamic-blocks.venue",
           }
 
           // Transform vendor serviceArea city/state to relation connects
@@ -283,7 +282,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           }
 
           //only include about, experience years and serviceArea for vendor and the rest for venue
-          if (form.type === "vendor") {
+          if (serviceType === "vendor") {
             delete (next as { location?: unknown }).location
             delete (next as { capacity?: unknown }).capacity
             delete (next as { amneties?: unknown }).amneties
@@ -299,8 +298,8 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
         })
       }
 
-      //set slug using title
-      payload.slug = `${slugify(payload.title)}-${locale}`
+      // set slug using title with a short unique suffix to avoid collisions within the same locale
+      payload.slug = `${slugify(payload.title)}-${shortId(6)}`
 
       // set locale from current app locale
       payload.locale = locale
@@ -309,7 +308,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
         data: payload,
       }
 
-      await createListing(data)
+      await createListing(data, locale)
       toast.success(t('toasts.created'))
       onSaved?.()
       onClose()
@@ -342,7 +341,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
             <Button style="ghost" onClick={onClose} disabled={isWorking}>
               {t('buttons.cancel')}
             </Button>
-            <Button style="primary" onClick={rhfHandleSubmit(onSubmit)} disabled={isWorking}>
+            <Button style="primary" type="submit" form="listingForm" disabled={isWorking}>
               {submitting ? t('buttons.saving') : t('buttons.create')}
             </Button>
           </div>
@@ -351,7 +350,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
     >
       {error && <div className="mb-4 p-3 rounded bg-red-50 text-red-700 border border-red-200">{error}</div>}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6  mt-14 ">
+      <form id="listingForm" onSubmit={rhfHandleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-2 gap-6  mt-14 ">
         {/* left side */}
         <div>
           {/* Basic Details */}
@@ -369,19 +368,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               />
               <ErrorMessage error={errors.title} />
             </div>
-            <div>
-              <Select
-                placeholder={t('fields.type.placeholder')}
-                disabled={isWorking}
-                {...register("type", { required: t('fields.type.required') })}
-                options={categoryOptions.map((category) => ({
-                  label: category.name,
-                  value: category.name,
-                }))}
-              />
-              <ErrorMessage error={errors.type} />
-            </div>
-            <div>
+            <div className="flex items-end" >
               <Select
                 placeholder={t('fields.listingStatus.placeholder')}
                 disabled={isWorking}
@@ -823,7 +810,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
             <ErrorMessage error={errors.category} />
           </div>
         </div>
-      </div>
+      </form>
     </Modal>
   )
 }

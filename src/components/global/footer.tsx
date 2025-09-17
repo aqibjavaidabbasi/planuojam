@@ -12,25 +12,44 @@ const IMP_IDS = {
 function Footer({ footerData }: { footerData: footer }) {
     const t=useTranslations("ContactUs")
 
+    // Build locale-aware URLs similar to header logic, preferring English slugs
+    const getServiceUrl = (category: any) => {
+        if (!category) return '/';
+        if (category.locale === 'en') return `/service/${category.slug}`;
+        const enEntry = category.localizations?.find((loc: any) => loc.locale === 'en');
+        return enEntry ? `/service/${enEntry.slug}` : `/service/${category.slug}`;
+    };
+
+    const getEventTypeUrl = (eventType: any) => {
+        if (!eventType) return '/';
+        if (eventType.locale === 'en') return `/event-types/${eventType.slug}`;
+        const enEntry = eventType.localizations?.find((loc: any) => loc.locale === 'en');
+        return enEntry ? `/event-types/${enEntry.slug}` : `/event-types/${eventType.slug}`;
+    };
+
     return (
-        <div className='bg-footer-background w-screen text-primary p-5' >
-            <div className='flex justify-start md:justify-between flex-col md:flex-row'>
+        <div className='bg-footer-background w-full text-primary p-5' >
+            <div className='flex justify-start md:justify-between flex-col md:flex-row max-w-screen lg:max-w-[1440px] mx-auto'>
                 {footerData?.footerlinkSection.map(section => (
                     <div key={section.id} className='py-3'>
                         <p className='text-white font-semibold mb-2 capitalize'>{section.title}</p>
                         {/* categories */}
                         {section.linksType.toLowerCase() === 'categories' && <div className='flex flex-col gap-1'>
-                            {section.categories.map(item => (<Link className='hover:underline capitalize' 
-                            href={`/service/${item.documentId}`} key={item.id}>
-                                {item.name}
-                            </Link>))}
+                            {section.categories.map(item => (
+                                <Link className='hover:underline capitalize'
+                                    href={getServiceUrl(item)} key={item.id}>
+                                    {item.name}
+                                </Link>
+                            ))}
                         </div>}
 
                         {/* event types */}
                         {section.linksType.toLowerCase() === 'events' && <div className='flex flex-col gap-1'>
-                            {section.event_types.map(item => (<Link className='hover:underline capitalize' href={`/event-types/${item.documentId}`} key={item.id}>
-                                {item.eventName}
-                            </Link>))}
+                            {section.event_types.map(item => (
+                                <Link className='hover:underline capitalize' href={getEventTypeUrl(item)} key={item.id}>
+                                    {item.eventName}
+                                </Link>
+                            ))}
                             <Link href={'/hot-deal'} >{t("hotdeal")}</Link>
                         </div>}
 
@@ -43,7 +62,7 @@ function Footer({ footerData }: { footerData: footer }) {
                         </div>}
                     </div>))}
             </div>
-            <div className='flex items-center justify-between mt-4 pt-3 border-t-[0.5px] border-border flex-col md:flex-row'>
+            <div className='flex items-center justify-between mt-4 pt-3 border-t-[0.5px] border-border flex-col md:flex-row max-w-screen lg:max-w-[1440px] mx-auto'>
                 <div className='flex items-center gap-2.5'>
                     {footerData?.extraLinks.pages.map((link, idx, arr) => (
                         <span key={link.documentId} className='flex items-center gap-2'>

@@ -25,7 +25,7 @@ function CategoryCard({category}: {category: category}) {
     }}
     onClick={()=>router.push(getUrlPath())}
 >
-    <div className='relative w-[300px] h-[250px]'>
+    <div className='relative w-[300px] h-[150px] md:h-[250px]'>
         <Image
             src={imageUrl}
             alt={`Category image for ${category.name}`}

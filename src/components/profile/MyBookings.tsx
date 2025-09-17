@@ -218,12 +218,14 @@ const MyBookings: React.FC = () => {
               </span>
             );
 
+            const listingTitle = b?.listing?.locale === 'en' ? b?.listing?.title : b?.listing?.localizations?.find(loc => loc.locale === locale)?.title;
+
             return (
               <li key={b.documentId || b.id} className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-3">
-                      {b?.listing?.title || t("labels.listing", { default: "Listing" })}
+                      {listingTitle || t("labels.listing", { default: "Listing" })}
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

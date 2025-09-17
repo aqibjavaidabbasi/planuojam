@@ -125,7 +125,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
 
     const t=useTranslations("VenueInfo")
     return (
-        <div>
+        <div className="lg:max-w-[1440px] mx-auto px-4">
             <div className="mb-4 flex flex-col gap-2.5">
                 <MapboxSearch onPlaceSelect={onPlaceSelect} placeholder={t("searchPlace")} />
                 <div className='flex gap-2 items-center justify-center flex-col lg:flex-row'>
@@ -146,8 +146,9 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
                     </div>
                 </div>
             </div>
-
-            <MapboxMap selectedPlace={selectedPlace} locations={locations} />
+            <div className='h-[calc(100vh-200px)]'>
+                <MapboxMap selectedPlace={selectedPlace} locations={locations} />
+            </div>
         </div>
     );
 };

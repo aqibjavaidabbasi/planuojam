@@ -105,7 +105,7 @@ function getLocationsFromVenues(venues: ListingItem[], t?: ReturnType<typeof use
   }
 
   return (
-    <div className='w-screen h-full'>
+    <div className='w-screen h-[calc(100vh-100px)] md:h-[calc(100vh-460px)]'>
           <MapboxMap locations={locations} />
     </div>
   )

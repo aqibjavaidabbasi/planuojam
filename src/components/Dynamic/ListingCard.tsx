@@ -67,14 +67,14 @@ function ListingCard({ item }: { item: ListingItem }) {
 
   return (
     <div
-      className="rounded-lg bg-white relative w-full max-w-[300px] mx-auto overflow-hidden border border-border"
+      className="rounded-lg bg-white relative w-full max-w-[300px] overflow-hidden border border-border"
       style={{
         boxShadow:
           '2px 0px 4px rgba(0,0,0,0.1), 0px 2px 4px rgba(0,0,0,0.1), 0px -2px 4px rgba(0,0,0,0.1), -2px 0px 4px rgba(0,0,0,0.1)'
       }}
     >
       {/* Heart icon */}
-      <div className="absolute top-2 left-2 z-20">
+      <div className="absolute top-1 md:top-2 left-1 md:left-2 z-20">
         {status === 'loading' ? (
           <FaSpinner size={32}
             color="#e53e3e"
@@ -98,9 +98,9 @@ function ListingCard({ item }: { item: ListingItem }) {
 
       {/* Hot Deal Badge */}
       {item.hotDeal?.enableHotDeal && (
-        <div className="absolute top-4 right-4 z-10">
+        <div className="absolute top-1 md:top-4 right-1 md:right-4 z-10">
           <div className="relative">
-            <div className="bg-primary text-white w-16 h-16 rounded-full flex items-center justify-center transform rotate-12">
+            <div className="bg-primary text-white w-14 md:w-16 h-14 md:h-16 rounded-full flex items-center justify-center transform rotate-12">
               <div className="text-center">
                 <div className="text-xs font-bold">{t('hot')}</div>
                 <div className="text-xs">{t('deal')}</div>

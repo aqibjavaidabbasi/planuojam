@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import { useAppSelector } from "@/store/hooks";
 import { EnrichedBooking, BookingStatusFilter, getProviderBookingsWithUsers, updateBooking } from "@/services/booking";
@@ -29,6 +29,7 @@ const ManageBookings: React.FC = () => {
   const [confirmModal, setConfirmModal] = useState<{ open: boolean; id?: string; action?: "confirm" | "cancel" }>({ open: false });
 
   const isProvider = useMemo(() => user?.serviceType !== null, [user?.serviceType]);
+  const locale = useLocale();
   const [statusFilter, setStatusFilter] = useState<BookingStatusFilter>("all");
 
   // Stats
@@ -46,7 +47,7 @@ const ManageBookings: React.FC = () => {
       if (!user?.documentId) return;
       try {
         setLoading(true);
-        const data = await getProviderBookingsWithUsers(user.documentId, undefined, statusFilter);
+        const data = await getProviderBookingsWithUsers(user.documentId, 'en', statusFilter);
         setItems(data || []);
       } catch (err: unknown) {
         let msg: string;
@@ -140,7 +141,7 @@ const ManageBookings: React.FC = () => {
       </div>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-5">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-5">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
           <p className="text-xs text-gray-500">{t("stats.total", { default: "Total" })}</p>
           <p className="text-2xl font-semibold">{stats.total}</p>
@@ -187,12 +188,14 @@ const ManageBookings: React.FC = () => {
               </span>
             );
 
+            const listingTitle = b?.listing?.locale === 'en' ? b?.listing?.title : b?.listing?.localizations?.find(loc => loc.locale === locale)?.title;
+
             return (
-              <li key={b.documentId || b.id} className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
+              <li key={b.documentId} className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-3">
-                      {b?.listing?.title || t("labels.listing", { default: "Listing" })}
+                      {listingTitle || t("labels.listing", { default: "Listing" })}
                     </h3>
 
                     {b?.userInfo && (

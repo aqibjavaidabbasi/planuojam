@@ -190,7 +190,7 @@ export default function SocialLinksSection({
 
         <div className="flex justify-end mt-6">
           <Button style="primary" disabled={isWorking} type="submit">
-            {submitting ? t("saving...") : t("savechanges")}
+            {submitting ? t("saving") : t("savechanges")}
           </Button>
         </div>
       </form>
