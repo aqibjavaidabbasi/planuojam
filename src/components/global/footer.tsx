@@ -1,6 +1,6 @@
 'use client' //for interactivity that might be added later
 import { Link } from '@/i18n/navigation';
-import { footer } from '@/types/pagesTypes';
+import { category, EventTypes, footer } from '@/types/pagesTypes';
 import { useTranslations } from 'next-intl';
 
 const IMP_IDS = {
@@ -13,17 +13,17 @@ function Footer({ footerData }: { footerData: footer }) {
     const t=useTranslations("ContactUs")
 
     // Build locale-aware URLs similar to header logic, preferring English slugs
-    const getServiceUrl = (category: any) => {
+    const getServiceUrl = (category: category) => {
         if (!category) return '/';
         if (category.locale === 'en') return `/service/${category.slug}`;
-        const enEntry = category.localizations?.find((loc: any) => loc.locale === 'en');
+        const enEntry = category.localizations?.find((loc) => loc.locale === 'en');
         return enEntry ? `/service/${enEntry.slug}` : `/service/${category.slug}`;
     };
 
-    const getEventTypeUrl = (eventType: any) => {
+    const getEventTypeUrl = (eventType: EventTypes) => {
         if (!eventType) return '/';
         if (eventType.locale === 'en') return `/event-types/${eventType.slug}`;
-        const enEntry = eventType.localizations?.find((loc: any) => loc.locale === 'en');
+        const enEntry = eventType.localizations?.find((loc) => loc.locale === 'en');
         return enEntry ? `/event-types/${enEntry.slug}` : `/event-types/${eventType.slug}`;
     };
 
