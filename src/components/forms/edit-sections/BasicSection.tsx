@@ -44,7 +44,7 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
       if (values.websiteLink === "") delete payload.websiteLink
       if (values.price == null || isNaN(values.price)) delete payload.price
       if (values.workingHours == null || isNaN(values.workingHours)) delete payload.workingHours
-      await updateListing(listing.documentId, { data: payload })
+      await updateListing(listing.documentId, { data: payload }, listing.locale)
       toast.success("Basic details updated")
       onSaved?.()
     } catch (e: unknown) {

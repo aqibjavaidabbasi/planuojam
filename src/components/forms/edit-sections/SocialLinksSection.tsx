@@ -82,7 +82,7 @@ export default function SocialLinksSection({
         if (!s.link || !/^https?:\/\//.test(s.link)) throw new Error("Valid URL is required for each social link")
       }
 
-      await updateListing(listing.documentId, { data: { socialLinks: values } })
+      await updateListing(listing.documentId, { data: { socialLinks: values } }, listing.locale)
       toast.success("Social links updated")
       onSaved?.()
     } catch (e: unknown) {
@@ -98,7 +98,7 @@ export default function SocialLinksSection({
   return (
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-2">Social Links</h3>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+      <form onSubmit={handleSubmit(onSubmit)} id="socialLinksForm" className="flex flex-col gap-3">
         <Input
           type="text"
           label={t("sectiontitle")}
@@ -189,7 +189,7 @@ export default function SocialLinksSection({
         </div>
 
         <div className="flex justify-end mt-6">
-          <Button style="primary" disabled={isWorking} type="submit">
+          <Button style="primary" form="socialLinksForm" disabled={isWorking} type="submit">
             {submitting ? t("saving") : t("savechanges")}
           </Button>
         </div>

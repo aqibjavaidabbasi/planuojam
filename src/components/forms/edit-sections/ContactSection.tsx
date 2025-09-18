@@ -32,7 +32,7 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
   const onSubmit = async (values: ContactForm) => {
     setSubmitting(true)
     try {
-      await updateListing(listing.documentId, { data: { contact: values } })
+      await updateListing(listing.documentId, { data: { contact: values } }, listing.locale)
       toast.success("Contact updated")
       onSaved?.()
     } catch (e: unknown) {
@@ -46,7 +46,7 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
   return (
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-2">Contact</h3>
-      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} id="contactForm" className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="col-span-2">
           <Input
             type="email"
@@ -65,7 +65,7 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
           {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
         </div>
         <div className="col-span-3 flex justify-end mt-2">
-          <Button style="primary" type="submit" disabled={submitting}>
+          <Button style="primary" type="submit" form="contactForm" disabled={submitting}>
             {submitting ? t("saving") : t("savechanges")}
           </Button>
         </div>

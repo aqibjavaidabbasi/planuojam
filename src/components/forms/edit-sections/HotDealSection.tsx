@@ -62,7 +62,7 @@ export default function HotDealSection({ listing, onSaved }: { listing: ListingI
     }
     setSubmitting(true)
     try {
-      await updateListing(listing.documentId, { data: { hotDeal: values } })
+      await updateListing(listing.documentId, { data: { hotDeal: values } }, listing.locale)
       toast.success("Hot Deal updated")
       onSaved?.()
     } catch (e: unknown) {
@@ -86,7 +86,7 @@ export default function HotDealSection({ listing, onSaved }: { listing: ListingI
       </div>
 
       {form.enableHotDeal && (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit(onSubmit)} id="hotDealForm" className="flex flex-col gap-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input type="date" label="Start Date" disabled={submitting} {...register("startDate", { required: true })} />
             <Input type="date" label="Last Date" disabled={submitting} {...register("lastDate", { required: true })} />
@@ -113,7 +113,7 @@ export default function HotDealSection({ listing, onSaved }: { listing: ListingI
             )}
           </div>
           <div className="flex justify-end mt-2">
-            <Button style="primary" type="submit" disabled={submitting}>
+            <Button style="primary" type="submit" form="hotDealForm" disabled={submitting}>
               {submitting ? "Saving..." : "Save Changes"}
             </Button>
           </div>

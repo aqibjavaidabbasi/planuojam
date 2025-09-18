@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import Input from "../../custom/Input"
 import TextArea from "../../custom/TextArea"
@@ -37,42 +37,32 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
   const [submitting, setSubmitting] = useState(false)
   const { cities } = useCities()
   const { states } = useStates()
+  
+  const vendorSource = listing.listingItem.find(item => item.__component === "dynamic-blocks.vendor")
 
-  const vendorSource = (Array.isArray((listing.listingItem as unknown)) ? (listing.listingItem as unknown[])[0] : undefined) as unknown
+  // Start with minimal defaults; we'll reset with mapped values once cities/states are available
   const defaultVendor: VendorForm = {
-    about: (vendorSource && typeof (vendorSource as { about?: unknown }).about === "string") ? (vendorSource as { about?: string }).about || "" : "",
-    experienceYears: (vendorSource && typeof (vendorSource as { experienceYears?: unknown }).experienceYears === "number")
-      ? (vendorSource as { experienceYears?: number }).experienceYears
-      : undefined,
-    serviceArea: (vendorSource && Array.isArray((vendorSource as { serviceArea?: unknown }).serviceArea))
-      ? ((vendorSource as { serviceArea?: ServiceArea[] }).serviceArea ?? [])
-      : [],
+    about: vendorSource ? vendorSource.about : "",
+    experienceYears: vendorSource ? vendorSource.experienceYears : undefined,
+    serviceArea: [],
   }
 
-  const venueSource = (Array.isArray((listing.listingItem as unknown)) ? (listing.listingItem as unknown[])[0] : undefined) as unknown
-  const venueLoc = (venueSource && typeof (venueSource as { location?: unknown }).location === "object" && (venueSource as { location?: unknown }).location !== null)
-    ? ((venueSource as { location: Partial<Location> }).location)
-    : {}
+  const venueSource = listing.listingItem.find(item => item.__component === "dynamic-blocks.venue")
+  const venueLoc = (venueSource?.location ?? {}) as Partial<{ address: string; city: string; state: string; latitude: number; longitude: number }>
+  const bookingTypeRaw = venueSource?.bookingDurationType
+  const bookingType: VenueForm["bookingDurationType"] = bookingTypeRaw === "Per Day" || bookingTypeRaw === "Per Hour" ? bookingTypeRaw : ""
   const defaultVenue: VenueForm = {
     location: {
-      address: typeof (venueLoc as { address?: unknown }).address === "string" ? (venueLoc as { address?: string }).address || "" : "",
-      city: typeof (venueLoc as { city?: unknown }).city === "string" ? (venueLoc as { city?: string }).city || "" : "",
-      state: typeof (venueLoc as { state?: unknown }).state === "string" ? (venueLoc as { state?: string }).state || "" : "",
-      latitude: typeof (venueLoc as { latitude?: unknown }).latitude === "string" ? (venueLoc as { latitude?: string }).latitude || "" : "",
-      longitude: typeof (venueLoc as { longitude?: unknown }).longitude === "string" ? (venueLoc as { longitude?: string }).longitude || "" : "",
+      address: venueLoc.address ?? "",
+      city: venueLoc.city ?? "",
+      state: venueLoc.state ?? "",
+      latitude: venueLoc.latitude != null ? String(venueLoc.latitude) : "",
+      longitude: venueLoc.longitude != null ? String(venueLoc.longitude) : "",
     },
-    capacity: (venueSource && typeof (venueSource as { capacity?: unknown }).capacity === "number")
-      ? (venueSource as { capacity?: number }).capacity
-      : undefined,
-    bookingDurationType: (venueSource && typeof (venueSource as { bookingDurationType?: unknown }).bookingDurationType === "string")
-      ? ((venueSource as { bookingDurationType?: VenueForm["bookingDurationType"] }).bookingDurationType || "")
-      : "",
-    bookingDuration: (venueSource && typeof (venueSource as { bookingDuration?: unknown }).bookingDuration === "number")
-      ? (venueSource as { bookingDuration?: number }).bookingDuration
-      : undefined,
-    amneties: (venueSource && Array.isArray((venueSource as { amneties?: unknown }).amneties))
-      ? ((venueSource as { amneties?: { text: string }[] }).amneties ?? [])
-      : [],
+    capacity: venueSource ? venueSource.capacity : undefined,
+    bookingDurationType: bookingType,
+    bookingDuration: venueSource ? venueSource.bookingDuration : undefined,
+    amneties: venueSource?.amneties ?? [],
   }
 
   // Use two separate forms based on type
@@ -110,7 +100,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
           }),
         },
       ]
-      await updateListing(listing.documentId, { data: { listingItem } })
+      await updateListing(listing.documentId, { data: { listingItem } }, listing.locale)
       toast.success("Vendor details updated")
       onSaved?.()
     } catch (e: unknown) {
@@ -176,12 +166,34 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
     }
   }
 
+  // Map backend vendor service areas (Place + numeric lat/lng) to form-friendly values (ids + string lat/lng)
+  useEffect(() => {
+    if (!vendorSource) return
+    const mapped = (vendorSource.serviceArea || []).map((sa) => {
+      const cityName = sa?.city?.name
+      const stateName = sa?.state?.name
+      const cityId = cityName ? (cities.find((c) => c.name === cityName)?.documentId ?? "") : ""
+      const stateId = stateName ? (states.find((s) => s.name === stateName)?.documentId ?? "") : ""
+      return {
+        city: cityId,
+        state: stateId,
+        latitude: sa?.latitude != null ? String(sa.latitude) : "",
+        longitude: sa?.longitude != null ? String(sa.longitude) : "",
+      }
+    })
+    vendorRHF.reset({
+      about: vendorSource.about ?? "",
+      experienceYears: vendorSource.experienceYears ?? undefined,
+      serviceArea: mapped,
+    })
+  }, [vendorSource, cities, states, vendorRHF])
+
    const t=useTranslations("vendorvenueSection")
   return (
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-4">{isVendor ? "Vendor" : "Venue"}{t("details")}</h3>
       {isVendor ? (
-        <form onSubmit={submitVendor(onSubmitVendor)} className="flex flex-col gap-4">
+        <form onSubmit={submitVendor(onSubmitVendor)} id="vendor-form" className="flex flex-col gap-4">
           <TextArea label="About" disabled={submitting} {...vendorRegister("about")} />
           <Input type="number" label="Experience Years" disabled={submitting} {...vendorRegister("experienceYears", { valueAsNumber: true })} />
 
@@ -231,13 +243,13 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
           </div>
 
           <div className="flex justify-end">
-            <Button style="primary" type="submit" disabled={submitting}>
+            <Button style="primary" type="submit" form="vendor-form" disabled={submitting}>
               {submitting ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </form>
       ) : (
-        <form onSubmit={submitVenue(onSubmitVenue)} className="flex flex-col gap-4">
+        <form onSubmit={submitVenue(onSubmitVenue)} id="venue-form" className="flex flex-col gap-4">
           <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
             <div className="col-span-2">
               <Input type="text" label={t("address")} disabled={submitting} {...venueRegister("location.address")} />
@@ -314,7 +326,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
           </div>
 
           <div className="flex justify-end">
-            <Button style="primary" type="submit" disabled={submitting}>
+            <Button style="primary" type="submit" form="venue-form" disabled={submitting}>
               {submitting ? t("saving") : t("savechanges")}
             </Button>
           </div>

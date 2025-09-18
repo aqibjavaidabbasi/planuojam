@@ -619,7 +619,11 @@
     "login": "Login"
   },
   "Search": {
-    "search": "Szukaj tutaj"
+    "search": "Szukaj tutaj",
+    "searchListings": "Szukaj ogłoszeń",
+    "loading": "Ładowanie...",
+    "error": "Coś poszło nie tak",
+    "noResults": "Brak wyników"
   },
   "ContactUs": {
     "contact": "Kontakt",
@@ -647,7 +651,25 @@
     "addportfolioimages": "Dodaj obrazy portfolio",
     "saving": "экономия",
     "saving...": "Zapisywanie...",
-    "saveImages": "zapisz obrazy"
+    "saveImages": "zapisz obrazy",
+    "uploadHint": "Przesyłaj obrazy o rozmiarze do {size} każdy.",
+    "readyToSave": "{count} obraz(y) gotowe do zapisania",
+    "errors": {
+      "noImage": "Proszę przesłać co najmniej jedno zdjęcie"
+    },
+    "toasts": {
+      "saved": "Obrazy zapisane",
+      "saveFailed": "Nie udało się zapisać obrazów",
+      "removed": "Obraz usunięty",
+      "removeFailed": "Nie udało się usunąć obrazu"
+    },
+    "modal": {
+      "deleteTitle": "Usuń obraz",
+      "confirm": "Czy na pewno chcesz usunąć ten obraz? Tego działania nie można cofnąć.",
+      "cancel": "Anuluj",
+      "delete": "Usuń",
+      "deleting": "Usuwanie..."
+    }
   },
   "vendorvenueSection": {
     "details": "Bliższe dane",

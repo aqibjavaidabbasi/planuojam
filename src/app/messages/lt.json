@@ -619,7 +619,11 @@
     "login": "Prisijungti"
   },
   "Search": {
-    "search": "Ieškoti čia"
+    "search": "Ieškoti čia",
+    "searchListings": "Ieškoti įrašų",
+    "loading": "Kraunama...",
+    "error": "Įvyko klaida",
+    "noResults": "Rezultatų nėra"
   },
   "ContactUs": {
     "contact": "Susisiekite",
@@ -645,7 +649,25 @@
   "ImageSection": {
     "addportfolioimages": "Pridėti portfelio vaizdus",
     "saving": "taupymas",
-    "saveImages": "išsaugoti paveikslėlius"
+    "saveImages": "išsaugoti paveikslėlius",
+    "uploadHint": "Įkelkite nuotraukas iki {size} kiekviena.",
+    "readyToSave": "{count} nuotrauka(-os) paruošta(-os) išsaugoti",
+    "errors": {
+      "noImage": "Prašome įkelti bent vieną nuotrauką"
+    },
+    "toasts": {
+      "saved": "Nuotraukos išsaugotos",
+      "saveFailed": "Nepavyko išsaugoti nuotraukų",
+      "removed": "Nuotrauka pašalinta",
+      "removeFailed": "Nepavyko pašalinti nuotraukos"
+    },
+    "modal": {
+      "deleteTitle": "Pašalinti nuotrauką",
+      "confirm": "Ar tikrai norite ištrinti šią nuotrauką? Šio veiksmo anuliuoti negalima.",
+      "cancel": "Atšaukti",
+      "delete": "Ištrinti",
+      "deleting": "Trinama..."
+    }
   },
   "vendorvenueSection": {
     "details": " detales",

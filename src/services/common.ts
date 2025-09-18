@@ -149,6 +149,57 @@ export async function fetchListingsPerEvents(docId: string,locale?:string) {
     return res;
 }
 
+// Lightweight suggestions for header search dropdown
+// - Always query base entries in English (slug source)
+// - Populate localizations to display title in the requested display locale
+// - Only include listings with listingStatus = 'published'
+export async function fetchListingSuggestions(keyword: string, displayLocale?: string, limit: number = 8) {
+    const trimmed = (keyword || '').trim();
+    if (trimmed.length < 3) return [];
+
+    // Limit fields; query in English
+    const additionalParams: Record<string, unknown> = {
+        fields: ['title', 'slug', 'listingStatus'],
+        'pagination[page]': 1,
+        'pagination[pageSize]': Math.max(1, Math.min(limit, 25)),
+        sort: ['updatedAt:desc'],
+        locale: 'en',
+    };
+    const populate = {
+        localizations: {
+            fields: ['title', 'slug', 'locale']
+        }
+    };
+
+    const query = createQuery(populate, additionalParams);
+    const filters = {
+        filters: {
+            listingStatus: { $eq: 'published' },
+            $or: [
+                { title: { $containsi: trimmed } },
+                { description: { $containsi: trimmed } },
+            ],
+        },
+    };
+
+    const res = await fetchAPI('listings', query, filters);
+
+    const out: Array<{ title: string; slug: string }> = Array.isArray(res)
+        ? res.map((item: any) => {
+                const enSlug = item.slug || '';
+                let displayTitle = item.title || '';
+                const locs = item.localizations?.data || [];
+                if (Array.isArray(locs) && displayLocale) {
+                    const match = locs.find((l: any) => l?.attributes?.locale === displayLocale);
+                    if (match?.attributes?.title) displayTitle = match.attributes.title;
+                }
+                return { title: displayTitle, slug: enSlug };
+            })
+            .filter((x) => !!x.slug && !!x.title)
+        : [];
+    return out;
+}
+
 export async function fetchHotDealListings(filter = {}) {
     const populate = {
         listingItem: {

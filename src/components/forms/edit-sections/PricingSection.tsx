@@ -83,7 +83,7 @@ export default function PricingSection({
         }
       }
 
-      await updateListing(listing.documentId, { data: { pricingPackages: values } })
+      await updateListing(listing.documentId, { data: { pricingPackages: values } }, listing.locale)
       toast.success("Pricing updated")
       onSaved?.()
     } catch (e: unknown) {
@@ -101,7 +101,7 @@ export default function PricingSection({
   return (
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-2">Pricing Packages</h3>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} id="pricingForm" className="flex flex-col gap-4">
         <Input type="text" label={t("sectiontitle")} disabled={isWorking} {...form.register("sectionTitle")} />
 
         <div className="flex flex-col gap-4 mt-2">
@@ -308,7 +308,7 @@ export default function PricingSection({
         </div>
 
         <div className="flex justify-end mt-6">
-          <Button style="primary" disabled={isWorking} type="submit">
+          <Button style="primary" form="pricingForm" disabled={isWorking} type="submit">
             {submitting ? t("saving") : t("savechanges")}
           </Button>
         </div>

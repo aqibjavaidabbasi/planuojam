@@ -15,9 +15,22 @@ export async function createListing(data: Record<string, unknown>, locale?: stri
     return res;
 }
 
-export async function updateListing(id: string, data: Record<string, unknown>) {
-    const res = await putAPI(`listings/${id}`, data);
-    return res;
+export async function updateListing(
+    id: string,
+    data: Record<string, unknown>,
+    locale?: string,
+) {
+    const headers = locale
+        ? {
+            'X-Strapi-Locale': locale,
+            'Content-Language': locale,
+            'Accept-Language': locale,
+          }
+        : undefined;
+    const query = locale ? `locale=${encodeURIComponent(locale)}` : undefined;
+
+    const res = await putAPI(`listings/${id}`, data, { headers }, query);
+    return res.data;
 }
 
 export async function deleteListing(id: string) {

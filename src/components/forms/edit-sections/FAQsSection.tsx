@@ -37,7 +37,7 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
 
     setSubmitting(true)
     try {
-      await updateListing(listing.documentId, { data: { FAQs: values } })
+      await updateListing(listing.documentId, { data: { FAQs: values } }, listing.locale)
       toast.success("FAQs updated")
       onSaved?.()
     } catch (e: unknown) {
@@ -50,7 +50,7 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
   return (
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-2">FAQs</h3>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} id="faqsForm" className="flex flex-col gap-4">
         <Input type="text" label={t("sectiontitle")} disabled={submitting} {...register("sectionTitle")} />
 
         <div className="flex flex-col gap-3">
@@ -77,7 +77,7 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
         </div>
 
         <div className="flex justify-end">
-          <Button style="primary" type="submit" disabled={submitting}>
+          <Button style="primary" type="submit" form="faqsForm" disabled={submitting}>
             {submitting ? t("saving") : t("savechanges")}
           </Button>
         </div>

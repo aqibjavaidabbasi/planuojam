@@ -119,8 +119,6 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
         }
         try {
           const res = fetcher ? await fetcher(filters) : await fetchListings(service as 'vendor' | 'venue', filters,locale);
-
-          console.log(res);
           setList(res);
         } catch (err) {
           console.error(err);

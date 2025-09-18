@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import MapboxSearch from './MapboxSearch';
 import MapboxMap, { Location } from './MapboxMap';
 import Select from '../custom/Select';
 import Button from '../custom/Button';
 import { fetchListings } from '@/services/common';
 import { ListingItem } from '@/types/pagesTypes';
 import { useTranslations } from 'next-intl';
+import Input from '../custom/Input';
 
 
 type FilterConfig = {
@@ -26,18 +26,10 @@ interface FiltersAndMapProps {
 }
 
 const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, initialFilterValues, locations, fetcher }) => {
-    const [selectedPlace, setSelectedPlace] = useState<{
-        geometry: {
-            location: {
-                lat: number;
-                lng: number;
-            };
-        };
-        place_name: string;
-    } | null>(null);
     const [tempFilterValues, setTempFilterValues] = useState<Record<string, string>>({});
     const [appliedFilters, setAppliedFilters] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    const [keyword, setKeyword] = useState<string>('');
 
     useEffect(() => {
         if (initialFilterValues) {
@@ -48,18 +40,6 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
         }
     }, [initialFilterValues]);
     
-
-    const onPlaceSelect = (place: {
-        geometry: {
-            location: {
-                lat: number;
-                lng: number;
-            };
-        };
-        place_name: string;
-    } | null) => {
-        setSelectedPlace(place);
-    };
     const handleFilterChange = (name: string, value: string) => {
 
         // pricing filter setup
@@ -108,8 +88,21 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
 
     const handleApply = async () => {
         setIsLoading(true);
-        console.log(appliedFilters)
-        const res = fetcher ? await fetcher(appliedFilters) : await fetchListings(type, appliedFilters);
+        // Compose keyword search with existing filters without breaking previous logic
+        let finalFilters: Record<string, unknown> = { ...appliedFilters };
+        if (keyword && keyword.trim().length > 0) {
+            const keywordClause = {
+                $or: [
+                    { title: { $containsi: keyword.trim() } },
+                    { description: { $containsi: keyword.trim() } }
+                ]
+            };
+            // If there are already filters, combine using $and to preserve all constraints
+            finalFilters = Object.keys(finalFilters).length
+                ? { $and: [finalFilters, keywordClause] }
+                : keywordClause;
+        }
+        const res = fetcher ? await fetcher(finalFilters) : await fetchListings(type, finalFilters);
         setList(res);
         setIsLoading(false);
     };
@@ -118,16 +111,26 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
         setIsLoading(true);
         setTempFilterValues({});
         setAppliedFilters({});
+        setKeyword('');
         const res = fetcher ? await fetcher({}) : await fetchListings(type);
         setList(res);
         setIsLoading(false);
     };
 
     const t=useTranslations("VenueInfo")
+    const tSearch = useTranslations('Search');
     return (
         <div className="lg:max-w-[1440px] mx-auto px-4">
             <div className="mb-4 flex flex-col gap-2.5">
-                <MapboxSearch onPlaceSelect={onPlaceSelect} placeholder={t("searchPlace")} />
+                {/* Keyword search for listings (title/description) */}
+                <div>
+                    <Input
+                        type="search"
+                        placeholder={tSearch('searchListings') || tSearch('search') || 'Search listings'}
+                        value={keyword}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}
+                    />
+                </div>
                 <div className='flex gap-2 items-center justify-center flex-col lg:flex-row'>
                     {filters.map(({ name, options, placeholder }) => (
                         <Select
@@ -147,7 +150,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
                 </div>
             </div>
             <div className='h-[calc(100vh-200px)]'>
-                <MapboxMap selectedPlace={selectedPlace} locations={locations} />
+                <MapboxMap locations={locations} />
             </div>
         </div>
     );

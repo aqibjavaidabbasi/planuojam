@@ -63,9 +63,16 @@ export default function EditListingPage() {
     }
   }, [loading, listing, ownsListing, router, user?.serviceType])
 
-  const handleSaved = () => {
-    // After save, stay on page or navigate; keeping here as refresh
-    router.refresh()
+  const handleSaved = async () => {
+    // After a successful save from any section, refetch latest listing to update child forms' props
+    if (!listingId) return
+    try {
+      const data = await fetchListingBySlug(String(listingId), 'en')
+      if (data) setListing(data as ListingItem)
+    } catch (e) {
+      // noop: Sections already toast on success/failure; avoid interrupting UX here
+      console.error('Failed to refetch listing after save:', e)
+    }
   }
 
   const tabs = [
@@ -80,6 +87,21 @@ export default function EditListingPage() {
   ] as const
   type TabKey = typeof tabs[number]["key"]
   const [activeTab, setActiveTab] = useState<TabKey>("basic")
+
+  function getStatusBadgeClass(s?: string) {
+    switch ((s || '').toLowerCase()) {
+      case 'draft':
+        return 'bg-gray-100 text-gray-800 ring-1 ring-gray-300'
+      case 'pending review':
+        return 'bg-amber-100 text-amber-800 ring-1 ring-amber-300'
+      case 'published':
+        return 'bg-green-100 text-green-800 ring-1 ring-green-300'
+      case 'archived':
+        return 'bg-slate-200 text-slate-700 ring-1 ring-slate-300'
+      default:
+        return 'bg-gray-100 text-gray-800 ring-1 ring-gray-300'
+    }
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -110,8 +132,14 @@ export default function EditListingPage() {
             </div>
           </div>
           <div className="mt-6 space-y-2 text-sm text-gray-600">
-            <p>{t("documentId")}: {typeof listingId === 'string' ? listingId : ''}</p>
-            <p>{t("status")}: {listing?.listingStatus || '-'}</p>
+            <p className="flex items-center gap-2">
+              <span>{t("status")}:</span>
+              <span
+                className={`inline-flex items-center px-2 py-1 rounded-full text-xs capitalize font-medium ${getStatusBadgeClass(listing?.listingStatus)}`}
+              >
+                {listing?.listingStatus}
+              </span>
+            </p>
           </div>
           <div className="mt-6">
             <div className="flex flex-col gap-2">

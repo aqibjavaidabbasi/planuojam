@@ -619,7 +619,11 @@
     "login": "Logi sisse"
   },
   "Search": {
-    "search": "Otsi siit"
+    "search": "Otsi siit",
+    "searchListings": "Otsi kuulutusi",
+    "loading": "Laadimine...",
+    "error": "Midagi läks valesti",
+    "noResults": "Tulemusi ei leitud"
   },
   "ContactUs": {
     "contact": "Võtke ühendust",
@@ -645,7 +649,25 @@
   "ImageSection": {
     "addportfolioimages": "LisaPortfolioImages",
     "saving": "säästmine",
-    "saveImages": "salvesta pilte"
+    "saveImages": "salvesta pilte",
+    "uploadHint": "Laadige üles pildid kuni {size} igaüks.",
+    "readyToSave": "{count} pilti valmis salvestamiseks",
+    "errors": {
+      "noImage": "Palun laadige üles vähemalt üks pilt"
+    },
+    "toasts": {
+      "saved": "Pildid salvestatud",
+      "saveFailed": "Piltide salvestamine ebaõnnestus",
+      "removed": "Pilt eemaldatud",
+      "removeFailed": "Pildi eemaldamine ebaõnnestus"
+    },
+    "modal": {
+      "deleteTitle": "Kustuta pilt",
+      "confirm": "Kas soovite kindlasti selle pildi kustutada? Seda toimingut ei saa tagasi võtta.",
+      "cancel": "Tühista",
+      "delete": "Kustuta",
+      "deleting": "Kustutamine..."
+    }
   },
   "vendorvenueSection": {
     "details": "üksikasjad",
