@@ -71,6 +71,7 @@ function Search() {
                     setNoHitPrefix('');
                 }
             } catch (err) {
+                console.log(err)
                 setError('failed');
             } finally {
                 setLoading(false);
