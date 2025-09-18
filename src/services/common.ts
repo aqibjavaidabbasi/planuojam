@@ -185,12 +185,12 @@ export async function fetchListingSuggestions(keyword: string, displayLocale?: s
     const res = await fetchAPI('listings', query, filters);
 
     const out: Array<{ title: string; slug: string }> = Array.isArray(res)
-        ? res.map((item: any) => {
+        ? res.map((item) => {
                 const enSlug = item.slug || '';
                 let displayTitle = item.title || '';
                 const locs = item.localizations?.data || [];
                 if (Array.isArray(locs) && displayLocale) {
-                    const match = locs.find((l: any) => l?.attributes?.locale === displayLocale);
+                    const match = locs.find((l) => l?.attributes?.locale === displayLocale);
                     if (match?.attributes?.title) displayTitle = match.attributes.title;
                 }
                 return { title: displayTitle, slug: enSlug };
