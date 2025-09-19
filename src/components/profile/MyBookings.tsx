@@ -9,6 +9,7 @@ import { useLocale, useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import Modal from "@/components/custom/Modal";
 import { FiCalendar } from "react-icons/fi";
+import ReviewModal from "@/components/modals/ReviewModal";
 import { RootState } from "@/store";
 import { fetchSiteSettings } from "@/services/siteSettings";
 
@@ -34,6 +35,7 @@ const MyBookings: React.FC = () => {
   const locale = useLocale();
   const [cancelHours, setCancelHours] = useState<number>(24);
   const [statusFilter, setStatusFilter] = useState<BookingStatusFilter>("all");
+  const [reviewModal, setReviewModal] = useState<{ open: boolean; listingId?: string }>({ open: false });
 
   const minDateTime = useMemo(() => {
     const now = new Date();
@@ -186,6 +188,7 @@ const MyBookings: React.FC = () => {
           <option value="confirmed">{t("status.confirmed", { default: "Confirmed" })}</option>
           <option value="cancelled">{t("status.cancelled", { default: "Cancelled" })}</option>
           <option value="rejected">{t("status.rejected", { default: "Rejected" })}</option>
+          <option value="completed">{t("status.completed", { default: "Completed" })}</option>
         </select>
       </div>
 
@@ -211,6 +214,8 @@ const MyBookings: React.FC = () => {
                     ? "bg-yellow-100 text-yellow-800"
                     : status === "cancelled"
                     ? "bg-gray-100 text-gray-800"
+                    : status === "completed"
+                    ? "bg-blue-100 text-blue-800"
                     : "bg-red-100 text-red-800"
                 }`}
               >
@@ -279,10 +284,40 @@ const MyBookings: React.FC = () => {
                       const hasEnded = endMs <= now;
                       const canCancel = !hasEnded && b.bookingStatus !== "cancelled" && (startMs - now) >= cancelHours * 60 * 60 * 1000;
 
-                      if (hasEnded) {
+                      // Show Review only when status is completed
+                      if (b.bookingStatus === "completed") {
                         return (
-                          <Button style="secondary" onClick={() => {}}>
+                          <Button
+                            style="secondary"
+                            onClick={() => setReviewModal({ open: true, listingId: b?.listing?.documentId as string })}
+                          >
                             {t("actions.review", { default: "Review" })}
+                          </Button>
+                        );
+                      }
+
+                      // Allow marking as completed after end time has passed
+                      if (hasEnded && b.bookingStatus !== "cancelled" && b.bookingStatus !== "rejected") {
+                        return (
+                          <Button
+                            style="primary"
+                            onClick={async () => {
+                              try {
+                                await toast.promise(
+                                  updateBooking(b.documentId, { bookingStatus: "completed" }),
+                                  {
+                                    loading: t("toasts.updating", { default: "Updating booking..." }),
+                                    success: t("toasts.updated", { default: "Booking marked as completed." }),
+                                    error: (err) => (typeof err === "string" ? err : err?.message || t("toasts.updateFailed", { default: "Failed to update booking." })),
+                                  }
+                                );
+                                setItems((prev) => prev.map((it) => (it.documentId === b.documentId ? { ...it, bookingStatus: "completed" } : it)));
+                              } catch {
+                                // toast already shown
+                              }
+                            }}
+                          >
+                            {t("actions.markCompleted", { default: "Mark as Completed" })}
                           </Button>
                         );
                       }
@@ -329,6 +364,19 @@ const MyBookings: React.FC = () => {
       >
         <p className="text-center py-2" >{t("confirm.cancel", { default: "Are you sure you want to cancel this booking?" })}</p>
       </Modal>
+
+      {user?.documentId && (
+        <ReviewModal
+          isOpen={reviewModal.open}
+          onClose={() => setReviewModal({ open: false })}
+          listingDocumentId={reviewModal.listingId || ""}
+          userDocumentId={user.documentId}
+          onCreated={() => {
+            // potential place to refresh listing reviews if we show them here
+            setReviewModal({ open: false });
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -8,7 +8,7 @@ export interface BookingPayload {
   userDocumentId: string; // user documentId (no relation)
   startDateTime: string; // ISO string
   endDateTime: string;   // ISO string
-  bookingStatus?: "pending" | "confirmed" | "cancelled" | "rejected";
+  bookingStatus?: "pending" | "confirmed" | "cancelled" | "rejected" | "completed";
 }
 
 // Minimal shape for related listing we render in UI
@@ -24,11 +24,11 @@ export interface BookingItem {
   documentId: string;
   startDateTime: string;
   endDateTime: string;
-  bookingStatus: "pending" | "confirmed" | "cancelled" | "rejected";
+  bookingStatus: "pending" | "confirmed" | "cancelled" | "rejected" | "completed";
   listing?: ListingMinimal;
 }
 
-export type BookingStatusFilter = "pending" | "confirmed" | "cancelled" | "rejected" | "all";
+export type BookingStatusFilter = "pending" | "confirmed" | "cancelled" | "rejected" | "completed" | "all";
 
 export type EnrichedBooking = BookingItem & {
   userInfo: MinimalUserInfo | null;

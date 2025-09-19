@@ -137,6 +137,7 @@ const ManageBookings: React.FC = () => {
           <option value="confirmed">{t("status.confirmed", { default: "Confirmed" })}</option>
           <option value="cancelled">{t("status.cancelled", { default: "Cancelled" })}</option>
           <option value="rejected">{t("status.rejected", { default: "Rejected" })}</option>
+          <option value="completed">{t("status.completed", { default: "Completed" })}</option>
         </select>
       </div>
 
@@ -175,14 +176,17 @@ const ManageBookings: React.FC = () => {
             const status = b.bookingStatus as string;
             const statusChip = (
               <span
-                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${status === "confirmed"
+                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                  status === "confirmed"
                     ? "bg-green-100 text-green-800"
                     : status === "pending"
                       ? "bg-yellow-100 text-yellow-800"
                       : status === "cancelled"
                         ? "bg-gray-100 text-gray-800"
-                        : "bg-red-100 text-red-800"
-                  }`}
+                        : status === "completed"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-red-100 text-red-800"
+                }`}
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
               </span>
@@ -228,16 +232,47 @@ const ManageBookings: React.FC = () => {
                   <div className="ml-4">{statusChip}</div>
                 </div>
 
-                {b.bookingStatus === "pending" && (
-                  <div className="flex items-center gap-2 mt-4">
-                    <Button style="primary" disabled={processingId === b.documentId} onClick={() => onAccept(b)}>
-                      {processingId === b.documentId ? t("actions.saving", { default: "Saving..." }) : t("actions.accept", { default: "Accept" })}
-                    </Button>
-                    <Button style="destructive" disabled={rejectingId === b.documentId} onClick={() => onReject(b)}>
-                      {rejectingId === b.documentId ? t("actions.saving", { default: "Saving..." }) : t("actions.reject", { default: "Reject" })}
-                    </Button>
-                  </div>
-                )}
+                <div className="flex items-center gap-2 mt-4">
+                  {b.bookingStatus === "pending" && (
+                    <>
+                      <Button style="primary" disabled={processingId === b.documentId} onClick={() => onAccept(b)}>
+                        {processingId === b.documentId ? t("actions.saving", { default: "Saving..." }) : t("actions.accept", { default: "Accept" })}
+                      </Button>
+                      <Button style="destructive" disabled={rejectingId === b.documentId} onClick={() => onReject(b)}>
+                        {rejectingId === b.documentId ? t("actions.saving", { default: "Saving..." }) : t("actions.reject", { default: "Reject" })}
+                      </Button>
+                    </>
+                  )}
+                  {/* Provider can mark as completed after end time has passed if not cancelled/rejected/completed */}
+                  {(() => {
+                    const now = Date.now();
+                    const endMs = new Date(b.endDateTime).getTime();
+                    const canMarkCompleted = endMs <= now && !["cancelled", "rejected", "completed"].includes(b.bookingStatus);
+                    if (!canMarkCompleted) return null;
+                    return (
+                      <Button
+                        style="primary"
+                        onClick={async () => {
+                          try {
+                            await toast.promise(
+                              updateBooking(b.documentId, { bookingStatus: "completed" }),
+                              {
+                                loading: t("toasts.updating", { default: "Updating booking..." }),
+                                success: t("toasts.updated", { default: "Booking marked as completed." }),
+                                error: (err) => (typeof err === "string" ? err : err?.message || t("toasts.updateFailed", { default: "Failed to update booking." })),
+                              }
+                            );
+                            setItems((prev) => prev.map((it) => (it.documentId === b.documentId ? { ...it, bookingStatus: "completed" } : it)));
+                          } catch {
+                            // toast already shown
+                          }
+                        }}
+                      >
+                        {t("actions.markCompleted", { default: "Mark as Completed" })}
+                      </Button>
+                    );
+                  })()}
+                </div>
               </li>
             );
           })}

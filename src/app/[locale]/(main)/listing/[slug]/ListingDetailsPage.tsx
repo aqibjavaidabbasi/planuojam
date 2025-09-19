@@ -67,6 +67,8 @@ export default function ListingDetailsPage() {
     renderingContent = listing
   }
 
+  console.log(renderingContent)
+
 
   return (
     <div className="min-h-screen bg-background py-6 md:py-8 lg:py-12 px-4 sm:px-6">
@@ -82,6 +84,15 @@ export default function ListingDetailsPage() {
             hotDeal={renderingContent.hotDeal}
             websiteLink={renderingContent.websiteLink}
             listingDocumentId={renderingContent.documentId}
+            bookingDurationType={(() => {
+              const venue = (renderingContent.listingItem || []).find((i) => i.__component === "dynamic-blocks.venue") as unknown as { bookingDurationType?: string } | undefined;
+              const t = venue?.bookingDurationType;
+              return t === "Per Day" || t === "Per Hour" ? t : undefined;
+            })()}
+            bookingDuration={(() => {
+              const venue = (renderingContent.listingItem || []).find((i) => i.__component === "dynamic-blocks.venue") as unknown as { bookingDuration?: number } | undefined;
+              return typeof venue?.bookingDuration === "number" ? venue?.bookingDuration : undefined;
+            })()}
           />
         </section>
 

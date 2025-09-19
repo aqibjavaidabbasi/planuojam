@@ -27,6 +27,8 @@ interface ListingDetailHeroProps {
     discount: Discount;
   };
   listingDocumentId: string;
+  bookingDurationType?: "Per Day" | "Per Hour";
+  bookingDuration?: number;
 }
 
 function ListingDetailHero({
@@ -38,6 +40,8 @@ function ListingDetailHero({
   hotDeal,
   websiteLink,
   listingDocumentId,
+  bookingDurationType,
+  bookingDuration,
 }: ListingDetailHeroProps) {
   const { siteSettings } = useSiteSettings();
   const t = useTranslations('Listing.Hero');
@@ -162,6 +166,8 @@ function ListingDetailHero({
         setShowModal={setShowBookingModal}
         listingDocumentId={listingDocumentId}
         userDocumentId={user?.documentId || ""}
+        bookingDurationType={bookingDurationType}
+        bookingDuration={bookingDuration}
       />
       <LoginNavigateModal showModal={showLoginModal} setShowModal={setShowLoginModal} />
     </div>

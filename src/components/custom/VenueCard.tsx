@@ -6,10 +6,11 @@ type Amenity = {
   text: string;
 };
 
+type MaybePlace = string | { name?: string } | null | undefined;
 type Location = {
-  address: string;
-  city: string;
-  country: string;
+  address?: string;
+  city?: MaybePlace;
+  country?: MaybePlace;
 };
 
 type VenueItem = {
@@ -24,6 +25,12 @@ type VenueCardProps = {
 
 function VenueCard({ item }: VenueCardProps) {
   const t = useTranslations('Custom.VenueCard')
+  const getName = (val: MaybePlace): string => {
+    if (!val) return "";
+    if (typeof val === "string") return val;
+    if (typeof val === "object" && val && "name" in val) return String(val.name || "");
+    return "";
+  }
   return (
     <div>
       {(item.amneties && item.amneties.length > 0) ||
@@ -43,8 +50,8 @@ function VenueCard({ item }: VenueCardProps) {
           )}
           {item.location && (
             <p className="text-secondary">
-              {t('location')}: {item.location.address}, {item.location.city},{" "}
-              {item.location.country}
+              {t('location')}: {item.location.address}{item.location?.city ? ", " : ""}{getName(item.location?.city)}{" "}
+              {getName(item.location?.country)}
             </p>
           )}
         </div>
