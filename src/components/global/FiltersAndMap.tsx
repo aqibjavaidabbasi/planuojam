@@ -31,6 +31,30 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
     const [isLoading, setIsLoading] = useState(false);
     const [keyword, setKeyword] = useState<string>('');
 
+    // Normalize simple initial filter values into Strapi filter object shape
+    const normalizeInitialFilters = (vals: Record<string, string>): Record<string, unknown> => {
+        const out: Record<string, unknown> = {};
+        Object.entries(vals).forEach(([name, value]) => {
+            const key = name.toLowerCase();
+            if (key.includes('category')) {
+                out.category = { name: { $eq: value } };
+            } else if (key.includes('eventtype')) {
+                out.eventTypes = { eventName: { $eq: value } };
+            } else if (key.includes('price')) {
+                // In case price ever arrives in initial values, mimic existing logic
+                if (value.toLowerCase().includes('without')) {
+                    out.$or = [{ price: { $eq: 0 } }, { price: { $null: true } }];
+                } else {
+                    out.price = { $gt: 0 };
+                }
+            } else {
+                // Fallback: pass as-is (string equality)
+                out[name] = { $eq: value } as unknown;
+            }
+        });
+        return out;
+    };
+
     useEffect(() => {
         if (initialFilterValues) {
             setTempFilterValues(initialFilterValues);
@@ -39,7 +63,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
             });
         }
     }, [initialFilterValues]);
-    
+
     const handleFilterChange = (name: string, value: string) => {
 
         // pricing filter setup
@@ -61,8 +85,8 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
             }
         }
         //category filter setup
-        if(name.toLowerCase().includes('category')){
-            setAppliedFilters(prev=>({
+        if (name.toLowerCase().includes('category')) {
+            setAppliedFilters(prev => ({
                 ...prev,
                 category: {
                     name: {
@@ -72,8 +96,8 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
             }))
         }
         //event type filter setup
-        if(name.toLowerCase().includes('eventtype')){
-            setAppliedFilters(prev=>({
+        if (name.toLowerCase().includes('eventtype')) {
+            setAppliedFilters(prev => ({
                 ...prev,
                 eventTypes: {
                     eventName: {
@@ -106,13 +130,20 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
         setList(res);
         setIsLoading(false);
     };
-    
+
     const handleClear = async () => {
+        let res;
         setIsLoading(true);
-        setTempFilterValues({});
-        setAppliedFilters({});
-        setKeyword('');
-        const res = fetcher ? await fetcher({}) : await fetchListings(type);
+        if (initialFilterValues) {
+            setTempFilterValues(initialFilterValues);
+            const normalized = normalizeInitialFilters(initialFilterValues);
+            setAppliedFilters(normalized as Record<string, unknown>);
+            res = fetcher ? await fetcher(normalized) : await fetchListings(type, normalized);
+        } else {
+            setTempFilterValues({});
+            setAppliedFilters({});
+            res = fetcher ? await fetcher({}) : await fetchListings(type);
+        }
         setList(res);
         setIsLoading(false);
     };

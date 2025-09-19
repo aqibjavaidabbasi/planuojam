@@ -27,8 +27,7 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
     setSubmitting(true)
     try {
       //persist existing images
-      const finalImageArray = [...listing.portfolio.map(img => img.id), ...imageIds]
-      console.log(finalImageArray)
+      const finalImageArray = [...listing.portfolio?.map(img => img.id) ?? [], ...imageIds]
       await updateListing(listing.documentId, { data: { portfolio: finalImageArray } }, listing.locale)
       toast.success(t("toasts.saved"))
       onSaved?.()
@@ -49,7 +48,7 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
     if (!imageToDelete) return
     setDeleting(true)
     try {
-      const remainingIds = listing.portfolio.map(img => img.id).filter(id => id !== imageToDelete.id)
+      const remainingIds = listing.portfolio?.map(img => img.id).filter(id => id !== imageToDelete.id) ?? []
       await updateListing(listing.documentId, { data: { portfolio: remainingIds } }, listing.locale)
       toast.success(t("toasts.removed"))
       setIsConfirmOpen(false)
@@ -64,7 +63,7 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
  
   return (
     <div className="py-4">
-      <p className="text-sm text-gray-600 mb-2">{t("uploadHint", { size: "800KB" })}</p>
+      <p className="text-sm text-gray-600 mb-2">{t("uploadHint", { size: "20MB" })}</p>
       <div className="flex gap-2 items-center ">
         {listing.portfolio?.map((image, id) => {
           const imagePath = getCompleteImageUrl(image.url);

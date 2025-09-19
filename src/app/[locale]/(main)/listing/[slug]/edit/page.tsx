@@ -10,12 +10,13 @@ import Button from "@/components/custom/Button"
 import { IoMdArrowRoundBack } from "react-icons/io"
 import { useTranslations } from "next-intl"
 import { fetchListingBySlug } from "@/services/listing"
+import { RootState } from "@/store"
 
 export default function EditListingPage() {
   const router = useRouter()
   const params = useParams<{ slug: string }>()
   const listingId = params?.slug
-  const { user } = useAppSelector((state) => state.auth)
+  const { user } = useAppSelector((state: RootState) => state.auth)
   const t = useTranslations("Listing.Edit")
   const tCommon = useTranslations("Common")
 

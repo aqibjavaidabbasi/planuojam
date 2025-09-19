@@ -95,8 +95,9 @@ export default function PricingSection({
   }
 
   const isWorking = submitting
-  const plans = form.getValues("plans") || []
-  const addons = form.getValues("optionalAddons") || []
+  // Subscribe to changes so UI re-renders when items are added/removed/edited
+  const plans = form.watch("plans") || []
+  const addons = form.watch("optionalAddons") || []
   const t=useTranslations("pricingSection")
   return (
     <div className="py-4">

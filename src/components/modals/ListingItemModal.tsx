@@ -41,6 +41,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const t = useTranslations('Modals.ListingItem')
+  const tImage = useTranslations('ImageSection')
   const locale = useLocale()
 
   const {
@@ -747,6 +748,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           {/* images */}
           <div className="flex flex-col gap-2 border-b-2 border-t-2 border-primary/20 py-4">
             <h3 className="text-lg font-semibold mb-2">{t('portfolio.title')} </h3>
+            <p className="text-sm text-gray-600">{tImage('uploadHint', { size: '20MB' })}</p>
             <ImageUploader setImageIds={setImageIds} disabled={isWorking} />
             {imageIds.length > 0 && <p className="text-gray-500 font-medium text-sm" >{t('portfolio.imageUploaded')} </p> }
           </div>

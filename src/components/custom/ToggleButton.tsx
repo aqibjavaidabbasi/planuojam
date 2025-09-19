@@ -43,6 +43,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
 
   return (
     <button
+      type="button"
       onClick={toggle}
       disabled={disabled}
       className={`relative inline-flex items-center h-8 w-16 rounded-full transition-colors duration-300

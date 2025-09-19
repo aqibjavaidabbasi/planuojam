@@ -204,7 +204,7 @@
         "usernameUpdateFailed": "Failed to update username",
         "updatingPassword": "Updating password...",
         "passwordUpdated": "Password updated successfully",
-        "passwordUpdateFailed": "Failed to update password"
+        "passwordUpdateFailed": "Invalid credentials, Please try again later!"
       },
       "password": {
         "updateTitle": "Update Password",
@@ -650,7 +650,7 @@
     "addportfolioimages": "Add  Portfolio Images",
     "saving": "Saving",
     "saveImages": "Save  Images",
-    "uploadHint": "Please upload images up to {size} each.",
+    "uploadHint": "Maximum file size: {size}",
     "readyToSave": "{count} image(s) ready to save",
     "errors": {
       "noImage": "Please upload at least one image"
@@ -681,7 +681,7 @@
     "amenities": "Amenities",
     "saving": "Saving",
     "savechanges": "Save  Changes",
-    "adamenity": "Adamenity",
+    "adamenity": "Add amenity",
     "fetchcoordinates": "Fetch Coordinates",
     "address": "Address",
     "remove": "Remove",

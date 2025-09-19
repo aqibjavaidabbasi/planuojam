@@ -12,6 +12,7 @@ import type { ListingItem } from "@/types/pagesTypes"
 import { useTranslations } from "next-intl"
 
 type SocialLink = {
+  id?: number
   platform:
   | "facebook"
   | "linkedin"
@@ -55,6 +56,7 @@ export default function SocialLinksSection({
     setValue,
     getValues,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<SocialLinksForm>({
     defaultValues: {
@@ -62,6 +64,9 @@ export default function SocialLinksSection({
       socialLink: initialSocialLinks,
     },
   })
+
+  // Subscribe to changes so UI re-renders when items are added/removed/edited
+  const socialLinks = watch("socialLink")
 
   const addSocialLink = (item: SocialLink) => {
     const current = getValues("socialLink") || []
@@ -82,7 +87,22 @@ export default function SocialLinksSection({
         if (!s.link || !/^https?:\/\//.test(s.link)) throw new Error("Valid URL is required for each social link")
       }
 
-      await updateListing(listing.documentId, { data: { socialLinks: values } }, listing.locale)
+      // Build a clean payload for Strapi: only include allowed fields
+      const cleanSocialLinks = (values.socialLink || []).map((s) => {
+        const out: { platform: SocialLink["platform"]; link: string; visible?: boolean } = {
+          platform: s.platform,
+          link: s.link,
+        }
+        if (typeof s.visible === 'boolean') out.visible = s.visible
+        return out
+      })
+
+      const payload = {
+        optionalSectionTitle: values.optionalSectionTitle || "",
+        socialLink: cleanSocialLinks,
+      }
+
+      await updateListing(listing.documentId, { data: { socialLinks: payload } }, listing.locale)
       toast.success("Social links updated")
       onSaved?.()
     } catch (e: unknown) {
@@ -106,7 +126,7 @@ export default function SocialLinksSection({
           {...register("optionalSectionTitle")}
         />
         <div className="flex flex-col gap-3 mt-2">
-          {(getValues("socialLink") || []).map((s, idx) => (
+          {(socialLinks || []).map((s, idx) => (
             <div key={idx} className="grid grid-cols-1 md:grid-cols-8 gap-3 items-end">
               <div className="col-span-3">
                 <Select
@@ -114,7 +134,7 @@ export default function SocialLinksSection({
                   disabled={isWorking}
                   value={s.platform}
                   onChange={(e) => {
-                    const list = [...(getValues("socialLink") || [])]
+                    const list = [...(socialLinks || [])]
                     list[idx] = { ...list[idx], platform: e.target.value as SocialLink["platform"] }
                     setValue("socialLink", list, { shouldDirty: true })
                   }}
@@ -140,7 +160,7 @@ export default function SocialLinksSection({
                   disabled={isWorking}
                   value={s.link}
                   onChange={(e) => {
-                    const list = [...(getValues("socialLink") || [])]
+                    const list = [...(socialLinks || [])]
                     list[idx] = { ...list[idx], link: e.target.value }
                     setValue("socialLink", list, { shouldDirty: true })
                   }}
@@ -153,7 +173,7 @@ export default function SocialLinksSection({
                   disabled={isWorking}
                   value={String(s.visible ?? true)}
                   onChange={(e) => {
-                    const list = [...(getValues("socialLink") || [])]
+                    const list = [...(socialLinks || [])]
                     list[idx] = { ...list[idx], visible: e.target.value === "true" }
                     setValue("socialLink", list, { shouldDirty: true })
                   }}

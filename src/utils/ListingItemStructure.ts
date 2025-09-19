@@ -19,7 +19,14 @@ export const LISTING_ITEM_POP_STRUCTURE = {
                 }
             },
             'dynamic-blocks.venue': {
-                populate: '*'
+                populate: {
+                    location: {
+                        populate: '*'
+                    },
+                    amneties: {
+                        populate: '*'
+                    }
+                }
             }
         }
     },

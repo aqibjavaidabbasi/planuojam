@@ -204,7 +204,7 @@
         "usernameUpdateFailed": "Kasutajanime uuendamine ebaõnnestus",
         "updatingPassword": "Parooli uuendamine...",
         "passwordUpdated": "Parool uuendatud",
-        "passwordUpdateFailed": "Parooli uuendamine ebaõnnestus"
+        "passwordUpdateFailed": "Kehtetud volitused, palun proovige hiljem uuesti!"
       },
       "password": {
         "updateTitle": "Uuenda parooli",
@@ -650,7 +650,7 @@
     "addportfolioimages": "LisaPortfolioImages",
     "saving": "säästmine",
     "saveImages": "salvesta pilte",
-    "uploadHint": "Laadige üles pildid kuni {size} igaüks.",
+    "uploadHint": "Laadige üles pildid kuni {size}",
     "readyToSave": "{count} pilti valmis salvestamiseks",
     "errors": {
       "noImage": "Palun laadige üles vähemalt üks pilt"
@@ -682,7 +682,7 @@
     "saving": "säästmine",
     "savechanges": " salvesta muudatused",
     "fetchcoordinates": "tooge koordinaadid",
-    "adamenity": "järjekindlus",
+    "adamenity": "Lisage mugavus",
     "address": "aadress",
     "remove": "eemaldada",
     "citylabel": "linnamärk",

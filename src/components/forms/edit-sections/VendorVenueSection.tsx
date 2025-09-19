@@ -48,14 +48,17 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
   }
 
   const venueSource = listing.listingItem.find(item => item.__component === "dynamic-blocks.venue")
-  const venueLoc = (venueSource?.location ?? {}) as Partial<{ address: string; city: string; state: string; latitude: number; longitude: number }>
+
+  const venueLoc = (venueSource?.location ?? {}) as Partial<{ address: string; city: {documentId: string}; state: {documentId: string}; latitude: number; longitude: number }>
+
   const bookingTypeRaw = venueSource?.bookingDurationType
   const bookingType: VenueForm["bookingDurationType"] = bookingTypeRaw === "Per Day" || bookingTypeRaw === "Per Hour" ? bookingTypeRaw : ""
+
   const defaultVenue: VenueForm = {
     location: {
       address: venueLoc.address ?? "",
-      city: venueLoc.city ?? "",
-      state: venueLoc.state ?? "",
+      city: venueLoc.city?.documentId ?? "",
+      state: venueLoc.state?.documentId ?? "",
       latitude: venueLoc.latitude != null ? String(venueLoc.latitude) : "",
       longitude: venueLoc.longitude != null ? String(venueLoc.longitude) : "",
     },
@@ -64,6 +67,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
     bookingDuration: venueSource ? venueSource.bookingDuration : undefined,
     amneties: venueSource?.amneties ?? [],
   }
+
 
   // Use two separate forms based on type
   const vendorRHF = useForm<VendorForm>({ defaultValues: defaultVendor })
@@ -114,24 +118,77 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
   const onSubmitVenue = async (values: VenueForm) => {
     setSubmitting(true)
     try {
+      type RelationUpdate = { connect?: string[]; set?: string[]; disconnect?: string[] }
       type VenuePayload = {
         __component: "dynamic-blocks.venue"
-        location?: Location
+        location?: {
+          address?: string
+          latitude?: string
+          longitude?: string
+          city?: RelationUpdate
+          state?: RelationUpdate
+        }
         capacity?: number
         bookingDurationType?: VenueForm["bookingDurationType"]
         bookingDuration?: number
         amneties?: { text: string }[]
       }
-      const next: VenuePayload = {
-        __component: "dynamic-blocks.venue",
+
+      const next: VenuePayload = { __component: "dynamic-blocks.venue" }
+
+      // Build location safely and only include relation updates that are valid
+      if (values.location) {
+        const loc: VenuePayload["location"] = {}
+        if (values.location.address != null) loc.address = values.location.address
+        if (values.location.latitude != null) loc.latitude = values.location.latitude
+        if (values.location.longitude != null) loc.longitude = values.location.longitude
+
+        // Determine if city/state were modified by the user
+        const dirty = venueRHF.formState.dirtyFields
+        const cityDirty = !!dirty?.location?.city
+        const stateDirty = !!dirty?.location?.state
+
+        // City relation update
+        const cityId = values.location.city?.trim() || ""
+        if (cityId) {
+          loc.city = { connect: [cityId] }
+        } else if (cityDirty) {
+          // Field cleared by user -> nullify relation
+          loc.city = { set: [] }
+        }
+
+        // State relation update
+        const stateId = values.location.state?.trim() || ""
+        if (stateId) {
+          loc.state = { connect: [stateId] }
+        } else if (stateDirty) {
+          // Field cleared by user -> nullify relation
+          loc.state = { set: [] }
+        }
+
+        if (Object.keys(loc).length) next.location = loc
       }
-      if (values.location) next.location = { ...values.location }
       if (values.capacity) next.capacity = values.capacity
       if (values.bookingDurationType) next.bookingDurationType = values.bookingDurationType
       if (values.bookingDuration) next.bookingDuration = values.bookingDuration
-      if (values.amneties && values.amneties.length > 0) next.amneties = values.amneties
+      // Handle amneties (repeatable component with required text)
+      if (Array.isArray(values.amneties)) {
+        const cleaned = values.amneties
+          .map((a) => ({ text: (a?.text ?? "").trim() }))
+          .filter((a) => a.text.length > 0)
+        if (cleaned.length > 0) {
+          next.amneties = cleaned
+        } else {
+          // If user modified amenities and removed them all, explicitly clear
+          const dirty = venueRHF.formState.dirtyFields
+          const amnetiesDirty = !!dirty?.amneties
+          if (amnetiesDirty) {
+            next.amneties = []
+          }
+        }
+      }
 
-      await updateListing(listing.documentId, { data: { listingItem: [next] } })
+      await updateListing(listing.documentId, { data: { listingItem: [next] } }, listing.locale)
       toast.success("Venue details updated")
       onSaved?.()
     } catch (e: unknown) {
@@ -187,6 +244,40 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
       serviceArea: mapped,
     })
   }, [vendorSource, cities, states, vendorRHF])
+
+  // Helper to safely extract a documentId (as string) from various possible shapes without using `any`
+  const getDocumentId = (val: unknown): string => {
+    if (typeof val === 'string') return val
+    if (val && typeof val === 'object') {
+      const maybe = val as { documentId?: unknown }
+      if (typeof maybe.documentId === 'string') return maybe.documentId
+    }
+    return ""
+  }
+
+  // Map backend venue location (names + numeric lat/lng) to form-friendly values (documentIds + string lat/lng)
+  useEffect(() => {
+    if (!venueSource) return
+    // Prefer documentId from populated relations if present; else fallback to whatever is stored on venueLoc
+    const rawVenueCity = (venueSource.location as { city?: unknown } | undefined)?.city
+    const rawVenueState = (venueSource.location as { state?: unknown } | undefined)?.state
+    const cityId = getDocumentId(rawVenueCity) || getDocumentId(venueLoc.city)
+    const stateId = getDocumentId(rawVenueState) || getDocumentId(venueLoc.state)
+
+    venueRHF.reset({
+      location: {
+        address: venueLoc.address ?? "",
+        city: cityId,
+        state: stateId,
+        latitude: venueLoc.latitude != null ? String(venueLoc.latitude) : "",
+        longitude: venueLoc.longitude != null ? String(venueLoc.longitude) : "",
+      },
+      capacity: venueSource.capacity ?? undefined,
+      bookingDurationType: bookingType,
+      bookingDuration: venueSource.bookingDuration ?? undefined,
+      amneties: venueSource.amneties ?? [],
+    })
+  }, [venueSource, venueLoc.address, venueLoc.city, venueLoc.state, venueLoc.latitude, venueLoc.longitude, bookingType, venueRHF])
 
    const t=useTranslations("vendorvenueSection")
   return (

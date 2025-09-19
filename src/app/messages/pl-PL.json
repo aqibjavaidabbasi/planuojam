@@ -204,7 +204,7 @@
         "usernameUpdateFailed": "Nie udało się zaktualizować nazwy użytkownika",
         "updatingPassword": "Aktualizowanie hasła...",
         "passwordUpdated": "Hasło zaktualizowane",
-        "passwordUpdateFailed": "Nie udało się zaktualizować hasła"
+        "passwordUpdateFailed": "Nieprawidłowe dane uwierzytelniające. Spróbuj ponownie później!"
       },
       "password": {
         "updateTitle": "Zmień hasło",
@@ -652,7 +652,7 @@
     "saving": "экономия",
     "saving...": "Zapisywanie...",
     "saveImages": "zapisz obrazy",
-    "uploadHint": "Przesyłaj obrazy o rozmiarze do {size} każdy.",
+    "uploadHint": "Przesyłaj obrazy o rozmiarze do {size}",
     "readyToSave": "{count} obraz(y) gotowe do zapisania",
     "errors": {
       "noImage": "Proszę przesłać co najmniej jedno zdjęcie"
@@ -684,7 +684,7 @@
     "saving": "экономия",
     "saving...": "Zapisywanie...",
     "savechanges": "zapisuje zmiany",
-    "adamenity": "bezkompromisowość",
+    "adamenity": "Dodaj udogodnienie",
     "fetchcoordinates": "pobierz współrzędne",
     "address": "adres",
     "remove": "usunąć",

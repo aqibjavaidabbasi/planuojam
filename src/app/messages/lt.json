@@ -508,7 +508,7 @@
         "usernameUpdateFailed": "Nepavyko atnaujinti vartotojo vardo",
         "updatingPassword": "Atnaujinamas slaptažodis...",
         "passwordUpdated": "Slaptažodis sėkmingai atnaujintas",
-        "passwordUpdateFailed": "Nepavyko atnaujinti slaptažodžio"
+        "passwordUpdateFailed": "Neteisingi prisijungimo duomenys, bandykite dar kartą vėliau!"
       },
       "password": {
         "updateTitle": "Atnaujinti slaptažodį",
@@ -650,7 +650,7 @@
     "addportfolioimages": "Pridėti portfelio vaizdus",
     "saving": "taupymas",
     "saveImages": "išsaugoti paveikslėlius",
-    "uploadHint": "Įkelkite nuotraukas iki {size} kiekviena.",
+    "uploadHint": "Įkelkite nuotraukas iki {size}",
     "readyToSave": "{count} nuotrauka(-os) paruošta(-os) išsaugoti",
     "errors": {
       "noImage": "Prašome įkelti bent vieną nuotrauką"
@@ -682,7 +682,7 @@
     "saving": "taupymas",
     "savechanges": "išsaugoti pakeitimus",
     "fetchcoordinates": "gauti koordinates",
-    "adamenity": "paklusnumas",
+    "adamenity": "Pridėti patogumą",
     "address": "adresu",
     "remove": "pašalinti",
     "citylabel": "miesto ženklas",
