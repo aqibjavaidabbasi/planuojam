@@ -255,6 +255,29 @@
       "propertyLabel": "Kinnisvara:"
     }
   },
+  "Reviews": {
+    "Modal": {
+      "title": "Kirjuta arvustus",
+      "fields": {
+        "rating": "Hinnang",
+        "review": "Sinu arvustus"
+      },
+      "errors": {
+        "invalidRating": "Palun vali hinnang vahemikus 1 kuni 5.",
+        "emptyBody": "Palun kirjuta oma arvustus."
+      },
+      "toasts": {
+        "creating": "Arvustuse saatmine...",
+        "created": "Arvustus on esitatud.",
+        "failed": "Arvustuse esitamine ebaõnnestus."
+      },
+      "actions": {
+        "cancel": "Tühista",
+        "submitting": "Esitamine...",
+        "submit": "Esita"
+      }
+    }
+  },
   "Vendors": {
     "filters": {
       "chooseVendor": "Vali pakkuja",
@@ -775,7 +798,8 @@
         "accept": "Kas oled kindel, et soovid selle broneeringu kinnitada? Kinnita ainult juhul, kui saad seda hallata.",
         "reject": "Kas oled kindel, et soovid selle broneeringu tagasi lükata (tühistada)?",
         "cancelTitle": "Kas tühistada see broneering?",
-        "cancel": "Kas oled kindel, et soovid selle broneeringu tühistada?"
+        "cancel": "Kas oled kindel, et soovid selle broneeringu tühistada?",
+        "markCompleted": "Kas märgida see broneering lõpetatuks?"
       },
       "actions": {
         "saving": "Salvestamine...",
@@ -785,7 +809,8 @@
         "delete": "Kustuta",
         "review": "Arvustus",
         "accept": "Kinnita",
-        "reject": "Lükka tagasi"
+        "reject": "Lükka tagasi",
+        "markCompleted": "Märgi lõpetatuks"
       },
       "filters": {
         "status": "Filtreeri oleku järgi",
@@ -795,14 +820,16 @@
         "pending": "Ootel",
         "confirmed": "Kinnitatud",
         "cancelled": "Tühistatud",
-        "rejected": "Tagasi lükatud"
+        "rejected": "Tagasi lükatud",
+        "completed": "Lõpetatud"
       },
       "stats": {
         "total": "Kokku",
         "pending": "Ootel",
         "confirmed": "Kinnitatud",
         "cancelled": "Tühistatud",
-        "rejected": "Tagasi lükatud"
+        "rejected": "Tagasi lükatud",
+        "completed": "Lõpetatud"
       }
     }
   }

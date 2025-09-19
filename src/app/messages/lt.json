@@ -475,6 +475,29 @@
       }
     }
   },
+  "Reviews": {
+    "Modal": {
+      "title": "Parašyti atsiliepimą",
+      "fields": {
+        "rating": "Įvertinimas",
+        "review": "Jūsų atsiliepimas"
+      },
+      "errors": {
+        "invalidRating": "Pasirinkite įvertinimą nuo 1 iki 5.",
+        "emptyBody": "Prašome parašyti savo atsiliepimą."
+      },
+      "toasts": {
+        "creating": "Siunčiamas atsiliepimas...",
+        "created": "Atsiliepimas pateiktas.",
+        "failed": "Nepavyko pateikti atsiliepimo."
+      },
+      "actions": {
+        "cancel": "Atšaukti",
+        "submitting": "Pateikiama...",
+        "submit": "Pateikti"
+      }
+    }
+  },
   "Profile": {
     "loginPrompt": "Norėdami peržiūrėti savo profilį, prisijunkite. Peradresuojama...",
     "tabs": {
@@ -774,7 +797,8 @@
         "accept": "Ar tikrai norite patvirtinti šį užsakymą? Patvirtinkite tik tuo atveju, jei galite jį valdyti.",
         "reject": "Ar tikrai norite atmesti (atšaukti) šį užsakymą?",
         "cancelTitle": "Atšaukti šį užsakymą?",
-        "cancel": "Ar tikrai norite atšaukti šį užsakymą?"
+        "cancel": "Ar tikrai norite atšaukti šį užsakymą?",
+        "markCompleted": "Pažymėti šį užsakymą kaip užbaigtą?"
       },
       "actions": {
         "saving": "Saugoma...",
@@ -784,7 +808,8 @@
         "delete": "Pašalinti",
         "review": "Atsiliepimas",
         "accept": "Patvirtinti",
-        "reject": "Atmesti"
+        "reject": "Atmesti",
+        "markCompleted": "Pažymėti kaip užbaigtą"
       },
       "filters": {
         "status": "Filtruoti pagal būseną",
@@ -794,14 +819,16 @@
         "pending": "Laukiama",
         "confirmed": "Patvirtinta",
         "cancelled": "Atšaukta",
-        "rejected": "Atmesta"
+        "rejected": "Atmesta",
+        "completed": "Užbaigta"
       },
       "stats": {
         "total": "Iš viso",
         "pending": "Laukiama",
         "confirmed": "Patvirtinta",
         "cancelled": "Atšaukta",
-        "rejected": "Atmesta"
+        "rejected": "Atmesta",
+        "completed": "Užbaigta"
       }
     }
   }

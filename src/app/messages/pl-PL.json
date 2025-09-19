@@ -255,6 +255,29 @@
       "propertyLabel": "Nieruchomość:"
     }
   },
+  "Reviews": {
+    "Modal": {
+      "title": "Napisz opinię",
+      "fields": {
+        "rating": "Ocena",
+        "review": "Twoja opinia"
+      },
+      "errors": {
+        "invalidRating": "Wybierz ocenę od 1 do 5.",
+        "emptyBody": "Proszę napisać opinię."
+      },
+      "toasts": {
+        "creating": "Wysyłanie opinii...",
+        "created": "Opinia została przesłana.",
+        "failed": "Nie udało się przesłać opinii."
+      },
+      "actions": {
+        "cancel": "Anuluj",
+        "submitting": "Wysyłanie...",
+        "submit": "Prześlij"
+      }
+    }
+  },
   "Vendors": {
     "filters": {
       "chooseVendor": "Wybierz dostawcę",
@@ -781,7 +804,8 @@
         "accept": "Czy na pewno chcesz zaakceptować tę rezerwację? Akceptuj tylko, jeśli możesz ją obsłużyć.",
         "reject": "Czy na pewno chcesz odrzucić (anulować) tę rezerwację?",
         "cancelTitle": "Anulować tę rezerwację?",
-        "cancel": "Czy na pewno chcesz anulować tę rezerwację?"
+        "cancel": "Czy na pewno chcesz anulować tę rezerwację?",
+        "markCompleted": "Oznaczyć tę rezerwację jako zakończoną?"
       },
       "actions": {
         "saving": "Zapisywanie...",
@@ -790,6 +814,7 @@
         "reschedule": "Przełóż termin",
         "delete": "Usuń",
         "review": "Oceń",
+        "markCompleted": "Oznacz jako zakończone",
         "accept": "Akceptuj",
         "reject": "Odrzuć"
       },
@@ -801,14 +826,16 @@
         "pending": "Oczekujące",
         "confirmed": "Potwierdzone",
         "cancelled": "Anulowane",
-        "rejected": "Odrzucone"
+        "rejected": "Odrzucone",
+        "completed": "Zakończone"
       },
       "stats": {
         "total": "Razem",
         "pending": "Oczekujące",
         "confirmed": "Potwierdzone",
         "cancelled": "Anulowane",
-        "rejected": "Odrzucone"
+        "rejected": "Odrzucone",
+        "completed": "Zakończone"
       }
     }
   }

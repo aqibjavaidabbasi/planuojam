@@ -578,6 +578,29 @@
       }
     }
   },
+  "Reviews": {
+    "Modal": {
+      "title": "Write a review",
+      "fields": {
+        "rating": "Rating",
+        "review": "Your review"
+      },
+      "errors": {
+        "invalidRating": "Please select a rating between 1 and 5.",
+        "emptyBody": "Please write your review."
+      },
+      "toasts": {
+        "creating": "Submitting review...",
+        "created": "Review submitted.",
+        "failed": "Failed to submit review."
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "submitting": "Submitting...",
+        "submit": "Submit"
+      }
+    }
+  },
   "Dynamic": {
     "ListingCard": {
       "toasts": {
@@ -774,7 +797,8 @@
         "accept": "Are you sure you want to accept this booking? Only accept if you can manage it.",
         "reject": "Are you sure you want to reject (cancel) this booking?",
         "cancelTitle": "Cancel this booking?",
-        "cancel": "Are you sure you want to cancel this booking?"
+        "cancel": "Are you sure you want to cancel this booking?",
+        "markCompleted": "Mark this booking as completed?"
       },
       "actions": {
         "saving": "Saving...",
@@ -783,6 +807,7 @@
         "reschedule": "Reschedule",
         "delete": "Delete",
         "review": "Review",
+        "markCompleted": "Mark as Completed",
         "accept": "Accept",
         "reject": "Reject"
       },
@@ -794,14 +819,16 @@
         "pending": "Pending",
         "confirmed": "Confirmed",
         "cancelled": "Cancelled",
-        "rejected": "Rejected"
+        "rejected": "Rejected",
+        "completed": "Completed"
       },
       "stats": {
         "total": "Total",
         "pending": "Pending",
         "confirmed": "Confirmed",
         "cancelled": "Cancelled",
-        "rejected": "Rejected"
+        "rejected": "Rejected",
+        "completed": "Completed"
       }
     }
   }
