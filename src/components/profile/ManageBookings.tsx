@@ -9,6 +9,7 @@ import NoDataCard from "@/components/custom/NoDataCard";
 import Button from "@/components/custom/Button";
 import Modal from "@/components/custom/Modal";
 import { FiCalendar } from "react-icons/fi";
+import BookingDetailsModal, { BookingDetails } from "@/components/modals/BookingDetailsModal";
 
 function toLocal(dt: string) {
   try {
@@ -27,6 +28,7 @@ const ManageBookings: React.FC = () => {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [confirmModal, setConfirmModal] = useState<{ open: boolean; id?: string; action?: "confirm" | "cancel" }>({ open: false });
+  const [detailsModal, setDetailsModal] = useState<{ open: boolean; booking?: BookingDetails }>({ open: false });
 
   const isProvider = useMemo(() => user?.serviceType !== null, [user?.serviceType]);
   const locale = useLocale();
@@ -233,6 +235,21 @@ const ManageBookings: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2 mt-4">
+                  <Button
+                    style="ghost"
+                    onClick={() => {
+                      const details: BookingDetails = {
+                        bookingStatus: b.bookingStatus,
+                        startDateTime: b.startDateTime,
+                        endDateTime: b.endDateTime,
+                        selectedPlan: b.selectedPlan,
+                        selectedAddons: b.selectedAddons,
+                      };
+                      setDetailsModal({ open: true, booking: details });
+                    }}
+                  >
+                    {t("actions.viewDetails", { default: "View Details" })}
+                  </Button>
                   {b.bookingStatus === "pending" && (
                     <>
                       <Button style="primary" disabled={processingId === b.documentId} onClick={() => onAccept(b)}>
@@ -312,6 +329,11 @@ const ManageBookings: React.FC = () => {
             : t("confirm.reject", { default: "Are you sure you want to reject (cancel) this booking?" })}
         </p>
       </Modal>
+      <BookingDetailsModal
+        isOpen={detailsModal.open}
+        onClose={() => setDetailsModal({ open: false })}
+        booking={detailsModal.booking || {}}
+      />
     </div>
   );
 };

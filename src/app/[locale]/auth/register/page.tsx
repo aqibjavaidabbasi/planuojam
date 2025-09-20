@@ -16,6 +16,7 @@ import toast from "react-hot-toast";
 import { BsCart3 } from "react-icons/bs";
 import { TbTools } from "react-icons/tb";
 import { useTranslations } from "next-intl";
+import SocialAuthButtons from "@/components/auth/SocialAuthButtons";
 
 type FormValues = {
   role: string;
@@ -259,18 +260,11 @@ function RegisterPage() {
             </Button>
           </form>
 
-          {/* <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">
-                Or register with
-              </span>
-            </div>
-          </div> */}
-
-          {/* <GoogleButton label="Continue With Google" /> */}
+          <SocialAuthButtons
+            className="mt-6"
+            onGoogleClick={() => toast("Google register clicked")}
+            onFacebookClick={() => toast("Facebook register clicked")}
+          />
 
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">

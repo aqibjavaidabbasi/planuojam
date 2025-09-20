@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import ReactDOM from "react-dom/client";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import MapInfoWindow from "./MapInfoWindow";
+import { useLocale, useTranslations } from "next-intl";
 
 const LATITUDE = 55.1694;
 const LONGITUDE = 23.8813;
@@ -38,6 +41,8 @@ type MapProps = {
 const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const t = useTranslations('Map.infoWindow');
+  const locale = useLocale();
 
   useEffect(() => {
     if (!mapContainer.current) {
@@ -113,16 +118,36 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
           </svg>
         `;
 
-        // Create popup
-        const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
-          <div class="w-64 p-4">
-            <h3 class="font-semibold text-lg">${location.name}</h3>
-            <p class="text-sm text-gray-600">User: ${location.username}</p>
-            <p class="text-sm text-gray-600">Category: ${location.category.name}</p>
-            <p class="text-sm text-gray-600">Location: ${location.address}</p>
-            <p class="text-sm text-gray-700 mt-1">${location.description}</p>
-          </div>
-        `);
+        // Create popup using React component
+        const popupContainer = document.createElement('div');
+        let root: ReactDOM.Root | null = null;
+        const popup = new mapboxgl.Popup({ offset: 25 })
+          .setDOMContent(popupContainer)
+          .on('open', () => {
+            if (!root) {
+              root = ReactDOM.createRoot(popupContainer);
+              const hrefBase = location?.category?.type === 'venue' ? 'venue' : 'vendor';
+              const href = `/${locale}/${hrefBase}/${location.id}`;
+              root.render(
+                <MapInfoWindow 
+                  selectedLocation={location}
+                  labels={{
+                    user: t('user'),
+                    category: t('category'),
+                    location: t('location'),
+                    view: t('view'),
+                  }}
+                  href={href}
+                />
+              );
+            }
+          })
+          .on('close', () => {
+            if (root) {
+              root.unmount();
+              root = null;
+            }
+          });
 
         // Add marker to map
         if (map.current) {

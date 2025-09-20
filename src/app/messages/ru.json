@@ -51,6 +51,11 @@
       "alreadyHaveAccount": "Уже есть аккаунт?",
       "signInHere": "Войдите здесь"
     },
+    "Social": {
+      "orContinue": "Или продолжить с",
+      "google": "Продолжить с Google",
+      "facebook": "Продолжить с Facebook"
+    },
     "ResetPassword": {
       "title": "Сброс пароля",
       "resetting": "Выполняется сброс пароля...",
@@ -137,7 +142,9 @@
       "valid": "Действительно",
       "reviews": "Отзывы",
       "noReviews": "Отзывов пока нет",
-      "faqs": "Вопросы и ответы"
+      "faqs": "Вопросы и ответы",
+      "location": "Местоположение",
+      "noLocation": "Местоположение недоступно"
     },
     "Edit": {
       "preview": "Предпросмотр объявления",
@@ -162,6 +169,10 @@
       "percentageOffLimited": "Скидка {percent}% — Ограниченное предложение",
       "getTicketCta": "Забронировать",
       "visitWebsite": "Перейти на сайт"
+    },
+    "Calendar": {
+      "availability": "Доступность",
+      "loading": "Загрузка календаря..."
     }
   },
   "Map": {
@@ -174,6 +185,12 @@
       "unknownUser": "Неизвестно",
       "uncategorized": "Без категории",
       "noAddress": "Адрес не указан"
+    },
+    "infoWindow": {
+      "user": "Пользователь",
+      "category": "Категория",
+      "location": "Местоположение",
+      "view": "Просмотр"
     }
   },
   "Vendors": {
@@ -752,6 +769,22 @@
   },
   "Booking": {
     "Modal": {
+      "title": "Создать бронирование",
+      "fields": {
+        "start": "Дата и время начала",
+        "end": "Дата и время окончания",
+        "autoEnd": "Дата и время окончания (авто {duration} {unit})",
+        "plan": "Выбрать план",
+        "addons": "Дополнения"
+      },
+      "placeholders": {
+        "selectPlan": "Выберите план (необязательно)"
+      },
+      "units": {
+        "hours": "час(ов)",
+        "days": "дн."
+      },
+      "defaultPlan": "По умолчанию",
       "errors": {
         "requiredDateTime": "Пожалуйста, выберите дату и время.",
         "futureOnly": "Пожалуйста, выберите дату и время в будущем.",
@@ -766,8 +799,24 @@
       "actions": {
         "cancel": "Отмена",
         "checking": "Проверяем доступность...",
-        "creating": "Создаётся...",
+        "creating": "Создание...",
         "create": "Создать бронирование"
+      }
+    },
+    "DetailsModal": {
+      "title": "Детали бронирования",
+      "labels": {
+        "status": "Статус",
+        "start": "Начало",
+        "end": "Окончание",
+        "plan": "План",
+        "price": "Цена",
+        "features": "Особенности",
+        "addons": "Дополнения",
+        "none": "Нет"
+      },
+      "actions": {
+        "close": "Закрыть"
       }
     },
     "MyBookings": {

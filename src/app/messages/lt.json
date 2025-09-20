@@ -51,6 +51,11 @@
       "alreadyHaveAccount": "Jau turite paskyrą?",
       "signInHere": "Prisijunkite čia"
     },
+    "Social": {
+      "orContinue": "Arba tęskite su",
+      "google": "Tęsti su Google",
+      "facebook": "Tęsti su Facebook"
+    },
     "ResetPassword": {
       "title": "Atkurti slaptažodį",
       "resetting": "Atkuriamas slaptažodis...",
@@ -154,7 +159,9 @@
       "valid": "Galioja",
       "reviews": "Atsiliepimai",
       "noReviews": "Kol kas nėra atsiliepimų",
-      "faqs": "DUK"
+      "faqs": "DUK",
+      "location": "Vieta",
+      "noLocation": "Vieta nenurodyta"
     },
     "Hero": {
       "by": "autorius {username}",
@@ -162,6 +169,10 @@
       "percentageOffLimited": "{percent}% NUOLAIDA - Ribotas laikas",
       "getTicketCta": "Rezervuoti dabar",
       "visitWebsite": "Apsilankyti svetainėje"
+    },
+    "Calendar": {
+      "availability": "Užimtumas",
+      "loading": "Kraunamas kalendorius..."
     }
   },
   "Map": {
@@ -174,6 +185,12 @@
       "unknownUser": "Nežinomas",
       "uncategorized": "Be kategorijos",
       "noAddress": "Adresas nenurodytas"
+    },
+    "infoWindow": {
+      "user": "Vartotojas",
+      "category": "Kategorija",
+      "location": "Vieta",
+      "view": "Peržiūrėti"
     }
   },
   "Vendors": {
@@ -747,6 +764,22 @@
   },
   "Booking": {
     "Modal": {
+      "title": "Sukurti užsakymą",
+      "fields": {
+        "start": "Pradžios data ir laikas",
+        "end": "Pabaigos data ir laikas",
+        "autoEnd": "Pabaigos data ir laikas (auto {duration} {unit})",
+        "plan": "Pasirinkti planą",
+        "addons": "Priedai"
+      },
+      "placeholders": {
+        "selectPlan": "Pasirinkite planą (neprivaloma)"
+      },
+      "units": {
+        "hours": "val.",
+        "days": "d."
+      },
+      "defaultPlan": "Numatytasis",
       "errors": {
         "requiredDateTime": "Prašome pasirinkti datą ir laiką.",
         "futureOnly": "Prašome pasirinkti ateities datą ir laiką.",
@@ -760,15 +793,31 @@
       },
       "actions": {
         "cancel": "Atšaukti",
-        "checking": "Tikrinamas pasiekiamumas...",
+        "checking": "Tikrinamas prieinamumas...",
         "creating": "Kuriama...",
         "create": "Sukurti užsakymą"
+      }
+    },
+    "DetailsModal": {
+      "title": "Užsakymo detalės",
+      "labels": {
+        "status": "Būsena",
+        "start": "Pradžia",
+        "end": "Pabaiga",
+        "plan": "Planas",
+        "price": "Kaina",
+        "features": "Funkcijos",
+        "addons": "Priedai",
+        "none": "Nėra"
+      },
+      "actions": {
+        "close": "Uždaryti"
       }
     },
     "MyBookings": {
       "title": "Mano užsakymai",
       "labels": {
-        "listing": "Įrašas",
+        "listing": "Skelbimas",
         "status": "Būsena",
         "dateTime": "Data/Laikas",
         "start": "Pradžia",

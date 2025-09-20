@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -17,9 +17,14 @@ import SocialIcon from "@/components/global/SocialIcon";
 import ListingReviews from "@/components/custom/ListingReviews";
 import NoDataCard from "@/components/custom/NoDataCard";
 import PricingPlans from "@/components/custom/PricingPlans";
+import BookingModal from "@/components/modals/BookingModal";
+import ListingCalendar from "@/components/custom/ListingCalendar";
+import { useAppSelector } from "@/store/hooks";
 import { useLocale } from "next-intl";
 import { useTranslations } from "next-intl";
 import { fetchListingBySlug } from "@/services/listing";
+import MapboxMap, { Location as MapLocation } from "@/components/global/MapboxMap";
+import geocodeLocations from "@/utils/mapboxLocation";
 
 export default function ListingDetailsPage() {
   const [listing, setListing] = useState<ListingItem | null>(null);
@@ -30,6 +35,10 @@ export default function ListingDetailsPage() {
   const locale = useLocale();
   const t = useTranslations("Listing.Details");
   const tCommon = useTranslations("Common");
+  const [detailLocation, setDetailLocation] = useState<MapLocation | null>(null);
+  const user = useAppSelector((s) => s.auth.user);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [preselectPlanIndex, setPreselectPlanIndex] = useState<number | null>(null);
   
 
   // Fetch listing data
@@ -48,6 +57,73 @@ export default function ListingDetailsPage() {
     loadListing();
   }, [slug, locale,tCommon]);
 
+  
+  const renderingContent = useMemo(() => {
+    if (!listing) return null;
+    if (locale === 'en') return listing;
+    const entry = listing.localizations?.find((loc) => loc.locale === locale);
+    return entry || listing;
+  }, [listing, locale]) as ListingItem;
+
+  // Compute a single map location for this listing
+  useEffect(() => {
+    async function computeLocation() {
+      if (!listing) {
+        setDetailLocation(null);
+        return;
+      }
+      // Prefer localized content for display values
+      const content = renderingContent || listing;
+      try {
+        if (listing.type === "venue") {
+          // Coordinates are taken from the base listing (usually locale-invariant)
+          const venueBlockBase = (listing.listingItem || []).find(
+            (i) => i.__component === "dynamic-blocks.venue"
+          ) as unknown as { location?: { latitude?: number; longitude?: number; address?: string } } | undefined;
+          // Prefer localized address if available
+          const venueBlockLocalized = (content?.listingItem || []).find(
+            (i) => i.__component === "dynamic-blocks.venue"
+          ) as { location?: { address?: string } } | undefined;
+
+          const lat = venueBlockBase?.location?.latitude;
+          const lng = venueBlockBase?.location?.longitude;
+          if (typeof lat === "number" && typeof lng === "number") {
+            setDetailLocation({
+              id: listing.id,
+              name: content.title || "",
+              username: listing.user?.username || "",
+              description: content.description || "",
+              category: { name: content.category?.name || "", type: "venue" },
+              position: { lat, lng },
+              address: venueBlockLocalized?.location?.address || venueBlockBase?.location?.address || "",
+            });
+            return;
+          }
+        } else if (listing.type === "vendor") {
+          // Geocode vendor using localized content for better display/address coherency
+          const res = await geocodeLocations([content as ListingItem]);
+          const first = res?.[0] || null;
+          if (first) {
+            setDetailLocation({
+              ...first,
+              name: content.title || first.name,
+              description: content.description || first.description,
+              category: { name: content.category?.name || first.category?.name || "", type: "vendor" },
+            });
+          } else {
+            setDetailLocation(null);
+          }
+          return;
+        }
+        setDetailLocation(null);
+      } catch (e) {
+        console.error(e);
+        setDetailLocation(null);
+      }
+    }
+    computeLocation();
+  }, [listing, renderingContent]);
+
   if (loading) return <Loader />;
 
   if (error || !listing) {
@@ -57,17 +133,6 @@ export default function ListingDetailsPage() {
       </div>
     );
   }
-
-  let renderingContent;
-  if (listing.locale === 'en') renderingContent = listing;
-  else if (listing.locale !== 'en') {
-    const entry = listing.localizations.find(loc => loc.locale === 'en');
-    renderingContent = entry || listing; // Fallback to original if no 'en' localization
-  }else {
-    renderingContent = listing
-  }
-
-  console.log(renderingContent)
 
 
   return (
@@ -80,19 +145,13 @@ export default function ListingDetailsPage() {
             title={renderingContent.title}
             username={renderingContent.user?.username}
             contact={renderingContent.contact}
+            websiteLink={renderingContent.websiteLink}
             price={renderingContent.price}
             hotDeal={renderingContent.hotDeal}
-            websiteLink={renderingContent.websiteLink}
-            listingDocumentId={renderingContent.documentId}
-            bookingDurationType={(() => {
-              const venue = (renderingContent.listingItem || []).find((i) => i.__component === "dynamic-blocks.venue") as unknown as { bookingDurationType?: string } | undefined;
-              const t = venue?.bookingDurationType;
-              return t === "Per Day" || t === "Per Hour" ? t : undefined;
-            })()}
-            bookingDuration={(() => {
-              const venue = (renderingContent.listingItem || []).find((i) => i.__component === "dynamic-blocks.venue") as unknown as { bookingDuration?: number } | undefined;
-              return typeof venue?.bookingDuration === "number" ? venue?.bookingDuration : undefined;
-            })()}
+            onOpenBooking={(idx) => {
+              setPreselectPlanIndex(typeof idx === 'number' ? idx : null);
+              setShowBookingModal(true);
+            }}
           />
         </section>
 
@@ -116,6 +175,20 @@ export default function ListingDetailsPage() {
               }
           
             </div>
+            {/* location map */}
+            <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
+              <h2 className="text-2xl font-semibold text-primary mb-4">{t("location")}</h2>
+              {detailLocation ? (
+                <div className="h-[45vh] md:h-[50vh] lg:h-[60vh]">
+                  <MapboxMap locations={[detailLocation]} />
+                </div>
+              ) : (
+                <NoDataCard>{t("noLocation")}</NoDataCard>
+              )}
+            </div>
+
+            {/* availability calendar */}
+            <ListingCalendar listingDocumentId={renderingContent.documentId} />
           </div>
 
           {/* right side */}
@@ -169,11 +242,11 @@ export default function ListingDetailsPage() {
                 </h2>
                 <div className="p-3 md:p-4 lg:p-6 bg-primary/10 rounded-lg shadow-sm">
                   <p className="text-secondary">
-                    {renderingContent.hotDeal.discount.discountType
+                    {renderingContent.hotDeal.discount?.discountType
                       .toLowerCase()
                       .includes("flat")
                       ? `${t("flatRate")}: ${renderingContent.hotDeal.discount.flatRatePrice}`
-                      : `${renderingContent.hotDeal.discount.percentage}% ${t("percentOff")}`}
+                      : `${renderingContent.hotDeal.discount?.percentage}% ${t("percentOff")}`}
                   </p>
                   <p className="text-secondary">{renderingContent.hotDeal.dealNote}</p>
                   <p className="text-secondary">
@@ -220,6 +293,11 @@ export default function ListingDetailsPage() {
                   key={index}
                   plan={plan}
                   optionalAddons={renderingContent.pricingPackages?.optionalAddons}
+                  planIndex={index}
+                  onSelectPlan={(i) => {
+                    setPreselectPlanIndex(i);
+                    setShowBookingModal(true);
+                  }}
                 />
               ))}
             </div>
@@ -247,6 +325,21 @@ export default function ListingDetailsPage() {
           </section>
         )}
       </div>
+      {/* Booking Modal at page level */}
+      {renderingContent && (
+        <BookingModal
+          showModal={showBookingModal}
+          setShowModal={setShowBookingModal}
+          listingDocumentId={renderingContent.documentId}
+          userDocumentId={user?.documentId || ""}
+          bookingDurationType={(renderingContent.listingItem?.find((i:any)=>i.__component==='dynamic-blocks.venue') as any)?.bookingDurationType as any}
+          bookingDuration={(renderingContent.listingItem?.find((i:any)=>i.__component==='dynamic-blocks.venue') as any)?.bookingDuration as any}
+          availablePlans={(renderingContent.pricingPackages?.plans || []).map(p => ({ name: p.name, price: p.price, features: (p.featuresList || []).map(f => f.statement) }))}
+          availableAddons={renderingContent.pricingPackages?.optionalAddons || []}
+          basePrice={renderingContent.price}
+          defaultPlanIndex={preselectPlanIndex}
+        />
+      )}
     </div>
   );
 }

@@ -51,6 +51,11 @@
       "alreadyHaveAccount": "Masz już konto?",
       "signInHere": "Zaloguj się tutaj"
     },
+    "Social": {
+      "orContinue": "Lub kontynuuj z",
+      "google": "Kontynuuj z Google",
+      "facebook": "Kontynuuj z Facebook"
+    },
     "ResetPassword": {
       "title": "Resetuj hasło",
       "resetting": "Resetowanie hasła...",
@@ -137,6 +142,12 @@
       "unknownUser": "Nieznany",
       "uncategorized": "Bez kategorii",
       "noAddress": "Brak adresu"
+    },
+    "infoWindow": {
+      "user": "Użytkownik",
+      "category": "Kategoria",
+      "location": "Lokalizacja",
+      "view": "Zobacz"
     }
   },
   "Listing": {
@@ -166,7 +177,9 @@
       "valid": "Ważne",
       "reviews": "Opinie",
       "noReviews": "Brak opinii",
-      "faqs": "FAQ"
+      "faqs": "FAQ",
+      "location": "Lokalizacja",
+      "noLocation": "Brak lokalizacji"
     },
     "Hero": {
       "by": "przez {username}",
@@ -174,6 +187,10 @@
       "percentageOffLimited": "{percent}% TANIEJ - Oferta ograniczona",
       "getTicketCta": "Zarezerwuj teraz",
       "visitWebsite": "Odwiedź stronę"
+    },
+    "Calendar": {
+      "availability": "Dostępność",
+      "loading": "Ładowanie kalendarza..."
     }
   },
   "Profile": {
@@ -754,6 +771,22 @@
   },
   "Booking": {
     "Modal": {
+      "title": "Utwórz rezerwację",
+      "fields": {
+        "start": "Data i godzina rozpoczęcia",
+        "end": "Data i godzina zakończenia",
+        "autoEnd": "Data i godzina zakończenia (auto {duration} {unit})",
+        "plan": "Wybierz plan",
+        "addons": "Dodatki"
+      },
+      "placeholders": {
+        "selectPlan": "Wybierz plan (opcjonalnie)"
+      },
+      "units": {
+        "hours": "godz.",
+        "days": "dni"
+      },
+      "defaultPlan": "Domyślny",
       "errors": {
         "requiredDateTime": "Wybierz datę i godzinę.",
         "futureOnly": "Wybierz datę i godzinę w przyszłości.",
@@ -770,6 +803,22 @@
         "checking": "Sprawdzanie dostępności...",
         "creating": "Tworzenie...",
         "create": "Utwórz rezerwację"
+      }
+    },
+    "DetailsModal": {
+      "title": "Szczegóły rezerwacji",
+      "labels": {
+        "status": "Status",
+        "start": "Początek",
+        "end": "Koniec",
+        "plan": "Plan",
+        "price": "Cena",
+        "features": "Funkcje",
+        "addons": "Dodatki",
+        "none": "Brak"
+      },
+      "actions": {
+        "close": "Zamknij"
       }
     },
     "MyBookings": {

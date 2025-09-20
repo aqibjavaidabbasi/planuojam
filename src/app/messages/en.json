@@ -51,6 +51,11 @@
       "alreadyHaveAccount": "Already have an account?",
       "signInHere": "Sign in here"
     },
+    "Social": {
+      "orContinue": "Or continue with",
+      "google": "Continue with Google",
+      "facebook": "Continue with Facebook"
+    },
     "ResetPassword": {
       "title": "Reset Password",
       "resetting": "Resetting your password...",
@@ -86,6 +91,22 @@
       "tokenRequired": "Confirmation token is required",
       "confirmCta": "Confirm Email",
       "resendCta": "Resend Confirmation Email"
+    },
+    "DetailsModal": {
+      "title": "Booking Details",
+      "labels": {
+        "status": "Status",
+        "start": "Start",
+        "end": "End",
+        "plan": "Plan",
+        "price": "Price",
+        "features": "Features",
+        "addons": "Addons",
+        "none": "None"
+      },
+      "actions": {
+        "close": "Close"
+      }
     }
   },
   "Contact": {
@@ -137,6 +158,12 @@
       "unknownUser": "Unknown",
       "uncategorized": "Uncategorized",
       "noAddress": "No address provided"
+    },
+    "infoWindow": {
+      "user": "User",
+      "category": "Category",
+      "location": "Location",
+      "view": "View"
     }
   },
   "Listing": {
@@ -166,7 +193,9 @@
       "valid": "Valid",
       "reviews": "Reviews",
       "noReviews": "No reviews yet",
-      "faqs": "FAQs"
+      "faqs": "FAQs",
+      "location": "Location",
+      "noLocation": "No location available"
     },
     "Hero": {
       "by": "by {username}",
@@ -174,6 +203,10 @@
       "percentageOffLimited": "{percent}% OFF - Limited Time",
       "getTicketCta": "Book Now",
       "visitWebsite": "Visit Website"
+    },
+    "Calendar": {
+      "availability": "Availability",
+      "loading": "Loading calendar..."
     }
   },
   "Profile": {
@@ -747,6 +780,22 @@
   },
   "Booking": {
     "Modal": {
+      "title": "Create Booking",
+      "fields": {
+        "start": "Start Date & Time",
+        "end": "End Date & Time",
+        "autoEnd": "End Date & Time (auto {duration} {unit})",
+        "plan": "Select Plan",
+        "addons": "Addons"
+      },
+      "placeholders": {
+        "selectPlan": "Select a plan (optional)"
+      },
+      "units": {
+        "hours": "hour(s)",
+        "days": "day(s)"
+      },
+      "defaultPlan": "Default",
       "errors": {
         "requiredDateTime": "Please select a date and time.",
         "futureOnly": "Please choose a future date and time.",
@@ -763,6 +812,22 @@
         "checking": "Checking availability...",
         "creating": "Creating...",
         "create": "Create Booking"
+      }
+    },
+    "DetailsModal": {
+      "title": "Booking Details",
+      "labels": {
+        "status": "Status",
+        "start": "Start",
+        "end": "End",
+        "plan": "Plan",
+        "price": "Price",
+        "features": "Features",
+        "addons": "Addons",
+        "none": "None"
+      },
+      "actions": {
+        "close": "Close"
       }
     },
     "MyBookings": {

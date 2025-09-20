@@ -1,5 +1,5 @@
 import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
-import { createQuery, deleteAPI, fetchAPIWithToken, postAPIWithToken, putAPI } from "./api";
+import { createQuery, deleteAPI, fetchAPI, fetchAPIWithToken, postAPIWithToken, putAPI } from "./api";
 import { getUsersByDocumentIds, MinimalUserInfo } from "./auth";
 
 // Types for booking entities kept minimal to avoid tight coupling
@@ -9,6 +9,50 @@ export interface BookingPayload {
   startDateTime: string; // ISO string
   endDateTime: string;   // ISO string
   bookingStatus?: "pending" | "confirmed" | "cancelled" | "rejected" | "completed";
+  // Optional pricing selections
+  selectedPlan?: {
+    name?: string;
+    price?: number;
+    features?: { statement: string }[];
+  } | null;
+  selectedAddons?: { statement: string; price?: number }[] | null;
+}
+
+// Public version for fetching bookings on listing details page without requiring auth
+export async function getListingBookingsPublic(
+  listingDocumentId: string,
+  startISO?: string,
+  endISO?: string,
+  locale?: string
+): Promise<BookingItem[]> {
+  try {
+    const populate = { listing: { populate: "*" } };
+    let filters: Record<string, unknown> = {
+      filters: {
+        listing: { documentId: { $eq: listingDocumentId } },
+        bookingStatus: { $ne: "cancelled" },
+      },
+    };
+    if (startISO && endISO) {
+      filters = {
+        filters: {
+          $and: [
+            { listing: { documentId: { $eq: listingDocumentId } } },
+            { bookingStatus: { $ne: "cancelled" } },
+            { startDateTime: { $lt: endISO } },
+            { endDateTime: { $gt: startISO } },
+          ],
+        },
+      };
+    }
+    const query = createQuery(populate, locale ? { locale } : {});
+    const res = await fetchAPI("bookings", query, filters);
+    return Array.isArray(res) ? (res as BookingItem[]) : [];
+  } catch (err) {
+    // Surface no data on public errors; page should gracefully render empty calendar
+    console.error(err);
+    return [];
+  }
 }
 
 // Minimal shape for related listing we render in UI
@@ -26,6 +70,13 @@ export interface BookingItem {
   endDateTime: string;
   bookingStatus: "pending" | "confirmed" | "cancelled" | "rejected" | "completed";
   listing?: ListingMinimal;
+  // Optional pricing selections saved with the booking
+  selectedPlan?: {
+    name?: string;
+    price?: number;
+    features?: { statement: string }[];
+  } | null;
+  selectedAddons?: { statement: string; price?: number }[] | null;
 }
 
 export type BookingStatusFilter = "pending" | "confirmed" | "cancelled" | "rejected" | "completed" | "all";

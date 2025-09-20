@@ -180,7 +180,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
                     </div>
                 </div>
             </div>
-            <div className='h-[calc(100vh-200px)]'>
+            <div className='h-[60vh] md:h-[90vh] lg:h-[calc(100vh-150px)]'>
                 <MapboxMap locations={locations} />
             </div>
         </div>

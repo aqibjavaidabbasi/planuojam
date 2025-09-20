@@ -6,7 +6,6 @@ import { MdOutlineEmail, MdOutlineLocalPhone } from "react-icons/md";
 import Button from "../custom/Button";
 import { useTranslations } from "next-intl";
 import { useAppSelector } from "@/store/hooks";
-import BookingModal from "@/components/modals/BookingModal";
 import LoginNavigateModal from "@/components/modals/LoginNavigateModal";
 
 interface ListingDetailHeroProps {
@@ -26,9 +25,7 @@ interface ListingDetailHeroProps {
     lastDate: string;
     discount: Discount;
   };
-  listingDocumentId: string;
-  bookingDurationType?: "Per Day" | "Per Hour";
-  bookingDuration?: number;
+  onOpenBooking: (defaultPlanIndex?: number | null) => void;
 }
 
 function ListingDetailHero({
@@ -39,14 +36,11 @@ function ListingDetailHero({
   price,
   hotDeal,
   websiteLink,
-  listingDocumentId,
-  bookingDurationType,
-  bookingDuration,
+  onOpenBooking,
 }: ListingDetailHeroProps) {
   const { siteSettings } = useSiteSettings();
   const t = useTranslations('Listing.Hero');
   const user = useAppSelector((s) => s.auth.user);
-  const [showBookingModal, setShowBookingModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const startDate = hotDeal && new Date(hotDeal.startDate);
   const lastDate = hotDeal && new Date(hotDeal.lastDate);
@@ -70,7 +64,7 @@ function ListingDetailHero({
             </div>
             <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2">{title}</h1>
             <p className="text-base sm:text-lg text-white text-opacity-80 mb-4">
-              {t('by', {username})}
+              {username}
             </p>
             <p className="text-base sm:text-xl text-white text-opacity-90 mb-6">
               {contact?.address}
@@ -127,7 +121,7 @@ function ListingDetailHero({
                   style="secondary"
                   onClick={() => {
                     if (!user) setShowLoginModal(true);
-                    else setShowBookingModal(true);
+                    else onOpenBooking(null);
                   }}
                 >
                   {t('getTicketCta')}
@@ -161,14 +155,6 @@ function ListingDetailHero({
       </div>
 
       {/* Modals */}
-      <BookingModal
-        showModal={showBookingModal}
-        setShowModal={setShowBookingModal}
-        listingDocumentId={listingDocumentId}
-        userDocumentId={user?.documentId || ""}
-        bookingDurationType={bookingDurationType}
-        bookingDuration={bookingDuration}
-      />
       <LoginNavigateModal showModal={showLoginModal} setShowModal={setShowLoginModal} />
     </div>
   );

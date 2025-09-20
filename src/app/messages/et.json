@@ -51,6 +51,11 @@
       "alreadyHaveAccount": "Kas konto on juba olemas?",
       "signInHere": "Logi sisse siin"
     },
+    "Social": {
+      "orContinue": "Või jätka",
+      "google": "Jätka Google'iga",
+      "facebook": "Jätka Facebookiga"
+    },
     "ResetPassword": {
       "title": "Parooli lähtestamine",
       "resetting": "Parooli lähtestamine...",
@@ -137,6 +142,12 @@
       "unknownUser": "Teadmata",
       "uncategorized": "Kategoriseerimata",
       "noAddress": "Aadressi ei ole"
+    },
+    "infoWindow": {
+      "user": "Kasutaja",
+      "category": "Kategooria",
+      "location": "Asukoht",
+      "view": "Vaata"
     }
   },
   "Listing": {
@@ -166,7 +177,9 @@
       "valid": "Kehtib",
       "reviews": "Arvustused",
       "noReviews": "Arvustusi veel pole",
-      "faqs": "KKK"
+      "faqs": "KKK",
+      "location": "Asukoht",
+      "noLocation": "Asukoht puudub"
     },
     "Hero": {
       "by": "autor {username}",
@@ -174,6 +187,10 @@
       "percentageOffLimited": "{percent}% SOODUSTUST - Piiratud aeg",
       "getTicketCta": "Broneeri nüüd",
       "visitWebsite": "Külasta veebisaiti"
+    },
+    "Calendar": {
+      "availability": "Saadavus",
+      "loading": "Kalendri laadimine..."
     }
   },
   "Profile": {
@@ -748,6 +765,22 @@
   },
   "Booking": {
     "Modal": {
+      "title": "Loo broneering",
+      "fields": {
+        "start": "Alguse kuupäev ja kellaaeg",
+        "end": "Lõpu kuupäev ja kellaaeg",
+        "autoEnd": "Lõpu kuupäev ja kellaaeg (auto {duration} {unit})",
+        "plan": "Vali pakett",
+        "addons": "Lisad"
+      },
+      "placeholders": {
+        "selectPlan": "Vali pakett (valikuline)"
+      },
+      "units": {
+        "hours": "tundi",
+        "days": "päeva"
+      },
+      "defaultPlan": "Vaikimisi",
       "errors": {
         "requiredDateTime": "Palun vali kuupäev ja kellaaeg.",
         "futureOnly": "Palun vali tulevikus olev kuupäev ja kellaaeg.",
@@ -764,6 +797,22 @@
         "checking": "Kontrollime saadavust...",
         "creating": "Luuakse...",
         "create": "Loo broneering"
+      }
+    },
+    "DetailsModal": {
+      "title": "Broneeringu üksikasjad",
+      "labels": {
+        "status": "Olek",
+        "start": "Algus",
+        "end": "Lõpp",
+        "plan": "Pakett",
+        "price": "Hind",
+        "features": "Omadused",
+        "addons": "Lisad",
+        "none": "Puudub"
+      },
+      "actions": {
+        "close": "Sulge"
       }
     },
     "MyBookings": {

@@ -134,19 +134,6 @@ export default function PricingSection({
                   }}
                 />
               </div>
-              <div className="col-span-1 flex items-center justify-end gap-2">
-                <ToggleButton
-                  onLabel="Popular"
-                  offLabel="Normal"
-                  defaultOn={!!p.isPopular}
-                  disabled={isWorking}
-                  onToggle={(v) => {
-                    const list = [...(form.getValues("plans") || [])]
-                    list[idx] = { ...list[idx], isPopular: v }
-                    form.setValue("plans", list, { shouldDirty: true })
-                  }}
-                />
-              </div>
               <div className="col-span-4 grid grid-cols-1 md:grid-cols-3 gap-3">
                 <Input
                   type="text"

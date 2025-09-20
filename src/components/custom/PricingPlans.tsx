@@ -7,9 +7,13 @@ import Button from "../custom/Button";
 function PricingPlans({
   plan,
   optionalAddons,
+  onSelectPlan,
+  planIndex,
 }: {
   plan: Plans;
   optionalAddons?: { statement: string; price: number }[];
+  onSelectPlan?: (index: number) => void;
+  planIndex?: number;
 }) {
   return (
     <div
@@ -54,11 +58,12 @@ function PricingPlans({
           <Button
             style="primary"
             extraStyles="!rounded-md bg-gradient-to-r from-amber-500 to-pink-500"
+            onClick={() => typeof planIndex === 'number' && onSelectPlan?.(planIndex)}
           >
             {plan.cta.bodyText}
           </Button>
         ) : (
-          <Button style="secondary">{plan.cta.bodyText}</Button>
+          <Button style="secondary" onClick={() => typeof planIndex === 'number' && onSelectPlan?.(planIndex)}>{plan.cta.bodyText}</Button>
         )}
       </div>
 

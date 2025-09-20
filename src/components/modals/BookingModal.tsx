@@ -7,6 +7,7 @@ import Button from "@/components/custom/Button";
 import { createBooking, getListingBookings } from "@/services/booking";
 import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
+import Select from "@/components/custom/Select";
 
 interface BookingModalProps {
   showModal: boolean;
@@ -16,6 +17,15 @@ interface BookingModalProps {
   onCreated?: (res: unknown) => void;
   bookingDurationType?: "Per Day" | "Per Hour";
   bookingDuration?: number;
+  availablePlans?: Array<{
+    name: string;
+    price: number;
+    features?: string[];
+  }>;
+  availableAddons?: Array<{ statement: string; price: number }>;
+  basePrice?: number;
+  // When provided, the dropdown will default to this plan index when the modal opens
+  defaultPlanIndex?: number | null;
 }
 
 function toISOFromLocal(dateTimeLocal: string) {
@@ -32,6 +42,10 @@ const BookingModal: React.FC<BookingModalProps> = ({
   onCreated,
   bookingDurationType,
   bookingDuration,
+  availablePlans = [],
+  availableAddons = [],
+  basePrice,
+  defaultPlanIndex,
 }) => {
   const [startDateTime, setStartDateTime] = useState("");
   const [endDateTime, setEndDateTime] = useState("");
@@ -40,6 +54,25 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const [slotAvailable, setSlotAvailable] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
   const t = useTranslations("Booking.Modal");
+  const [selectedPlanIndex, setSelectedPlanIndex] = useState<number | null>(null);
+  const [selectedAddonIdxSet, setSelectedAddonIdxSet] = useState<Set<number>>(new Set());
+
+  // When modal opens, set default plan selection if provided. Reset when it closes.
+  useEffect(() => {
+    if (showModal) {
+      if (typeof (defaultPlanIndex as number | null) === 'number') {
+        setSelectedPlanIndex(defaultPlanIndex as number);
+      }
+    } else {
+      // reset basic fields on close to avoid stale state when re-opening
+      setSelectedPlanIndex(null);
+      setSelectedAddonIdxSet(new Set());
+      setStartDateTime("");
+      setEndDateTime("");
+      setError(null);
+      setSlotAvailable(null);
+    }
+  }, [showModal, defaultPlanIndex]);
 
   const minDateTime = useMemo(() => {
     const now = new Date();
@@ -100,12 +133,37 @@ const BookingModal: React.FC<BookingModalProps> = ({
         setSubmitting(false);
         return;
       }
+      // Build selected plan and addons for payload
+      let selectedPlan: { name?: string; price?: number; features?: Array<{ statement: string }> } | undefined;
+      if (selectedPlanIndex !== null && availablePlans[selectedPlanIndex]) {
+        const pl = availablePlans[selectedPlanIndex];
+        selectedPlan = {
+          name: pl.name,
+          price: pl.price,
+          features: (pl.features || []).map((f) => ({ statement: f })),
+        };
+      } else if (typeof basePrice === 'number') {
+        selectedPlan = {
+          name: t('defaultPlan', { default: 'Default' }),
+          price: basePrice,
+          features: [],
+        };
+      }
+
+      const selectedAddons = Array.from(selectedAddonIdxSet)
+        .sort((a, b) => a - b)
+        .map((idx) => availableAddons[idx])
+        .filter(Boolean)
+        .map((a) => ({ statement: a.statement, price: a.price }));
+
       const payload = {
         listing: listingDocumentId,
         userDocumentId,
         startDateTime: startISO,
         endDateTime: endISO,
         bookingStatus: "pending" as const,
+        selectedPlan,
+        selectedAddons,
       };
       await toast.promise(
         createBooking(payload),
@@ -118,6 +176,8 @@ const BookingModal: React.FC<BookingModalProps> = ({
             setStartDateTime("");
             setEndDateTime("");
             setError(null);
+            setSelectedPlanIndex(null);
+            setSelectedAddonIdxSet(new Set());
             return t("toasts.created", { default: "Booking created successfully." });
 
           },
@@ -182,7 +242,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
     <Modal 
     isOpen={showModal} 
     onClose={() => setShowModal(false)} 
-    title={<span className="pr-8">Create Booking</span>}
+    title={<span className="pr-8">{t('title', { default: 'Create Booking' })}</span>}
     footer={
       <div className="flex items-center justify-end gap-3 pt-2">
         <Button style="ghost" onClick={() => setShowModal(false)} type="button">
@@ -198,7 +258,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
         <Input
           type="datetime-local"
           required
-          label="Start Date & Time"
+          label={t('fields.start', { default: 'Start Date & Time' })}
           value={startDateTime}
           min={minDateTime}
           onChange={(e) => setStartDateTime(e.target.value)}
@@ -219,7 +279,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
                 type="datetime-local"
                 required
                 disabled
-                label={`End Date & Time (auto ${bookingDuration} ${bookingDurationType === "Per Hour" ? "hour(s)" : "day(s)"})`}
+                label={t('fields.autoEnd', { default: 'End Date & Time (auto {duration} {unit})', duration: bookingDuration || 0, unit: t(`units.${bookingDurationType === 'Per Hour' ? 'hours' : 'days'}`, { default: bookingDurationType === 'Per Hour' ? 'hour(s)' : 'day(s)' }) })}
                 value={endLocal}
               />
             );
@@ -228,12 +288,57 @@ const BookingModal: React.FC<BookingModalProps> = ({
           <Input
             type="datetime-local"
             required
-            label="End Date & Time"
+            label={t('fields.end', { default: 'End Date & Time' })}
             value={endDateTime}
             min={startDateTime || minDateTime}
             onChange={(e) => setEndDateTime(e.target.value)}
           />
         )}
+        {availablePlans && availablePlans.length > 0 && (
+          <Select
+            label={t('fields.plan', { default: 'Select Plan' })}
+            required={false}
+            value={selectedPlanIndex !== null ? String(selectedPlanIndex) : ""}
+            onChange={(e) => {
+              const v = e.target.value;
+              setSelectedPlanIndex(v === "" ? null : Number(v));
+            }}
+            options={availablePlans.map((p, idx) => ({ value: String(idx), label: `${p.name} — ${p.price}` }))}
+            placeholder={t('placeholders.selectPlan', { default: 'Select a plan (optional)' }) as string}
+          />
+        )}
+
+        {availableAddons && availableAddons.length > 0 && (
+          <div>
+            <div className="block capitalize text-sm font-medium text-gray-700 mb-2 tracking-wider">
+              {t('fields.addons', { default: 'Optional Addons' })}
+            </div>
+            <div className="flex flex-col gap-2">
+              {availableAddons.map((a, idx) => {
+                const checked = selectedAddonIdxSet.has(idx);
+                return (
+                  <label key={idx} className="inline-flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4"
+                      checked={checked}
+                      onChange={(e) => {
+                        setSelectedAddonIdxSet((prev) => {
+                          const next = new Set(prev);
+                          if (e.target.checked) next.add(idx);
+                          else next.delete(idx);
+                          return next;
+                        });
+                      }}
+                    />
+                    <span className="text-sm text-gray-800">{a.statement} — {a.price}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {checking && (
           <div className="text-sm text-gray-600">{t("actions.checking", { default: "Checking availability..." })}</div>
         )}

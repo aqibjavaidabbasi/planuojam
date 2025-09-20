@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import Modal from "@/components/custom/Modal";
 import { FiCalendar } from "react-icons/fi";
 import ReviewModal from "@/components/modals/ReviewModal";
+import BookingDetailsModal, { BookingDetails } from "@/components/modals/BookingDetailsModal";
 import { RootState } from "@/store";
 import { fetchSiteSettings } from "@/services/siteSettings";
 
@@ -36,6 +37,7 @@ const MyBookings: React.FC = () => {
   const [cancelHours, setCancelHours] = useState<number>(24);
   const [statusFilter, setStatusFilter] = useState<BookingStatusFilter>("all");
   const [reviewModal, setReviewModal] = useState<{ open: boolean; listingId?: string }>({ open: false });
+  const [detailsModal, setDetailsModal] = useState<{ open: boolean; booking?: BookingDetails }>({ open: false });
 
   const minDateTime = useMemo(() => {
     const now = new Date();
@@ -260,6 +262,21 @@ const MyBookings: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2 mt-4">
+                  <Button
+                    style="ghost"
+                    onClick={() => {
+                      const details: BookingDetails = {
+                        bookingStatus: b.bookingStatus,
+                        startDateTime: b.startDateTime,
+                        endDateTime: b.endDateTime,
+                        selectedPlan: b.selectedPlan,
+                        selectedAddons: b.selectedAddons,
+                      };
+                      setDetailsModal({ open: true, booking: details });
+                    }}
+                  >
+                    {t("actions.viewDetails", { default: "View Details" })}
+                  </Button>
                   {isEditing ? (
                     <>
                       <input
@@ -377,6 +394,11 @@ const MyBookings: React.FC = () => {
           }}
         />
       )}
+      <BookingDetailsModal
+        isOpen={detailsModal.open}
+        onClose={() => setDetailsModal({ open: false })}
+        booking={detailsModal.booking || {}}
+      />
     </div>
   );
 };

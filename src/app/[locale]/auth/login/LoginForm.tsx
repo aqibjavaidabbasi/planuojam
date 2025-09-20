@@ -8,6 +8,7 @@ import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
+import SocialAuthButtons from "@/components/auth/SocialAuthButtons";
 
 type FormValues = {
   identifier: string;
@@ -105,6 +106,12 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
       >
         {t("signIn")}
       </Button>
+
+      <SocialAuthButtons
+        className="mt-4"
+        onGoogleClick={() => toast("Google sign-in clicked")}
+        onFacebookClick={() => toast("Facebook sign-in clicked")}
+      />
     </form>
   );
 }
