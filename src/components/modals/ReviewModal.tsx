@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Modal from "@/components/custom/Modal";
-import Input from "@/components/custom/Input";
 import TextArea from "@/components/custom/TextArea";
 import Button from "@/components/custom/Button";
 import toast from "react-hot-toast";
