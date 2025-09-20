@@ -165,7 +165,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
     } else {
       map.current.on('load', addMarkers);
     }
-  }, [locations]);
+  }, [locations, t, locale]);
 
   // Move map when selected place changes
   useEffect(() => {

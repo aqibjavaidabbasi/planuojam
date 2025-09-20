@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { ListingItem } from "@/types/pagesTypes";
+import { ListingItem, Venue } from "@/types/pagesTypes";
 import Faqitem from "@/components/Dynamic/Faqitem";
 import Loader from "@/components/custom/Loader";
 import ListingDetailHero from "@/components/custom/ListingDetailHero";
@@ -64,6 +64,15 @@ export default function ListingDetailsPage() {
     const entry = listing.localizations?.find((loc) => loc.locale === locale);
     return entry || listing;
   }, [listing, locale]) as ListingItem;
+
+  // typed access to venue block (if listing type is venue)
+  const venueBlock = useMemo(() => {
+    if (!renderingContent) return undefined;
+    const vb = (renderingContent.listingItem || []).find(
+      (i) => (i as { __component?: string }).__component === "dynamic-blocks.venue"
+    ) as Venue | undefined;
+    return vb;
+  }, [renderingContent]);
 
   // Compute a single map location for this listing
   useEffect(() => {
@@ -332,8 +341,8 @@ export default function ListingDetailsPage() {
           setShowModal={setShowBookingModal}
           listingDocumentId={renderingContent.documentId}
           userDocumentId={user?.documentId || ""}
-          bookingDurationType={(renderingContent.listingItem?.find((i:any)=>i.__component==='dynamic-blocks.venue') as any)?.bookingDurationType as any}
-          bookingDuration={(renderingContent.listingItem?.find((i:any)=>i.__component==='dynamic-blocks.venue') as any)?.bookingDuration as any}
+          bookingDurationType={venueBlock?.bookingDurationType as ("Per Day" | "Per Hour") | undefined}
+          bookingDuration={venueBlock?.bookingDuration}
           availablePlans={(renderingContent.pricingPackages?.plans || []).map(p => ({ name: p.name, price: p.price, features: (p.featuresList || []).map(f => f.statement) }))}
           availableAddons={renderingContent.pricingPackages?.optionalAddons || []}
           basePrice={renderingContent.price}

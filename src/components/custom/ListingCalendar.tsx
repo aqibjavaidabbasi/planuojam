@@ -12,8 +12,10 @@ interface ListingCalendarProps {
   listingDocumentId: string;
 }
 
+type BackgroundEvent = { start: string; end: string; display: "background"; allDay: boolean };
+
 // Expand a booking into per-day background events (shades the entire day)
-function expandBookingToDayBackgrounds(b: BookingItem): { start: string; end: string; display: "background"; allDay: boolean; }[] {
+function expandBookingToDayBackgrounds(b: BookingItem): BackgroundEvent[] {
   try {
     const start = new Date(b.startDateTime);
     const end = new Date(b.endDateTime); // exclusive logic handled per-day below
@@ -41,7 +43,7 @@ function expandBookingToDayBackgrounds(b: BookingItem): { start: string; end: st
 }
 
 const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId }) => {
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<BackgroundEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const currentRange = useRef<{ start: string; end: string } | null>(null);
   const t = useTranslations("Listing.Calendar");
@@ -53,7 +55,7 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId }) 
       const bookings = await getListingBookingsPublic(listingDocumentId, rangeStartISO, rangeEndISO);
       const backgroundEvents = (bookings || []).flatMap(expandBookingToDayBackgrounds);
       setEvents(backgroundEvents);
-    } catch (err: unknown) {
+    } catch {
       // if public fetch fails (e.g., 401), show empty calendar gracefully
       setEvents([]);
     } finally {
