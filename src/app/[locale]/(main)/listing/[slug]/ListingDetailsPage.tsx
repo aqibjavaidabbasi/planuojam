@@ -175,7 +175,7 @@ export default function ListingDetailsPage() {
               <p className="text-secondary my-4">{renderingContent.description}</p>
               {/* gallery */}
               {
-                renderingContent.portfolio && renderingContent.portfolio.length > 0 && (
+                renderingContent?.portfolio && renderingContent.portfolio?.length > 0 && (
                 <ListingGallery
                 portfolio={renderingContent.portfolio}
                 title={renderingContent.title}
