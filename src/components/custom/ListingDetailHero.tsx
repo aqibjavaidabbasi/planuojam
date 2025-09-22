@@ -57,11 +57,11 @@ function ListingDetailHero({
       <div className="relative z-10 p-8 md:p-10 lg:p-12 text-white">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
           <div className="flex-1 mb-6 md:mb-0">
-            <div className="flex items-center mb-4">
+            {category && <div className="flex items-center mb-4">
               <span className="bg-white bg-opacity-20 text-black px-3 py-1 rounded-full text-sm font-medium">
                 {category}
               </span>
-            </div>
+            </div>}
             <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2">{title}</h1>
             <p className="text-base sm:text-lg text-white text-opacity-80 mb-4">
               {username}

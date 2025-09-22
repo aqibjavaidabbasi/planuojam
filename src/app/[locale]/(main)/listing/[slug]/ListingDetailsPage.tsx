@@ -143,6 +143,8 @@ export default function ListingDetailsPage() {
     );
   }
 
+  console.log(renderingContent)
+
 
   return (
     <div className="min-h-screen bg-background py-6 md:py-8 lg:py-12 px-4 sm:px-6">
@@ -188,7 +190,7 @@ export default function ListingDetailsPage() {
             <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
               <h2 className="text-2xl font-semibold text-primary mb-4">{t("location")}</h2>
               {detailLocation ? (
-                <div className="h-[45vh] md:h-[50vh] lg:h-[60vh]">
+                <div className="h-[45vh] max-h-[400px] md:h-[50vh] md:max-h-[600px] lg:h-[60vh] lg:max-h-[800px]">
                   <MapboxMap locations={[detailLocation]} />
                 </div>
               ) : (
