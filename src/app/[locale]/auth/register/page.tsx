@@ -38,6 +38,7 @@ function RegisterPage() {
     watch,
   } = useForm<FormValues>();
   const { parentCategories } = useParentCategories();
+  console.log(parentCategories)
   const dispatch = useAppDispatch();
   const router = useRouter();
   const t = useTranslations("Auth.Register");
@@ -177,7 +178,9 @@ function RegisterPage() {
                 <Select
                   options={parentCategories.map((cat) => ({
                     value: cat.name,
-                    label: cat.name,
+                    label:
+                      cat.localizations?.find((loc) => loc.locale === locale)?.name ||
+                      cat.name,
                   }))}
                   disabled={isSubmitting}
                   {...register("serviceType", { required: true })}
@@ -249,6 +252,7 @@ function RegisterPage() {
                 onChange={(e)=>setIsChecked(e.target.checked)}
                 checked={isChecked}
                 disabled={isSubmitting}
+                linkHref="/privacy-policy"
               />
             </div>
 
@@ -267,6 +271,10 @@ function RegisterPage() {
             onGoogleClick={() => {
               const svc = watch("serviceType");
               const role = watch("role");
+              if (!role) {
+                toast.error(t("roleRequired"));
+                return;
+              }
               if (role === "provider" && !svc) {
                 toast.error(t("serviceRequired"));
                 return;
@@ -284,6 +292,10 @@ function RegisterPage() {
             onFacebookClick={() => {
               const svc = watch("serviceType");
               const role = watch("role");
+              if (!role) {
+                toast.error(t("roleRequired"));
+                return;
+              }
               if (role === "provider" && !svc) {
                 toast.error(t("serviceRequired"));
                 return;
