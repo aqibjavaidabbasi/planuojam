@@ -45,10 +45,10 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
       if (values.price == null || isNaN(values.price)) delete payload.price
       if (values.workingHours == null || isNaN(values.workingHours)) delete payload.workingHours
       await updateListing(listing.documentId, { data: payload }, listing.locale)
-      toast.success("Basic details updated")
+      toast.success(t("toasts.updated"))
       onSaved?.()
     } catch (e: unknown) {
-      toast.error((e as Error)?.message || "Failed to update basic details")
+      toast.error((e as Error)?.message || t("toasts.updateFailed"))
     } finally {
       setSubmitting(false)
     }

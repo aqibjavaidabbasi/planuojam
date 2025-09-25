@@ -56,7 +56,7 @@ export async function fetchAPI(
 
   // Check for unexpected response statuses
   if (response.status !== 200) {
-    throw new Error(`Something went wrong: ${response.status}`);
+    throw new Error('Errors.Api.generic');
   }
 
   const data = await response.json();
@@ -99,7 +99,7 @@ export async function fetchAPIWithToken(
 
   // Check for unexpected response statuses
   if (response.status !== 200) {
-    throw new Error(`Something went wrong: ${response.status}`);
+    throw new Error('Errors.Api.generic');
   }
   const data = await response.json();
   return data;
@@ -151,7 +151,7 @@ export async function postAPI(
 
   // Check for unexpected response statuses
   if (response.status !== 200 && response.status !== 201) {
-    throw new Error(`Something went wrong: ${response.status}`);
+    throw new Error('Errors.Api.generic');
   }
   const data = await response.json();
   return data;
@@ -168,7 +168,7 @@ export async function postAPIWithToken(
   // Try to get the token from localStorage
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   if (!token) {
-    throw new Error("No authentication token found. Please log in.");
+    throw new Error('Errors.Auth.noToken');
   }
 
   const url = `${API_URL}/api/${endpoint}${query ? `?${query}` : ''}`;
@@ -210,7 +210,7 @@ export async function postAPIWithToken(
 
   // Check for unexpected response statuses
   if (response.status !== 200 && response.status !== 201) {
-    throw new Error(`Something went wrong: ${response.status}`);
+    throw new Error('Errors.Api.generic');
   }
   const data = await response.json();
   return data;
@@ -227,7 +227,7 @@ export async function putAPI(
   // Try to get the token from localStorage
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   if (!token) {
-    throw new Error("No authentication token found. Please log in.");
+    throw new Error('Errors.Auth.noToken');
   }
 
   const url = `${API_URL}/api/${endpoint}${query ? `?${query}` : ''}`;
@@ -269,7 +269,7 @@ export async function putAPI(
 
   // Check for unexpected response statuses
   if (response.status !== 200 && response.status !== 201) {
-    throw new Error(`Something went wrong: ${response.status}`);
+    throw new Error('Errors.Api.generic');
   }
   const data = await response.json();
   return data;
@@ -285,7 +285,7 @@ export async function deleteAPI(
   // Try to get the token from localStorage
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
   if (!token) {
-    throw new Error("No authentication token found. Please log in.");
+    throw new Error('Errors.Auth.noToken');
   }
 
   const url = `${API_URL}/api/${endpoint}`;
@@ -323,6 +323,6 @@ export async function deleteAPI(
 
   // Check for unexpected response statuses
   if (response.status !== 200 && response.status !== 204) {
-    throw new Error(`Something went wrong: ${response.status}`);
+    throw new Error('Errors.Api.generic');
   }
 }

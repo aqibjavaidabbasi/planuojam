@@ -49,12 +49,17 @@
       "tosRequired": "Przeczytaj i zaakceptuj Regulamin oraz Politykę prywatności",
       "registerCta": "Zarejestruj się",
       "alreadyHaveAccount": "Masz już konto?",
-      "signInHere": "Zaloguj się tutaj"
+      "signInHere": "Zaloguj się tutaj",
+      "tosNotAccepted": "Proszę zaakceptować Regulamin i Politykę prywatności"
     },
     "Social": {
       "orContinue": "Lub kontynuuj z",
       "google": "Kontynuuj z Google",
-      "facebook": "Kontynuuj z Facebook"
+      "facebook": "Kontynuuj z Facebook",
+      "toasts": {
+        "googleClicked": "Kliknięto rejestrację przez Google",
+        "facebookClicked": "Kliknięto rejestrację przez Facebook"
+      }
     },
     "ResetPassword": {
       "title": "Resetuj hasło",
@@ -135,7 +140,10 @@
   "Map": {
     "loading": "Ładowanie mapy...",
     "errors": {
-      "failedToLoadLocations": "Nie udało się wczytać lokalizacji"
+      "failedToLoadLocations": "Nie udało się wczytać lokalizacji",
+      "addCityOrState": "Dodaj miasto lub województwo, aby uzyskać współrzędne",
+      "addCoordinatesManually": "Coś poszło nie tak! Dodaj współrzędne ręcznie",
+      "unableToGetCoordinates": "Nie możemy uzyskać współrzędnych Twojej lokalizacji. Dodaj je ręcznie"
     },
     "fallback": {
       "unnamedVenue": "Miejsce bez nazwy",
@@ -568,7 +576,14 @@
       "serviceArea": {
         "helpText": "Wybierz miasto lub województwo i użyj przycisku pobierania współrzędnych, albo wprowadź je ręcznie",
         "title": "Obszar usług",
-        "add": "Dodaj obszar usług"
+        "add": "Dodaj obszar usług",
+        "errors": {
+          "cityStateRequired": "Każdy obszar usług wymaga miasta i województwa"
+        },
+        "toasts": {
+          "updated": "Dane sprzedawcy/miejsca zaktualizowane",
+          "updateFailed": "Nie udało się zaktualizować danych sprzedawcy/miejsca"
+        }
       },
       "amenities": {
         "title": "Udogodnienia",
@@ -597,12 +612,28 @@
       "socialLinks": {
         "title": "Linki społecznościowe",
         "sectionTitle": "Tytuł sekcji",
-        "add": "+ Dodaj link społecznościowy"
+        "add": "+ Dodaj link społecznościowy",
+        "errors": {
+          "platformRequired": "Dla każdego linku społecznościowego platforma jest wymagana",
+          "validUrlRequired": "Dla każdego linku społecznościowego wymagany jest prawidłowy adres URL"
+        },
+        "toasts": {
+          "updated": "Zaktualizowano linki społecznościowe",
+          "updateFailed": "Nie udało się zaktualizować linków społecznościowych"
+        }
       },
       "faq": {
         "title": "FAQ",
         "sectionTitle": "Tytuł sekcji",
-        "add": "+ Dodaj pytanie i odpowiedź"
+        "add": "+ Dodaj pytanie i odpowiedź",
+        "errors": {
+          "addAtLeastOne": "Dodaj co najmniej jedno pytanie",
+          "eachNeedsQnA": "Każde pytanie musi mieć pytanie i odpowiedź"
+        },
+        "toasts": {
+          "updated": "FAQ zaktualizowane",
+          "updateFailed": "Nie udało się zaktualizować FAQ"
+        }
       },
       "eventTypes": {
         "title": "Typy wydarzeń"
@@ -614,7 +645,19 @@
         "addFeature": "+ Dodaj funkcję",
         "add": "+ Dodaj plan",
         "optAddons": "Opcjonalne dodatki:",
-        "addOptAddon": "+ Dodaj opcjonalny dodatek"
+        "addOptAddon": "+ Dodaj opcjonalny dodatek",
+        "errors": {
+          "planRequired": "Dodaj co najmniej jeden plan",
+          "planNameRequired": "Każdy plan musi mieć nazwę",
+          "nonNegativePrice": "Cena planu nie może być ujemna",
+          "validCtaUrl": "URL przycisku CTA musi zaczynać się od http lub https",
+          "addonStatementRequired": "Każdy dodatek musi mieć opis",
+          "addonNonNegativePrice": "Cena dodatku nie może być ujemna"
+        },
+        "toasts": {
+          "updated": "Cennik zaktualizowany",
+          "updateFailed": "Nie udało się zaktualizować cennika"
+        }
       }
     }
   },
@@ -658,6 +701,24 @@
   "Login": {
     "login": "Login"
   },
+  "Errors": {
+    "Api": {
+      "generic": "Coś poszło nie tak. Spróbuj ponownie."
+    },
+    "Auth": {
+      "noToken": "Nie znaleziono tokenu uwierzytelniającego. Zaloguj się.",
+      "invalidCredentials": "Sprawdź email lub hasło i spróbuj ponownie!",
+      "registerFailed": "Rejestracja nie powiodła się. Spróbuj później!",
+      "emailConfirmFailed": "Nie udało się potwierdzić emaila. Spróbuj ponownie.",
+      "forgotFailed": "Nie udało się wysłać emaila resetującego hasło. Spróbuj później!",
+      "resetFailed": "Nie udało się zresetować hasła. Spróbuj później!",
+      "updateUserFailed": "Nie udało się zaktualizować użytkownika. Spróbuj później!",
+      "updatePasswordFailed": "Nie udało się zaktualizować hasła. Spróbuj później!",
+      "missingToken": "Logowanie nie powiodło się — brak tokenu",
+      "registerNoResponse": "Rejestracja nie powiodła się — brak odpowiedzi z serwera",
+      "userIdRequired": "Wymagany jest identyfikator użytkownika, aby zaktualizować dane"
+    }
+  },
   "Search": {
     "search": "Szukaj tutaj",
     "searchListings": "Szukaj ogłoszeń",
@@ -685,7 +746,11 @@
     "titleDescription": "tytułOpis",
     "saving": "экономия",
     "saving...": "Zapisywanie...",
-    "savechanges": "zapisuje zmiany"
+    "savechanges": "zapisuje zmiany",
+    "toasts": {
+      "updated": "Podstawowe dane zaktualizowane",
+      "updateFailed": "Nie udało się zaktualizować podstawowych danych"
+    }
   },
   "ImageSection": {
     "addportfolioimages": "Dodaj obrazy portfolio",
@@ -731,7 +796,14 @@
     "citylabel": "etykieta miasta",
     "statelabel": "etykieta stanu",
     "selectstate": "wybierz stan",
-    "selectcity": "wybierz miasto"
+    "selectcity": "Wybierz miasto",
+    "errors": {
+      "cityStateRequired": "Każdy obszar usług wymaga miasta i województwa"
+    },
+    "toasts": {
+      "updated": "Dane sprzedawcy/miejsca zaktualizowane",
+      "updateFailed": "Nie udało się zaktualizować danych sprzedawcy/miejsca"
+    }
   },
   "contactSections": {
     "email": "e-mail",
@@ -739,7 +811,11 @@
     "address": "adres",
     "saving": "oszczędność",
     "saving...": "Zapisywanie...",
-    "savechanges": "zapisuje zmiany"
+    "savechanges": "zapisuje zmiany",
+    "toasts": {
+      "updated": "Kontakt zaktualizowany",
+      "updateFailed": "Nie udało się zaktualizować kontaktu"
+    }
   },
   "socialLinkSection": {
     "sectiontitle": "tytuł sekcji",
@@ -748,7 +824,20 @@
     "+addsociallink": "+ dodajlink społecznościowy",
     "saving": "oszczędność",
     "saving...": "Zapisywanie...",
-    "savechanges": "zapisuje zmiany"
+    "savechanges": "zapisuje zmiany",
+    "title": "Linki społecznościowe",
+    "platformLabel": "Platforma",
+    "selectPlatform": "Wybierz platformę",
+    "yes": "Tak",
+    "no": "Nie",
+    "errors": {
+      "platformRequired": "Dla każdego linku społecznościowego platforma jest wymagana",
+      "validUrlRequired": "Dla każdego linku społecznościowego wymagany jest prawidłowy adres URL"
+    },
+    "toasts": {
+      "updated": "Zaktualizowano linki społecznościowe",
+      "updateFailed": "Nie udało się zaktualizować linków społecznościowych"
+    }
   },
   "pricingSection": {
     "+addoptionaladdon": "+dodaj opcjonalny dodatek",
@@ -758,7 +847,19 @@
     "saving...": "Zapisywanie...",
     "savechanges": "zapisuje zmiany",
     "sectiontitle": "tytuł sekcji",
-    "optionaladdons": "opcjonalne dodatki"
+    "optionaladdons": "opcjonalne dodatki",
+    "errors": {
+      "planRequired": "Dodaj co najmniej jeden plan",
+      "planNameRequired": "Każdy plan musi mieć nazwę",
+      "nonNegativePrice": "Cena planu nie może być ujemna",
+      "validCtaUrl": "URL przycisku CTA musi zaczynać się od http lub https",
+      "addonStatementRequired": "Każdy dodatek musi mieć opis",
+      "addonNonNegativePrice": "Cena dodatku nie może być ujemna"
+    },
+    "toasts": {
+      "updated": "Cennik zaktualizowany",
+      "updateFailed": "Nie udało się zaktualizować cennika"
+    }
   },
   "FAQsSection": {
     "sectiontitle": "tytuł sekcji",
@@ -767,7 +868,15 @@
     "savechanges": "zapisuje zmiany",
     "+addFAQ": "+добавитьFAQ",
     "answer": "odpowiedź",
-    "question": "pytanie"
+    "question": "Pytanie",
+    "errors": {
+      "addAtLeastOne": "Dodaj co najmniej jedno pytanie",
+      "eachNeedsQnA": "Każde pytanie musi mieć pytanie i odpowiedź"
+    },
+    "toasts": {
+      "updated": "FAQ zaktualizowane",
+      "updateFailed": "Nie udało się zaktualizować FAQ"
+    }
   },
   "Booking": {
     "Modal": {
@@ -886,6 +995,18 @@
         "rejected": "Odrzucone",
         "completed": "Zakończone"
       }
+    }
+  },
+  "hotDealSection": {
+    "errors": {
+      "startRequired": "Wymagana jest data rozpoczęcia",
+      "lastRequired": "Wymagana jest data zakończenia",
+      "flatRateMin": "Stawka stała musi być większa lub równa 0",
+      "percentageRange": "Procent musi mieścić się w przedziale od 0 do 100"
+    },
+    "toasts": {
+      "updated": "Gorąca oferta zaktualizowana",
+      "updateFailed": "Nie udało się zaktualizować gorącej oferty"
     }
   }
 }

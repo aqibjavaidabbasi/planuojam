@@ -9,6 +9,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
 import SocialAuthButtons from "@/components/auth/SocialAuthButtons";
+import { useLocale } from "next-intl";
 
 type FormValues = {
   identifier: string;
@@ -28,6 +29,7 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const t = useTranslations("Auth.Login");
+  const locale = useLocale();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await toast.promise(
@@ -109,8 +111,26 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
 
       <SocialAuthButtons
         className="mt-4"
-        onGoogleClick={() => toast("Google sign-in clicked")}
-        onFacebookClick={() => toast("Facebook sign-in clicked")}
+        onGoogleClick={() => {
+          try {
+            const origin = typeof window !== "undefined" ? window.location.origin : "";
+            const redirectTo = `${origin}/${locale}/auth/callback`;
+            window.location.href = `/api/auth/google?redirectTo=${encodeURIComponent(redirectTo)}&locale=${encodeURIComponent(locale)}&mode=login`;
+          } catch (e) {
+            console.log(e)
+            toast.error(t("loginFailed"));
+          }
+        }}
+        onFacebookClick={() => {
+          try {
+            const origin = typeof window !== "undefined" ? window.location.origin : "";
+            const redirectTo = `${origin}/${locale}/auth/callback`;
+            window.location.href = `/api/auth/facebook?redirectTo=${encodeURIComponent(redirectTo)}&locale=${encodeURIComponent(locale)}&mode=login`;
+          } catch (e) {
+            console.log(e)
+            toast.error(t("loginFailed"));
+          }
+        }}
       />
     </form>
   );

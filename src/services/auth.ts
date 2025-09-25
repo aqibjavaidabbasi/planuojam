@@ -6,7 +6,7 @@ export async function login(data: Record<string, unknown>) {
     return res;
   } catch (err) {
     console.log(err);
-    throw new Error("Check your email or password and try again!");
+    throw new Error('Errors.Auth.invalidCredentials');
   }
 }
 export async function fetchUser(jwt: string) {
@@ -27,7 +27,7 @@ export async function register(data: Record<string, unknown>) {
     return res;
   } catch (err) {
     console.log(err);
-    throw new Error("We failed to register you. Please try again later!");
+    throw new Error('Errors.Auth.registerFailed');
   }
 }
 
@@ -60,8 +60,7 @@ export async function emailConfirmation(confirmationToken: string) {
       }
     }
     // Simplified error handling
-    const errorMessage = `Email confirmation failed: ${response.status}`;
-    throw new Error(errorMessage);
+    throw new Error('Errors.Auth.emailConfirmFailed');
   }
 }
 export async function resendEmailConfirmation(data: Record<string, unknown>) {
@@ -75,9 +74,7 @@ export async function forgotPassword(data: Record<string, unknown>) {
     return res;
   } catch (err) {
     console.log(err);
-    throw new Error(
-      "Failed to send password reset email. Please try again later!"
-    );
+    throw new Error('Errors.Auth.forgotFailed');
   }
 }
 
@@ -87,7 +84,7 @@ export async function resetPassword(data: Record<string, unknown>) {
     return res;
   } catch (err) {
     console.log(err);
-    throw new Error("Failed to reset password. Please try again later!");
+    throw new Error('Errors.Auth.resetFailed');
   }
 }
 
@@ -97,7 +94,7 @@ export async function updateUserData(id: number, data: Record<string, unknown>){
     return res;
   }catch(err){
     console.log(err);
-    throw new Error("Failed to update user, please try again later!");
+    throw new Error('Errors.Auth.updateUserFailed');
   }
 }
 export async function updateUserPassword(data: Record<string, unknown>) {
@@ -106,7 +103,7 @@ export async function updateUserPassword(data: Record<string, unknown>) {
     return res;
   } catch (err) {
     console.log(err);
-    throw new Error("Failed to update password, please try again later!");
+    throw new Error('Errors.Auth.updatePasswordFailed');
   }
 }
 
@@ -121,7 +118,7 @@ export interface MinimalUserInfo {
 export async function getUsersByDocumentIds(documentIds: string[]): Promise<MinimalUserInfo[]> {
   if (!Array.isArray(documentIds) || documentIds.length === 0) return [];
   const jwt = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-  if (!jwt) throw new Error("No authentication token found. Please log in.");
+  if (!jwt) throw new Error('Errors.Auth.noToken');
 
   const fields = { fields: ["documentId", "username", "email"] } as const;
   const filters = {

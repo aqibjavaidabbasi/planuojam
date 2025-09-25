@@ -33,10 +33,10 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
     setSubmitting(true)
     try {
       await updateListing(listing.documentId, { data: { contact: values } }, listing.locale)
-      toast.success("Contact updated")
+      toast.success(t("toasts.updated"))
       onSaved?.()
     } catch (e: unknown) {
-      toast.error((e as Error)?.message || "Failed to update contact")
+      toast.error((e as Error)?.message || t("toasts.updateFailed"))
     } finally {
       setSubmitting(false)
     }

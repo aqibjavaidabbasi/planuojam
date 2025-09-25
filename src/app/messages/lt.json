@@ -49,12 +49,17 @@
       "tosRequired": "Perskaitykite ir sutikite su Paslaugų teikimo sąlygomis ir Privatumo politika",
       "registerCta": "Registruotis",
       "alreadyHaveAccount": "Jau turite paskyrą?",
-      "signInHere": "Prisijunkite čia"
+      "signInHere": "Prisijunkite čia",
+      "tosNotAccepted": "Prašome sutikti su Paslaugų teikimo sąlygomis ir Privatumo politika"
     },
     "Social": {
       "orContinue": "Arba tęskite su",
       "google": "Tęsti su Google",
-      "facebook": "Tęsti su Facebook"
+      "facebook": "Tęsti su Facebook",
+      "toasts": {
+        "googleClicked": "Paspausta Google registracija",
+        "facebookClicked": "Paspausta Facebook registracija"
+      }
     },
     "ResetPassword": {
       "title": "Atkurti slaptažodį",
@@ -178,7 +183,10 @@
   "Map": {
     "loading": "Kraunamas žemėlapis...",
     "errors": {
-      "failedToLoadLocations": "Nepavyko įkelti vietų"
+      "failedToLoadLocations": "Nepavyko įkelti vietų",
+      "addCityOrState": "Prašome pridėti miestą arba valstiją, kad gautumėte koordinates",
+      "addCoordinatesManually": "Kažkas negerai! Pridėkite koordinates rankiniu būdu",
+      "unableToGetCoordinates": "Nepavyko gauti jūsų vietos koordinačių. Pridėkite jas rankiniu būdu"
     },
     "fallback": {
       "unnamedVenue": "Be pavadinimo",
@@ -442,7 +450,14 @@
       "serviceArea": {
         "helpText": "Pasirinkite miestą arba regioną ir naudokite koordinatų gavimo mygtuką, arba įveskite rankiniu būdu",
         "title": "Paslaugų zona",
-        "add": "Pridėti paslaugų zoną"
+        "add": "Pridėti paslaugų zoną",
+        "errors": {
+          "cityStateRequired": "Kiekvienai aptarnavimo sričiai reikia miesto ir valstijos"
+        },
+        "toasts": {
+          "updated": "Tiekėjo/Vietos informacija atnaujinta",
+          "updateFailed": "Nepavyko atnaujinti Tiekėjo/Vietos informacijos"
+        }
       },
       "amenities": {
         "title": "Patogumai",
@@ -476,7 +491,15 @@
       "faq": {
         "title": "DUK",
         "sectionTitle": "Skyriaus pavadinimas",
-        "add": "+ Pridėti klausimą-atsakymą"
+        "add": "+ Pridėti klausimą-atsakymą",
+        "errors": {
+          "addAtLeastOne": "Pridėkite bent vieną DUK",
+          "eachNeedsQnA": "Kiekvienam DUK reikia klausimo ir atsakymo"
+        },
+        "toasts": {
+          "updated": "DUK atnaujinti",
+          "updateFailed": "Nepavyko atnaujinti DUK"
+        }
       },
       "eventTypes": {
         "title": "Renginių tipai"
@@ -488,7 +511,19 @@
         "addFeature": "+ Pridėti funkciją",
         "add": "+ Pridėti planą",
         "optAddons": "Papildomos parinktys:",
-        "addOptAddon": "+ Pridėti papildomą parinktį"
+        "addOptAddon": "+ Pridėti papildomą parinktį",
+        "errors": {
+          "planRequired": "Pridėkite bent vieną planą",
+          "planNameRequired": "Kiekvienas planas turi turėti pavadinimą",
+          "nonNegativePrice": "Kiekvieno plano kaina turi būti neneigiama",
+          "validCtaUrl": "CTA mygtuko URL turi prasidėti http arba https",
+          "addonStatementRequired": "Kiekvienas priedas turi turėti aprašą",
+          "addonNonNegativePrice": "Kiekvieno priedo kaina turi būti neneigiama"
+        },
+        "toasts": {
+          "updated": "Kainodara atnaujinta",
+          "updateFailed": "Nepavyko atnaujinti kainodaros"
+        }
       }
     }
   },
@@ -658,6 +693,24 @@
   "Login": {
     "login": "Prisijungti"
   },
+  "Errors": {
+    "Api": {
+      "generic": "Įvyko klaida. Bandykite dar kartą."
+    },
+    "Auth": {
+      "noToken": "Nerastas autentifikavimo žetonas. Prašome prisijungti.",
+      "invalidCredentials": "Patikrinkite el. paštą arba slaptažodį ir bandykite dar kartą!",
+      "registerFailed": "Nepavyko užsiregistruoti. Bandykite vėliau!",
+      "emailConfirmFailed": "Nepavyko patvirtinti el. pašto. Bandykite dar kartą.",
+      "forgotFailed": "Nepavyko išsiųsti slaptažodžio atkūrimo laiško. Bandykite vėliau!",
+      "resetFailed": "Nepavyko atkurti slaptažodžio. Bandykite vėliau!",
+      "updateUserFailed": "Nepavyko atnaujinti vartotojo. Bandykite vėliau!",
+      "updatePasswordFailed": "Nepavyko atnaujinti slaptažodžio. Bandykite vėliau!",
+      "missingToken": "Prisijungimas nepavyko — trūksta žetono",
+      "registerNoResponse": "Registracija nepavyko — serveris neatsakė",
+      "userIdRequired": "Norint atnaujinti duomenis, būtinas vartotojo ID"
+    }
+  },
   "Search": {
     "search": "Ieškoti čia",
     "searchListings": "Ieškoti įrašų",
@@ -684,7 +737,11 @@
     "workinghours(perday)": "darbo valandos (per dieną)",
     "titleDescription": "pavadinimas Aprašymas",
     "saving": "taupymas",
-    "savechanges": "išsaugoti pakeitimus"
+    "savechanges": "išsaugoti pakeitimus",
+    "toasts": {
+      "updated": "Pagrindinė informacija atnaujinta",
+      "updateFailed": "Nepavyko atnaujinti pagrindinės informacijos"
+    }
   },
   "ImageSection": {
     "addportfolioimages": "Pridėti portfelio vaizdus",
@@ -728,14 +785,25 @@
     "citylabel": "miesto ženklas",
     "statelabel": "valstybės etiketė",
     "selectstate": "pasirinkite būseną",
-    "selectcity": "pasirinkimo miestas"
+    "selectcity": "Pasirinkite miestą",
+    "errors": {
+      "cityStateRequired": "Kiekvienai aptarnavimo sričiai reikia miesto ir valstijos"
+    },
+    "toasts": {
+      "updated": "Tiekėjo/Vietos informacija atnaujinta",
+      "updateFailed": "Nepavyko atnaujinti Tiekėjo/Vietos informacijos"
+    }
   },
   "contactSections": {
     "email": "paštu",
     "phone": "telefonas",
     "address": "adresu",
     "saving": "taupymas",
-    "savechanges": " išsaugoti pakeitimus"
+    "savechanges": " išsaugoti pakeitimus",
+    "toasts": {
+      "updated": "Kontaktas atnaujintas",
+      "updateFailed": "Nepavyko atnaujinti kontakto"
+    }
   },
   "socialLinkSection": {
     "sectiontitle": "skyriaus pavadinimas",
@@ -743,7 +811,20 @@
     "visible": "matomas",
     "+addsociallink": "+ pridėti socialinę nuorodą",
     "saving": "taupymas",
-    "savechanges": "išsaugoti pakeitimus"
+    "savechanges": "išsaugoti pakeitimus",
+    "title": "Socialiniai tinklai",
+    "platformLabel": "Platforma",
+    "selectPlatform": "Pasirinkite platformą",
+    "yes": "Taip",
+    "no": "Ne",
+    "errors": {
+      "platformRequired": "Kiekvienai socialinei nuorodai privaloma nurodyti platformą",
+      "validUrlRequired": "Kiekvienai socialinei nuorodai būtina galiojanti nuoroda (URL)"
+    },
+    "toasts": {
+      "updated": "Socialinės nuorodos atnaujintos",
+      "updateFailed": "Nepavyko atnaujinti socialinių nuorodų"
+    }
   },
   "pricingSection": {
     "+addoptionaladdon": "+ papildomas priedas",
@@ -752,7 +833,19 @@
     "saving": "taupymas",
     "savechanges": "išsaugoti pakeitimus",
     "sectiontitle": "skyriaus pavadinimas",
-    "optionaladdons": "pasirinktiniai papildymai"
+    "optionaladdons": "pasirinktiniai papildymai",
+    "errors": {
+      "planRequired": "Pridėkite bent vieną planą",
+      "planNameRequired": "Kiekvienas planas turi turėti pavadinimą",
+      "nonNegativePrice": "Kiekvieno plano kaina turi būti neneigiama",
+      "validCtaUrl": "CTA mygtuko URL turi prasidėti http arba https",
+      "addonStatementRequired": "Kiekvienas priedas turi turėti aprašą",
+      "addonNonNegativePrice": "Kiekvieno priedo kaina turi būti neneigiama"
+    },
+    "toasts": {
+      "updated": "Kainodara atnaujinta",
+      "updateFailed": "Nepavyko atnaujinti kainodaros"
+    }
   },
   "FAQsSection": {
     "sectiontitle": "skyriaus pavadinimas ",
@@ -760,7 +853,15 @@
     "savechanges": "išsaugoti pakeitimus",
     "+addFAQ": "+pridėti DUK",
     "answer": "atsakyti",
-    "question": "klausimas"
+    "question": "Klausimas",
+    "errors": {
+      "addAtLeastOne": "Pridėkite bent vieną DUK",
+      "eachNeedsQnA": "Kiekvienam DUK reikia klausimo ir atsakymo"
+    },
+    "toasts": {
+      "updated": "DUK atnaujinti",
+      "updateFailed": "Nepavyko atnaujinti DUK"
+    }
   },
   "Booking": {
     "Modal": {
@@ -879,6 +980,19 @@
         "rejected": "Atmesta",
         "completed": "Užbaigta"
       }
+    }
+  }
+  ,
+  "hotDealSection": {
+    "errors": {
+      "startRequired": "Reikalinga pradžios data",
+      "lastRequired": "Reikalinga pabaigos data",
+      "flatRateMin": "Fiksuota suma turi būti didesnė arba lygi 0",
+      "percentageRange": "Procentas turi būti nuo 0 iki 100"
+    },
+    "toasts": {
+      "updated": "Karštas pasiūlymas atnaujintas",
+      "updateFailed": "Nepavyko atnaujinti karšto pasiūlymo"
     }
   }
 }

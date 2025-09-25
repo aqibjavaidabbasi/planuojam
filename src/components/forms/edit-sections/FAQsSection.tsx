@@ -26,22 +26,22 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
 
   const onSubmit = async (values: FAQsForm) => {
     if (!values.items || values.items.length === 0) {
-      toast.error("Add at least one FAQ")
+      toast.error(t("errors.addAtLeastOne"))
       return
     }
     const hasInvalid = values.items.some((i) => !i.question?.trim() || !i.answer?.trim())
     if (hasInvalid) {
-      toast.error("Each FAQ needs a question and an answer")
+      toast.error(t("errors.eachNeedsQnA"))
       return
     }
 
     setSubmitting(true)
     try {
       await updateListing(listing.documentId, { data: { FAQs: values } }, listing.locale)
-      toast.success("FAQs updated")
+      toast.success(t("toasts.updated"))
       onSaved?.()
     } catch (e: unknown) {
-      toast.error((e as Error)?.message || "Failed to update FAQs")
+      toast.error((e as Error)?.message || t("toasts.updateFailed"))
     } finally {
       setSubmitting(false)
     }

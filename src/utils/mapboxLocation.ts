@@ -1,6 +1,5 @@
 import { Location } from '@/components/global/MapboxMap';
 import { ListingItem, Vendor } from '../types/pagesTypes';
-import toast from 'react-hot-toast';
 
 // Build Location[] directly from vendor serviceArea coordinates without external API calls.
 // Keep async signature to avoid changing existing callers.
@@ -57,12 +56,10 @@ export type GeocodeResult = { lat: number; lng: number; address: string };
 export async function geocodePlace(city?: string, state?: string): Promise<GeocodeResult | null> {
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY;
   if (!city && !state) {
-    toast.error("Please add a city or state to get coordinates")
-    return null;
+    throw new Error('Errors.Map.addCityOrState');
   }
   if (!mapboxToken) {
-    toast.error("Something went wrong! Please add coordinates manually")
-    return null;
+    throw new Error('Errors.Map.addCoordinatesManually');
   }
 
   const query = [city, state].filter(Boolean).join(', ').trim();
@@ -73,7 +70,7 @@ export async function geocodePlace(city?: string, state?: string): Promise<Geoco
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${encoded}.json?access_token=${mapboxToken}&limit=1`
     );
     if (!res.ok) {
-      throw new Error("We are unable to get your location coordinates. Please add manually")
+      throw new Error('Errors.Map.unableToGetCoordinates');
     }
     const data = await res.json();
     const feature = data?.features?.[0];
@@ -85,7 +82,8 @@ export async function geocodePlace(city?: string, state?: string): Promise<Geoco
       address: feature.place_name || query,
     };
   } catch (err) {
-    toast.error(err instanceof Error ? err.message : "Something went wrong! Please add coordinates manually")
-    return null;
+    // Let callers decide how to display/translate the error
+    if (err instanceof Error) throw err;
+    throw new Error('Errors.Map.addCoordinatesManually');
   }
 }

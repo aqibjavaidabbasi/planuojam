@@ -83,8 +83,8 @@ export default function SocialLinksSection({
     try {
       // Frontend validation: every social link must have platform and link
       for (const s of values.socialLink || []) {
-        if (!s.platform) throw new Error("Platform is required for each social link")
-        if (!s.link || !/^https?:\/\//.test(s.link)) throw new Error("Valid URL is required for each social link")
+        if (!s.platform) throw new Error(t("errors.platformRequired"))
+        if (!s.link || !/^https?:\/\//.test(s.link)) throw new Error(t("errors.validUrlRequired"))
       }
 
       // Build a clean payload for Strapi: only include allowed fields
@@ -103,21 +103,28 @@ export default function SocialLinksSection({
       }
 
       await updateListing(listing.documentId, { data: { socialLinks: payload } }, listing.locale)
-      toast.success("Social links updated")
+      toast.success(t("toasts.updated"))
       onSaved?.()
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to update social links"
-      toast.error(message)
+      const raw = e instanceof Error ? e.message : t("toasts.updateFailed")
+      // If we threw a translation key (Option A), resolve it from the Errors namespace
+      if (typeof raw === 'string' && raw.startsWith('Errors.')) {
+        const subKey = raw.replace(/^Errors\./, '')
+        toast.error(tErrors(subKey))
+      } else {
+        toast.error(raw)
+      }
     } finally {
       setSubmitting(false)
     }
   }
 
   const isWorking = submitting
-  const t=useTranslations("socialLinkSection")
+  const t = useTranslations("socialLinkSection")
+  const tErrors = useTranslations('Errors')
   return (
     <div className="py-4">
-      <h3 className="text-lg font-semibold mb-2">Social Links</h3>
+      <h3 className="text-lg font-semibold mb-2">{t("title")}</h3>
       <form onSubmit={handleSubmit(onSubmit)} id="socialLinksForm" className="flex flex-col gap-3">
         <Input
           type="text"
@@ -130,7 +137,7 @@ export default function SocialLinksSection({
             <div key={idx} className="grid grid-cols-1 md:grid-cols-8 gap-3 items-end">
               <div className="col-span-3">
                 <Select
-                  label="Platform"
+                  label={t("platformLabel")}
                   disabled={isWorking}
                   value={s.platform}
                   onChange={(e) => {
@@ -139,7 +146,7 @@ export default function SocialLinksSection({
                     setValue("socialLink", list, { shouldDirty: true })
                   }}
                   options={[
-                    { label: "Select Platform", value: "" },
+                    { label: t("selectPlatform"), value: "" },
                     { label: "Facebook", value: "facebook" },
                     { label: "LinkedIn", value: "linkedin" },
                     { label: "YouTube", value: "youtube" },
@@ -178,8 +185,8 @@ export default function SocialLinksSection({
                     setValue("socialLink", list, { shouldDirty: true })
                   }}
                   options={[
-                    { label: "Yes", value: "true" },
-                    { label: "No", value: "false" },
+                    { label: t("yes"), value: "true" },
+                    { label: t("no"), value: "false" },
                   ]}
                 />
               </div>

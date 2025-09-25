@@ -1,0 +1,97 @@
+import { NextRequest } from "next/server";
+import { getAppBaseUrl } from "@/lib/social";
+import { API_URL } from "@/services/api";
+
+export const runtime = 'nodejs';
+
+export async function GET(req: NextRequest) {
+  try {
+    const base = getAppBaseUrl(req as unknown as Request);
+    const code = req.nextUrl.searchParams.get("code");
+    const stateRaw = req.nextUrl.searchParams.get("state");
+    const state = stateRaw ? JSON.parse(decodeURIComponent(stateRaw)) : {};
+    const redirectTo: string | undefined = state.redirectTo;
+    const locale: string = state.locale || "en";
+    const mode: 'login' | 'register' = state.mode || 'login';
+    const serviceType: string | undefined = state.serviceType || undefined;
+
+    if (!code) return new Response("Missing code", { status: 400 });
+
+    const clientId = process.env.GOOGLE_CLIENT_ID as string;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET as string;
+    const redirectUri = `${base}/api/auth/google/callback`;
+
+    if (!clientId || !clientSecret) {
+      return new Response("Missing Google OAuth envs", { status: 500 });
+    }
+
+    // Exchange code for tokens
+    const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        code,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+        grant_type: "authorization_code",
+      }),
+    });
+
+    if (!tokenRes.ok) {
+      const text = await tokenRes.text();
+      return new Response(`Token exchange failed: ${text}`, { status: 400 });
+    }
+
+    const tokenJson = await tokenRes.json();
+    const accessToken = tokenJson.access_token as string;
+
+    // Fetch user info
+    const userRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    if (!userRes.ok) {
+      const text = await userRes.text();
+      return new Response(`Userinfo fetch failed: ${text}`, { status: 400 });
+    }
+    const profile = await userRes.json();
+    const providerUserId = profile.sub as string;
+    const email = (profile.email as string) || "";
+    const name = (profile.name as string) || email || "user";
+
+    if (!email) {
+      // Require email for Strapi local auth
+      const fallback = `/${locale}/auth/login?error=missing_email`;
+      return Response.redirect(new URL(fallback, base).toString(), 302);
+    }
+
+    // Call Strapi custom endpoint for passwordless social login/register
+    const exchangeRes = await fetch(`${API_URL}/api/social-auth/exchange`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        name,
+        mode,
+        serviceType: serviceType || null,
+        provider: 'google',
+        providerUserId,
+      }),
+    });
+    if (!exchangeRes.ok) {
+      const text = await exchangeRes.text();
+      return new Response(`Social exchange failed: ${text}`, { status: 400 });
+    }
+    const { jwt } = await exchangeRes.json();
+
+    const finalRedirect = redirectTo || `${base}/${locale}/auth/callback`;
+    const url = new URL(finalRedirect);
+    if (jwt) url.searchParams.set("jwt", jwt);
+    return Response.redirect(url.toString(), 302);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      return new Response(`Unhandled error: ${e.message}`, { status: 500 });
+    }
+    return new Response(`Unhandled error: ${e}`, { status: 500 });
+  }
+}

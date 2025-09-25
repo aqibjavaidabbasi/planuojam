@@ -47,6 +47,7 @@
       "confirmPasswordRequired": "Parooli kinnitamine on kohustuslik",
       "tosAgree": "Nõustun kasutustingimuste ja privaatsuspoliitikaga",
       "tosRequired": "Palun loe ja nõustu kasutustingimuste ning privaatsuspoliitikaga",
+      "tosNotAccepted": "Palun nõustu kasutustingimuste ja privaatsuspoliitikaga",
       "registerCta": "Registreeru",
       "alreadyHaveAccount": "Kas konto on juba olemas?",
       "signInHere": "Logi sisse siin"
@@ -54,7 +55,11 @@
     "Social": {
       "orContinue": "Või jätka",
       "google": "Jätka Google'iga",
-      "facebook": "Jätka Facebookiga"
+      "facebook": "Jätka Facebookiga",
+      "toasts": {
+        "googleClicked": "Google'i registreerimine klõpsatud",
+        "facebookClicked": "Facebooki registreerimine klõpsatud"
+      }
     },
     "ResetPassword": {
       "title": "Parooli lähtestamine",
@@ -135,7 +140,10 @@
   "Map": {
     "loading": "Kaardi laadimine...",
     "errors": {
-      "failedToLoadLocations": "Asukohtade laadimine ebaõnnestus"
+      "failedToLoadLocations": "Asukohtade laadimine ebaõnnestus",
+      "addCityOrState": "Palun lisage linn või osariik, et saada koordinaadid",
+      "addCoordinatesManually": "Midagi läks valesti! Palun lisage koordinaadid käsitsi",
+      "unableToGetCoordinates": "Me ei saa teie asukoha koordinaate. Palun lisage käsitsi"
     },
     "fallback": {
       "unnamedVenue": "Nimetu koht",
@@ -568,7 +576,14 @@
       "serviceArea": {
         "helpText": "Vali linn või maakond ja kasuta koordinaatide hankimise nuppu või sisesta käsitsi",
         "title": "Teeninduspiirkond",
-        "add": "Lisa teeninduspiirkond"
+        "add": "Lisa teeninduspiirkond",
+        "errors": {
+          "cityStateRequired": "Igas teeninduspiirkonnas peab olema linn ja osariik"
+        },
+        "toasts": {
+          "updated": "Müüja/Koha andmed on uuendatud",
+          "updateFailed": "Müüja/Koha andmete uuendamine ebaõnnestus"
+        }
       },
       "amenities": {
         "title": "Mugavused",
@@ -597,12 +612,28 @@
       "socialLinks": {
         "title": "Sotsiaalmeedia lingid",
         "sectionTitle": "Sektsiooni pealkiri",
-        "add": "+ Lisa sotsiaalmeedia link"
+        "add": "+ Lisa sotsiaalmeedia link",
+        "errors": {
+          "platformRequired": "Iga sotsiaalmeedia lingi jaoks on platvorm kohustuslik",
+          "validUrlRequired": "Iga sotsiaalmeedia lingi jaoks on vajalik kehtiv URL"
+        },
+        "toasts": {
+          "updated": "Sotsiaalmeedia lingid on uuendatud",
+          "updateFailed": "Sotsiaalmeedia linkide uuendamine ebaõnnestus"
+        }
       },
       "faq": {
         "title": "KKK",
         "sectionTitle": "Sektsiooni pealkiri",
-        "add": "+ Lisa küsimus-vastus"
+        "add": "+ Lisa küsimus-vastus",
+        "errors": {
+          "addAtLeastOne": "Lisage vähemalt üks KKK",
+          "eachNeedsQnA": "Iga KKK vajab küsimust ja vastust"
+        },
+        "toasts": {
+          "updated": "KKK-d on uuendatud",
+          "updateFailed": "KKK-de uuendamine ebaõnnestus"
+        }
       },
       "eventTypes": {
         "title": "Ürituse tüübid"
@@ -614,7 +645,19 @@
         "addFeature": "+ Lisa funktsioon",
         "add": "+ Lisa pakett",
         "optAddons": "Valikulised lisad:",
-        "addOptAddon": "+ Lisa valikuline lisa"
+        "addOptAddon": "+ Lisa valikuline lisa",
+        "errors": {
+          "planRequired": "Palun lisage vähemalt üks plaan",
+          "planNameRequired": "Igal plaanil peab olema nimi",
+          "nonNegativePrice": "Iga plaani hind peab olema mitte-negatiivne",
+          "validCtaUrl": "CTA nupu URL peab algama http või https",
+          "addonStatementRequired": "Igal lisal peab olema kirjeldus",
+          "addonNonNegativePrice": "Iga lisa hind peab olema mitte-negatiivne"
+        },
+        "toasts": {
+          "updated": "Hinnakujundus on uuendatud",
+          "updateFailed": "Hinnakujunduse uuendamine ebaõnnestus"
+        }
       }
     }
   },
@@ -658,6 +701,24 @@
   "Login": {
     "login": "Logi sisse"
   },
+  "Errors": {
+    "Api": {
+      "generic": "Midagi läks valesti. Palun proovi uuesti."
+    },
+    "Auth": {
+      "noToken": "Autentimismärki ei leitud. Palun logi sisse.",
+      "invalidCredentials": "Kontrolli oma e-posti või parooli ja proovi uuesti!",
+      "registerFailed": "Registreerimine ebaõnnestus. Palun proovi hiljem uuesti!",
+      "emailConfirmFailed": "E-posti kinnitamine ebaõnnestus. Palun proovi uuesti.",
+      "forgotFailed": "Parooli lähtestamise e-kirja saatmine ebaõnnestus. Palun proovi hiljem uuesti!",
+      "resetFailed": "Parooli lähtestamine ebaõnnestus. Palun proovi hiljem uuesti!",
+      "updateUserFailed": "Kasutaja uuendamine ebaõnnestus, palun proovi hiljem uuesti!",
+      "updatePasswordFailed": "Parooli uuendamine ebaõnnestus, palun proovi hiljem uuesti!",
+      "missingToken": "Sisselogimine ebaõnnestus — puudu on märk",
+      "registerNoResponse": "Registreerimine ebaõnnestus — server ei vastanud",
+      "userIdRequired": "Kasutaja ID on vajalik kasutaja andmete uuendamiseks"
+    }
+  },
   "Search": {
     "search": "Otsi siit",
     "searchListings": "Otsi kuulutusi",
@@ -684,7 +745,11 @@
     "workinghours(perday)": "töötunnid (päevas)",
     "saving": "säästmine",
     "savechanges": "salvesta muudatused",
-    "titleDescription": "pealkiriKirjeldus"
+    "titleDescription": "pealkiriKirjeldus",
+    "toasts": {
+      "updated": "Põhiandmed on uuendatud",
+      "updateFailed": "Põhiandmete uuendamine ebaõnnestus"
+    }
   },
   "ImageSection": {
     "addportfolioimages": "LisaPortfolioImages",
@@ -728,14 +793,25 @@
     "citylabel": "linnamärk",
     "statelabel": "riigimärgis",
     "selectstate": "vali olek",
-    "selectcity": "valitud linn"
+    "selectcity": "Vali linn",
+    "errors": {
+      "cityStateRequired": "Igas teeninduspiirkonnas peab olema linn ja osariik"
+    },
+    "toasts": {
+      "updated": "Müüja/Koha andmed on uuendatud",
+      "updateFailed": "Müüja/Koha andmete uuendamine ebaõnnestus"
+    }
   },
   "contactSections": {
     "email": "meili",
     "phone": "telefon",
     "address": "aadress",
     "saving": "säästmine",
-    "savechanges": "salvesta muudatused"
+    "savechanges": "salvesta muudatused",
+    "toasts": {
+      "updated": "Kontakt on uuendatud",
+      "updateFailed": "Kontakti uuendamine ebaõnnestus"
+    }
   },
   "socialLinkSection": {
     "sectiontitle": "jaotise pealkiri",
@@ -743,7 +819,20 @@
     "visible": "nähtav",
     "+addsociallink": "+ lisa sotsiaallink",
     "saving": "säästmine",
-    "savechanges": "salvesta muudatused"
+    "savechanges": "salvesta muudatused",
+    "title": "Sotsiaalmeedia lingid",
+    "platformLabel": "Platvorm",
+    "selectPlatform": "Vali platvorm",
+    "yes": "Jah",
+    "no": "Ei",
+    "errors": {
+      "platformRequired": "Iga sotsiaalmeedia lingi jaoks on platvorm kohustuslik",
+      "validUrlRequired": "Iga sotsiaalmeedia lingi jaoks on vajalik kehtiv URL"
+    },
+    "toasts": {
+      "updated": "Sotsiaalmeedia lingid on uuendatud",
+      "updateFailed": "Sotsiaalmeedia linkide uuendamine ebaõnnestus"
+    }
   },
   "pricingSection": {
     "+addoptionaladdon": "+ lisalisand",
@@ -753,7 +842,19 @@
     "saving...": "Salvestamine...",
     "savechanges": "salvesta muudatused",
     "sectiontitle": "jaotise pealkiri",
-    "optionaladdons": "valikulised alad"
+    "optionaladdons": "valikulised alad",
+    "errors": {
+      "planRequired": "Palun lisage vähemalt üks plaan",
+      "planNameRequired": "Igal plaanil peab olema nimi",
+      "nonNegativePrice": "Iga plaani hind peab olema mitte-negatiivne",
+      "validCtaUrl": "CTA nupu URL peab algama http või https",
+      "addonStatementRequired": "Igal lisal peab olema kirjeldus",
+      "addonNonNegativePrice": "Iga lisa hind peab olema mitte-negatiivne"
+    },
+    "toasts": {
+      "updated": "Hinnakujundus on uuendatud",
+      "updateFailed": "Hinnakujunduse uuendamine ebaõnnestus"
+    }
   },
   "FAQsSection": {
     "sectiontitle": "jaotise pealkiri",
@@ -761,7 +862,15 @@
     "savechanges": "salvesta muudatused ",
     "+addFAQ": "+lisa KKK",
     "answer": "vastama",
-    "question": "küsimus"
+    "question": "Küsimus",
+    "errors": {
+      "addAtLeastOne": "Lisage vähemalt üks KKK",
+      "eachNeedsQnA": "Iga KKK vajab küsimust ja vastust"
+    },
+    "toasts": {
+      "updated": "KKK-d on uuendatud",
+      "updateFailed": "KKK-de uuendamine ebaõnnestus"
+    }
   },
   "Booking": {
     "Modal": {
@@ -880,6 +989,18 @@
         "rejected": "Tagasi lükatud",
         "completed": "Lõpetatud"
       }
+    }
+  },
+  "hotDealSection": {
+    "errors": {
+      "startRequired": "Alguskuupäev on kohustuslik",
+      "lastRequired": "Lõppkuupäev on kohustuslik",
+      "flatRateMin": "Fikseeritud hind peab olema suurem või võrdne 0-ga",
+      "percentageRange": "Protsent peab olema vahemikus 0 kuni 100"
+    },
+    "toasts": {
+      "updated": "Eripakkumine on uuendatud",
+      "updateFailed": "Eripakkumise uuendamine ebaõnnestus"
     }
   }
 }

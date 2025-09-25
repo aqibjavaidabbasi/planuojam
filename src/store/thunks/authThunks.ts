@@ -7,7 +7,7 @@ export const loginUser = createAsyncThunk(
   async (credentials: Record<string, unknown>, thunkAPI) => {
     try {
       const res = await login(credentials);
-      if (!res?.jwt) throw new Error("Login failed — missing token");
+      if (!res?.jwt) throw new Error('Errors.Auth.missingToken');
       localStorage.setItem("token", res.jwt);
       return res.user;
     } catch (error: unknown) {
@@ -21,7 +21,7 @@ export const registerUser = createAsyncThunk(
   async (data: Record<string, unknown>, thunkAPI) => {
     try {
       const res = await register(data);
-      if (!res) throw new Error("Registration failed — no response from server");
+      if (!res) throw new Error('Errors.Auth.registerNoResponse');
       return res.user
     } catch (error: unknown) {
       return thunkAPI.rejectWithValue(getStrapiErrorMessage(error));
@@ -36,7 +36,7 @@ export const updateUser = createAsyncThunk(
     try {
       // Expecting data to contain at least an 'id' field and the rest as update fields
       const { id, ...updateFields } = data as { id: number } & Record<string, unknown>;
-      if (!id) throw new Error("User ID is required to update user data");
+      if (!id) throw new Error('Errors.Auth.userIdRequired');
       const res = await updateUserData(id, updateFields);
       return res;
     } catch (error: unknown) {

@@ -47,6 +47,7 @@
       "confirmPasswordRequired": "Password is required",
       "tosAgree": "I agree to the Terms of Service and Privacy Policy",
       "tosRequired": "Please read and agree to our Terms of Service and Privacy Policy",
+      "tosNotAccepted": "Please accept the Terms of Service and Privacy Policy",
       "registerCta": "Register",
       "alreadyHaveAccount": "Already have an account?",
       "signInHere": "Sign in here"
@@ -54,7 +55,11 @@
     "Social": {
       "orContinue": "Or continue with",
       "google": "Continue with Google",
-      "facebook": "Continue with Facebook"
+      "facebook": "Continue with Facebook",
+      "toasts": {
+        "googleClicked": "Google register clicked",
+        "facebookClicked": "Facebook register clicked"
+      }
     },
     "ResetPassword": {
       "title": "Reset Password",
@@ -674,6 +679,29 @@
   "Login": {
     "login": "Login"
   },
+  "Errors": {
+    "Api": {
+      "generic": "Something went wrong. Please try again."
+    },
+    "Auth": {
+      "noToken": "No authentication token found. Please log in.",
+      "invalidCredentials": "Check your email or password and try again!",
+      "registerFailed": "We failed to register you. Please try again later!",
+      "emailConfirmFailed": "Email confirmation failed. Please try again.",
+      "forgotFailed": "Failed to send password reset email. Please try again later!",
+      "resetFailed": "Failed to reset password. Please try again later!",
+      "updateUserFailed": "Failed to update user, please try again later!",
+      "updatePasswordFailed": "Failed to update password, please try again later!",
+      "missingToken": "Login failed — missing token",
+      "registerNoResponse": "Registration failed — no response from server",
+      "userIdRequired": "User ID is required to update user data"
+    },
+    "Map": {
+      "addCityOrState": "Please add a city or state to get coordinates",
+      "addCoordinatesManually": "Something went wrong! Please add coordinates manually",
+      "unableToGetCoordinates": "We are unable to get your location coordinates. Please add manually"
+    }
+  },
   "Search": {
     "search": "Search Here",
     "searchListings": "Search listings",
@@ -700,7 +728,22 @@
     "workinghours(perday)": "Working Hour (Per Day)",
     "titleDescription": "Title Description",
     "saving": "Saving",
-    "savechanges": "Save  Changes"
+    "savechanges": "Save  Changes",
+    "errors": {
+      "titleRequired": "Title is required",
+      "priceRequired": "Price is required",
+      "descriptionRequired": "Description is required"
+    },
+    "toasts": {
+      "updated": "Basic details updated",
+      "updateFailed": "Failed to update basic details"
+    }
+  },
+  "ContactSection": {
+    "toasts": {
+      "updated": "Contact updated",
+      "updateFailed": "Failed to update contact"
+    }
   },
   "ImageSection": {
     "addportfolioimages": "Add  Portfolio Images",
@@ -744,14 +787,37 @@
     "citylabel": "City ",
     "statelabel": "State",
     "selectstate": "Select State",
-    "selectcity": "Select City"
+    "selectcity": "Select City",
+    "errors": {
+      "cityRequired": "City is required",
+      "stateRequired": "State is required",
+      "latitudeRequired": "Latitude is required",
+      "longitudeRequired": "Longitude is required",
+      "capacityRequired": "Capacity is required",
+      "bookingDurationTypeRequired": "Booking duration type is required",
+      "bookingDurationRequired": "Booking duration is required",
+      "cityStateRequired": "Each service area needs a city and state"
+    },
+    "toasts": {
+      "updated": "Vendor/Venue details updated",
+      "updateFailed": "Failed to update Vendor/Venue details"
+    }
   },
   "contactSections": {
     "email": "Email",
     "phone": "Phone",
     "address": "Address",
     "saving": "Saving",
-    "savechanges": "Save  Changes"
+    "savechanges": "Save  Changes",
+    "errors": {
+      "emailRequired": "Email is required",
+      "phoneRequired": "Phone is required",
+      "addressRequired": "Address is required"
+    },
+    "toasts": {
+      "updated": "Contact updated",
+      "updateFailed": "Failed to update contact"
+    }
   },
   "socialLinkSection": {
     "sectiontitle": "Section Title",
@@ -759,7 +825,20 @@
     "visible": "Visible",
     "+addsociallink": "+ Add Social Link",
     "saving": "Saving",
-    "savechanges": "Save Changes"
+    "savechanges": "Save Changes",
+    "title": "Social Links",
+    "platformLabel": "Platform",
+    "selectPlatform": "Select Platform",
+    "yes": "Yes",
+    "no": "No",
+    "errors": {
+      "platformRequired": "Platform is required for each social link",
+      "validUrlRequired": "Valid URL is required for each social link"
+    },
+    "toasts": {
+      "updated": "Social links updated",
+      "updateFailed": "Failed to update social links"
+    }
   },
   "pricingSection": {
     "+addoptionaladdon": "+ Add Optional Addon",
@@ -768,7 +847,19 @@
     "saving": "Saving",
     "savechanges": "Save  Changes",
     "sectiontitle": "Section Title",
-    "optionaladdons": "Optional Addons"
+    "optionaladdons": "Optional Addons",
+    "errors": {
+      "planRequired": "Please add at least one plan",
+      "planNameRequired": "Each plan must have a name",
+      "nonNegativePrice": "Each plan must have a non-negative price",
+      "validCtaUrl": "CTA Button URL must be a valid URL starting with http or https",
+      "addonStatementRequired": "Each addon must have a statement",
+      "addonNonNegativePrice": "Each addon must have a non-negative price"
+    },
+    "toasts": {
+      "updated": "Pricing updated",
+      "updateFailed": "Failed to update pricing"
+    }
   },
   "FAQsSection": {
     "sectiontitle": "Section Title",
@@ -776,7 +867,15 @@
     "savechanges": "Save Changes",
     "+addFAQ": "+addFAQ",
     "answer": "Answer",
-    "question": "Question"
+    "question": "Question",
+    "errors": {
+      "addAtLeastOne": "Add at least one FAQ",
+      "eachNeedsQnA": "Each FAQ needs a question and an answer"
+    },
+    "toasts": {
+      "updated": "FAQs updated",
+      "updateFailed": "Failed to update FAQs"
+    }
   },
   "Booking": {
     "Modal": {
@@ -891,10 +990,197 @@
         "total": "Total",
         "pending": "Pending",
         "confirmed": "Confirmed",
-        "cancelled": "Cancelled",
-        "rejected": "Rejected",
-        "completed": "Completed"
+        "cancelled": "Cancelled"
       }
+    },
+    "socialLinkSection": {
+      "sectiontitle": "Section Title",
+      "link": "Link",
+      "visible": "Visible",
+      "+addsociallink": "+ Add Social Link",
+      "saving": "Saving",
+      "savechanges": "Save Changes",
+      "title": "Social Links",
+      "platformLabel": "Platform",
+      "selectPlatform": "Select Platform",
+      "yes": "Yes",
+      "no": "No",
+      "errors": {
+        "platformRequired": "Platform is required for each social link",
+        "validUrlRequired": "Valid URL is required for each social link"
+      },
+      "toasts": {
+        "updated": "Social links updated",
+        "updateFailed": "Failed to update social links"
+      }
+    },
+    "pricingSection": {
+      "+addoptionaladdon": "+ Add Optional Addon",
+      "+addplan": "+ Add Plan",
+      "+addfeature": "+ Add Feature",
+      "saving": "Saving",
+      "savechanges": "Save  Changes",
+      "sectiontitle": "Section Title",
+      "optionaladdons": "Optional Addons",
+      "errors": {
+        "planRequired": "Please add at least one plan",
+        "planNameRequired": "Each plan must have a name",
+        "nonNegativePrice": "Each plan must have a non-negative price",
+        "validCtaUrl": "CTA Button URL must be a valid URL starting with http or https",
+        "addonStatementRequired": "Each addon must have a statement",
+        "addonNonNegativePrice": "Each addon must have a non-negative price"
+      },
+      "toasts": {
+        "updated": "Pricing updated",
+        "updateFailed": "Failed to update pricing"
+      }
+    },
+    "FAQsSection": {
+      "sectiontitle": "Section Title",
+      "saving": "Saving",
+      "savechanges": "Save Changes",
+      "+addFAQ": "+addFAQ",
+      "answer": "Answer",
+      "question": "Question",
+      "errors": {
+        "addAtLeastOne": "Add at least one FAQ",
+        "eachNeedsQnA": "Each FAQ needs a question and an answer"
+      },
+      "toasts": {
+        "updated": "FAQs updated",
+        "updateFailed": "Failed to update FAQs"
+      }
+    },
+    "Booking": {
+      "Modal": {
+        "title": "Create Booking",
+        "fields": {
+          "start": "Start Date & Time",
+          "end": "End Date & Time",
+          "autoEnd": "End Date & Time (auto {duration} {unit})",
+          "plan": "Select Plan",
+          "addons": "Addons"
+        },
+        "placeholders": {
+          "selectPlan": "Select a plan (optional)"
+        },
+        "units": {
+          "hours": "hour(s)",
+          "days": "day(s)"
+        },
+        "defaultPlan": "Default",
+        "errors": {
+          "requiredDateTime": "Please select a date and time.",
+          "futureOnly": "Please choose a future date and time.",
+          "invalidRange": "End time must be after start time.",
+          "slotUnavailable": "Selected time slot is not available."
+        },
+        "toasts": {
+          "creating": "Creating booking...",
+          "created": "Booking created successfully.",
+          "failedCreate": "Failed to create booking."
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "checking": "Checking availability...",
+          "creating": "Creating...",
+          "create": "Create Booking"
+        }
+      },
+      "DetailsModal": {
+        "title": "Booking Details",
+        "labels": {
+          "status": "Status",
+          "start": "Start",
+          "end": "End",
+          "plan": "Plan",
+          "price": "Price",
+          "features": "Features",
+          "addons": "Addons",
+          "none": "None"
+        },
+        "actions": {
+          "close": "Close"
+        }
+      },
+      "MyBookings": {
+        "title": "My Bookings",
+        "labels": {
+          "listing": "Listing",
+          "status": "Status",
+          "dateTime": "Date/Time",
+          "start": "Start",
+          "end": "End"
+        },
+        "messages": {
+          "loginToView": "Please log in to view your bookings.",
+          "none": "No bookings yet."
+        },
+        "toasts": {
+          "updating": "Updating booking...",
+          "updated": "Booking updated.",
+          "updateFailed": "Failed to update booking.",
+          "deleting": "Deleting booking...",
+          "deleted": "Booking deleted.",
+          "deleteFailed": "Failed to delete booking."
+        },
+        "errors": {
+          "slotUnavailable": "Selected time slot is not available.",
+          "load": "Failed to load bookings."
+        },
+        "confirm": {
+          "delete": "Delete this booking?",
+          "acceptTitle": "Accept booking?",
+          "rejectTitle": "Reject booking?",
+          "accept": "Are you sure you want to accept this booking? Only accept if you can manage it.",
+          "reject": "Are you sure you want to reject (cancel) this booking?",
+          "cancelTitle": "Cancel this booking?",
+          "cancel": "Are you sure you want to cancel this booking?",
+          "markCompleted": "Mark this booking as completed?"
+        },
+        "actions": {
+          "saving": "Saving...",
+          "save": "Save",
+          "cancel": "Cancel",
+          "reschedule": "Reschedule",
+          "delete": "Delete",
+          "review": "Review",
+          "markCompleted": "Mark as Completed",
+          "accept": "Accept",
+          "reject": "Reject"
+        },
+        "filters": {
+          "status": "Filter by status",
+          "all": "All"
+        },
+        "status": {
+          "pending": "Pending",
+          "confirmed": "Confirmed",
+          "cancelled": "Cancelled",
+          "rejected": "Rejected",
+          "completed": "Completed"
+        },
+        "stats": {
+          "total": "Total",
+          "pending": "Pending",
+          "confirmed": "Confirmed",
+          "cancelled": "Cancelled",
+          "rejected": "Rejected",
+          "completed": "Completed"
+        }
+      }
+    }
+  },
+  "hotDealSection": {
+    "errors": {
+      "startRequired": "Start date is required",
+      "lastRequired": "Last date is required",
+      "flatRateMin": "Flat rate must be greater than or equal to 0",
+      "percentageRange": "Percentage must be between 0 and 100"
+    },
+    "toasts": {
+      "updated": "Hot Deal updated",
+      "updateFailed": "Failed to update Hot Deal"
     }
   }
 }

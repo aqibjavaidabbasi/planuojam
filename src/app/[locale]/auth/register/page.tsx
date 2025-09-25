@@ -17,6 +17,7 @@ import { BsCart3 } from "react-icons/bs";
 import { TbTools } from "react-icons/tb";
 import { useTranslations } from "next-intl";
 import SocialAuthButtons from "@/components/auth/SocialAuthButtons";
+import { useLocale } from "next-intl";
 
 type FormValues = {
   role: string;
@@ -41,10 +42,11 @@ function RegisterPage() {
   const router = useRouter();
   const t = useTranslations("Auth.Register");
   const [isChecked, setIsChecked] = useState(false);
+  const locale = useLocale();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!isChecked) {
-      toast.error("Please Accept Terms of service and Privacy Policy");
+      toast.error(t("tosNotAccepted"));
       return;
     }
     //filter role, terms, confirm
@@ -262,8 +264,40 @@ function RegisterPage() {
 
           <SocialAuthButtons
             className="mt-6"
-            onGoogleClick={() => toast("Google register clicked")}
-            onFacebookClick={() => toast("Facebook register clicked")}
+            onGoogleClick={() => {
+              const svc = watch("serviceType");
+              const role = watch("role");
+              if (role === "provider" && !svc) {
+                toast.error(t("serviceRequired"));
+                return;
+              }
+              const origin = typeof window !== "undefined" ? window.location.origin : "";
+              const redirectTo = `${origin}/${locale}/auth/callback`;
+              const qs = new URLSearchParams({
+                redirectTo,
+                locale,
+                mode: "register",
+                serviceType: svc || "",
+              }).toString();
+              window.location.href = `/api/auth/google?${qs}`;
+            }}
+            onFacebookClick={() => {
+              const svc = watch("serviceType");
+              const role = watch("role");
+              if (role === "provider" && !svc) {
+                toast.error(t("serviceRequired"));
+                return;
+              }
+              const origin = typeof window !== "undefined" ? window.location.origin : "";
+              const redirectTo = `${origin}/${locale}/auth/callback`;
+              const qs = new URLSearchParams({
+                redirectTo,
+                locale,
+                mode: "register",
+                serviceType: svc || "",
+              }).toString();
+              window.location.href = `/api/auth/facebook?${qs}`;
+            }}
           />
 
           <div className="text-center mt-6">

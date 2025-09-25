@@ -64,30 +64,29 @@ export default function PricingSection({
     try {
       // Frontend validation
       if (!values.plans || values.plans.length === 0) {
-        throw new Error("Please add at least one plan")
+        throw new Error(t("errors.planRequired"))
       }
       for (const p of values.plans) {
-        if (!p.name?.trim()) throw new Error("Each plan must have a name")
+        if (!p.name?.trim()) throw new Error(t("errors.planNameRequired"))
         if (p.price === undefined || p.price === null || isNaN(Number(p.price)) || Number(p.price) < 0) {
-          throw new Error("Each plan must have a non-negative price")
+          throw new Error(t("errors.nonNegativePrice"))
         }
         if (p.cta?.buttonUrl && !/^https?:\/\//.test(p.cta.buttonUrl)) {
-          throw new Error("CTA Button URL must be a valid URL starting with http or https")
+          throw new Error(t("errors.validCtaUrl"))
         }
       }
       for (const a of values.optionalAddons || []) {
-        if (!a.statement?.trim()) throw new Error("Each addon must have a statement")
+        if (!a.statement?.trim()) throw new Error(t("errors.addonStatementRequired"))
         if (a.price === undefined || a.price === null || isNaN(Number(a.price)) || Number(a.price) < 0) {
-          throw new Error("Each addon must have a non-negative price")
+          throw new Error(t("errors.addonNonNegativePrice"))
         }
       }
 
       await updateListing(listing.documentId, { data: { pricingPackages: values } }, listing.locale)
-      toast.success("Pricing updated")
+      toast.success(t("toasts.updated"))
       onSaved?.()
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to update pricing"
-      toast.error(message)
+      toast.error(e instanceof Error ? e.message : t("toasts.updateFailed"))
     } finally {
       setSubmitting(false)
     }

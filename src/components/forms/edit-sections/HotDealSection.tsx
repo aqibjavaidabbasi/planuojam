@@ -9,6 +9,7 @@ import Button from "../../custom/Button"
 import { toast } from "react-hot-toast"
 import { updateListing } from "@/services/listing"
 import type { ListingItem } from "@/types/pagesTypes"
+import { useTranslations } from "next-intl"
 
 export type Discount = {
   discountType: "Flat Rate" | "Percentage"
@@ -26,6 +27,7 @@ export type HotDealForm = {
 
 export default function HotDealSection({ listing, onSaved }: { listing: ListingItem; onSaved?: () => void }) {
   const [submitting, setSubmitting] = useState(false)
+  const t = useTranslations('hotDealSection')
   const { register, watch, setValue, handleSubmit } = useForm<HotDealForm>({
     defaultValues: {
       enableHotDeal: (listing.hotDeal)?.enableHotDeal ?? false,
@@ -41,17 +43,17 @@ export default function HotDealSection({ listing, onSaved }: { listing: ListingI
   const validate = useMemo(() => {
     const errors: string[] = []
     if (form.enableHotDeal) {
-      if (!form.startDate) errors.push("Start date is required")
-      if (!form.lastDate) errors.push("Last date is required")
+      if (!form.startDate) errors.push(t('errors.startRequired'))
+      if (!form.lastDate) errors.push(t('errors.lastRequired'))
       if (form.discount?.discountType === "Flat Rate") {
-        if (form.discount?.flatRatePrice == null || form.discount.flatRatePrice < 0) errors.push("Flat rate must be >= 0")
+        if (form.discount?.flatRatePrice == null || form.discount.flatRatePrice < 0) errors.push(t('errors.flatRateMin'))
       } else if (form.discount?.discountType === "Percentage") {
         if (form.discount?.percentage == null || form.discount.percentage < 0 || form.discount.percentage > 100)
-          errors.push("Percentage must be between 0 and 100")
+          errors.push(t('errors.percentageRange'))
       }
     }
     return errors
-  }, [form])
+  }, [form, t])
 
   const onSubmit = async (values: HotDealForm) => {
     if (values.enableHotDeal) {
@@ -63,10 +65,10 @@ export default function HotDealSection({ listing, onSaved }: { listing: ListingI
     setSubmitting(true)
     try {
       await updateListing(listing.documentId, { data: { hotDeal: values } }, listing.locale)
-      toast.success("Hot Deal updated")
+      toast.success(t('toasts.updated'))
       onSaved?.()
     } catch (e: unknown) {
-      toast.error((e as Error)?.message || "Failed to update Hot Deal")
+      toast.error((e as Error)?.message || t('toasts.updateFailed'))
     } finally {
       setSubmitting(false)
     }

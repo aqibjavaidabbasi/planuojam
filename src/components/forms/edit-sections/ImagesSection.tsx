@@ -11,6 +11,7 @@ import { getCompleteImageUrl } from "@/utils/helpers"
 import { useTranslations } from "next-intl"
 import Modal from "@/components/custom/Modal"
 import { FaTrash } from "react-icons/fa6"
+import { translateError } from "@/utils/translateError"
 
 export default function ImagesSection({ listing, onSaved }: { listing: ListingItem; onSaved?: () => void }) {
   const [imageIds, setImageIds] = useState<number[]>([])
@@ -19,6 +20,7 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [imageToDelete, setImageToDelete] = useState<{ id: number; url?: string } | null>(null)
   const t=useTranslations("ImageSection")
+  const tErrors = useTranslations('Errors')
   const onSubmit = async () => {
     if (imageIds.length === 0) {
       toast.error(t("errors.noImage"))
@@ -33,7 +35,7 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
       onSaved?.()
       setImageIds([])
     } catch (e: unknown) {
-      toast.error((e as Error)?.message || t("toasts.saveFailed"))
+      toast.error(translateError(t, tErrors, e, 'toasts.saveFailed'))
     } finally {
       setSubmitting(false)
     }
@@ -55,7 +57,7 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
       setImageToDelete(null)
       onSaved?.()
     } catch (e: unknown) {
-      toast.error((e as Error)?.message || t("toasts.removeFailed"))
+      toast.error(translateError(t, tErrors, e, 'toasts.removeFailed'))
     } finally {
       setDeleting(false)
     }

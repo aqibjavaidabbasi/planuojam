@@ -8,6 +8,7 @@ import { createBooking, getListingBookings } from "@/services/booking";
 import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
 import Select from "@/components/custom/Select";
+import { translateError } from "@/utils/translateError";
 
 interface BookingModalProps {
   showModal: boolean;
@@ -54,6 +55,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const [slotAvailable, setSlotAvailable] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
   const t = useTranslations("Booking.Modal");
+  const tErrors = useTranslations('Errors');
   const [selectedPlanIndex, setSelectedPlanIndex] = useState<number | null>(null);
   const [selectedAddonIdxSet, setSelectedAddonIdxSet] = useState<Set<number>>(new Set());
 
@@ -181,22 +183,11 @@ const BookingModal: React.FC<BookingModalProps> = ({
             return t("toasts.created", { default: "Booking created successfully." });
 
           },
-          error: (err) => {
-            if (typeof err === "string") return err;
-            if (err && typeof err === "object" && "message" in err) return String((err).message);
-            return t("toasts.failedCreate", { default: "Failed to create booking." });
-          },
+          error: (err) => translateError(t, tErrors, err, 'toasts.failedCreate'),
         }
       );
     } catch (err: unknown) {
-      let msg: string;
-      if (typeof err === "string") {
-        msg = err;
-      } else if (err && typeof err === "object" && "message" in err) {
-        msg = String((err).message);
-      } else {
-        msg = t("toasts.failedCreate", { default: "Failed to create booking." });
-      }
+      const msg = translateError(t, tErrors, err, 'toasts.failedCreate');
       setError(msg);
     } finally {
       setSubmitting(false);

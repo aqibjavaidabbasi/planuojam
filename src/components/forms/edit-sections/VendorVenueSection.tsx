@@ -82,7 +82,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
   const onSubmitVendor = async (values: VendorForm) => {
     // minimal validation
     if (values.serviceArea?.some(sa => !sa.city || !sa.state)) {
-      toast.error("Each service area needs a city and state")
+      toast.error(t("errors.cityStateRequired", { default: "Each service area needs a city and state" }))
       return
     }
     setSubmitting(true)
@@ -105,10 +105,10 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
         },
       ]
       await updateListing(listing.documentId, { data: { listingItem } }, listing.locale)
-      toast.success("Vendor details updated")
+      toast.success(t("toasts.updated", { default: "Vendor/Venue details updated" }))
       onSaved?.()
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to update vendor details"
+      const message = e instanceof Error ? e.message : t("toasts.updateFailed", { default: "Failed to update Vendor/Venue details" })
       toast.error(message)
     } finally {
       setSubmitting(false)
@@ -189,10 +189,10 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
       }
 
       await updateListing(listing.documentId, { data: { listingItem: [next] } }, listing.locale)
-      toast.success("Venue details updated")
+      toast.success(t("toasts.updated", { default: "Vendor/Venue details updated" }))
       onSaved?.()
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Failed to update venue details"
+      const message = e instanceof Error ? e.message : t("toasts.updateFailed", { default: "Failed to update Vendor/Venue details" })
       toast.error(message)
     } finally {
       setSubmitting(false)
