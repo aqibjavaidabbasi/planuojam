@@ -21,7 +21,7 @@ function FaqBlock({ data }: { data: FAQComponentBlock }) {
   if (!faqs.length) return null
 
   return (
-    <section className="my-12 px-4 lg:max-w-[1440px] mx-auto">
+    <section className="my-12 px-4 lg:max-w-[1700px] mx-auto">
       <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center text-primary">
         {data.sectionTitle}
       </h2>

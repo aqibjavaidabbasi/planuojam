@@ -21,7 +21,7 @@ function TopListingItem({ data }: { data: topListingItemsBlock }) {
     });
 
     return (
-        <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1440px] mx-auto'>
+        <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1700px] mx-auto'>
             <div className='mb-5 flex w-full flex-col items-center justify-center'>
                 <Heading headingPiece={data.sectionheader.heading.headingPiece} />
                 <p className='text-center max-w-prose'>{data.sectionheader.sectionDescription}</p>

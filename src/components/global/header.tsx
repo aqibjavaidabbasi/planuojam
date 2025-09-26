@@ -152,7 +152,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
   return (
     <header className="sticky top-0 z-30">
       <div className="w-full bg-white shadow-sm px-2.5 md:px-4 py-2 ">
-        <div className="max-w-screen lg:max-w-[1440px] mx-auto flex items-center justify-between">
+        <div className="max-w-screen lg:max-w-[1700px] mx-auto flex items-center justify-between">
           {/* Left: Logo and Nav */}
           <div className="flex items-center gap-3 w-full md:w-auto">
             <Image
@@ -351,7 +351,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
       {Array.isArray(headerData?.eventTypes) &&
         headerData.eventTypes.length > 0 && (
           <div className="hidden md:flex w-full bg-gray-50 border-t border-b border-border px-4 py-2 gap-2 z-20">
-            <div className="max-w-screen lg:max-w-[1440px] mx-auto">
+            <div className="max-w-screen lg:max-w-[1700px] mx-auto">
               {headerData.eventTypes.map(({ id, eventType }) => {
                 const isActive = isEventTypeActive(eventType.documentId);
                 return (

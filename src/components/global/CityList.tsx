@@ -8,7 +8,7 @@ function CityList({ data }: { data: CityListBlock }) {
         boxShadow: '0px 0px 4px rgba(0,0,0,0.2)'
       }}
     >
-      <div className='lg:max-w-[1440px] mx-auto max-w-screen w-full p-4'>
+      <div className='lg:max-w-[1700px] mx-auto max-w-screen w-full p-4'>
       <h3 className='text-base font-semibold mb-2'>Find Venues and cities</h3>
       <ul className='grid grid-cols-2 md:grid-cols-5 justify-evenly pl-5'>
         {data.Cities.map((city) => (

@@ -12,7 +12,7 @@ function SelectedCategories({ data }: { data: SelectedCategoriesList }) {
     const updatedData = filterUniqueCategoriesByParent(data);
 
     return (
-        <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1440px] mx-auto'>
+        <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1700px] mx-auto'>
             <div className='flex flex-col items-center justify-center gap-2'>
                 <Heading headingPiece={data.sectionTitle.heading.headingPiece} />
                 <p className='text-center max-w-prose'>{data.sectionTitle.sectionDescription}</p>

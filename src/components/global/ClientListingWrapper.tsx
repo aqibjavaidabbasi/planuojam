@@ -196,7 +196,7 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
         locations={locations}
         fetcher={fetcher}
       />
-      <div className="flex justify-center gap-5 my-10 flex-wrap lg:max-w-[1440px] mx-auto px-4">
+      <div className="flex justify-center gap-5 my-10 flex-wrap lg:max-w-[1700px] mx-auto px-4">
         {list.length === 0 ? (
           <NoDataCard>{getTranslation(placeholders.emptyList)}</NoDataCard>
         ) : (

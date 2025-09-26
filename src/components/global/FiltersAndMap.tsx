@@ -151,7 +151,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
     const t=useTranslations("VenueInfo")
     const tSearch = useTranslations('Search');
     return (
-        <div className="lg:max-w-[1440px] mx-auto px-4">
+        <div className="lg:max-w-[1700px] mx-auto px-4">
             <div className="mb-4 flex flex-col gap-2.5">
                 {/* Keyword search for listings (title/description) */}
                 <div>

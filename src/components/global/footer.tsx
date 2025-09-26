@@ -29,7 +29,7 @@ function Footer({ footerData }: { footerData: footer }) {
 
     return (
         <div className='bg-footer-background w-full text-primary p-5' >
-            <div className='flex justify-start md:justify-between flex-col md:flex-row max-w-screen lg:max-w-[1440px] mx-auto'>
+            <div className='flex justify-start md:justify-between flex-col md:flex-row max-w-screen lg:max-w-[1700px] mx-auto'>
                 {footerData?.footerlinkSection.map(section => (
                     <div key={section.id} className='py-3'>
                         <p className='text-white font-semibold mb-2 capitalize'>{section.title}</p>
@@ -62,7 +62,7 @@ function Footer({ footerData }: { footerData: footer }) {
                         </div>}
                     </div>))}
             </div>
-            <div className='flex items-center justify-between mt-4 pt-3 border-t-[0.5px] border-border flex-col md:flex-row max-w-screen lg:max-w-[1440px] mx-auto'>
+            <div className='flex items-center justify-between mt-4 pt-3 border-t-[0.5px] border-border flex-col md:flex-row max-w-screen lg:max-w-[1700px] mx-auto'>
                 <div className='flex items-center gap-2.5'>
                     {footerData?.extraLinks.pages.map((link, idx, arr) => (
                         <span key={link.documentId} className='flex items-center gap-2'>
