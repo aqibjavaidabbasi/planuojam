@@ -57,7 +57,7 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
     );
   };
   return (
-    <form className="space-y-6" id="loginForm" onSubmit={handleSubmit(onSubmit)}>
+    <form className="space-y-3.5" id="loginForm" onSubmit={handleSubmit(onSubmit)}>
       <div>
         <Input
           type="email"
@@ -113,9 +113,11 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
         className="mt-4"
         onGoogleClick={() => {
           try {
-            const origin = typeof window !== "undefined" ? window.location.origin : "";
-            const redirectTo = `${origin}/${locale}/auth/callback`;
-            window.location.href = `/api/auth/google?redirectTo=${encodeURIComponent(redirectTo)}&locale=${encodeURIComponent(locale)}&mode=login`;
+            const qs = new URLSearchParams({
+              locale,
+              mode: "login",
+            }).toString();
+            window.location.href = `/api/auth/google?${qs}`;
           } catch (e) {
             console.log(e)
             toast.error(t("loginFailed"));
@@ -123,9 +125,11 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
         }}
         onFacebookClick={() => {
           try {
-            const origin = typeof window !== "undefined" ? window.location.origin : "";
-            const redirectTo = `${origin}/${locale}/auth/callback`;
-            window.location.href = `/api/auth/facebook?redirectTo=${encodeURIComponent(redirectTo)}&locale=${encodeURIComponent(locale)}&mode=login`;
+            const qs = new URLSearchParams({
+              locale,
+              mode: "login",
+            }).toString();
+            window.location.href = `/api/auth/facebook?${qs}`;
           } catch (e) {
             console.log(e)
             toast.error(t("loginFailed"));

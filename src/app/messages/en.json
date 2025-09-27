@@ -990,7 +990,8 @@
         "total": "Total",
         "pending": "Pending",
         "confirmed": "Confirmed",
-        "cancelled": "Cancelled"
+        "cancelled": "Cancelled",
+        "rejected": "Rejected"
       }
     },
     "socialLinkSection": {

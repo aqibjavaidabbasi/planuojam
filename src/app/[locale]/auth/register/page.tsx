@@ -275,14 +275,16 @@ function RegisterPage() {
                 toast.error(t("roleRequired"));
                 return;
               }
+
               if (role === "provider" && !svc) {
                 toast.error(t("serviceRequired"));
                 return;
               }
-              const origin = typeof window !== "undefined" ? window.location.origin : "";
-              const redirectTo = `${origin}/${locale}/auth/callback`;
+              if (!isChecked) {
+                toast.error(t("tosRequired"));
+                return;
+              }
               const qs = new URLSearchParams({
-                redirectTo,
                 locale,
                 mode: "register",
                 serviceType: svc || "",
@@ -300,10 +302,11 @@ function RegisterPage() {
                 toast.error(t("serviceRequired"));
                 return;
               }
-              const origin = typeof window !== "undefined" ? window.location.origin : "";
-              const redirectTo = `${origin}/${locale}/auth/callback`;
+              if (!isChecked) {
+                toast.error(t("tosRequired"));
+                return;
+              }
               const qs = new URLSearchParams({
-                redirectTo,
                 locale,
                 mode: "register",
                 serviceType: svc || "",

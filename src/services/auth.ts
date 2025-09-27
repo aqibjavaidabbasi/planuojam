@@ -10,13 +10,8 @@ export async function login(data: Record<string, unknown>) {
   }
 }
 export async function fetchUser(jwt: string) {
-  const populate = {
-    populate: {
-      role: "*",
-    },
-  };
   const filters = {};
-  const query = createQuery(populate);
+  const query = createQuery({});
   const res = await fetchAPIWithToken(`users/me`, query, filters, jwt);
   return res;
 }

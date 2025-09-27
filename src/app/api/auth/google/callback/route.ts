@@ -10,7 +10,6 @@ export async function GET(req: NextRequest) {
     const code = req.nextUrl.searchParams.get("code");
     const stateRaw = req.nextUrl.searchParams.get("state");
     const state = stateRaw ? JSON.parse(decodeURIComponent(stateRaw)) : {};
-    const redirectTo: string | undefined = state.redirectTo;
     const locale: string = state.locale || "en";
     const mode: 'login' | 'register' = state.mode || 'login';
     const serviceType: string | undefined = state.serviceType || undefined;
@@ -45,7 +44,6 @@ export async function GET(req: NextRequest) {
 
     const tokenJson = await tokenRes.json();
     const accessToken = tokenJson.access_token as string;
-
     // Fetch user info
     const userRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -54,6 +52,7 @@ export async function GET(req: NextRequest) {
       const text = await userRes.text();
       return new Response(`Userinfo fetch failed: ${text}`, { status: 400 });
     }
+    
     const profile = await userRes.json();
     const providerUserId = profile.sub as string;
     const email = (profile.email as string) || "";
@@ -74,7 +73,6 @@ export async function GET(req: NextRequest) {
         name,
         mode,
         serviceType: serviceType || null,
-        provider: 'google',
         providerUserId,
       }),
     });
@@ -82,9 +80,11 @@ export async function GET(req: NextRequest) {
       const text = await exchangeRes.text();
       return new Response(`Social exchange failed: ${text}`, { status: 400 });
     }
-    const { jwt } = await exchangeRes.json();
 
-    const finalRedirect = redirectTo || `${base}/${locale}/auth/callback`;
+    const exchangeJson = await exchangeRes.json();
+    const { jwt } = exchangeJson;
+
+    const finalRedirect = `${base}/auth/callback`;
     const url = new URL(finalRedirect);
     if (jwt) url.searchParams.set("jwt", jwt);
     return Response.redirect(url.toString(), 302);

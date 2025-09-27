@@ -10,7 +10,6 @@ export async function GET(req: NextRequest) {
     const code = req.nextUrl.searchParams.get("code");
     const stateRaw = req.nextUrl.searchParams.get("state");
     const state = stateRaw ? JSON.parse(decodeURIComponent(stateRaw)) : {};
-    const redirectTo: string | undefined = state.redirectTo;
     const locale: string = state.locale || "en";
     const mode: 'login' | 'register' = state.mode || 'login';
     const serviceType: string | undefined = state.serviceType || undefined;
@@ -71,7 +70,6 @@ export async function GET(req: NextRequest) {
         name,
         mode,
         serviceType: serviceType || null,
-        provider: 'facebook',
         providerUserId,
       }),
     });
@@ -81,7 +79,7 @@ export async function GET(req: NextRequest) {
     }
     const { jwt } = await exchangeRes.json();
 
-    const finalRedirect = redirectTo || `${base}/${locale}/auth/callback`;
+    const finalRedirect = `${base}/auth/callback`;
     const url = new URL(finalRedirect);
     if (jwt) url.searchParams.set("jwt", jwt);
     return Response.redirect(url.toString(), 302);

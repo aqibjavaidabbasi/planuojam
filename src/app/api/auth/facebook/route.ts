@@ -6,7 +6,6 @@ export const runtime = 'nodejs';
 export async function GET(req: NextRequest) {
   const base = getAppBaseUrl(req as unknown as Request);
   const clientId = process.env.FACEBOOK_CLIENT_ID;
-  const redirectTo = req.nextUrl.searchParams.get("redirectTo");
   const locale = req.nextUrl.searchParams.get("locale") || "en";
   const mode = req.nextUrl.searchParams.get("mode") || "login";
   const serviceType = req.nextUrl.searchParams.get("serviceType") || "";
@@ -16,7 +15,7 @@ export async function GET(req: NextRequest) {
   }
 
   const redirectUri = `${base}/api/auth/facebook/callback`;
-  const state = encodeURIComponent(JSON.stringify({ redirectTo, locale, mode, serviceType }));
+  const state = encodeURIComponent(JSON.stringify({ locale, mode, serviceType }));
   const authUrl = new URL("https://www.facebook.com/v18.0/dialog/oauth");
   authUrl.searchParams.set("client_id", clientId);
   authUrl.searchParams.set("redirect_uri", redirectUri);

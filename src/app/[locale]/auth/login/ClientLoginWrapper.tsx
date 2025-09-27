@@ -16,8 +16,8 @@ function ClientLoginWrapper() {
 
   return (
     <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 mb-4 overflow-hidden relative">
+        <div className="text-center mb-4">
+          <div className="inline-flex items-center justify-center w-20 h-20 mb-2 overflow-hidden relative">
             <Image
               alt="site logo"
               src={getCompleteImageUrl(siteSettings.siteLogo.url)}
@@ -29,10 +29,10 @@ function ClientLoginWrapper() {
           <h1 className="text-2xl font-bold text-gray-800">{t("title")}</h1>
           <p className="text-gray-600 mt-2">{t("subtitle")}</p>
         </div>
-      <div className="bg-white rounded-2xl shadow-xl p-8">
+      <div className="bg-white rounded-2xl shadow-xl p-6">
         <LoginForm setIsOpen={setIsOpen} />
 
-        <div className="text-center mt-6">
+        <div className="text-center mt-4">
           <p className="text-sm text-gray-600">
             {t("noAccount")} {" "}
             <Link
