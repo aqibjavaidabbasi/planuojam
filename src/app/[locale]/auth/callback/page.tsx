@@ -67,7 +67,6 @@ export default function AuthCallbackPage() {
         } else {
           router.replace(`/profile?tab=my-listings`);
         }
-        toast.success(t("loggedIn"));
       } catch (e) {
         console.error(e);
         toast.error(t("loginFailed"));
@@ -80,8 +79,8 @@ export default function AuthCallbackPage() {
   }, []);
 
   return (
-    <div className="min-h-[50vh] flex items-center justify-center">
-      <div className="text-sm text-gray-600">{t("loggingIn")}</div>
+    <div className="h-screen w-screen flex items-center justify-center" style={{background: "linear-gradient(135deg, #000 0%, #1a1a1a 50%, #000 100%)",}} >
+      <div className="text-xl text-primary font-bold tracking-wider" style={{animation: "textGlow 3s ease-in-out infinite alternate",textShadow: "0 0 20px rgba(204, 146, 47, 0.5)"}} >{t("loggingIn")}</div>
     </div>
   );
 }
