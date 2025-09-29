@@ -853,7 +853,7 @@
     "+addplan": "+ lisaplaan",
     "+addfeature": "+ lisafunktsioon",
     "saving": "säästmine",
-    "saving...": "Salvestamine...",
+    "savingEllipsis": "Salvestamine...",
     "savechanges": "salvesta muudatused",
     "sectiontitle": "jaotise pealkiri",
     "optionaladdons": "valikulised alad",
