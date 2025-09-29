@@ -168,7 +168,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
         selectedAddons,
       };
       await toast.promise(
-        createBooking(payload),
+        createBooking(payload, 'en'),
         {
           loading: t("toasts.creating", { default: "Creating booking..." }),
           success: () => {

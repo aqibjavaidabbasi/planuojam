@@ -7,11 +7,13 @@ import Button from "../custom/Button";
 import { useTranslations } from "next-intl";
 import { useAppSelector } from "@/store/hooks";
 import LoginNavigateModal from "@/components/modals/LoginNavigateModal";
+import { useRouter } from "@/i18n/navigation";
 
 interface ListingDetailHeroProps {
   category: string;
   title: string;
   username: string;
+  vendorUserId?: number;
   contact: {
     email: string;
     phone: string;
@@ -32,6 +34,7 @@ function ListingDetailHero({
   category,
   title,
   username,
+  vendorUserId,
   contact,
   price,
   hotDeal,
@@ -42,6 +45,7 @@ function ListingDetailHero({
   const t = useTranslations('Listing.Hero');
   const user = useAppSelector((s) => s.auth.user);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const router = useRouter();
   const startDate = hotDeal && new Date(hotDeal.startDate);
   const lastDate = hotDeal && new Date(hotDeal.lastDate);
   const isDealActive =
@@ -80,7 +84,7 @@ function ListingDetailHero({
               </div>
             </div>
           </div>
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col justify-center items-center">
             {price && (
               <div
                 className="rounded-xl p-6 text-center"
@@ -148,6 +152,39 @@ function ListingDetailHero({
                 onClick={() => window.open(websiteLink, "_blank")}
               >
                 <span className="text-white">{t('visitWebsite')}</span>
+              </div>
+            )}
+
+            {/* Message Vendor (beneath website), same visual style */}
+            {typeof vendorUserId === 'number' && user?.id !== vendorUserId && (
+              <div
+                className="rounded-xl px-6 py-2 text-center mt-3 cursor-pointer transition-all duration-200"
+                style={{
+                  backdropFilter: "blur(10px)",
+                  background: "rgba(255, 255, 255, 0.1)",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background =
+                    "rgba(255, 255, 255, 0.3)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background =
+                    "rgba(255, 255, 255, 0.1)")
+                }
+                onClick={() => {
+                  if (!user) {
+                    setShowLoginModal(true);
+                    return;
+                  }
+                  router.push(`/profile?tab=messages&withUser=${vendorUserId}`);
+                }}
+              >
+                <span className="text-white">
+                  {username
+                    ? `${t('messageVendor', { default: `Message` })} ${username}`
+                    : t('sendMessage', { default: 'Send a message' })}
+                </span>
               </div>
             )}
           </div>

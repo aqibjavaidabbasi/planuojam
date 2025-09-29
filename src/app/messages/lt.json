@@ -166,14 +166,17 @@
       "noReviews": "Kol kas nėra atsiliepimų",
       "faqs": "DUK",
       "location": "Vieta",
-      "noLocation": "Vieta nenurodyta"
+      "noLocation": "Vieta nenurodyta",
+      "messageVendor": "Sėkmės suteikti sėkmės"
     },
     "Hero": {
-      "by": "autorius {username}",
+      "by": "autorius ",
       "hotDealBadge": "KARŠTAS PASIŪLYMAS",
       "percentageOffLimited": "{percent}% NUOLAIDA - Ribotas laikas",
       "getTicketCta": "Rezervuoti dabar",
-      "visitWebsite": "Apsilankyti svetainėje"
+      "visitWebsite": "Apsilankyti svetainėje",
+      "messageVendor": "Parašyti ",
+      "sendMessage": "Siųsti žinutę"
     },
     "Calendar": {
       "availability": "Užimtumas",
@@ -624,9 +627,20 @@
     },
     "Messages": {
       "title": "Žinutės",
-      "subtitle": "Netrukus – sekite naujienas dėl žinučių funkcijų!",
+      "subtitle": "Bendraukite su kitais vartotojais.",
+      "inbox": "Gauti",
+      "outbox": "Išsiųsti",
+      "loading": "Kraunama...",
+      "noMessages": "Kol kas nėra žinučių",
+      "selectConversation": "Pasirinkite pokalbį",
+      "conversationWith": "Pokalbis su",
+      "noMessagesInThread": "Šiame pokalbyje dar nėra žinučių",
+      "typeMessage": "Rašykite žinutę...",
+      "sending": "Siunčiama...",
+      "send": "Siųsti",
       "comingSoonTitle": "Žinutės netrukus",
-      "comingSoonDesc": "Dirbame ties galinga žinučių sistema, kad galėtumėte bendrauti su savininkais ir nuomininkais."
+      "comingSoonDesc": "Dirbame ties galinga žinučių sistema, kad galėtumėte bendrauti su savininkais ir nuomininkais.",
+      "refresh": "Atnaujinti"
     }
   },
   "Custom": {
@@ -959,7 +973,8 @@
         "review": "Atsiliepimas",
         "accept": "Patvirtinti",
         "reject": "Atmesti",
-        "markCompleted": "Pažymėti kaip užbaigtą"
+        "markCompleted": "Pažymėti kaip užbaigtą",
+        "viewDetails": "Peržiūrėti detalės"
       },
       "filters": {
         "status": "Filtruoti pagal būseną",

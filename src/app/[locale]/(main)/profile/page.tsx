@@ -17,6 +17,7 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import ManageBookings from "@/components/profile/ManageBookings";
+import { countUnread } from "@/services/messages";
 
 function ProfilePage() {
   const t = useTranslations("Profile");
@@ -25,6 +26,7 @@ function ProfilePage() {
   const initialTab = searchParams?.get("tab") || "profile";
   const [activeTab, setActiveTab] = useState(initialTab);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   const user = useAppSelector((state) => state.auth.user);
   const router = useRouter()
   const showTab = (tabName: string) => {
@@ -55,6 +57,21 @@ function ProfilePage() {
       setActiveTab(tab);
     }
   }, [searchParams, activeTab]);
+
+  // Compute unread messages once on profile load
+  useEffect(() => {
+    (async () => {
+      try {
+        const uid = user?.id;
+        if (!uid) return;
+        const unread = await countUnread(uid);
+        setUnreadCount(unread);
+      } catch {
+        // ignore silently
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="bg-gray-50 min-h-screen font-inter">
@@ -177,7 +194,14 @@ function ProfilePage() {
                 }`}
               >
                 <LuMessageSquareText size={20} className="mr-3" />
-                {t("tabs.messages")}
+                <span className="relative">
+                  {t("tabs.messages")}
+                  {unreadCount > 0 && (
+                    <span className="ml-2 inline-flex items-center justify-center min-w-5 h-5 px-1 text-xs rounded-full bg-red-600 text-white">
+                      {unreadCount}
+                    </span>
+                  )}
+                </span>
               </button>
 
               {!user?.serviceType === null && (
@@ -203,7 +227,9 @@ function ProfilePage() {
             {activeTab === "manage-bookings" && <ManageBookings />}
             {activeTab === "bookings" && <MyBookings />}
             {activeTab === "favourite-listings" && <FavouriteListings />}
-            {activeTab === "messages" && <Messages />}
+            {activeTab === "messages" && (
+              <Messages initialUserId={Number(searchParams?.get("withUser") || 0) || undefined} />
+            )}
             {activeTab === "reviews" && <ReviewsTab />}
           </div>
         </div>

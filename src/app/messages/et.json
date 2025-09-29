@@ -187,14 +187,17 @@
       "noReviews": "Arvustusi veel pole",
       "faqs": "KKK",
       "location": "Asukoht",
-      "noLocation": "Asukoht puudub"
+      "noLocation": "Asukoht puudub",
+      "messageVendor": "Sõnumi pakkuja"
     },
     "Hero": {
-      "by": "autor {username}",
+      "by": "autor",
       "hotDealBadge": "KUUM PAKKUMINE",
       "percentageOffLimited": "{percent}% SOODUSTUST - Piiratud aeg",
       "getTicketCta": "Broneeri nüüd",
-      "visitWebsite": "Külasta veebisaiti"
+      "visitWebsite": "Külasta veebisaiti",
+      "messageVendor": "Saada sõnum kasutajale ",
+      "sendMessage": "Saada sõnum"
     },
     "Calendar": {
       "availability": "Saadavus",
@@ -270,9 +273,20 @@
     },
     "Messages": {
       "title": "Sõnumid",
-      "subtitle": "Varsti tulekul – püsi lainel!",
+      "subtitle": "Vestle teiste kasutajatega.",
+      "inbox": "Postkast",
+      "outbox": "Väljasaadetud",
+      "loading": "Laadimine...",
+      "noMessages": "Sõnumeid veel ei ole",
+      "selectConversation": "Vali vestlus",
+      "conversationWith": "Vestlus kasutajaga",
+      "noMessagesInThread": "Selles vestluses pole veel sõnumeid",
+      "typeMessage": "Kirjuta sõnum...",
+      "sending": "Saatmine...",
+      "send": "Saada",
       "comingSoonTitle": "Sõnumid peagi",
-      "comingSoonDesc": "Töötame sõnumisüsteemi kallal, et saaksid suhelda omanike ja üürnikega."
+      "comingSoonDesc": "Töötame sõnumisüsteemi kallal, et saaksid suhelda omanike ja üürnikega.",
+      "refresh": "Värskenda"
     },
     "ReviewsTab": {
       "title": "Arvustused",
@@ -968,7 +982,8 @@
         "review": "Arvustus",
         "accept": "Kinnita",
         "reject": "Lükka tagasi",
-        "markCompleted": "Märgi lõpetatuks"
+        "markCompleted": "Märgi lõpetatuks",
+        "viewDetails": "Vaata üksikasju"
       },
       "filters": {
         "status": "Filtreeri oleku järgi",

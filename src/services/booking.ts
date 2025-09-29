@@ -1,6 +1,7 @@
 import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
 import { createQuery, deleteAPI, fetchAPI, fetchAPIWithToken, postAPIWithToken, putAPI } from "./api";
 import { getUsersByDocumentIds, MinimalUserInfo } from "./auth";
+import { ListingItem } from "@/types/pagesTypes";
 
 // Types for booking entities kept minimal to avoid tight coupling
 export interface BookingPayload {
@@ -55,13 +56,6 @@ export async function getListingBookingsPublic(
   }
 }
 
-// Minimal shape for related listing we render in UI
-export interface ListingMinimal {
-  documentId?: string;
-  title?: string;
-  locale?: string;
-  localizations?: ListingMinimal[];
-}
 
 export interface BookingItem {
   id: number;
@@ -69,7 +63,7 @@ export interface BookingItem {
   startDateTime: string;
   endDateTime: string;
   bookingStatus: "pending" | "confirmed" | "cancelled" | "rejected" | "completed";
-  listing?: ListingMinimal;
+  listing?: ListingItem;
   // Optional pricing selections saved with the booking
   selectedPlan?: {
     name?: string;
@@ -141,15 +135,17 @@ export async function getProviderBookingsWithUsers(
 }
 
 // Create a booking
-export async function createBooking(data: BookingPayload) {
+export async function createBooking(data: BookingPayload, locale?: string) {
   // Send body with data wrapper; populate listing only
   const populate = {
     listing: { populate: "*" },
   };
-  const query = createQuery(populate);
+  // Important: Strapi uses query param ?locale=xx for localized creation
+  const query = createQuery(populate, locale ? { locale } : {});
   try {
     const body: Record<string, unknown> = { data };
     const res = await postAPIWithToken("bookings", body, {}, query);
+    console.log(res);
     return res;
   } catch (err) {
     console.error(err);

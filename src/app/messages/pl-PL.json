@@ -187,14 +187,17 @@
       "noReviews": "Brak opinii",
       "faqs": "FAQ",
       "location": "Lokalizacja",
-      "noLocation": "Brak lokalizacji"
+      "noLocation": "Brak lokalizacji",
+      "messageVendor": "Wiadomość dostawcy"
     },
     "Hero": {
-      "by": "przez {username}",
+      "by": "przez ",
       "hotDealBadge": "GORĄCA OFERTA",
       "percentageOffLimited": "{percent}% TANIEJ - Oferta ograniczona",
       "getTicketCta": "Zarezerwuj teraz",
-      "visitWebsite": "Odwiedź stronę"
+      "visitWebsite": "Odwiedź stronę",
+      "messageVendor": "Wiadomość do",
+      "sendMessage": "Wyślij wiadomość"
     },
     "Calendar": {
       "availability": "Dostępność",
@@ -270,9 +273,20 @@
     },
     "Messages": {
       "title": "Wiadomości",
-      "subtitle": "Wkrótce – bądź na bieżąco!",
+      "subtitle": "Rozmawiaj z innymi użytkownikami.",
+      "inbox": "Odebrane",
+      "outbox": "Wysłane",
+      "loading": "Wczytywanie...",
+      "noMessages": "Brak wiadomości",
+      "selectConversation": "Wybierz rozmowę",
+      "conversationWith": "Rozmowa z",
+      "noMessagesInThread": "Brak wiadomości w tej rozmowie",
+      "typeMessage": "Napisz wiadomość...",
+      "sending": "Wysyłanie...",
+      "send": "Wyślij",
       "comingSoonTitle": "Wiadomości wkrótce",
-      "comingSoonDesc": "Pracujemy nad systemem wiadomości, aby ułatwić kontakt z właścicielami i najemcami."
+      "comingSoonDesc": "Pracujemy nad systemem wiadomości, aby ułatwić kontakt z właścicielami i najemcami.",
+      "refresh": "Odświeżać"
     },
     "ReviewsTab": {
       "title": "Opinie",
@@ -974,7 +988,8 @@
         "review": "Oceń",
         "markCompleted": "Oznacz jako zakończone",
         "accept": "Akceptuj",
-        "reject": "Odrzuć"
+        "reject": "Odrzuć",
+        "viewDetails": "Zobacz szczegóły"
       },
       "filters": {
         "status": "Filtruj według statusu",

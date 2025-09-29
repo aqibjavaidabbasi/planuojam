@@ -143,9 +143,6 @@ export default function ListingDetailsPage() {
     );
   }
 
-  console.log(renderingContent)
-
-
   return (
     <div className="min-h-screen bg-background py-6 md:py-8 lg:py-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
@@ -155,6 +152,7 @@ export default function ListingDetailsPage() {
             category={renderingContent.category?.name}
             title={renderingContent.title}
             username={renderingContent.user?.username}
+            vendorUserId={renderingContent?.user?.id}
             contact={renderingContent.contact}
             websiteLink={renderingContent.websiteLink}
             price={renderingContent.price}

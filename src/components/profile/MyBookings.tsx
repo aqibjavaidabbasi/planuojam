@@ -13,6 +13,7 @@ import ReviewModal from "@/components/modals/ReviewModal";
 import BookingDetailsModal, { BookingDetails } from "@/components/modals/BookingDetailsModal";
 import { RootState } from "@/store";
 import { fetchSiteSettings } from "@/services/siteSettings";
+import { useRouter } from "@/i18n/navigation";
 
 function toLocalInputValue(iso: string) {
   const d = new Date(iso);
@@ -38,6 +39,7 @@ const MyBookings: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<BookingStatusFilter>("all");
   const [reviewModal, setReviewModal] = useState<{ open: boolean; listingId?: string }>({ open: false });
   const [detailsModal, setDetailsModal] = useState<{ open: boolean; booking?: BookingDetails }>({ open: false });
+  const router = useRouter();
 
   const minDateTime = useMemo(() => {
     const now = new Date();
@@ -277,6 +279,21 @@ const MyBookings: React.FC = () => {
                   >
                     {t("actions.viewDetails", { default: "View Details" })}
                   </Button>
+                  {(() => {
+                    const vendorUserId: number | undefined = b?.listing?.user?.id;
+                    if (vendorUserId) {
+                      return (
+                        <Button
+                          style="primary"
+                          extraStyles="!rounded-md"
+                          onClick={() => router.push(`/profile?tab=messages&withUser=${vendorUserId}`)}
+                        >
+                          {t("actions.message", { default: "Message" })}
+                        </Button>
+                      );
+                    }
+                    return null;
+                  })()}
                   {isEditing ? (
                     <>
                       <input

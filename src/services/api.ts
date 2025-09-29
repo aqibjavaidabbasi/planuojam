@@ -105,6 +105,39 @@ export async function fetchAPIWithToken(
   return data;
 }
 
+// Upload multiple files with JWT token to Strapi Upload plugin
+// Returns the array of uploaded file objects from Strapi
+export async function uploadFilesWithToken(files: File[]) {
+  // Try to get the token from localStorage
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  if (!token) {
+    throw new Error('Errors.Auth.noToken');
+  }
+
+  const url = `${API_URL}/api/upload`;
+  const form = new FormData();
+  for (const f of files) form.append("files", f);
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: form,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    console.warn("DEBUG LOGGG::: upload error", errorData);
+    throw new Error(errorData?.error?.message || `Upload failed with status ${response.status}`);
+  }
+
+  // 200 or 201 typically
+  const data = await response.json();
+  // Strapi returns an array of file objects
+  return Array.isArray(data) ? data : [data];
+}
+
 // POST API function
 // To send auth headers, pass them in the `options.headers` object when calling postAPI.
 // For example: postAPI('some-endpoint', data, { headers: { Authorization: `Bearer ${token}` } })

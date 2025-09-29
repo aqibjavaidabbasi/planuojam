@@ -193,21 +193,24 @@
       "overview": "Overview",
       "rating": "Rating",
       "hotDeal": "Hot Deal",
-      "flatRate": "Flat rate",
+      "flatRate": "Flat Rate",
       "percentOff": "off",
       "valid": "Valid",
       "reviews": "Reviews",
       "noReviews": "No reviews yet",
       "faqs": "FAQs",
       "location": "Location",
-      "noLocation": "No location available"
+      "noLocation": "Location not available",
+      "messageVendor": "Message vendor"
     },
     "Hero": {
-      "by": "by {username}",
+      "by": "by ",
       "hotDealBadge": "HOT DEAL",
       "percentageOffLimited": "{percent}% OFF - Limited Time",
       "getTicketCta": "Book Now",
-      "visitWebsite": "Visit Website"
+      "visitWebsite": "Visit Website",
+      "messageVendor": "Message ",
+      "sendMessage": "Send a message"
     },
     "Calendar": {
       "availability": "Availability",
@@ -283,9 +286,20 @@
     },
     "Messages": {
       "title": "Messages",
-      "subtitle": "Coming soon - Stay tuned for messaging features!",
+      "subtitle": "Chat with other users.",
+      "inbox": "Inbox",
+      "outbox": "Outbox",
+      "loading": "Loading...",
+      "noMessages": "No messages yet",
+      "selectConversation": "Select a conversation",
+      "conversationWith": "Conversation with",
+      "noMessagesInThread": "No messages yet in this thread",
+      "typeMessage": "Type a message...",
+      "sending": "Sending...",
+      "send": "Send",
       "comingSoonTitle": "Messages Coming Soon",
-      "comingSoonDesc": "We're working on bringing you a powerful messaging system to connect with property owners and renters."
+      "comingSoonDesc": "We're working on bringing you a powerful messaging system to connect with property owners and renters.",
+      "refresh": "Refresh"
     },
     "ReviewsTab": {
       "title": "Reviews",
@@ -971,9 +985,11 @@
         "reschedule": "Reschedule",
         "delete": "Delete",
         "review": "Review",
+        "message": "Message",
         "markCompleted": "Mark as Completed",
         "accept": "Accept",
-        "reject": "Reject"
+        "reject": "Reject",
+        "viewDetails": "View Details"
       },
       "filters": {
         "status": "Filter by status",

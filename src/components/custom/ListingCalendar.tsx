@@ -63,8 +63,6 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId }) 
     }
   }, [listingDocumentId]);
 
-  console.log(events)
-
   const onDatesSet = useCallback((arg: DatesSetArg) => {
     const startISO = arg.start.toISOString();
     const endISO = arg.end.toISOString();
