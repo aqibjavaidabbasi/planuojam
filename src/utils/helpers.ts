@@ -1,8 +1,7 @@
 import { SelectedCategoriesList } from "@/types/pagesTypes";
 
 // lib/url.ts
-export function getCompleteImageUrl(path?: string | null) {
-  if (!path) return null;
+export function getCompleteImageUrl(path: string) {
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
   const base = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
   return `${base}/${path.replace(/^\/+/, "")}`; // safe absolute URL
