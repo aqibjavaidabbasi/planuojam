@@ -55,6 +55,7 @@ function ListingDetailHero({
     lastDate &&
     new Date() >= startDate &&
     new Date() <= lastDate;
+
   return (
     <div className="rounded-2xl overflow-hidden mb-8 relative bg-gradient-to-r from-amber-500 to-pink-500">
       <div className="absolute inset-0 bg-black/20"></div>
@@ -74,14 +75,14 @@ function ListingDetailHero({
               {contact?.address}
             </p>
             <div className="flex flex-wrap gap-4 text-sm">
-              <div className="flex items-center">
+              {contact?.email && <div className="flex items-center">
                 <MdOutlineEmail className="mr-2" size={24} />
                 <span>{contact?.email}</span>
-              </div>
-              <div className="flex items-center">
+              </div>}
+              {contact?.phone && <div className="flex items-center">
                 <MdOutlineLocalPhone className="mr-2" size={24} />
                 <span>{contact?.phone}</span>
-              </div>
+              </div>}
             </div>
           </div>
           <div className="flex flex-col justify-center items-center">
@@ -102,7 +103,7 @@ function ListingDetailHero({
 
                 {isDealActive &&
                   hotDeal.discount.discountType === "Flat Rate" && (
-                    <div className="text-3xl font-bold mb-1">€45</div>
+                    <div className="text-3xl font-bold mb-1">{hotDeal.discount.flatRatePrice} </div>
                   )}
 
                 <div
@@ -155,7 +156,6 @@ function ListingDetailHero({
               </div>
             )}
 
-            {/* Message Vendor (beneath website), same visual style */}
             {typeof vendorUserId === 'number' && user?.id !== vendorUserId && (
               <div
                 className="rounded-xl px-6 py-2 text-center mt-3 cursor-pointer transition-all duration-200"

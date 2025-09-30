@@ -7,6 +7,13 @@ export async function fetchSiteSettings() {
         },
         currency: {
             populate: '*'
+        },
+        fallbackSeo: {
+            populate: {
+                seo: {
+                    populate: '*'
+                }
+            }
         }
     };
     const query = createQuery(populate);

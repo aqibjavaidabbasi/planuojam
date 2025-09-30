@@ -33,8 +33,6 @@ export async function fetchPageById(docId: string, locale?: string) {
 export async function fetchPageLocalized(pageSlug: string, locale?: string) {
     const populate = PAGES_DYNAMIC_ZONE;
 
-    console.log("Fetching page for slug:", pageSlug, "with locale:", locale);
-
     const filters = {
         filters: {
             slug: { $eq: pageSlug }

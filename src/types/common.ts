@@ -36,3 +36,22 @@ export interface User{
     documentId: string;
     serviceType: string | null;
 }
+
+export type StrapiSeo = {
+  metaTitle: string;
+  metaDescription: string;
+  canonicalUrl?: string;
+  metaImage?: { url: string };
+  metaRobots?: "index, follow" | "noindex, nofollow" | "noindex, follow" | "index, nofollow";
+  schemaMarkup?: object;
+   // OG overrides
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: strapiImage;
+  ogType?: string;
+
+  // Twitter overrides
+  twitterTitle?: string;
+  twitterDescription?: string;
+  twitterImage?: strapiImage;
+};

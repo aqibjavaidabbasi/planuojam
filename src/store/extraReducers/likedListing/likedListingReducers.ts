@@ -28,7 +28,6 @@ export const addToLikedListingReducer = (
             state.status = 'loading'
         })
         .addCase(addToLikedListing.fulfilled, (state, action) => {
-            console.log(action.payload)
             state.status = 'succeeded'
             state.items.push(action.payload as never);
         })
@@ -45,7 +44,6 @@ export const removeFromLikedListingReducer = (
             state.status = 'loading'
         })
         .addCase(removeFromLikedListing.fulfilled, (state, action) => {
-            console.log(action.payload)
             state.status = 'succeeded'
             state.items = state.items.filter((item) => item.documentId !== action.payload)
         })

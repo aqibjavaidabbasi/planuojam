@@ -47,7 +47,6 @@ export async function fetchListingsByParentSlug(
       ...appliedFilters,
     },
   };
-  console.log(filters)
   const query = createQuery(populate, locale ? { locale } : undefined);
   const res = await fetchAPI('listings', query, filters);
   return res;

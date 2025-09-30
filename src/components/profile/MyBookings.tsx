@@ -12,8 +12,8 @@ import { FiCalendar } from "react-icons/fi";
 import ReviewModal from "@/components/modals/ReviewModal";
 import BookingDetailsModal, { BookingDetails } from "@/components/modals/BookingDetailsModal";
 import { RootState } from "@/store";
-import { fetchSiteSettings } from "@/services/siteSettings";
 import { useRouter } from "@/i18n/navigation";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 function toLocalInputValue(iso: string) {
   const d = new Date(iso);
@@ -35,11 +35,11 @@ const MyBookings: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [confirmModal, setConfirmModal] = useState<{ open: boolean; id?: string }>({ open: false });
   const locale = useLocale();
-  const [cancelHours, setCancelHours] = useState<number>(24);
   const [statusFilter, setStatusFilter] = useState<BookingStatusFilter>("all");
   const [reviewModal, setReviewModal] = useState<{ open: boolean; listingId?: string }>({ open: false });
   const [detailsModal, setDetailsModal] = useState<{ open: boolean; booking?: BookingDetails }>({ open: false });
   const router = useRouter();
+  const { siteSettings } = useSiteSettings();
 
   const minDateTime = useMemo(() => {
     const now = new Date();
@@ -73,21 +73,6 @@ const MyBookings: React.FC = () => {
     }   
     load();
   }, [user?.documentId, statusFilter,t,locale]);
-
-  useEffect(() => {
-    // fetch dynamic cancellation window (hours) from site settings
-    (async () => {
-      try {
-        const settings = await fetchSiteSettings();
-        const hours = settings?.data?.attributes?.bookingCancellationAllowedTime;
-        if (typeof hours === 'number' && hours > 0) {
-          setCancelHours(hours);
-        }
-      } catch {
-        // ignore, fallback to default 24
-      }
-    })();
-  }, []);
 
   const startEdit = (b: BookingItem) => {
     if (b.bookingStatus === 'cancelled') return; // cannot reschedule cancelled booking
@@ -316,7 +301,7 @@ const MyBookings: React.FC = () => {
                       const startMs = new Date(b.startDateTime).getTime();
                       const endMs = new Date(b.endDateTime).getTime();
                       const hasEnded = endMs <= now;
-                      const canCancel = !hasEnded && b.bookingStatus !== "cancelled" && (startMs - now) >= cancelHours * 60 * 60 * 1000;
+                      const canCancel = !hasEnded && b.bookingStatus !== "cancelled" && (startMs - now) >= siteSettings.bookingCancellationAllowedTime * 60 * 60 * 1000;
 
                       // Show Review only when status is completed
                       if (b.bookingStatus === "completed") {

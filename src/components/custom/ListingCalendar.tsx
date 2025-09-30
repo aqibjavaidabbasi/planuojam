@@ -7,6 +7,9 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { DatesSetArg } from "@fullcalendar/core";
 import { getListingBookingsPublic, BookingItem } from "@/services/booking";
 import { useLocale, useTranslations } from "next-intl";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import multiMonthPlugin from "@fullcalendar/multimonth";
+
 
 interface ListingCalendarProps {
   listingDocumentId: string;
@@ -79,7 +82,7 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId }) 
   const headerToolbar = useMemo(() => ({
     left: "prev,next today",
     center: "title",
-    right: "dayGridMonth",
+    right: "dayGridMonth,timeGridWeek,timeGridDay,multiMonthYear",
   }), []);
 
   return (
@@ -87,7 +90,7 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId }) 
       <h2 className="text-2xl font-semibold text-primary mb-4">{t("availability", { default: "Availability" })}</h2>
       <div className="w-full">
         <FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin]}
+          plugins={[dayGridPlugin, timeGridPlugin, multiMonthPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           headerToolbar={headerToolbar}
           locale={locale}
@@ -101,6 +104,14 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId }) 
           eventBackgroundColor="#cc922f" // red-200
           eventColor="#cc922f"
           eventDisplay="auto"
+          buttonText={{
+            today: 'Today',
+            month: 'Month',
+            week: 'Week',
+            day: 'Day',
+            year: 'Year'
+          }}
+
         />
       </div>
       {loading && (

@@ -80,11 +80,6 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
     // Add attribution
     map.current.addControl(new mapboxgl.AttributionControl(), "bottom-left");
 
-    // Debug: Log when map is loaded
-    map.current.on('load', () => {
-      console.log("Map loaded successfully");
-    });
-
     return () => {
       if (map.current) {
         map.current.remove();

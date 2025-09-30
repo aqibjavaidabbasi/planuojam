@@ -45,7 +45,6 @@ const ImageUploader = ({setImageIds, disabled}: {setImageIds: (ids: number[]) =>
         try {
             setUploading(true);
             const res = await uploadToStrapi(files);
-            console.log("Uploaded:", res);
             setImageIds(res.map((item) => item.id));
             // Reset
             setFiles([]);

@@ -38,7 +38,6 @@ function RegisterPage() {
     watch,
   } = useForm<FormValues>();
   const { parentCategories } = useParentCategories();
-  console.log(parentCategories)
   const dispatch = useAppDispatch();
   const router = useRouter();
   const t = useTranslations("Auth.Register");

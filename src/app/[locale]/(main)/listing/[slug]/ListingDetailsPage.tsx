@@ -143,6 +143,7 @@ export default function ListingDetailsPage() {
     );
   }
 
+  console.log("Rendering listing:", renderingContent);
   return (
     <div className="min-h-screen bg-background py-6 md:py-8 lg:py-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
@@ -176,10 +177,7 @@ export default function ListingDetailsPage() {
               {/* gallery */}
               {
                 renderingContent?.portfolio && renderingContent.portfolio?.length > 0 && (
-                <ListingGallery
-                portfolio={renderingContent.portfolio}
-                title={renderingContent.title}
-              />
+                  <ListingGallery portfolio={renderingContent.portfolio} title={renderingContent.title} />
                 )
               }
           
@@ -222,7 +220,7 @@ export default function ListingDetailsPage() {
               <div className="flex items-center gap-2.5 flex-wrap">
                 {renderingContent.eventTypes.map((event) => (
                   <span
-                    key={event.documentId}
+                    key={event.id}
                     className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium"
                   >
                     {event.eventName}

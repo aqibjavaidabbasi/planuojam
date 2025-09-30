@@ -1,8 +1,13 @@
 import { SelectedCategoriesList } from "@/types/pagesTypes";
 
-export function getCompleteImageUrl(path: string) {
-  return `${process.env.NEXT_PUBLIC_API_URL}${path}`;
+// lib/url.ts
+export function getCompleteImageUrl(path?: string | null) {
+  if (!path) return null;
+  if (path.startsWith("http://") || path.startsWith("https://")) return path;
+  const base = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
+  return `${base}/${path.replace(/^\/+/, "")}`; // safe absolute URL
 }
+
 
 export function filterUniqueCategoriesByParent(data: SelectedCategoriesList) {
   // Deduplicate based on category.documentId and filter by parentCategory.parent.name
@@ -66,16 +71,12 @@ export function slugify(input: string): string {
 // Generate a short alphanumeric string suitable for appending to slugs
 // Uses crypto.getRandomValues when available for better randomness; falls back to Math.random.
 export function shortId(length: number = 6): string {
-  try {
     if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
       const bytes = new Uint8Array(length);
       crypto.getRandomValues(bytes);
       // Map bytes to base36 [0-9a-z]
       return Array.from(bytes, (b) => (b % 36).toString(36)).join('');
     }
-  } catch (err) {
-    console.log(err)
-  }
   // Fallback
   return Math.random().toString(36).slice(2, 2 + length);
 }

@@ -30,7 +30,6 @@ export async function updateListing(
     const query = locale ? `locale=${encodeURIComponent(locale)}` : undefined;
 
     const res = await putAPI(`listings/${id}`, data, { headers }, query);
-    console.log("Updated listing data::", res.data);
     return res.data;
 }
 

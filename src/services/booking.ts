@@ -145,7 +145,6 @@ export async function createBooking(data: BookingPayload, locale?: string) {
   try {
     const body: Record<string, unknown> = { data };
     const res = await postAPIWithToken("bookings", body, {}, query);
-    console.log(res);
     return res;
   } catch (err) {
     console.error(err);
