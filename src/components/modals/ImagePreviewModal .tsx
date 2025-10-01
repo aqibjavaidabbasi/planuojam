@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
@@ -15,13 +15,13 @@ const ImagePreviewModal = ({ images, initialIndex = 0, onClose }: Props) => {
 
   const hasPrev = index > 0;
   const hasNext = index < images.length - 1;
-
-  const goPrev = () => {
+  const goPrev = useCallback(() => {
     if (hasPrev) setIndex((i) => i - 1);
-  };
-  const goNext = () => {
+  }, [hasPrev]);
+
+  const goNext = useCallback(() => {
     if (hasNext) setIndex((i) => i + 1);
-  };
+  }, [hasNext]);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -31,7 +31,7 @@ const ImagePreviewModal = ({ images, initialIndex = 0, onClose }: Props) => {
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose, hasPrev, hasNext, goPrev, goNext]);
+  }, [onClose, goPrev, goNext]);
 
   return (
     <div
