@@ -16,7 +16,9 @@
       "passwordPlaceholder": "Sisesta oma parool",
       "passwordRequired": "Parool on kohustuslik",
       "forgotPassword": "Unustasid parooli?",
-      "signIn": "Logi sisse"
+      "signIn": "Logi sisse",
+      "missingToken":"Sisselogimine ebaõnnestus — puudu on märk",
+      "invalidCredentials":"Kontrolli oma e-posti või parooli ja proovi uuesti!"
     },
     "Register": {
       "title": "Loo konto",
@@ -50,16 +52,13 @@
       "tosNotAccepted": "Palun nõustu kasutustingimuste ja privaatsuspoliitikaga",
       "registerCta": "Registreeru",
       "alreadyHaveAccount": "Kas konto on juba olemas?",
-      "signInHere": "Logi sisse siin"
+      "signInHere": "Logi sisse siin",
+      "registerNoResponse":"Registreerimine ebaõnnestus — server ei vastanud"
     },
     "Social": {
       "orContinue": "Või jätka",
       "google": "Jätka Google'iga",
-      "facebook": "Jätka Facebookiga",
-      "toasts": {
-        "googleClicked": "Google'i registreerimine klõpsatud",
-        "facebookClicked": "Facebooki registreerimine klõpsatud"
-      }
+      "facebook": "Jätka Facebookiga"
     },
     "ResetPassword": {
       "title": "Parooli lähtestamine",
@@ -76,7 +75,9 @@
       "confirmPasswordRequired": "Palun kinnita parool",
       "passwordsDoNotMatch": "Paroolid ei ühti",
       "resetCta": "Lähtesta parool",
-      "backToLogin": "Tagasi sisselogimisele"
+      "backToLogin": "Tagasi sisselogimisele",
+      "updateUserFailed": "Kasutaja uuendamine ebaõnnestus, palun proovi hiljem uuesti!"
+
     },
     "EmailConfirmation": {
       "title": "E-posti kinnitamine",
@@ -95,7 +96,8 @@
       "tokenPlaceholder": "Sisesta e-kirjas olev kinnituskood",
       "tokenRequired": "Kinnituskood on kohustuslik",
       "confirmCta": "Kinnita e-post",
-      "resendCta": "Saada kinnituskiri uuesti"
+      "resendCta": "Saada kinnituskiri uuesti",
+      "emailConfirmFailed":"E-posti kinnitamine ebaõnnestus. Palun proovi uuesti."
     }
   },
   "Contact": {
@@ -197,11 +199,17 @@
       "getTicketCta": "Broneeri nüüd",
       "visitWebsite": "Külasta veebisaiti",
       "messageVendor": "Saada sõnum kasutajale ",
-      "sendMessage": "Saada sõnum"
+      "sendMessage": "Saada sõnum",
+      "viewAvailableSlots": "Vaata saadavus"
     },
     "Calendar": {
       "availability": "Saadavus",
-      "loading": "Kalendri laadimine..."
+      "loading": "Kalendri laadimine...",
+      "month": "Kuu",
+      "year": "Aasta",
+      "day": "Päev",
+      "week": "Nädal",
+      "today": "Täna"
     }
   },
   "Profile": {
@@ -406,7 +414,7 @@
     "ListingItem": {
       "errors": {
         "noImage": "Palun laadige üles vähemalt üks pilt",
-        "invalidServiceType": "Palun valige sobiv teenuse tüüp"
+        "invalidServiceType": "Teil pole selle kuulutuse loomiseks õigusi"
       },
       "toasts": {
         "created": "Kuulutus on edukalt loodud",
@@ -706,7 +714,8 @@
     "SelectsubCategory": "Valige alamkategooria",
     "ChooseEventType": "Valige Sündmuse tüüp",
     "Apply": "Rakenda",
-    "Clear": "Selge"
+    "Clear": "Selge",
+    "noHotDealsFound": "Kuumehinguid ei leitud"
   },
   "hotdealstatic": {
     "HotDeal": "kuum tehing",
@@ -983,7 +992,8 @@
         "accept": "Kinnita",
         "reject": "Lükka tagasi",
         "markCompleted": "Märgi lõpetatuks",
-        "viewDetails": "Vaata üksikasju"
+        "viewDetails": "Vaata üksikasju",
+        "message": "Sõnum"
       },
       "filters": {
         "status": "Filtreeri oleku järgi",

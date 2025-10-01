@@ -39,7 +39,7 @@ export default function ListingDetailsPage() {
   const user = useAppSelector((s) => s.auth.user);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [preselectPlanIndex, setPreselectPlanIndex] = useState<number | null>(null);
-  
+
 
   // Fetch listing data
   useEffect(() => {
@@ -55,9 +55,9 @@ export default function ListingDetailsPage() {
       }
     }
     loadListing();
-  }, [slug, locale,tCommon]);
+  }, [slug, locale, tCommon]);
 
-  
+
   const renderingContent = useMemo(() => {
     if (!listing) return null;
     if (locale === 'en') return listing;
@@ -82,7 +82,7 @@ export default function ListingDetailsPage() {
         return;
       }
       // Prefer localized content for display values
-      const content = renderingContent || listing;
+      const content = listing;
       try {
         if (listing.type === "venue") {
           // Coordinates are taken from the base listing (usually locale-invariant)
@@ -97,6 +97,17 @@ export default function ListingDetailsPage() {
           const lat = venueBlockBase?.location?.latitude;
           const lng = venueBlockBase?.location?.longitude;
           if (typeof lat === "number" && typeof lng === "number") {
+
+            const primaryImage = (listing.portfolio && listing.portfolio.length > 0)
+              ? listing.portfolio[0]
+              : listing.category?.image;
+            const path = (() => {
+              if (!listing) return "#";
+              if (listing.listingItem.length === 0) return "#";
+              if (listing.locale === "en") return `/listing/${listing.slug}`;
+              const entry = listing.localizations.find((loc) => loc.locale === "en");
+              return entry ? `/listing/${entry.slug}` : "#";
+            })();
             setDetailLocation({
               id: listing.id,
               name: content.title || "",
@@ -105,6 +116,8 @@ export default function ListingDetailsPage() {
               category: { name: content.category?.name || "", type: "venue" },
               position: { lat, lng },
               address: venueBlockLocalized?.location?.address || venueBlockBase?.location?.address || "",
+              image: primaryImage,
+              path,
             });
             return;
           }
@@ -143,44 +156,44 @@ export default function ListingDetailsPage() {
     );
   }
 
-  console.log("Rendering listing:", renderingContent);
   return (
     <div className="min-h-screen bg-background py-6 md:py-8 lg:py-12 px-4 sm:px-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Hero Section */}
-        <section className="my-6">
-          <ListingDetailHero
-            category={renderingContent.category?.name}
-            title={renderingContent.title}
-            username={renderingContent.user?.username}
-            vendorUserId={renderingContent?.user?.id}
-            contact={renderingContent.contact}
-            websiteLink={renderingContent.websiteLink}
-            price={renderingContent.price}
-            hotDeal={renderingContent.hotDeal}
-            onOpenBooking={(idx) => {
-              setPreselectPlanIndex(typeof idx === 'number' ? idx : null);
-              setShowBookingModal(true);
-            }}
-          />
-        </section>
+      <div className="max-w-[1700px] mx-auto">
+
+        {/* gallery */}
+        {
+          renderingContent?.portfolio && renderingContent.portfolio?.length > 0 && (
+            <ListingGallery portfolio={renderingContent.portfolio} title={renderingContent.title} />
+          )
+        }
 
         <div className="grid grid-cols-4 md:grid-cols-6 gap-8">
           {/* left side */}
+
           <div className="col-span-4 space-y-8">
+            {/* hero section moved to right */}
+            <section className="">
+              <ListingDetailHero
+                category={renderingContent.category?.name}
+                title={renderingContent.title}
+                username={renderingContent.user?.username}
+                vendorUserId={renderingContent?.user?.id}
+                contact={renderingContent.contact}
+                websiteLink={renderingContent.websiteLink}
+                price={renderingContent.price}
+                hotDeal={renderingContent.hotDeal}
+                onOpenBooking={(idx) => {
+                  setPreselectPlanIndex(typeof idx === 'number' ? idx : null);
+                  setShowBookingModal(true);
+                }}
+              />
+            </section>
             {/* overview aka description */}
             <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
               <h2 className="text-2xl font-semibold text-primary mb-4">
                 {t("overview")}
               </h2>
               <p className="text-secondary my-4">{renderingContent.description}</p>
-              {/* gallery */}
-              {
-                renderingContent?.portfolio && renderingContent.portfolio?.length > 0 && (
-                  <ListingGallery portfolio={renderingContent.portfolio} title={renderingContent.title} />
-                )
-              }
-          
             </div>
             {/* location map */}
             <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
@@ -193,9 +206,6 @@ export default function ListingDetailsPage() {
                 <NoDataCard>{t("noLocation")}</NoDataCard>
               )}
             </div>
-
-            {/* availability calendar */}
-            <ListingCalendar listingDocumentId={renderingContent.documentId} />
           </div>
 
           {/* right side */}
@@ -204,13 +214,13 @@ export default function ListingDetailsPage() {
             {renderingContent.averageRating && (
               <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
                 <div className="flex items-start lg:items-center flex-row md:flex-col lg:flex-row justify-between md:justify-start lg:justify-between" >
-                <p className="text-lg font-semibold" >{t("rating")}: </p>
-                <div className="flex items-center gap-1.5">
-                  <StarRating rating={renderingContent.averageRating} />
-                  <p className="text-base lg:text-lg text-secondary">
-                    {renderingContent.averageRating}/5 ({renderingContent.ratingsCount})
-                  </p>
-                </div>
+                  <p className="text-lg font-semibold" >{t("rating")}: </p>
+                  <div className="flex items-center gap-1.5">
+                    <StarRating rating={renderingContent.averageRating} />
+                    <p className="text-base lg:text-lg text-secondary">
+                      {renderingContent.averageRating}/5 ({renderingContent.ratingsCount})
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
@@ -276,6 +286,11 @@ export default function ListingDetailsPage() {
                 </section>
               )}
           </div>
+        </div>
+
+        <div id="availability" className="mt-6">
+          {/* availability calendar */}
+          <ListingCalendar listingDocumentId={renderingContent.documentId} />
         </div>
 
         {/* Reviews Section */}

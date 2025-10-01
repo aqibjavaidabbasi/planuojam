@@ -23,6 +23,7 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
   })
 
   const { fields, append, remove } = useFieldArray({ control, name: "items" })
+  const t=useTranslations("FAQsSection")
 
   const onSubmit = async (values: FAQsForm) => {
     if (!values.items || values.items.length === 0) {
@@ -46,7 +47,6 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
       setSubmitting(false)
     }
   }
- const t=useTranslations("FAQsSection")
   return (
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-2">FAQs</h3>

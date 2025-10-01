@@ -7,7 +7,7 @@ export const loginUser = createAsyncThunk(
   async (credentials: Record<string, unknown>, thunkAPI) => {
     try {
       const res = await login(credentials);
-      if (!res?.jwt) throw new Error('Errors.Auth.missingToken');
+      if (!res?.jwt) throw new Error('missingToken');
       localStorage.setItem("token", res.jwt);
       return res.user;
     } catch (error: unknown) {
@@ -21,7 +21,7 @@ export const registerUser = createAsyncThunk(
   async (data: Record<string, unknown>, thunkAPI) => {
     try {
       const res = await register(data);
-      if (!res) throw new Error('Errors.Auth.registerNoResponse');
+      if (!res) throw new Error('registerNoResponse');
       return res.user
     } catch (error: unknown) {
       return thunkAPI.rejectWithValue(getStrapiErrorMessage(error));

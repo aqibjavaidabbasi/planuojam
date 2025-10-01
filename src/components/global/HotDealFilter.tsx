@@ -7,6 +7,7 @@ import { category, ListingItem } from '@/types/pagesTypes';
 import { fetchChildCategories, fetchHotDealListings } from '@/services/common';
 import { useEventTypes } from '@/context/EventTypesContext';
 import { useLocale, useTranslations } from 'next-intl';
+import { useParentCategories } from '@/context/ParentCategoriesContext';
 
 type FilterConfig = {
     name: string;
@@ -16,12 +17,10 @@ type FilterConfig = {
 
 interface HotDealFilterProps {
     setList: (listings: ListingItem[]) => void;
-    categoryOptions: FilterConfig;
 }
 
 const HotDealFilter: React.FC<HotDealFilterProps> = ({
     setList,
-    categoryOptions,
 }) => {
     const [tempFilterValues, setTempFilterValues] = useState<Record<string, string>>({});
     const [isLoading, setIsLoading] = useState(false);
@@ -31,9 +30,18 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
     const [appliedFilters, setAppliedFilters] = useState({});
     const locale = useLocale();
     const t = useTranslations("hotdeal");
+    const { parentCategories } = useParentCategories();
 
     const eventTypeNames: string[] = []
     eventTypes.map(event => eventTypeNames.push(event.eventName));
+    
+    const categoryOptions = locale === 'en' ? {
+        name: 'category',
+        options: parentCategories?.map(cat => ({name: cat.name, documentId: cat.documentId})) || [],
+    } : {
+        name: 'category',
+        options: parentCategories?.map(cat => cat.localizations?.filter(loc => loc.locale === locale)?.map(loc => ({name: loc.name, documentId: loc.documentId}))[0] || [])
+    }
 
     useEffect(function () {
         async function fetchChildren() {
@@ -99,7 +107,7 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
                         setSubCategory(e.target.value);
                         handleFilterChange(categoryOptions.name, e.target.value)
                     }}
-                    options={categoryOptions.options.map((opt) => ({ label: opt, value: opt }))}
+                    options={categoryOptions.options.map((opt) => ({ label: opt.name, value: opt.documentId }))}
                     placeholder={t("selectCategory")}
                     disabled={isLoading}
                 />

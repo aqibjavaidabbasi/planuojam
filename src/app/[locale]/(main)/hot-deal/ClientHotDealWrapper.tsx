@@ -1,39 +1,38 @@
 'use client'
+
 import NoDataCard from '@/components/custom/NoDataCard'
 import ListingCard from '@/components/Dynamic/ListingCard'
 import HotDealFilter from '@/components/global/HotDealFilter'
 import Heading from '@/components/custom/heading'
-import Loader from '@/components/custom/Loader'
-import { useParentCategories } from '@/context/ParentCategoriesContext'
 import { fetchHotDealListings } from '@/services/common'
 import { ListingItem, TitleDescriptionBlock } from '@/types/pagesTypes'
 import React, { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: TitleDescriptionBlock[]}) {
-    const [hotDealListings, setHotDealListings] = useState<ListingItem[]>()
-    const { parentCategories, isLoading, error } = useParentCategories();
+    const [hotDealListings, setHotDealListings] = useState<ListingItem[]>([])
+    const t = useTranslations('hotdeal');
 
     useEffect(function(){
         async function fetchListings(){
             const res = await fetchHotDealListings();
-            setHotDealListings(res);
+            // filter to only currently active hot deals
+            const now = new Date();
+            const active = (res || []).filter((l: ListingItem) => {
+                const hd = l.hotDeal;
+                if (!hd || !hd.enableHotDeal) return false;
+                try {
+                    const start = new Date(hd.startDate);
+                    const end = new Date(hd.lastDate);
+                    return now >= start && now <= end;
+                } catch {
+                    return false;
+                }
+            });
+            setHotDealListings(active);
         }
         fetchListings();
     },[])
-
-    const parentCategoriesFilter = {
-        name: 'category',
-        options: parentCategories?.map(cat => cat.name) || [],
-        placeholder: 'Choose a vendor',
-    }
-
-    if (isLoading) {
-        return <Loader />
-    }
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
 
   return (
     <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1700px] mx-auto'>
@@ -46,8 +45,21 @@ function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: T
             )}
         </div>
         <HotDealFilter
-            categoryOptions={parentCategoriesFilter}
-            setList={setHotDealListings}
+            setList={(list: ListingItem[]) => {
+                const now = new Date();
+                const active = (list || []).filter((l: ListingItem) => {
+                    const hd = (l).hotDeal;
+                    if (!hd || !hd.enableHotDeal) return false;
+                    try {
+                        const start = new Date(hd.startDate);
+                        const end = new Date(hd.lastDate);
+                        return now >= start && now <= end;
+                    } catch {
+                        return false;
+                    }
+                });
+                setHotDealListings(active);
+            }}
         />
         <div className='flex items-center justify-center gap-3 mt-10 flex-wrap'>
             {
@@ -56,7 +68,7 @@ function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: T
                         <ListingCard key={listing.documentId} item={listing} />
                     ))
                     :
-                    <NoDataCard>No Data Found</NoDataCard>
+                    <NoDataCard>{t('noHotDealsFound')}</NoDataCard>
             }
         </div>
     </div>

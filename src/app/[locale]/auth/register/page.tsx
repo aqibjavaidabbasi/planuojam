@@ -69,7 +69,7 @@ function RegisterPage() {
           // err is exactly what rejectWithValue() returned in the thunk
           if (typeof err === "string") return err;
           if (err && typeof err === "object" && "message" in err)
-            return String(err.message);
+            return t(String(err.message));
           return t("registerFailed");
         },
       }
@@ -79,8 +79,8 @@ function RegisterPage() {
   return (
     <div className="flex items-center justify-center w-screen">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 mb-4">
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-20 h-20 mb- cursor-pointer" onClick={() => router.push("/")}>
             <Image
               src={getCompleteImageUrl(siteSettings.siteLogo.url)}
               alt="site logo"
@@ -92,7 +92,7 @@ function RegisterPage() {
           <p className="text-gray-600 mt-2">{t("subtitle")}</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-2xl shadow-xl p-6">
           <form className="space-y-6" id="registerForm" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label

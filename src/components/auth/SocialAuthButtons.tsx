@@ -28,7 +28,6 @@ const SocialAuthButtons: React.FC<Props> = ({ onGoogleClick, onFacebookClick, cl
       </div>
 
       <div className="flex flex-col gap-2">
-        {/* Google */}
         <button
           type="button"
           onClick={onGoogleClick}
@@ -39,7 +38,6 @@ const SocialAuthButtons: React.FC<Props> = ({ onGoogleClick, onFacebookClick, cl
           <span className="truncate">{t("google")}</span>
         </button>
 
-        {/* Facebook */}
         <button
           type="button"
           onClick={onFacebookClick}

@@ -37,9 +37,9 @@ export default function ResetPasswordPage() {
         loading: t("resetting"),
         success: t("resetSuccessToast"),
         error: (err) => {
-          if (typeof err === "string") return err;
+          if (typeof err === "string") return t(err);
           if (err && typeof err === "object" && "message" in err)
-            return String(err.message);
+            return t(String(err.message));
           return t("resetFailed");
         },
       }

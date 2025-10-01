@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import LoginForm from "./LoginForm";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import Modal from "@/components/custom/Modal";
 import ForgotPasswordModal from "@/components/modals/ForgotPasswordModal";
 import Image from "next/image";
@@ -13,11 +13,14 @@ function ClientLoginWrapper() {
   const [isOpen, setIsOpen] = useState(false);
   const { siteSettings } = useSiteSettings();
   const t = useTranslations("Auth.Login");
+  const router = useRouter();
 
   return (
     <div className="w-full max-w-md">
         <div className="text-center mb-4">
-          <div className="inline-flex items-center justify-center w-20 h-20 mb-2 overflow-hidden relative">
+          <div 
+            onClick={() => router.push("/")}
+            className="inline-flex items-center justify-center w-20 h-20 mb-2 overflow-hidden relative cursor-pointer">
             <Image
               alt="site logo"
               src={getCompleteImageUrl(siteSettings.siteLogo.url)}

@@ -6,6 +6,7 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import MapInfoWindow from "./MapInfoWindow";
 import { useLocale, useTranslations } from "next-intl";
+import { strapiImage } from "@/types/common";
 
 const LATITUDE = 55.1694;
 const LONGITUDE = 23.8813;
@@ -24,6 +25,8 @@ export interface Location {
     lng: number;
   };
   address: string;
+  image: strapiImage;
+  path: string; // precomputed navigation path matching ListingCard
 }
 
 type MapProps = {
@@ -103,28 +106,43 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
       existingMarkers.forEach(marker => marker.remove());
 
       locations.forEach((location) => {
-        // Create marker element
+        // Create marker element using custom SVG from public
         const markerEl = document.createElement('div');
         markerEl.className = 'mapbox-marker cursor-pointer';
-        markerEl.innerHTML = `
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cc922f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="drop-shadow-lg">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
-        `;
+        const img = document.createElement('img');
+        img.src = '/map-marker.svg'; // served from frontend/public
+        img.alt = 'Marker';
+        img.style.width = '28px';
+        img.style.height = '28px';
+        img.style.objectFit = 'contain';
+        img.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.25))';
+        markerEl.appendChild(img);
 
         // Create popup using React component
         const popupContainer = document.createElement('div');
         let root: ReactDOM.Root | null = null;
-        const popup = new mapboxgl.Popup({ offset: 25 })
+        const popup = new mapboxgl.Popup({
+          anchor: 'bottom',
+          offset: 24, // push popup above the marker
+          closeButton: false,
+          maxWidth: '400px',
+        })
           .setDOMContent(popupContainer)
           .on('open', () => {
+            // Pan map upward so popup stays fully visible and not cut off
+            if (map.current) {
+              map.current.easeTo({
+                center: [location.position.lng, location.position.lat],
+                // Negative y moves the map content up, showing space above the marker for the popup
+                offset: [0, 200],
+                duration: 300,
+              });
+            }
             if (!root) {
               root = ReactDOM.createRoot(popupContainer);
-              const hrefBase = location?.category?.type === 'venue' ? 'venue' : 'vendor';
-              const href = `/${locale}/${hrefBase}/${location.id}`;
+              const href = `/${locale}${location.path || ''}`;
               root.render(
-                <MapInfoWindow 
+                <MapInfoWindow
                   selectedLocation={location}
                   labels={{
                     user: t('user'),
@@ -139,14 +157,18 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
           })
           .on('close', () => {
             if (root) {
-              root.unmount();
+              // Defer unmount to avoid synchronous unmount during React render
+              const toUnmount = root;
               root = null;
+              setTimeout(() => {
+                try { toUnmount.unmount(); } catch {}
+              }, 0);
             }
           });
 
         // Add marker to map
         if (map.current) {
-          new mapboxgl.Marker(markerEl)
+          new mapboxgl.Marker({ element: markerEl, anchor: 'bottom' })
             .setLngLat([location.position.lng, location.position.lat])
             .setPopup(popup)
             .addTo(map.current);
@@ -174,8 +196,8 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
 
   return (
     <div className="w-full h-full relative border border-gray-200 rounded-lg overflow-hidden">
-      <div 
-        ref={mapContainer} 
+      <div
+        ref={mapContainer}
         className="w-full h-full"
       />
     </div>

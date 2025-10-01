@@ -4,9 +4,8 @@ export async function login(data: Record<string, unknown>) {
   try {
     const res = await postAPI("auth/local", data);
     return res;
-  } catch (err) {
-    console.log(err);
-    throw new Error('Errors.Auth.invalidCredentials');
+  } catch {
+    throw new Error('invalidCredentials');
   }
 }
 export async function fetchUser(jwt: string) {
@@ -20,9 +19,8 @@ export async function register(data: Record<string, unknown>) {
   try {
     const res = await postAPI("auth/local/register", data);
     return res;
-  } catch (err) {
-    console.log(err);
-    throw new Error('Errors.Auth.registerFailed');
+  } catch {
+    throw new Error('registerFailed');
   }
 }
 
@@ -55,7 +53,7 @@ export async function emailConfirmation(confirmationToken: string) {
       }
     }
     // Simplified error handling
-    throw new Error('Errors.Auth.emailConfirmFailed');
+    throw new Error('emailConfirmFailed');
   }
 }
 export async function resendEmailConfirmation(data: Record<string, unknown>) {
@@ -67,8 +65,7 @@ export async function forgotPassword(data: Record<string, unknown>) {
   try {
     const res = await postAPI("auth/forgot-password", data);
     return res;
-  } catch (err) {
-    console.log(err);
+  } catch {
     throw new Error('Errors.Auth.forgotFailed');
   }
 }
@@ -87,9 +84,8 @@ export async function updateUserData(id: number, data: Record<string, unknown>){
   try{
     const res = await putAPI(`users/${id}`, data);
     return res;
-  }catch(err){
-    console.log(err);
-    throw new Error('Errors.Auth.updateUserFailed');
+  }catch{
+    throw new Error('updateUserFailed');
   }
 }
 export async function updateUserPassword(data: Record<string, unknown>) {

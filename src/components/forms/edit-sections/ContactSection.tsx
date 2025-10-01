@@ -17,6 +17,7 @@ export type ContactForm = {
 
 export default function ContactSection({ listing, onSaved }: { listing: ListingItem; onSaved?: () => void }) {
   const [submitting, setSubmitting] = useState(false)
+  const t=useTranslations("contactSections")
   const {
     register,
     handleSubmit,
@@ -42,7 +43,6 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
     }
   }
 
-  const t=useTranslations("contactSections")
   return (
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-2">Contact</h3>

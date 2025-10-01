@@ -29,9 +29,9 @@ function EmailConfirmationPage() {
       success: t("resendSuccess"),
       error: (err) => {
         // err is exactly what rejectWithValue() returned in the thunk
-        if (typeof err === "string") return err;
+        if (typeof err === "string") return t(err);
         if (err && typeof err === "object" && "message" in err)
-          return String(err.message);
+          return t(String(err.message));
         return t("resendFailed");
       },
     });
@@ -49,9 +49,9 @@ function EmailConfirmationPage() {
         success: t("confirmed"),
         error: (err) => {
           // err is exactly what rejectWithValue() returned in the thunk
-          if (typeof err === "string") return err;
+          if (typeof err === "string") return t(err);
           if (err && typeof err === "object" && "message" in err)
-            return String(err.message);
+            return t(String(err.message));
           return t("confirmFailed");
         },
       }

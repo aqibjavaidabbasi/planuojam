@@ -27,8 +27,8 @@ export function getSeoMetadata(
       ? data.canonicalUrl
       : (baseUrl ? `${baseUrl}${urlPath}` : urlPath);
 
-    const ogImageUrl = getCompleteImageUrl(data.ogImage?.url || data.metaImage?.url || fallbackSeo?.ogImage?.url || fallbackSeo?.metaImage?.url || null);
-  const twitterImageUrl = getCompleteImageUrl(data.twitterImage?.url || data.ogImage?.url || data.metaImage?.url || fallbackSeo?.twitterImage?.url || null);
+    const ogImageUrl = getCompleteImageUrl(data.ogImage?.url || fallbackSeo?.ogImage?.url || fallbackSeo?.metaImage?.url || data.metaImage?.url || "");
+  const twitterImageUrl = getCompleteImageUrl(data.twitterImage?.url || data.ogImage?.url || fallbackSeo?.twitterImage?.url || data.metaImage?.url || "");
  
 
   // absolute image URL

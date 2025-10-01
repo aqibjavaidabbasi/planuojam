@@ -210,6 +210,15 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
 export default ClientListingWrapper;
 
 // Helpers
+function getListingItemUrl(listing: ListingItem): string {
+  // Mirror logic from components/Dynamic/ListingCard.tsx
+  if (!listing) return '#';
+  if (listing.listingItem.length === 0) return '#';
+  if (listing.locale === 'en') return `/listing/${listing.slug}`;
+  const entry = listing.localizations.find((loc) => loc.locale === 'en');
+  return entry ? `/listing/${entry.slug}` : '#';
+}
+
 function deriveVenueLocations(items: ListingItem[]): Location[] {
   return items
     .map((item) => {
@@ -222,6 +231,10 @@ function deriveVenueLocations(items: ListingItem[]): Location[] {
         typeof venueBlock.location.longitude !== "number"
       )
         return null;
+
+      const primaryImage = (item.portfolio && item.portfolio.length > 0)
+        ? item.portfolio[0]
+        : item.category?.image;
 
       return {
         id: item.id,
@@ -237,6 +250,8 @@ function deriveVenueLocations(items: ListingItem[]): Location[] {
           lng: venueBlock.location.longitude,
         },
         address: venueBlock.location.address || "No address provided",
+        image: primaryImage,
+        path: getListingItemUrl(item),
       };
     })
     .filter((loc): loc is Location => loc !== null);

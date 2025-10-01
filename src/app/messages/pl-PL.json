@@ -16,7 +16,9 @@
       "passwordPlaceholder": "Wpisz swoje hasło",
       "passwordRequired": "Hasło jest wymagane",
       "forgotPassword": "Zapomniałeś hasła?",
-      "signIn": "Zaloguj się"
+      "signIn": "Zaloguj się",
+      "missingToken": "Logowanie nie powiodło się — brak tokenu",
+      "invalidCredentials": "Sprawdź swój email lub hasło i spróbuj ponownie!"
     },
     "Register": {
       "title": "Utwórz konto",
@@ -50,16 +52,13 @@
       "registerCta": "Zarejestruj się",
       "alreadyHaveAccount": "Masz już konto?",
       "signInHere": "Zaloguj się tutaj",
-      "tosNotAccepted": "Proszę zaakceptować Regulamin i Politykę prywatności"
+      "tosNotAccepted": "Proszę zaakceptować Regulamin i Politykę prywatności",
+      "registerNoResponse":"Rejestracja nie powiodła się — brak odpowiedzi z serwera"
     },
     "Social": {
       "orContinue": "Lub kontynuuj z",
       "google": "Kontynuuj z Google",
-      "facebook": "Kontynuuj z Facebook",
-      "toasts": {
-        "googleClicked": "Kliknięto rejestrację przez Google",
-        "facebookClicked": "Kliknięto rejestrację przez Facebook"
-      }
+      "facebook": "Kontynuuj z Facebook"
     },
     "ResetPassword": {
       "title": "Resetuj hasło",
@@ -76,7 +75,8 @@
       "confirmPasswordRequired": "Potwierdzenie hasła jest wymagane",
       "passwordsDoNotMatch": "Hasła nie są takie same",
       "resetCta": "Resetuj hasło",
-      "backToLogin": "Powrót do logowania"
+      "backToLogin": "Powrót do logowania",
+      "updateUserFailed": "Nie udało się zaktualizować użytkownika. Spróbuj później!"
     },
     "EmailConfirmation": {
       "title": "Potwierdzenie adresu email",
@@ -95,7 +95,8 @@
       "tokenPlaceholder": "Wpisz token z wiadomości email",
       "tokenRequired": "Token potwierdzający jest wymagany",
       "confirmCta": "Potwierdź email",
-      "resendCta": "Wyślij ponownie email potwierdzający"
+      "resendCta": "Wyślij ponownie email potwierdzający",
+      "emailConfirmFailed":"Nie udało się potwierdzić emaila. Spróbuj ponownie."
     }
   },
   "Contact": {
@@ -197,11 +198,17 @@
       "getTicketCta": "Zarezerwuj teraz",
       "visitWebsite": "Odwiedź stronę",
       "messageVendor": "Wiadomość do",
-      "sendMessage": "Wyślij wiadomość"
+      "sendMessage": "Wyślij wiadomość",
+      "viewAvailableSlots": "Wyświetl dostępne sloty"
     },
     "Calendar": {
       "availability": "Dostępność",
-      "loading": "Ładowanie kalendarza..."
+      "loading": "Ładowanie kalendarza...",
+      "month": "Miesiąc",
+      "year": "Rok",
+      "day": "Dzień",
+      "week": "Tydzień",
+      "today": "Dzisiaj"
     }
   },
   "Profile": {
@@ -406,7 +413,7 @@
     "ListingItem": {
       "errors": {
         "noImage": "Proszę przesłać co najmniej jedno zdjęcie",
-        "invalidServiceType": "Proszę wybrać prawidłowy typ usługi"
+        "invalidServiceType": "Nie masz uprawnień do utworzenia tej oferty"
       },
       "toasts": {
         "created": "Ogłoszenie zostało pomyślnie utworzone",
@@ -706,7 +713,8 @@
     "SelectsubCategory": "Wybierz podkategorię",
     "ChooseEventType": "Wybierz Typ zdarzenia",
     "Apply": "Stosować",
-    "Clear": "Jasne"
+    "Clear": "Jasne",
+    "noHotDealsFound": "Nie znaleziono gorących ofert"
   },
   "hotdealstatic": {
     "HotDeal": "gorąca oferta",
@@ -989,7 +997,8 @@
         "markCompleted": "Oznacz jako zakończone",
         "accept": "Akceptuj",
         "reject": "Odrzuć",
-        "viewDetails": "Zobacz szczegóły"
+        "viewDetails": "Zobacz szczegóły",
+        "message": "Wiadomość"
       },
       "filters": {
         "status": "Filtruj według statusu",

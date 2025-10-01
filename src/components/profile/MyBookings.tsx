@@ -208,7 +208,7 @@ const MyBookings: React.FC = () => {
                     : "bg-red-100 text-red-800"
                 }`}
               >
-                {status.charAt(0).toUpperCase() + status.slice(1)}
+                {t("status." + status)}
               </span>
             );
 

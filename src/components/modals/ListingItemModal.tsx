@@ -71,9 +71,37 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
   })
   const form = watch()
   const [imageIds, setImageIds] = useState<number[]>([])
+
   const { eventTypes } = useEventTypes()
+  const eventTypeOptions = {
+    options: eventTypes.map((e) => {
+      const localized = locale === 'en'
+        ? e.eventName
+        : e.localizations.find((l) => l.locale === locale)?.eventName ?? e.eventName
+      return { label: localized ?? '', value: e.documentId }
+    }),
+  }
+
   const { cities } = useCities()
+  const cityOptions = {
+    options: cities.map(c => {
+      const localized = locale === 'en'
+        ? c.name
+        : c.localizations.find((l) => l.locale === locale)?.name
+      return { label: localized ?? '', value: c.documentId }
+    })
+  }
+  
   const { states } = useStates()
+  const stateOptions = {
+    options: states.map( s => {
+      const localized = locale === 'en'
+      ? s.name
+      : s.localizations.find(s => s.locale === locale)?.name
+      return { label: localized ?? '', value: s.documentId }
+    })
+  }
+
   const [eventTypesIds, setEventTypesIds] = useState<string[]>([])
   const { parentCategories } = useParentCategories()
   const [childCategories, setChildCategories] = useState<category[]>([])
@@ -417,11 +445,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
             </div>
             <div>
               <Input
-                type="url"
+                type="text"
                 label={t('fields.websiteLink.label')}
                 disabled={isWorking}
                 {...register("websiteLink", {
-                  pattern: { value: /^https?:\/\/.+/, message: t('fields.websiteLink.errors.invalid') },
+                  pattern: { value: /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})(\/[^\s]*)?$/
+                  , message: t('fields.websiteLink.errors.invalid') },
                 })}
               />
               <ErrorMessage error={errors.websiteLink} />
@@ -487,7 +516,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                               setValue("listingItem", updatedItems, { shouldDirty: true })
                             }
                           }}
-                          options={[{ label: t('fields.city.placeholder'), value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
+                          options={[{ label: t('fields.city.placeholder'), value: "" }, ...cityOptions.options]}
                         />
                       </div>
                       <div className="col-span-2">
@@ -506,7 +535,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                               setValue("listingItem", updatedItems, { shouldDirty: true })
                             }
                           }}
-                          options={[{ label: t('fields.state.placeholder'), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
+                          options={[{ label: t('fields.state.placeholder'), value: "" }, ...stateOptions.options]}
                         />
                       </div>
                       <div className="col-span-1">
@@ -788,8 +817,8 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
             <h3 className="text-lg font-semibold mb-2"> {t('eventTypes.title')} </h3>
             <div className="flex flex-col gap-3">
               <MultiSelect
-              disabled={isWorking}
-                options={eventTypes.map((e) => ({ label: e.eventName, value: e.documentId }))}
+                disabled={isWorking}
+                options={eventTypeOptions.options}
                 value={eventTypesIds}
                 onChange={(selected) => setEventTypesIds(selected)}
                 placeholder={t('fields.chooseEventType.label')}

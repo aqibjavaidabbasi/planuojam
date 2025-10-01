@@ -7,6 +7,9 @@ import { useLocale } from "next-intl";
 export type City = {
   documentId: string;
   name: string;
+  id: number;
+  locale: string;
+  localizations: City[]
 };
 
 interface CitiesContextProps {
@@ -27,23 +30,8 @@ export const CitiesProvider: React.FC<React.PropsWithChildren<object>> = ({ chil
     const run = async () => {
       setIsLoading(true);
       try {
-        const res = await fetchCities(locale);
-        // Normalize result -> expecting array of items with { documentId, name }
-        const array = Array.isArray(res) ? res : [];
-        const normalized: City[] = array
-          .map((c: unknown) => {
-            if (c && typeof c === 'object') {
-              const obj = c as Record<string, unknown>;
-              const nestedCity = (obj.city && typeof obj.city === 'object') ? (obj.city as Record<string, unknown>) : undefined;
-              const attributes = (obj.attributes && typeof obj.attributes === 'object') ? (obj.attributes as Record<string, unknown>) : undefined;
-              const documentId = String(obj.documentId ?? obj.id ?? nestedCity?.documentId ?? "");
-              const name = String(obj.name ?? nestedCity?.name ?? attributes?.name ?? "");
-              return { documentId, name } as City;
-            }
-            return { documentId: "", name: "" } as City;
-          })
-          .filter((c) => Boolean(c.documentId) && Boolean(c.name));
-        setCities(normalized);
+        const res = await fetchCities();
+        setCities(res);
       } catch (e: unknown) {
         const message = e && typeof e === 'object' && 'message' in e ? String((e as { message?: unknown }).message) : "Failed to load cities";
         setError(message);

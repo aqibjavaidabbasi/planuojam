@@ -48,6 +48,7 @@ function expandBookingToDayBackgrounds(b: BookingItem): BackgroundEvent[] {
 const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId }) => {
   const [events, setEvents] = useState<BackgroundEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
   const currentRange = useRef<{ start: string; end: string } | null>(null);
   const t = useTranslations("Listing.Calendar");
   const locale = useLocale();
@@ -79,22 +80,45 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId }) 
     fetchRange(currentRange.current.start, currentRange.current.end);
   }, [listingDocumentId, fetchRange]);
 
-  const headerToolbar = useMemo(() => ({
-    left: "prev,next today",
-    center: "title",
-    right: "dayGridMonth,timeGridWeek,timeGridDay,multiMonthYear",
-  }), []);
+  // responsive media listener
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mql = window.matchMedia('(max-width: 640px)');
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    // initialize
+    setIsMobile(mql.matches);
+    // subscribe
+    mql.addEventListener('change', handler);
+    return () => {
+      mql.removeEventListener('change', handler);
+    }; 
+  }, []);
+
+  const headerToolbar = useMemo(() => (
+    isMobile
+      ? {
+          left: 'prev,next',
+          center: 'title',
+          right: 'today',
+        }
+      : {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay,multiMonthYear',
+        }
+  ), [isMobile]);
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
       <h2 className="text-2xl font-semibold text-primary mb-4">{t("availability", { default: "Availability" })}</h2>
-      <div className="w-full">
+      <div className="w-full overflow-x-auto">
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, multiMonthPlugin, interactionPlugin]}
-          initialView="dayGridMonth"
+          initialView={isMobile ? 'dayGridMonth' : 'dayGridMonth'}
           headerToolbar={headerToolbar}
           locale={locale}
           height="auto"
+          expandRows
           events={events}
           selectable={false}
           selectMirror={false}
@@ -105,11 +129,11 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId }) 
           eventColor="#cc922f"
           eventDisplay="auto"
           buttonText={{
-            today: 'Today',
-            month: 'Month',
-            week: 'Week',
-            day: 'Day',
-            year: 'Year'
+            today: t("today"),
+            month: t("month"),
+            week: t("week"),
+            day: t("day"),
+            year: t("year")
           }}
 
         />

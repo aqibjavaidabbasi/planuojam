@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { forgotPassword } from "@/services/auth";
 import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 
 interface ForgotPasswordModalProps {
   onClose: () => void;
@@ -16,6 +17,7 @@ interface ForgotPasswordModalProps {
 
 function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
   const { siteSettings } = useSiteSettings();
+  const router = useRouter();
   const t = useTranslations("Modals.ForgotPassword");
   const {
     formState: { errors, isSubmitting },
@@ -32,9 +34,9 @@ function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
         loading: t("toasts.sending"),
         success: t("toasts.sent"),
         error: (err) => {
-          if (typeof err === "string") return err;
+          if (typeof err === "string") return t(err);
           if (err && typeof err === "object" && "message" in err)
-            return String(err.message);
+            return t(String(err.message));
           return t("toasts.errorDefault");
         },
       }
@@ -44,7 +46,7 @@ function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
   return (
     <div>
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-20 h-20 mb-4 overflow-hidden relative">
+        <div className="inline-flex items-center justify-center w-20 h-20 mb-4 overflow-hidden relative cursor-pointer" onClick={() => router.push('/')}>
           <Image
             alt="site logo"
             src={getCompleteImageUrl(siteSettings.siteLogo.url)}

@@ -16,7 +16,9 @@
       "passwordPlaceholder": "Įveskite slaptažodį",
       "passwordRequired": "Slaptažodis yra privalomas",
       "forgotPassword": "Pamiršote slaptažodį?",
-      "signIn": "Prisijungti"
+      "signIn": "Prisijungti",
+      "missingToken":"Prisijungimas nepavyko — trūksta žetono",
+      "loginNoResponse":"Prisijungimas nepavyko — serveris neatsakė"
     },
     "Register": {
       "title": "Sukurti paskyrą",
@@ -50,16 +52,13 @@
       "registerCta": "Registruotis",
       "alreadyHaveAccount": "Jau turite paskyrą?",
       "signInHere": "Prisijunkite čia",
-      "tosNotAccepted": "Prašome sutikti su Paslaugų teikimo sąlygomis ir Privatumo politika"
+      "tosNotAccepted": "Prašome sutikti su Paslaugų teikimo sąlygomis ir Privatumo politika",
+      "registerNoResponse":"Registracija nepavyko — serveris neatsakė"
     },
     "Social": {
       "orContinue": "Arba tęskite su",
       "google": "Tęsti su Google",
-      "facebook": "Tęsti su Facebook",
-      "toasts": {
-        "googleClicked": "Paspausta Google registracija",
-        "facebookClicked": "Paspausta Facebook registracija"
-      }
+      "facebook": "Tęsti su Facebook"
     },
     "ResetPassword": {
       "title": "Atkurti slaptažodį",
@@ -76,7 +75,8 @@
       "confirmPasswordRequired": "Patvirtinkite slaptažodį",
       "passwordsDoNotMatch": "Slaptažodžiai nesutampa",
       "resetCta": "Atkurti slaptažodį",
-      "backToLogin": "Grįžti į prisijungimą"
+      "backToLogin": "Grįžti į prisijungimą",
+      "updateUserFailed": "Nepavyko atnaujinti vartotojo. Bandykite vėliau!"
     },
     "EmailConfirmation": {
       "title": "El. pašto patvirtinimas",
@@ -95,7 +95,8 @@
       "tokenPlaceholder": "Įveskite patvirtinimo kodą iš el. laiško",
       "tokenRequired": "Reikalingas patvirtinimo kodas",
       "confirmCta": "Patvirtinti el. paštą",
-      "resendCta": "Persiųsti patvirtinimo el. laišką"
+      "resendCta": "Persiųsti patvirtinimo el. laišką",
+      "emailConfirmFailed":"Nepavyko patvirtinti el. pašto. Bandykite dar kartą."
     }
   },
   "Contact": {
@@ -176,11 +177,17 @@
       "getTicketCta": "Rezervuoti dabar",
       "visitWebsite": "Apsilankyti svetainėje",
       "messageVendor": "Parašyti ",
-      "sendMessage": "Siųsti žinutę"
+      "sendMessage": "Siųsti žinutę",
+      "viewAvailableSlots": "Peržiūrėti laikotarpius"
     },
     "Calendar": {
       "availability": "Užimtumas",
-      "loading": "Kraunamas kalendorius..."
+      "loading": "Kraunamas kalendorius...",
+      "month": "Mėnuo",
+      "year": "Metai",
+      "day": "Diena",
+      "week": "Savaikis",
+      "today": "Dabar"
     }
   },
   "Map": {
@@ -269,7 +276,7 @@
     "ListingItem": {
       "errors": {
         "noImage": "Prašome įkelti bent vieną nuotrauką",
-        "invalidServiceType": "Prašome pasirinkti tinkamą paslaugos tipą"
+        "invalidServiceType": "Jūs neturite leidimų kurti šio įrašo"
       },
       "toasts": {
         "created": "Skelbimas sėkmingai sukurtas",
@@ -698,7 +705,8 @@
     "SelectsubCategory": "Pasirinkite subkategoriją",
     "ChooseEventType": "Pasirinkite Įvykio tipas",
     "Apply": "Taikyti",
-    "Clear": "Aišku"
+    "Clear": "Aišku",
+    "noHotDealsFound": "Nerasta karštų sandorių"
   },
   "hotdealstatic": {
     "HotDeal": "karštas sandoris",
@@ -974,7 +982,8 @@
         "accept": "Patvirtinti",
         "reject": "Atmesti",
         "markCompleted": "Pažymėti kaip užbaigtą",
-        "viewDetails": "Peržiūrėti detalės"
+        "viewDetails": "Peržiūrėti detalės",
+        "message": "Žinutę"
       },
       "filters": {
         "status": "Filtruoti pagal būseną",

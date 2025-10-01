@@ -24,6 +24,7 @@ export type BasicForm = {
 
 export default function BasicSection({ listing, onSaved }: { listing: ListingItem; onSaved?: () => void }) {
   const [submitting, setSubmitting] = useState(false)
+  const t=useTranslations("basicSelectionForm")
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<BasicForm>({
     defaultValues: {
@@ -54,7 +55,6 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
     }
   }
    
-  const t=useTranslations("basicSelectionForm")
   return (
     <div className="py-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

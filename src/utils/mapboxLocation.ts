@@ -22,6 +22,19 @@ async function geocodeLocations(listings: ListingItem[]): Promise<Location[]> {
       },
     };
 
+    const primaryImage = (listing.portfolio && listing.portfolio.length > 0)
+      ? listing.portfolio[0]
+      : listing.category?.image;
+
+    // Build listing path similar to ListingCard
+    const path = (() => {
+      if (!listing) return '#';
+      if (listing.listingItem.length === 0) return '#';
+      if (listing.locale === 'en') return `/listing/${listing.slug}`;
+      const entry = listing.localizations.find((loc) => loc.locale === 'en');
+      return entry ? `/listing/${entry.slug}` : '#';
+    })();
+
     for (const area of vendor.serviceArea) {
       // Prefer provided coordinates; if missing, skip to avoid API calls
       if (typeof area.latitude !== 'number' || typeof area.longitude !== 'number') continue;
@@ -40,6 +53,8 @@ async function geocodeLocations(listings: ListingItem[]): Promise<Location[]> {
         description: baseData.description,
         username: baseData.username,
         category: baseData.category,
+        image: primaryImage,
+        path,
       });
     }
   }
@@ -49,8 +64,6 @@ async function geocodeLocations(listings: ListingItem[]): Promise<Location[]> {
 
 export default geocodeLocations;
 
-// Named helper to geocode a place using Mapbox when explicitly needed.
-// Accepts either city, state, or both. Returns the first match.
 export type GeocodeResult = { lat: number; lng: number; address: string };
 
 export async function geocodePlace(city?: string, state?: string): Promise<GeocodeResult | null> {

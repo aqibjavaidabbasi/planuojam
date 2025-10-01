@@ -25,19 +25,31 @@ function ListingCard({ item }: { item: ListingItem }) {
   const { siteSettings } = useSiteSettings();
   const { user } = useAppSelector(state => state.auth);
   const { status, items: likedListings } = useAppSelector(state => state.likedListings);
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const dispatch = useAppDispatch();
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const t = useTranslations('Dynamic.ListingCard');
 
   const isLiked = Array.isArray(likedListings) && likedListings.some(listing => listing.listing.documentId === item.documentId);
 
+  // Determine if hot deal is currently active
+  const isHotDealActive = (() => {
+    try {
+      const hd = item.hotDeal;
+      if (!hd || !hd.enableHotDeal) return false;
+      const now = new Date();
+      const start = new Date(hd.startDate);
+      const end = new Date(hd.lastDate);
+      return now >= start && now <= end;
+    } catch {
+      return false;
+    }
+  })();
+
   function handleHeartClick() {
-    //if user is not logged in, show modal for login 
     if (!user) {
-      setShowLoginModal(true)
+      setShowLoginModal(true);
       return;
     }
-    // When already liked, find the corresponding liked item id (cannot be undefined if isLiked is true)
     const likedItem = isLiked
       ? (Array.isArray(likedListings)
         ? likedListings.find(listing => listing.listing.documentId === item.documentId)
@@ -53,7 +65,7 @@ function ListingCard({ item }: { item: ListingItem }) {
         success: isLiked ? t('toasts.removed') : t('toasts.added'),
         error: isLiked ? t('toasts.removeFailed') : t('toasts.addFailed')
       }
-    )
+    );
   }
 
   function getListingItemUrl() {
@@ -76,28 +88,16 @@ function ListingCard({ item }: { item: ListingItem }) {
       {/* Heart icon */}
       <div className="absolute top-1 md:top-2 left-1 md:left-2 z-20">
         {status === 'loading' ? (
-          <FaSpinner size={32}
-            color="#e53e3e"
-            className="cursor-not-allowed" />
+          <FaSpinner size={32} color="#e53e3e" className="cursor-not-allowed" />
         ) : isLiked ? (
-          <FaHeart
-            onClick={handleHeartClick}
-            size={32}
-            color="#e53e3e"
-            className="cursor-pointer"
-          />
+          <FaHeart onClick={handleHeartClick} size={32} color="#e53e3e" className="cursor-pointer" />
         ) : (
-          <CiHeart
-            onClick={handleHeartClick}
-            size={32}
-            color="#e2e8f0"
-            className="cursor-pointer"
-          />
+          <CiHeart onClick={handleHeartClick} size={32} color="#e2e8f0" className="cursor-pointer" />
         )}
       </div>
 
-      {/* Hot Deal Badge */}
-      {item.hotDeal?.enableHotDeal && (
+      {/* Hot Deal Badge (only when currently active) */}
+      {isHotDealActive && (
         <div className="absolute top-1 md:top-4 right-1 md:right-4 z-10">
           <div className="relative">
             <div className="bg-primary text-white w-14 md:w-16 h-14 md:h-16 rounded-full flex items-center justify-center transform rotate-12">
@@ -120,38 +120,39 @@ function ListingCard({ item }: { item: ListingItem }) {
         navigation
         pagination={{ clickable: true }}
         loop={true}
-        autoplay={{
-          delay: 3000,
-          disableOnInteraction: false
-        }}
+        autoplay={{ delay: 3000, disableOnInteraction: false }}
       >
-        {item.portfolio?.length > 0 ? item.portfolio?.map((img, idx) => {
-          const imageUrl = getCompleteImageUrl(img.url)
-          return (
-            <SwiperSlide key={idx}>
-              <div className="relative w-full h-40 md:h-56 lg:h-64">
-                <Image
-                  src={imageUrl}
-                  alt={t('imageAlt', { index: idx + 1 })}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  sizes="(max-width: 768px) 100vw, 400px"
-                  priority={idx === 0}
-                />
-              </div>
-            </SwiperSlide>
-          )
-        }) : [1, 2, 3].map((_, idx) => <SwiperSlide key={idx}>
-          <div className="relative w-full h-40 md:h-56 lg:h-64">
-            <Image
-              src={"/placeholder.png"}
-              alt={t('placeholderAlt')}
-              fill
-              style={{ objectFit: 'cover' }}
-              sizes="(max-width: 768px) 100vw, 400px"
-            />
-          </div>
-        </SwiperSlide>)}
+        {item.portfolio?.length > 0
+          ? item.portfolio?.map((img, idx) => {
+              const imageUrl = getCompleteImageUrl(img.url);
+              return (
+                <SwiperSlide key={idx}>
+                  <div className="relative w-full h-40 md:h-56 lg:h-64">
+                    <Image
+                      src={imageUrl}
+                      alt={t('imageAlt', { index: idx + 1 })}
+                      fill
+                      style={{ objectFit: 'cover' }}
+                      sizes="(max-width: 768px) 100vw, 400px"
+                      priority={idx === 0}
+                    />
+                  </div>
+                </SwiperSlide>
+              );
+            })
+          : [1, 2, 3].map((_, idx) => (
+              <SwiperSlide key={idx}>
+                <div className="relative w-full h-40 md:h-56 lg:h-64">
+                  <Image
+                    src={"/placeholder.png"}
+                    alt={t('placeholderAlt')}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    sizes="(max-width: 768px) 100vw, 400px"
+                  />
+                </div>
+              </SwiperSlide>
+            ))}
       </Swiper>
 
       {/* Content */}
@@ -173,30 +174,29 @@ function ListingCard({ item }: { item: ListingItem }) {
                 <span className="truncate block max-w-[210px]">
                   {item.listingItem[0].__component === 'dynamic-blocks.vendor' && (
                     <>
-                      {item.listingItem[0].serviceArea?.length > 0 ? (
-                        (() => {
-                          const locations = item.listingItem[0].serviceArea
-                            .map(area => {
-                              const city = area?.city?.name ?? '';
-                              const state = area?.state?.name ?? '';
-                              return city || state ? `${city} ${state}`.trim() : '';
-                            })
-                            .filter(Boolean);
-
-                          return locations.length > 0 ? locations.join(', ') : t('noLocation');
-                        })()
-                      ) : (
-                        t('noLocation')
-                      )}
+                      {item.listingItem[0].serviceArea?.length > 0
+                        ? (() => {
+                            const locations = item.listingItem[0].serviceArea
+                              .map(area => {
+                                const city = area?.city?.name ?? '';
+                                const state = area?.state?.name ?? '';
+                                return city || state ? `${city} ${state}`.trim() : '';
+                              })
+                              .filter(Boolean);
+                            return locations.length > 0 ? locations.join(', ') : t('noLocation');
+                          })()
+                        : t('noLocation')
+                      }
                     </>
                   )}
 
-                  {item.listingItem[0].__component === 'dynamic-blocks.venue' &&
+                  {item.listingItem[0].__component === 'dynamic-blocks.venue' && (
                     <>
                       {item.listingItem[0].location
-                        ? item.listingItem[0].location.address : t('noVenueLocation')}
+                        ? item.listingItem[0].location.address
+                        : t('noVenueLocation')}
                     </>
-                  }
+                  )}
                 </span>
               </li>
             )}
@@ -221,11 +221,7 @@ function ListingCard({ item }: { item: ListingItem }) {
             )}
           </div>
           {user?.serviceType && user?.documentId && item?.user?.documentId === user.documentId ? (
-            <Button
-              style="secondary"
-              size="small"
-              onClick={() => router.push(`${getListingItemUrl() as string}/edit`)}
-            >
+            <Button style="secondary" size="small" onClick={() => router.push(`${getListingItemUrl() as string}/edit`)}>
               {t('edit')} <IoNavigateOutline />
             </Button>
           ) : (
@@ -238,7 +234,7 @@ function ListingCard({ item }: { item: ListingItem }) {
 
       <LoginNavigateModal showModal={showLoginModal} setShowModal={setShowLoginModal} />
     </div>
-  )
+  );
 }
 
 export default ListingCard

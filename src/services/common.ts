@@ -32,24 +32,24 @@ async function fetchWithLocaleFallback(
 
 // Fetch listings by parent category slug (localized). Uses populate like other listings.
 export async function fetchListingsByParentSlug(
-  parentSlug: string,
-  appliedFilters: Record<string, unknown> = {},
-  locale?: string
+    parentSlug: string,
+    appliedFilters: Record<string, unknown> = {},
+    locale?: string
 ) {
-  const populate = LISTING_ITEM_POP_STRUCTURE;
-  const filters = {
-    filters: {
-      category: {
-        parentCategory: {
-          slug: { $eq: parentSlug },
+    const populate = LISTING_ITEM_POP_STRUCTURE;
+    const filters = {
+        filters: {
+            category: {
+                parentCategory: {
+                    slug: { $eq: parentSlug },
+                },
+            },
+            ...appliedFilters,
         },
-      },
-      ...appliedFilters,
-    },
-  };
-  const query = createQuery(populate, locale ? { locale } : undefined);
-  const res = await fetchAPI('listings', query, filters);
-  return res;
+    };
+    const query = createQuery(populate, locale ? { locale } : undefined);
+    const res = await fetchAPI('listings', query, filters);
+    return res;
 }
 
 
@@ -114,34 +114,42 @@ export async function fetchListings(type: 'venue' | 'vendor', appliedFilters = {
     return res;
 }
 
-export async function fetchCities(locale?: string) {
-    const populate = { populate: '*' };
-    return await fetchWithLocaleFallback('cities', populate, undefined, locale);
+export async function fetchCities() {
+    const populate = {
+        localizations: {
+            populate: '*'
+        }
+    };
+    return await fetchWithLocaleFallback('cities', populate, undefined, 'en');
 }
 
 export async function fetchStates(locale?: string) {
-    const populate = { populate: '*' };
+    const populate = { 
+        localizations: {
+            populate: '*'
+        }
+     };
     return await fetchWithLocaleFallback('states', populate, undefined, locale);
 }
 // Fetch listing by Events with necessary relations populated
-export async function fetchListingsPerEvents(docId: string,locale?:string) {
+export async function fetchListingsPerEvents(docId: string, locale?: string) {
     const populate = LISTING_ITEM_POP_STRUCTURE;
     const filters = {
         filters: {
             eventTypes: {
-                documentId:  docId
+                documentId: docId
             }
         }
     }
-    if(locale){
-        const queryWithLocal= createQuery(populate,{locale});
-        const dataLocal= await fetchAPI('listings',queryWithLocal,filters);
+    if (locale) {
+        const queryWithLocal = createQuery(populate, { locale });
+        const dataLocal = await fetchAPI('listings', queryWithLocal, filters);
 
 
-    if (Array.isArray(dataLocal) && dataLocal.length > 0) {
-      return dataLocal as ListingItem[];
+        if (Array.isArray(dataLocal) && dataLocal.length > 0) {
+            return dataLocal as ListingItem[];
+        }
     }
-  }
 
     const query = createQuery(populate)
     const res = await fetchAPI('listings', query, filters);
@@ -185,38 +193,22 @@ export async function fetchListingSuggestions(keyword: string, displayLocale?: s
 
     const out: Array<{ title: string; slug: string }> = Array.isArray(res)
         ? res.map((item) => {
-                const enSlug = item.slug || '';
-                let displayTitle = item.title || '';
-                const locs = item.localizations?.data || [];
-                if (Array.isArray(locs) && displayLocale) {
-                    const match = locs.find((l) => l?.attributes?.locale === displayLocale);
-                    if (match?.attributes?.title) displayTitle = match.attributes.title;
-                }
-                return { title: displayTitle, slug: enSlug };
-            })
+            const enSlug = item.slug || '';
+            let displayTitle = item.title || '';
+            const locs = item.localizations?.data || [];
+            if (Array.isArray(locs) && displayLocale) {
+                const match = locs.find((l) => l?.attributes?.locale === displayLocale);
+                if (match?.attributes?.title) displayTitle = match.attributes.title;
+            }
+            return { title: displayTitle, slug: enSlug };
+        })
             .filter((x) => !!x.slug && !!x.title)
         : [];
     return out;
 }
 
 export async function fetchHotDealListings(filter = {}) {
-    const populate = {
-        listingItem: {
-            populate: '*'
-        },
-        eventTypes: {
-            populate: '*'
-        },
-        category: {
-            populate: '*'
-        },
-        hotDeal: {
-            populate: '*'
-        },
-        portfolio: {
-            populate: '*'
-        }
-    }
+    const populate = LISTING_ITEM_POP_STRUCTURE;
     const filters = {
         filters: {
             hotDeal: {

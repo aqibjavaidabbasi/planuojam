@@ -5,6 +5,7 @@ import { ListingItem, Venue } from '@/types/pagesTypes'
 import geocodeLocations from '@/utils/mapboxLocation'
 import React, { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { strapiImage } from '@/types/common'
 
 function ClientMapWrapper() {
   const t = useTranslations('Map')
@@ -48,6 +49,7 @@ function ClientMapWrapper() {
     fetchAndProcessLocations()
   }, [t])
 
+
   // Map venues to Location[]
 function getLocationsFromVenues(venues: ListingItem[], t?: ReturnType<typeof useTranslations>): Location[] {
   return venues
@@ -57,6 +59,17 @@ function getLocationsFromVenues(venues: ListingItem[], t?: ReturnType<typeof use
       ) as Venue | undefined;
 
       if (!venueBlock?.location) return null;
+
+      const primaryImage = (item.portfolio && item.portfolio.length > 0)
+        ? item.portfolio[0]
+        : item.category?.image;
+
+      const path = (() => {
+        if (item.listingItem.length === 0) return '#';
+        if (item.locale === 'en') return `/listing/${item.slug}`;
+        const entry = item.localizations.find(loc => loc.locale === 'en');
+        return entry ? `/listing/${entry.slug}` : '#';
+      })();
 
       return {
         id: item.id,
@@ -72,6 +85,8 @@ function getLocationsFromVenues(venues: ListingItem[], t?: ReturnType<typeof use
           lng: venueBlock.location.longitude,
         },
         address: venueBlock.location.address || t?.('fallback.noAddress') || 'No address provided',
+        image: primaryImage,
+        path,
       };
     })
 
@@ -84,6 +99,8 @@ function getLocationsFromVenues(venues: ListingItem[], t?: ReturnType<typeof use
         category: { name: string; type: "venue" };
         position: { lat: number; lng: number };
         address: string;
+        image: strapiImage;
+        path: string;
       } => location !== null
     );
 }

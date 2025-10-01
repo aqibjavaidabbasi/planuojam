@@ -47,10 +47,11 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
         loading: t("loggingIn"),
         success: t("loggedIn"),
         error: (err) => {
+          console.log(err)
           // err is exactly what rejectWithValue() returned in the thunk
-          if (typeof err === "string") return err;
+          if (typeof err === "string") return t(err);
           if (err && typeof err === "object" && "message" in err)
-            return String(err.message);
+            return t(String(err.message));
           return t("loginFailed");
         },
       }

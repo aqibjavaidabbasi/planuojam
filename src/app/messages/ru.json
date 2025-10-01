@@ -16,7 +16,9 @@
       "passwordPlaceholder": "Введите пароль",
       "passwordRequired": "Требуется пароль",
       "forgotPassword": "Забыли пароль?",
-      "signIn": "Войти"
+      "signIn": "Войти",
+      "missingToken":"Не удалось войти — отсутствует токен",
+      "invalidCredentials":"Проверьте email или пароль и попробуйте снова!"
     },
     "Register": {
       "title": "Создать аккаунт",
@@ -50,16 +52,13 @@
       "registerCta": "Зарегистрироваться",
       "alreadyHaveAccount": "Уже есть аккаунт?",
       "signInHere": "Войдите здесь",
-      "tosNotAccepted": "Пожалуйста, примите Условия использования и Политику конфиденциальности"
+      "tosNotAccepted": "Пожалуйста, примите Условия использования и Политику конфиденциальности",
+      "registerNoResponse":"Регистрация не удалась — сервер не ответил"
     },
     "Social": {
       "orContinue": "Или продолжить с",
       "google": "Продолжить с Google",
-      "facebook": "Продолжить с Facebook",
-      "toasts": {
-        "googleClicked": "Нажата регистрация через Google",
-        "facebookClicked": "Нажата регистрация через Facebook"
-      }
+      "facebook": "Продолжить с Facebook"
     },
     "ResetPassword": {
       "title": "Сброс пароля",
@@ -76,12 +75,13 @@
       "confirmPasswordRequired": "Подтвердите пароль",
       "passwordsDoNotMatch": "Пароли не совпадают",
       "resetCta": "Сбросить пароль",
-      "backToLogin": "Назад ко входу"
+      "backToLogin": "Назад ко входу",
+      "updateUserFailed": "Не удалось обновить пользователя. Попробуйте позже!"
     },
     "EmailConfirmation": {
       "title": "Подтверждение email",
       "instruction": "Пожалуйста, подтвердите ваш email для активации аккаунта.",
-      "resendHint": "Если вы не получили письмо с подтверждением, вы можете отправить его ещё раз ниже.",
+      "resendHint": "Если вы не получили письмо с подтверждением, вы можете отправить его ещё раз ниже",
       "resendLoading": "Отправка письма с подтверждением...",
       "resendSuccess": "Письмо с подтверждением успешно отправлено!",
       "resendFailed": "Не удалось отправить письмо с подтверждением. Попробуйте ещё раз.",
@@ -95,7 +95,8 @@
       "tokenPlaceholder": "Введите код подтверждения из письма",
       "tokenRequired": "Требуется код подтверждения",
       "confirmCta": "Подтвердить email",
-      "resendCta": "Отправить письмо с подтверждением ещё раз"
+      "resendCta": "Отправить письмо с подтверждением ещё раз",
+      "emailConfirmFailed":"Не удалось подтвердить email. Попробуйте ещё раз."
     }
   },
   "hotDealSection": {
@@ -188,11 +189,17 @@
       "getTicketCta": "Забронировать",
       "visitWebsite": "Перейти на сайт",
       "messageVendor": "Написать ",
-      "sendMessage": "Отправить сообщение"
+      "sendMessage": "Отправить сообщение",
+      "viewAvailableSlots": "Посмотреть доступные слоты"
     },
     "Calendar": {
       "availability": "Доступность",
-      "loading": "Загрузка календаря..."
+      "loading": "Загрузка календаря...",
+      "month": "Месяц",
+      "year": "Год",
+      "day": "День",
+      "week": "Неделя",
+      "today": "Сегодня"
     }
   },
   "Map": {
@@ -391,7 +398,7 @@
     "ListingItem": {
       "errors": {
         "noImage": "Пожалуйста, загрузите хотя бы одно изображение",
-        "invalidServiceType": "Пожалуйста, выберите правильный тип услуги"
+        "invalidServiceType": "У вас нет прав на создание этого листинга"
       },
       "toasts": {
         "created": "Объявление успешно создано",
@@ -680,7 +687,8 @@
     "SelectsubCategory": "Выберите подкатегорию",
     "ChooseEventType": "Выберите тип события",
     "Apply": "Применить",
-    "Clear": "Очистить"
+    "Clear": "Очистить",
+    "noHotDealsFound": "Не найдено горячих предложений"
   },
   "hotdealstatic": {
     "HotDeal": "Горячее предложение",
@@ -966,7 +974,8 @@
         "markCompleted": "Отметить как выполнено",
         "accept": "Принять",
         "reject": "Отклонить",
-        "viewDetails": "Просмотреть детали"
+        "viewDetails": "Просмотреть детали",
+        "message": "Сообщение"
       },
       "filters": {
         "status": "Фильтр по статусу",
