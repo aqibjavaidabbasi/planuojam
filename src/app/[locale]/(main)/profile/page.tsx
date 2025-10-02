@@ -18,7 +18,7 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import ManageBookings from "@/components/profile/ManageBookings";
 import ProviderCalendar from "@/components/profile/ProviderCalendar";
-import { countUnread, fetchUnreadForReceiver } from "@/services/messages";
+import { fetchUnreadForReceiver } from "@/services/messages";
 
 function ProfilePage() {
   const t = useTranslations("Profile");

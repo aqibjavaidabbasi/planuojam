@@ -32,7 +32,6 @@ const MapPickerModal: React.FC<MapPickerModalProps> = ({ isOpen, onClose, onSele
     const token = process.env.NEXT_PUBLIC_MAPBOX_API_KEY;
     if (!token) {
       // If no token, keep modal but disable map rendering
-      // eslint-disable-next-line no-console
       console.error("Mapbox token missing");
       return;
     }

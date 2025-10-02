@@ -26,7 +26,7 @@ function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
   } = useForm();
 
   async function onSubmit(data: Record<string, unknown>) {
-    const email = String((data as any)?.email || "").trim();
+    const email = String(data?.email || "").trim();
     await toast.promise(
       (async () => {
         const user = await publicFindUserByEmail(email);

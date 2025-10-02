@@ -123,7 +123,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
     } finally {
       if (!silent) setListLoading(false);
     }
-  }, [user?.id, list.length]);
+  }, [user?.id, list.length, locallyReadIds, clearedUserIds]);
 
   const loadThread = useCallback(
     async (uid: number, opts?: { silent?: boolean }) => {
@@ -200,7 +200,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
         if (!silent) setThreadLoading(false);
       }
     },
-    [user?.id, thread.length]
+    [user?.id, thread.length, locallyReadIds, clearedUserIds]
   );
 
   // Load list on mount and when user changes
@@ -229,7 +229,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
         // ignore
       }
     })();
-  }, [user?.id]);
+  }, [user?.id, locallyReadIds, clearedUserIds, onUnreadChange]);
 
   // Preselect conversation if initialUserId provided
   useEffect(() => {
@@ -302,7 +302,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
       } catch {}
       return next;
     });
-  }, [selectedUserId]);
+  }, [selectedUserId, thread, user?.id]);
 
   // Emit total unread to parent AFTER state updates to avoid render-phase updates
   useEffect(() => {

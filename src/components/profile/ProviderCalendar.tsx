@@ -79,7 +79,7 @@ const ProviderCalendar: React.FC = () => {
         {
           loading: t("toasts.creating", { default: "Creating booking..." }),
           success: t("toasts.created", { default: "Blocked slot added" }),
-          error: (err) => (typeof err === "string" ? err : (err as any)?.message || t("toasts.failed", { default: "Failed to create" })),
+          error: (err) => (typeof err === "string" ? err : err?.message || t("toasts.failed", { default: "Failed to create" })),
         }
       );
       // Clear fields to encourage fresh selection
