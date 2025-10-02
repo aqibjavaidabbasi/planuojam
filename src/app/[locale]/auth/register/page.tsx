@@ -10,7 +10,7 @@ import { registerUser } from "@/store/thunks/authThunks";
 import { getCompleteImageUrl } from "@/utils/helpers";
 import Image from "next/image";
 import { Link, useRouter } from "@/i18n/navigation";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { BsCart3 } from "react-icons/bs";
@@ -18,6 +18,8 @@ import { TbTools } from "react-icons/tb";
 import { useTranslations } from "next-intl";
 import SocialAuthButtons from "@/components/auth/SocialAuthButtons";
 import { useLocale } from "next-intl";
+import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
+import { checkUsernameAvailability } from "@/services/auth";
 
 type FormValues = {
   role: string;
@@ -36,6 +38,7 @@ function RegisterPage() {
     handleSubmit,
     register,
     watch,
+    setValue,
   } = useForm<FormValues>();
   const { parentCategories } = useParentCategories();
   const dispatch = useAppDispatch();
@@ -43,10 +46,51 @@ function RegisterPage() {
   const t = useTranslations("Auth.Register");
   const [isChecked, setIsChecked] = useState(false);
   const locale = useLocale();
+  const [usernameStatus, setUsernameStatus] = useState<"unchecked" | "checking" | "available" | "taken">("unchecked");
+  const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
+
+  const currentUsername = watch("username");
+  const canRegister = useMemo(() => {
+    // Require explicit availability confirmation
+    return usernameStatus === "available" && isChecked && !isSubmitting;
+  }, [usernameStatus, isChecked, isSubmitting]);
+
+  function onUsernameChangeReset() {
+    if (usernameStatus !== "unchecked") {
+      setUsernameStatus("unchecked");
+      setUsernameSuggestions([]);
+    }
+  }
+
+  async function handleCheckUsername() {
+    const uname = (currentUsername || "").trim();
+    if (!uname) {
+      toast.error(t("usernameRequired"));
+      return;
+    }
+    setUsernameStatus("checking");
+    try {
+      const res = await checkUsernameAvailability(uname);
+      if (res.available) {
+        setUsernameStatus("available");
+        setUsernameSuggestions([]);
+      } else {
+        setUsernameStatus("taken");
+        setUsernameSuggestions(res.suggestions || []);
+      }
+    } catch {
+      setUsernameStatus("unchecked");
+      toast.error(t("registerFailed"));
+    }
+  }
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!isChecked) {
       toast.error(t("tosNotAccepted"));
+      return;
+    }
+    if (usernameStatus !== "available") {
+      toast.error(t("usernameRequired"));
       return;
     }
     //filter role, terms, confirm
@@ -196,10 +240,47 @@ function RegisterPage() {
                 placeholder={t("usernamePlaceholder")}
                 label={t("usernameLabel")}
                 disabled={isSubmitting}
-                {...register("username", { required: true })}
+                {...register("username", { required: true, onChange: onUsernameChangeReset })}
               />
+              <div className="flex items-center justify-between mx-2">
+                <button
+                  type="button"
+                  onClick={handleCheckUsername}
+                  className="text-xs text-primary hover:underline disabled:opacity-50"
+                  disabled={isSubmitting || !currentUsername}
+                >
+                  {usernameStatus === "checking" ? t("registering") : t("checkAvailability", { default: "Check availability" })}
+                </button>
+                {usernameStatus === "available" && (
+                  <span className="flex items-center text-green-600 text-xs">
+                    <AiOutlineCheckCircle className="mr-1" /> {t("usernameAvailable", { default: "Username is available" })}
+                  </span>
+                )}
+                {usernameStatus === "taken" && (
+                  <span className="flex items-center text-red-600 text-xs">
+                    <AiOutlineCloseCircle className="mr-1" /> {t("usernameTaken", { default: "Username is taken" })}
+                  </span>
+                )}
+              </div>
               {errors.username && (
                 <p className="text-red-500">{t("usernameRequired")}</p>
+              )}
+              {usernameStatus === "taken" && usernameSuggestions.length > 0 && (
+                <div className="text-xs text-gray-600 flex flex-wrap gap-2">
+                  {usernameSuggestions.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => {
+                        setValue("username", s, { shouldDirty: true, shouldTouch: true });
+                        setUsernameStatus("unchecked");
+                      }}
+                      className="px-2 py-1 border rounded hover:bg-gray-50"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
               )}
               <Input
                 type="email"
@@ -260,6 +341,7 @@ function RegisterPage() {
               type="submit"
               form="registerForm"
               extraStyles="!rounded-md !w-full"
+              disabled={!canRegister}
             >
               {t("registerCta")}
             </Button>

@@ -13,6 +13,7 @@ import { useCities } from "@/context/CitiesContext"
 import { useStates } from "@/context/StatesContext"
 import { geocodePlace } from "@/utils/mapboxLocation"
 import { useTranslations } from "next-intl"
+import MapPickerModal from "@/components/modals/MapPickerModal"
 
 // Vendor form
 type ServiceArea = { city?: string; state?: string; latitude?: string; longitude?: string }
@@ -37,6 +38,8 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
   const [submitting, setSubmitting] = useState(false)
   const { cities } = useCities()
   const { states } = useStates()
+  const [vendorPickerIndex, setVendorPickerIndex] = useState<number | null>(null)
+  const [venuePickerOpen, setVenuePickerOpen] = useState(false)
   
   const vendorSource = listing.listingItem.find(item => item.__component === "dynamic-blocks.vendor")
 
@@ -325,6 +328,9 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                   <Button type="button" style="secondary" disabled={submitting} onClick={() => onFetchVendorCoords(idx)}>
                     Fetch coordinates
                   </Button>
+                  <Button type="button" style="secondary" disabled={submitting} onClick={() => setVendorPickerIndex(idx)}>
+                    Pick on map
+                  </Button>
                   <Button type="button" style="ghost" disabled={submitting} onClick={() => removeSA(idx)} extraStyles="text-red-600 hover:text-red-700">
                     Remove
                   </Button>
@@ -375,6 +381,9 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
               <Button type="button" style="secondary" disabled={submitting} onClick={onFetchVenueCoords}>
                 {t("fetchcoordinates")}
               </Button>
+              <Button type="button" style="secondary" disabled={submitting} onClick={() => setVenuePickerOpen(true)}>
+                Pick on map
+              </Button>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
@@ -422,6 +431,48 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
             </Button>
           </div>
         </form>
+      )}
+      {/* Vendor Map Picker */}
+      {vendorPickerIndex !== null && (
+        <MapPickerModal
+          isOpen={vendorPickerIndex !== null}
+          onClose={() => setVendorPickerIndex(null)}
+          title={t("picklocation", { default: "Pick location" })}
+          initial={(() => {
+            const latStr = vendorRHF.getValues(`serviceArea.${vendorPickerIndex}.latitude`)
+            const lngStr = vendorRHF.getValues(`serviceArea.${vendorPickerIndex}.longitude`)
+            const lat = latStr && !isNaN(Number(latStr)) ? Number(latStr) : undefined
+            const lng = lngStr && !isNaN(Number(lngStr)) ? Number(lngStr) : undefined
+            return { lat, lng }
+          })()}
+          onSelect={(lat, lng) => {
+            if (vendorPickerIndex !== null) {
+              vendorRHF.setValue(`serviceArea.${vendorPickerIndex}.latitude`, String(lat), { shouldDirty: true })
+              vendorRHF.setValue(`serviceArea.${vendorPickerIndex}.longitude`, String(lng), { shouldDirty: true })
+            }
+            setVendorPickerIndex(null)
+          }}
+        />
+      )}
+      {/* Venue Map Picker */}
+      {venuePickerOpen && (
+        <MapPickerModal
+          isOpen={venuePickerOpen}
+          onClose={() => setVenuePickerOpen(false)}
+          title={t("picklocation", { default: "Pick location" })}
+          initial={(() => {
+            const latStr = venueRHF.getValues("location.latitude")
+            const lngStr = venueRHF.getValues("location.longitude")
+            const lat = latStr && !isNaN(Number(latStr)) ? Number(latStr) : undefined
+            const lng = lngStr && !isNaN(Number(lngStr)) ? Number(lngStr) : undefined
+            return { lat, lng }
+          })()}
+          onSelect={(lat, lng) => {
+            venueRHF.setValue("location.latitude", String(lat), { shouldDirty: true })
+            venueRHF.setValue("location.longitude", String(lng), { shouldDirty: true })
+            setVenuePickerOpen(false)
+          }}
+        />
       )}
     </div>
   )

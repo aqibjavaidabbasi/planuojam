@@ -9,6 +9,7 @@ import {
   Message,
   UserLite,
 } from "@/services/messages";
+import { fetchUnreadForReceiver } from "@/services/messages";
 import { uploadFilesWithToken, API_URL } from "@/services/api";
 import { MdAttachFile } from "react-icons/md";
 import Button from "../custom/Button";
@@ -17,15 +18,19 @@ import Image from "next/image";
 
 type MessagesProps = {
   initialUserId?: number;
+  onUnreadChange?: (total: number) => void;
 };
 
-function Messages({ initialUserId }: MessagesProps) {
+function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
   const t = useTranslations("Profile.Messages");
   const user = useAppSelector((s) => s.auth.user);
 
   const [list, setList] = useState<Message[]>([]);
   const [listLoading, setListLoading] = useState(false); // used only for initial load
   const [listError, setListError] = useState<string | null>(null);
+  const [unreadByUser, setUnreadByUser] = useState<Record<number, number>>({});
+  const [clearedUserIds, setClearedUserIds] = useState<Set<number>>(new Set());
+  const [locallyReadIds, setLocallyReadIds] = useState<Set<string>>(new Set());
 
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [thread, setThread] = useState<Message[]>([]);
@@ -85,6 +90,26 @@ function Messages({ initialUserId }: MessagesProps) {
       if (!user?.id) throw new Error("Errors.Auth.noToken");
       const res = await fetchAllForUser(user.id, 1, 200);
       setList(res.data);
+      // also fetch unread map for receiver (current user)
+      try {
+        const unreadRes = await fetchUnreadForReceiver(user.id, 1, 200);
+        let map = unreadRes.data.reduce((acc, m) => {
+          const mid = (typeof m.documentId === 'string' ? m.documentId : String(m.id));
+          if (locallyReadIds.has(mid)) return acc; // skip locally marked read
+          const senderId = (m.sender as UserLite | undefined)?.id ?? (m.sender as unknown as number);
+          const sid = Number(senderId);
+          if (Number.isFinite(sid)) acc[sid] = (acc[sid] || 0) + 1;
+          return acc;
+        }, {} as Record<number, number>);
+        // apply local clears
+        if (clearedUserIds.size > 0) {
+          map = { ...map };
+          clearedUserIds.forEach((id) => { map[id] = 0; });
+        }
+        setUnreadByUser(map);
+      } catch {
+        // ignore silently
+      }
     } catch (e: unknown) {
       let msg: string;
       if (typeof e === "string") {
@@ -108,6 +133,7 @@ function Messages({ initialUserId }: MessagesProps) {
       try {
         if (!user?.id) throw new Error("Errors.Auth.noToken");
         const res = await fetchThread(user.id, uid, 1, 200);
+        console.log(res)
         setThread(res.data);
         // Mark received messages as read
         const myId = user?.id;
@@ -115,19 +141,50 @@ function Messages({ initialUserId }: MessagesProps) {
           const unread = res.data.filter(
             (m) => (m.receiver?.id ?? m.receiver) === myId && !m.readAt
           );
-          // Fire and forget
-          if (!suppressMarkReadRef.current) {
-            unread.slice(0, 5).forEach((m) => {
-              if (typeof m.documentId === "string") {
-                markMessageRead(m.documentId).catch((err) => {
-                  // If backend doesn't support PUT for messages, avoid future attempts
-                  if (err && String(err).includes("Not Found")) {
-                    suppressMarkReadRef.current = true;
-                  }
-                });
+          // Mark all unread on server (use numeric id)
+          if (!suppressMarkReadRef.current && unread.length > 0) {
+            const ids = unread.map((m) => String(m.documentId)).filter(Boolean);
+            try {
+              await Promise.allSettled(ids.map((id) => markMessageRead(id)));
+            } catch (err) {
+              if (err && String(err).includes("Not Found")) {
+                suppressMarkReadRef.current = true;
               }
+            }
+            // Persist locally read ids immediately (handles tab switches before backend reflects state)
+            setLocallyReadIds((prev) => {
+              const next = new Set(prev);
+              ids.forEach((id) => next.add(id));
+              try {
+                if (typeof window !== 'undefined') {
+                  sessionStorage.setItem('locallyReadMessageIds', JSON.stringify(Array.from(next)));
+                }
+              } catch {}
+              return next;
             });
           }
+          // After marking on server, refresh unread map from server to keep badges in sync
+          try {
+            const unreadRes = await fetchUnreadForReceiver(myId, 1, 200);
+            let map = unreadRes.data.reduce((acc, m) => {
+              const mid = String(m.id);
+              if (locallyReadIds.has(mid)) return acc; // skip locally marked read
+              const senderId = (m.sender as UserLite | undefined)?.id ?? (m.sender as unknown as number);
+              const sid = Number(senderId);
+              if (Number.isFinite(sid)) acc[sid] = (acc[sid] || 0) + 1;
+              return acc;
+            }, {} as Record<number, number>);
+            // apply local clears
+            if (clearedUserIds.size > 0) {
+              map = { ...map };
+              clearedUserIds.forEach((id) => { map[id] = 0; });
+            }
+            setUnreadByUser(map);
+          } catch {
+            // ignore refresh errors
+          }
+          // Immediately clear unread badge for this counterpart
+          setUnreadByUser((prev) => ({ ...prev, [uid]: 0 }));
         }
       } catch (e: unknown) {
         let msg: string;
@@ -150,6 +207,29 @@ function Messages({ initialUserId }: MessagesProps) {
   useEffect(() => {
     loadList();
   }, [loadList]);
+
+  // Also compute unread map once on mount when user changes independently
+  useEffect(() => {
+    (async () => {
+      try {
+        if (!user?.id) return;
+        const unreadRes = await fetchUnreadForReceiver(user.id, 1, 200);
+        const map = unreadRes.data.reduce((acc, m) => {
+          const senderId = (m.sender as UserLite | undefined)?.id ?? (m.sender as unknown as number);
+          const sid = Number(senderId);
+          if (Number.isFinite(sid)) acc[sid] = (acc[sid] || 0) + 1;
+          return acc;
+        }, {} as Record<number, number>);
+        setUnreadByUser(map);
+        if (onUnreadChange) {
+          const total = Object.values(map).reduce((a, b) => a + b, 0);
+          onUnreadChange(total);
+        }
+      } catch {
+        // ignore
+      }
+    })();
+  }, [user?.id]);
 
   // Preselect conversation if initialUserId provided
   useEffect(() => {
@@ -181,6 +261,55 @@ function Messages({ initialUserId }: MessagesProps) {
       if (pollRef.current) clearInterval(pollRef.current);
     }
   }, [selectedUserId, loadThread]);
+
+  // When a thread is loaded/selected, optimistically clear unread for that user
+  useEffect(() => {
+    if (!selectedUserId) return;
+    setUnreadByUser((prev) => ({ ...prev, [selectedUserId]: 0 }));
+    // Optimistically mark currently loaded thread messages as read in client state
+    if (user?.id) {
+      setThread((prev) => prev.map((m) => {
+        const isToMe = ((m.receiver as UserLite | undefined)?.id ?? (m.receiver as unknown as number)) === user.id;
+        if (isToMe && !m.readAt) return { ...m, readAt: new Date().toISOString() } as Message;
+        return m;
+      }));
+    }
+    // persist cleared id in sessionStorage
+    setClearedUserIds((prev) => {
+      const next = new Set(prev);
+      next.add(selectedUserId);
+      try {
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('clearedUnreadByUser', JSON.stringify(Array.from(next)));
+        }
+      } catch {}
+      return next;
+    });
+    // persist locally read message ids for this thread (based on current thread state)
+    setLocallyReadIds((prev) => {
+      const next = new Set(prev);
+      thread.forEach((m) => {
+        const isToMe = ((m.receiver as UserLite | undefined)?.id ?? (m.receiver as unknown as number)) === user?.id;
+        if (isToMe) {
+          const mid = (typeof m.documentId === 'string' ? m.documentId : String(m.id));
+          next.add(mid);
+        }
+      });
+      try {
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('locallyReadMessageIds', JSON.stringify(Array.from(next)));
+        }
+      } catch {}
+      return next;
+    });
+  }, [selectedUserId]);
+
+  // Emit total unread to parent AFTER state updates to avoid render-phase updates
+  useEffect(() => {
+    if (!onUnreadChange) return;
+    const total = Object.values(unreadByUser).reduce((a, b) => a + b, 0);
+    onUnreadChange(total);
+  }, [unreadByUser, onUnreadChange]);
 
   const onSend = async () => {
     if (!selectedUserId) return;
@@ -282,6 +411,7 @@ function Messages({ initialUserId }: MessagesProps) {
             <ul>
               {conversationItems.map(({ id, counterpart }) => {
                 const isActive = selectedUserId === id;
+                const unread = (id !== user?.id) ? (unreadByUser[id] || 0) : 0;
                 return (
                   <li
                     key={id}
@@ -289,7 +419,12 @@ function Messages({ initialUserId }: MessagesProps) {
                     onClick={() => setSelectedUserId(id)}
                   >
                     <div className="flex items-center justify-between font-medium">
-                        {counterpart.username}
+                      <span>{counterpart.username}</span>
+                      {unread > 0 && (
+                        <span className="ml-2 inline-flex items-center justify-center min-w-5 h-5 px-1 text-xs rounded-full bg-red-600 text-white">
+                          {unread}
+                        </span>
+                      )}
                     </div>
                   </li>
                 );

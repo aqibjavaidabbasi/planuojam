@@ -1,4 +1,4 @@
-import { API_URL, createQuery, fetchAPIWithToken, postAPI, postAPIWithToken, putAPI } from "./api";
+import { API_URL, createQuery, fetchAPI, fetchAPIWithToken, postAPI, postAPIWithToken, putAPI } from "./api";
 
 export async function login(data: Record<string, unknown>) {
   try {
@@ -8,6 +8,7 @@ export async function login(data: Record<string, unknown>) {
     throw new Error('invalidCredentials');
   }
 }
+ 
 export async function fetchUser(jwt: string) {
   const filters = {};
   const query = createQuery({});
@@ -118,4 +119,71 @@ export async function getUsersByDocumentIds(documentIds: string[]): Promise<Mini
   const query = createQuery(fields);
   const res = await fetchAPIWithToken('users', query, filters, jwt);
   return Array.isArray(res?.data) ? res.data : res;
+}
+
+// Public lookup of user by email. Returns null if not found or not accessible.
+export async function publicFindUserByEmail(email: string): Promise<{ id: number; email: string; confirmed: boolean } | null> {
+  try {
+    if (!email) return null;
+    const filters = {
+      filters: {
+        email : {
+          $eqi: email,
+        }
+      }
+    }
+    const query = createQuery({})
+    const res = await fetchAPI('users',query, filters);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const users = Array.isArray(data) ? data : data?.data;
+    if (Array.isArray(users) && users.length > 0) {
+      const u = users[0];
+      // Strapi /api/users returns array of plain user objects (no attributes wrapper)
+      const emailVal = u.email;
+      const confirmedVal = u.confirmed;
+      const idVal = u.id;
+      if (emailVal) return { id: idVal, email: String(emailVal), confirmed: Boolean(confirmedVal) };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+// Public check for username availability. Returns availability and simple suggestions if taken.
+export async function checkUsernameAvailability(username: string): Promise<{ available: boolean; suggestions: string[] }> {
+  const clean = (username || '').trim();
+  if (!clean) return { available: false, suggestions: [] };
+
+  const filters = {
+    filters: {
+      username: {
+        $eqi: clean,
+      },
+    },
+  };
+  const query = createQuery({});
+
+  try {
+    const res = await fetchAPI('users', query, filters);
+    const users = Array.isArray(res) ? res : res?.data;
+    const taken = Array.isArray(users) && users.length > 0;
+    if (!taken) return { available: true, suggestions: [] };
+
+    const base = clean.replace(/[^a-zA-Z0-9_\.\-]/g, '').slice(0, 20) || 'user';
+    const rand = () => Math.floor(Math.random() * 900 + 100); // 100-999
+    const year = new Date().getFullYear();
+    const candidates = [
+      `${base}${rand()}`,
+      `${base}${rand()}`,
+      `${base}${rand()}`,
+      `${base}${year % 100}`,
+      `${base}${rand()}`,
+    ];
+    const suggestions = Array.from(new Set(candidates)).slice(0, 5);
+    return { available: false, suggestions };
+  } catch {
+    return { available: false, suggestions: [] };
+  }
 }

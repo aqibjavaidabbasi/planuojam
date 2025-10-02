@@ -1,20 +1,45 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaRegUser } from 'react-icons/fa';
 import { RiLoginCircleLine } from 'react-icons/ri';
 import Loader from '../custom/Loader';
 import { User } from '@/types/common';
 import { useTranslations } from 'use-intl';
 import { useRouter } from '@/i18n/navigation';
+import { countUnread } from '@/services/messages';
 
 function ProfileBtn({loading, user}: {loading: boolean, user: User | null}) {
   const router = useRouter();
   const t=useTranslations("Login")
+  const [hasUnread, setHasUnread] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        if (user?.id) {
+          const total = await countUnread(user.id);
+          if (mounted) setHasUnread(total > 0);
+        } else {
+          if (mounted) setHasUnread(false);
+        }
+      } catch {
+        // silently ignore
+      }
+    })();
+    return () => { mounted = false; };
+  }, [user?.id]);
 
   return (
     <div
-      className="border border-primary rounded-full cursor-pointer group hover:bg-primary transition-colors"
+      className="relative border border-primary rounded-full cursor-pointer group hover:bg-primary transition-colors"
     >
+      {user && hasUnread && (
+        <span
+          aria-label="unread messages"
+          className="absolute -top-1 -left-1 h-2 w-2 bg-red-500 rounded-full"
+        />
+      )}
       {loading ? (
         <Loader />
       ) : user ? (

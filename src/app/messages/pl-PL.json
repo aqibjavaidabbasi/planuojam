@@ -17,7 +17,7 @@
       "passwordRequired": "Hasło jest wymagane",
       "forgotPassword": "Zapomniałeś hasła?",
       "signIn": "Zaloguj się",
-      "missingToken": "Logowanie nie powiodło się — brak tokenu",
+      "missingToken": "Sprawdź połączenie z Internetem i spróbuj ponownie",
       "invalidCredentials": "Sprawdź swój email lub hasło i spróbuj ponownie!"
     },
     "Register": {
@@ -37,6 +37,9 @@
       "usernameLabel": "Nazwa użytkownika",
       "usernamePlaceholder": "Wpisz swoją nazwę użytkownika",
       "usernameRequired": "Wpisz nazwę użytkownika",
+      "checkAvailability": "Sprawdź dostępność",
+      "usernameAvailable": "Nazwa użytkownika jest dostępna",
+      "usernameTaken": "Nazwa użytkownika jest zajęta",
       "emailLabel": "Email",
       "emailPlaceholder": "Wpisz swój email",
       "emailRequired": "Email jest wymagany",
@@ -136,7 +139,8 @@
       "failedToLoad": "Nie udało się wczytać",
       "notFound": "Nie znaleziono"
     },
-    "loading": "Wczytywanie..."
+    "loading": "Wczytywanie...",
+    "saving": "Zapisywanie..."
   },
   "Map": {
     "loading": "Ładowanie mapy...",
@@ -208,7 +212,10 @@
       "year": "Rok",
       "day": "Dzień",
       "week": "Tydzień",
-      "today": "Dzisiaj"
+      "today": "Dzisiaj",
+      "legend": {
+        "booked": "Zarezerwowane (zacienione dni)"
+      }
     }
   },
   "Profile": {
@@ -220,7 +227,8 @@
       "messages": "Wiadomości",
       "reviews": "Opinie",
       "bookings": "Rezerwacje",
-      "manageBookings": "Zarządzaj rezerwacjami"
+      "manageBookings": "Zarządzaj rezerwacjami",
+      "calendar": "Kalendarz"
     },
     "ProfileTab": {
       "title": "Ustawienia profilu",
@@ -229,9 +237,13 @@
       "usernameLabel": "Nazwa użytkownika",
       "usernamePlaceholder": "Nazwa użytkownika",
       "saveUsername": "Zapisz nazwę",
+      "checkAvailability": "Sprawdź dostępność",
+      "usernameAvailable": "Nazwa użytkownika jest dostępna",
+      "usernameTaken": "Nazwa użytkownika jest zajęta",
       "errors": {
         "usernameEmpty": "Nazwa użytkownika nie może być pusta",
-        "userNotFound": "Nie znaleziono użytkownika"
+        "userNotFound": "Nie znaleziono użytkownika",
+        "usernameNotAvailable": "Potwierdź dostępność nazwy użytkownika"
       },
       "toasts": {
         "updatingUsername": "Aktualizowanie nazwy użytkownika...",
@@ -299,6 +311,31 @@
       "title": "Opinie",
       "subtitle": "Przeglądaj i zarządzaj opiniami o nieruchomościach.",
       "propertyLabel": "Nieruchomość:"
+    },
+    "ProviderCalendar": {
+      "notProvider": "Kalendarz dostępny tylko dla dostawców.",
+      "selectListing": {
+        "placeholder": "Wybierz ogłoszenie",
+        "help": "Wybierz ogłoszenie, aby zobaczyć jego kalendarz"
+      },
+      "fields": {
+        "start": "Początek",
+        "end": "Koniec"
+      },
+      "actions": {
+        "addBlock": "Dodaj zablokowany termin"
+      },
+      "errors": {
+        "noListing": "Wybierz ogłoszenie",
+        "noTime": "Wybierz początek i koniec",
+        "invalidRange": "Koniec musi być po początku",
+        "conflict": "Wybrany czas nakłada się na istniejącą rezerwację"
+      },
+      "toasts": {
+        "creating": "Tworzenie rezerwacji...",
+        "created": "Dodano zablokowany termin",
+        "failed": "Nie udało się utworzyć"
+      }
     }
   },
   "Reviews": {
@@ -387,7 +424,8 @@
       "sendResetLink": "Wyślij link resetujący",
       "errors": {
         "emailRequired": "Email jest wymagany",
-        "emailInvalid": "Nieprawidłowy adres email"
+        "emailInvalid": "Nieprawidłowy adres email",
+        "userNotFoundOrUnconfirmed": "Sprawdź swoją skrzynkę e-mail i spróbuj ponownie."
       },
       "toasts": {
         "sending": "Wysyłanie emaila...",
@@ -426,7 +464,11 @@
         "saving": "Zapisywanie...",
         "create": "Utwórz ogłoszenie",
         "fetchCoordinates": "Pobierz współrzędne",
+        "pickOnMap": "Wybierz na mapie",
         "remove": "Usuń"
+      },
+      "map": {
+        "pickLocation": "Wybierz lokalizację na mapie"
       },
       "sections": {
         "basicDetails": "Podstawowe informacje",
@@ -728,7 +770,7 @@
       "generic": "Coś poszło nie tak. Spróbuj ponownie."
     },
     "Auth": {
-      "noToken": "Nie znaleziono tokenu uwierzytelniającego. Zaloguj się.",
+      "noToken": "Sprawdź połączenie z Internetem i spróbuj ponownie",
       "invalidCredentials": "Sprawdź email lub hasło i spróbuj ponownie!",
       "registerFailed": "Rejestracja nie powiodła się. Spróbuj później!",
       "emailConfirmFailed": "Nie udało się potwierdzić emaila. Spróbuj ponownie.",
@@ -736,7 +778,7 @@
       "resetFailed": "Nie udało się zresetować hasła. Spróbuj później!",
       "updateUserFailed": "Nie udało się zaktualizować użytkownika. Spróbuj później!",
       "updatePasswordFailed": "Nie udało się zaktualizować hasła. Spróbuj później!",
-      "missingToken": "Logowanie nie powiodło się — brak tokenu",
+      "missingToken": "Sprawdź połączenie z Internetem i spróbuj ponownie",
       "registerNoResponse": "Rejestracja nie powiodła się — brak odpowiedzi z serwera",
       "userIdRequired": "Wymagany jest identyfikator użytkownika, aby zaktualizować dane"
     }
@@ -813,6 +855,7 @@
     "savechanges": "zapisuje zmiany",
     "adamenity": "Dodaj udogodnienie",
     "fetchcoordinates": "pobierz współrzędne",
+    "picklocation": "Wybierz lokalizację na mapie",
     "address": "adres",
     "remove": "usunąć",
     "citylabel": "etykieta miasta",
@@ -954,6 +997,7 @@
     },
     "MyBookings": {
       "title": "Moje rezerwacje",
+      "manage": "Zarządzać",
       "labels": {
         "listing": "Ogłoszenie",
         "status": "Status",
@@ -978,13 +1022,15 @@
         "load": "Nie udało się wczytać rezerwacji."
       },
       "confirm": {
-        "delete": "Usunąć tę rezerwację?",
+        "delete": "Delete this booking?",
         "acceptTitle": "Zaakceptować rezerwację?",
         "rejectTitle": "Odrzucić rezerwację?",
         "accept": "Czy na pewno chcesz zaakceptować tę rezerwację? Akceptuj tylko, jeśli możesz ją obsłużyć.",
         "reject": "Czy na pewno chcesz odrzucić (anulować) tę rezerwację?",
         "cancelTitle": "Anulować tę rezerwację?",
         "cancel": "Czy na pewno chcesz anulować tę rezerwację?",
+        "calendarLegend": "Legenda kalendarza",
+        "providerCalendarTabLabel": "Kalendarz dostawcy",
         "markCompleted": "Oznaczyć tę rezerwację jako zakończoną?"
       },
       "actions": {

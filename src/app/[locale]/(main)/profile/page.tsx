@@ -10,14 +10,15 @@ import Button from "@/components/custom/Button";
 import { useAppSelector } from "@/store/hooks";
 import React, { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
-import { FaArrowCircleDown, FaList, FaCalendarAlt } from "react-icons/fa";
+import { FaArrowCircleDown, FaList, FaCalendarAlt, FaCalendarCheck } from "react-icons/fa";
 import { LuMessageSquareText } from "react-icons/lu";
-import { MdOutlineFavorite, MdStarBorderPurple500 } from "react-icons/md";
+import { MdEditCalendar, MdOutlineFavorite, MdStarBorderPurple500 } from "react-icons/md";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import ManageBookings from "@/components/profile/ManageBookings";
-import { countUnread } from "@/services/messages";
+import ProviderCalendar from "@/components/profile/ProviderCalendar";
+import { countUnread, fetchUnreadForReceiver } from "@/services/messages";
 
 function ProfilePage() {
   const t = useTranslations("Profile");
@@ -58,20 +59,54 @@ function ProfilePage() {
     }
   }, [searchParams, activeTab]);
 
-  // Compute unread messages once on profile load
+  // Compute unread messages once on profile load (respect local reads)
   useEffect(() => {
     (async () => {
       try {
         const uid = user?.id;
         if (!uid) return;
-        const unread = await countUnread(uid);
-        setUnreadCount(unread);
+        const res = await fetchUnreadForReceiver(uid, 1, 200);
+        const localIdsRaw = typeof window !== 'undefined' ? sessionStorage.getItem('locallyReadMessageIds') : null;
+        const locallyRead = new Set<string>(localIdsRaw ? JSON.parse(localIdsRaw) : []);
+        const adjusted = res.data.filter((m) => !locallyRead.has(String(m.id)));
+        setUnreadCount(adjusted.length);
       } catch {
         // ignore silently
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Refresh unread count when tab changes or window regains focus
+  useEffect(() => {
+    const refresh = async () => {
+      try {
+        const uid = user?.id;
+        if (!uid) return;
+        const res = await fetchUnreadForReceiver(uid, 1, 200);
+        const localIdsRaw = typeof window !== 'undefined' ? sessionStorage.getItem('locallyReadMessageIds') : null;
+        const locallyRead = new Set<string>(localIdsRaw ? JSON.parse(localIdsRaw) : []);
+        const adjusted = res.data.filter((m) => !locallyRead.has(String(m.id)));
+        setUnreadCount(adjusted.length);
+      } catch {}
+    };
+    // On tab change
+    refresh();
+    // On window focus
+    const onFocus = () => { refresh(); };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('focus', onFocus);
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') refresh();
+      });
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('focus', onFocus);
+        document.removeEventListener('visibilitychange', () => {});
+      }
+    };
+  }, [activeTab, user?.id]);
 
   return (
     <div className="bg-gray-50 min-h-screen font-inter">
@@ -161,6 +196,20 @@ function ProfilePage() {
                 </button>
               )}
 
+              {user?.serviceType !== null && (
+                <button
+                  onClick={() => showTab("calendar")}
+                  className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${
+                    activeTab === "calendar"
+                      ? "text-white bg-[#cc922f]"
+                      : "text-gray-600 hover:text-[#cc922f] hover:bg-gray-50"
+                  }`}
+                >
+                  <MdEditCalendar size={20} className="mr-3" />
+                  {t("tabs.calendar", { default: "Calendar" })}
+                </button>
+              )}
+
               <button
                 onClick={() => showTab("bookings")}
                 className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${
@@ -169,7 +218,7 @@ function ProfilePage() {
                     : "text-gray-600 hover:text-[#cc922f] hover:bg-gray-50"
                 }`}
               >
-                <FaCalendarAlt size={20} className="mr-3" />
+                <FaCalendarCheck size={20} className="mr-3" />
                 {t("tabs.bookings", { default: "Bookings" })}
               </button>
 
@@ -225,10 +274,14 @@ function ProfilePage() {
             {activeTab === "profile" && <ProfileTab user={user} />}
             {activeTab === "my-listings" && <Mylistings />}
             {activeTab === "manage-bookings" && <ManageBookings />}
+            {activeTab === "calendar" && <ProviderCalendar />}
             {activeTab === "bookings" && <MyBookings />}
             {activeTab === "favourite-listings" && <FavouriteListings />}
             {activeTab === "messages" && (
-              <Messages initialUserId={Number(searchParams?.get("withUser") || 0) || undefined} />
+              <Messages
+                initialUserId={Number(searchParams?.get("withUser") || 0) || undefined}
+                onUnreadChange={(total) => setUnreadCount(total)}
+              />
             )}
             {activeTab === "reviews" && <ReviewsTab />}
           </div>

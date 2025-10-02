@@ -10,6 +10,8 @@ import { updateUser } from "@/store/thunks/authThunks";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { useTranslations } from "next-intl";
+import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
+import { checkUsernameAvailability } from "@/services/auth";
 
 type PasswordForm = {
   currentPassword: string;
@@ -23,11 +25,15 @@ function ProfileTab({ user }: { user: User | null }) {
   const [username, setUsername] = useState("");
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
+  const [usernameStatus, setUsernameStatus] = useState<"unchecked" | "checking" | "available" | "taken">("unchecked");
+  const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
   const { register, handleSubmit, watch, formState: { errors }, reset } = useForm<PasswordForm>()
   const t = useTranslations('Profile.ProfileTab');
 
   useEffect(function () {
     setUsername(user?.username ?? "");
+    setUsernameStatus("unchecked");
+    setUsernameSuggestions([]);
   }, [user]);
 
   async function updateUsername(e?: React.FormEvent) {
@@ -38,6 +44,10 @@ function ProfileTab({ user }: { user: User | null }) {
       return;
     }
     if (username === user?.username) {
+      return;
+    }
+    if (usernameStatus !== 'available') {
+      toast.error(t('errors.usernameNotAvailable', { default: 'Please confirm username availability' }));
       return;
     }
 
@@ -53,6 +63,40 @@ function ProfileTab({ user }: { user: User | null }) {
             : t('toasts.usernameUpdateFailed'),
       }
     ).finally(() => setLoading(false));
+  }
+
+  function onUsernameChangeReset() {
+    if (usernameStatus !== 'unchecked') {
+      setUsernameStatus('unchecked');
+      setUsernameSuggestions([]);
+    }
+  }
+
+  async function handleCheckUsername() {
+    const uname = (username || '').trim();
+    if (!uname) {
+      toast.error(t('errors.usernameEmpty'));
+      return;
+    }
+    if (user && uname === user.username) {
+      setUsernameStatus('available');
+      setUsernameSuggestions([]);
+      return;
+    }
+    setUsernameStatus('checking');
+    try {
+      const res = await checkUsernameAvailability(uname);
+      if (res.available) {
+        setUsernameStatus('available');
+        setUsernameSuggestions([]);
+      } else {
+        setUsernameStatus('taken');
+        setUsernameSuggestions(res.suggestions || []);
+      }
+    } catch {
+      setUsernameStatus('unchecked');
+      toast.error(t('toasts.usernameUpdateFailed'));
+    }
   }
 
   async function handlePasswordUpdate(data: PasswordForm) {
@@ -109,26 +153,66 @@ function ProfileTab({ user }: { user: User | null }) {
 
       <div className="max-w-2xl">
         <form className="flex gap-3 items-end w-full" id="usernameForm" onSubmit={updateUsername}>
-          <div className="w-full">
+          <div className="w-full relative">
             <Input
               type="text"
               placeholder={t('usernamePlaceholder')}
               label={t('usernameLabel')}
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                onUsernameChangeReset();
+              }}
               disabled={loading}
             />
+            <div className="absolute -bottom-5 left-2 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={handleCheckUsername}
+                className="text-xs text-primary hover:underline disabled:opacity-50 cursor-pointer"
+                disabled={loading || !username}
+              >
+                {usernameStatus === 'checking' ? t('toasts.updatingUsername') : t('checkAvailability', { default: 'Check availability' })}
+              </button>
+              {usernameStatus === 'available' && (
+                <span className="flex items-center text-green-600 text-xs">
+                  <AiOutlineCheckCircle className="mr-1" /> {t('usernameAvailable', { default: 'Username is available' })}
+                </span>
+              )}
+              {usernameStatus === 'taken' && (
+                <span className="flex items-center text-red-600 text-xs">
+                  <AiOutlineCloseCircle className="mr-1" /> {t('usernameTaken', { default: 'Username is taken' })}
+                </span>
+              )}
+            </div>
           </div>
           <Button
             style="primary"
             type='submit'
             form="usernameForm"
             extraStyles="!rounded-md !whitespace-nowrap"
-            disabled={loading}
+            disabled={loading || usernameStatus !== 'available'}
           >
             {t('saveUsername')}
           </Button>
         </form>
+        {usernameStatus === 'taken' && usernameSuggestions.length > 0 && (
+          <div className="text-xs text-gray-600 flex flex-wrap gap-2 mt-10">
+            {usernameSuggestions.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => {
+                  setUsername(s);
+                  setUsernameStatus('unchecked');
+                }}
+                className="px-2 py-1 border rounded hover:bg-gray-50"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
         {/* Password Update Section */}
         <div className="mt-12 pt-8 border-t border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">

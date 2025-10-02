@@ -10,6 +10,7 @@ import Button from "@/components/custom/Button";
 import Modal from "@/components/custom/Modal";
 import { FiCalendar } from "react-icons/fi";
 import BookingDetailsModal, { BookingDetails } from "@/components/modals/BookingDetailsModal";
+import { useRouter } from "@/i18n/navigation";
 
 function toLocal(dt: string) {
   try {
@@ -33,6 +34,7 @@ const ManageBookings: React.FC = () => {
   const isProvider = useMemo(() => user?.serviceType !== null, [user?.serviceType]);
   const locale = useLocale();
   const [statusFilter, setStatusFilter] = useState<BookingStatusFilter>("all");
+  const router = useRouter();
 
   // Stats
   const stats = useMemo(() => {
@@ -121,7 +123,7 @@ const ManageBookings: React.FC = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-semibold mb-4">{t("title", { default: "My Bookings" })} — Manage</h2>
+      <h2 className="text-xl font-semibold mb-4">{t("title", { default: "My Bookings" })} — {t("manage")}</h2>
 
       {/* Filter */}
       <div className="flex items-center gap-2 mb-4">
@@ -190,7 +192,7 @@ const ManageBookings: React.FC = () => {
                           : "bg-red-100 text-red-800"
                 }`}
               >
-                {status.charAt(0).toUpperCase() + status.slice(1)}
+                {t("status." + status)}
               </span>
             );
 
@@ -234,9 +236,10 @@ const ManageBookings: React.FC = () => {
                   <div className="ml-4">{statusChip}</div>
                 </div>
 
-                <div className="flex items-center gap-2 mt-4">
+                <div className="flex items-center gap-1.5 mt-4">
                   <Button
                     style="ghost"
+                    extraStyles="!whitespace-nowrap"
                     onClick={() => {
                       const details: BookingDetails = {
                         bookingStatus: b.bookingStatus,
@@ -250,6 +253,21 @@ const ManageBookings: React.FC = () => {
                   >
                     {t("actions.viewDetails", { default: "View Details" })}
                   </Button>
+                  {(() => {
+                    const customerUserId: number | undefined = b?.userInfo?.id as number | undefined;
+                    if (customerUserId) {
+                      return (
+                        <Button
+                          style="primary"
+                          extraStyles="!rounded-md"
+                          onClick={() => router.push(`/profile?tab=messages&withUser=${customerUserId}`)}
+                        >
+                          {t("actions.message", { default: "Message" })}
+                        </Button>
+                      );
+                    }
+                    return null;
+                  })()}
                   {b.bookingStatus === "pending" && (
                     <>
                       <Button style="primary" disabled={processingId === b.documentId} onClick={() => onAccept(b)}>
@@ -269,6 +287,7 @@ const ManageBookings: React.FC = () => {
                     return (
                       <Button
                         style="primary"
+                        extraStyles="!whitespace-nowrap"
                         onClick={async () => {
                           try {
                             await toast.promise(

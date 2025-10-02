@@ -228,7 +228,9 @@ export async function getBookings(
 export async function updateBooking(id: string, data: Partial<BookingPayload>) {
   try {
     const body: Record<string, unknown> = { data };
-    const res = await putAPI(`bookings/${id}`, body);
+    const query = createQuery({}, { locale: "en" });
+    const res = await putAPI(`bookings/${id}`, body, {}, query);
+    console.log(res); 
     return res;
   } catch (err) {
     console.error(err);

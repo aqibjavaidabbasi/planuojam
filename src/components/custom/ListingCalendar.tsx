@@ -111,6 +111,12 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId }) 
   return (
     <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
       <h2 className="text-2xl font-semibold text-primary mb-4">{t("availability", { default: "Availability" })}</h2>
+      <div className="flex items-center gap-3 mb-3 text-sm">
+        <div className="flex items-center gap-2">
+          <span className="inline-block w-4 h-4 rounded-sm" style={{ backgroundColor: "rgba(0, 123, 255, 0.3)" }} />
+          <span className="text-gray-600">{t("legend.booked", { default: "Booked (shaded days)" })}</span>
+        </div>
+      </div>
       <div className="w-full overflow-x-auto">
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, multiMonthPlugin, interactionPlugin]}
@@ -125,7 +131,7 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId }) 
           dayMaxEvents={true}
           datesSet={onDatesSet}
           // soften background color via CSS variable
-          eventBackgroundColor="#cc922f" // red-200
+          eventBackgroundColor="rgba(0, 123, 255, 0.3)"
           eventColor="#cc922f"
           eventDisplay="auto"
           buttonText={{

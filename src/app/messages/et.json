@@ -17,7 +17,7 @@
       "passwordRequired": "Parool on kohustuslik",
       "forgotPassword": "Unustasid parooli?",
       "signIn": "Logi sisse",
-      "missingToken":"Sisselogimine ebaõnnestus — puudu on märk",
+      "missingToken":"Kontrolli oma internetiühendust ja proovi uuesti",
       "invalidCredentials":"Kontrolli oma e-posti või parooli ja proovi uuesti!"
     },
     "Register": {
@@ -37,6 +37,9 @@
       "usernameLabel": "Kasutajanimi",
       "usernamePlaceholder": "Sisesta oma kasutajanimi",
       "usernameRequired": "Palun sisesta kasutajanimi",
+      "checkAvailability": "Check availability",
+      "usernameAvailable": "Username is available",
+      "usernameTaken": "Username is taken",
       "emailLabel": "E-post",
       "emailPlaceholder": "Sisesta oma e-post",
       "emailRequired": "E-post on kohustuslik",
@@ -137,7 +140,8 @@
       "failedToLoad": "Laadimine ebaõnnestus",
       "notFound": "Ei leitud"
     },
-    "loading": "Laadimine..."
+    "loading": "Laadimine...",
+    "saving": "Salvestamine..."
   },
   "Map": {
     "loading": "Kaardi laadimine...",
@@ -209,7 +213,10 @@
       "year": "Aasta",
       "day": "Päev",
       "week": "Nädal",
-      "today": "Täna"
+      "today": "Täna",
+      "legend": {
+        "booked": "Broneeritud (varjutatud päevad)"
+      }
     }
   },
   "Profile": {
@@ -221,7 +228,8 @@
       "messages": "Sõnumid",
       "reviews": "Arvustused",
       "bookings": "Broneeringud",
-      "manageBookings": "Halda broneeringuid"
+      "manageBookings": "Halda broneeringuid",
+      "calendar": "Kalender"
     },
     "ProfileTab": {
       "title": "Profiili seaded",
@@ -230,9 +238,13 @@
       "usernameLabel": "Kasutajanimi",
       "usernamePlaceholder": "Kasutajanimi",
       "saveUsername": "Salvesta nimi",
+      "checkAvailability": "Check availability",
+      "usernameAvailable": "Username is available",
+      "usernameTaken": "Username is taken",
       "errors": {
         "usernameEmpty": "Kasutajanimi ei tohi olla tühi",
-        "userNotFound": "Kasutajat ei leitud"
+        "userNotFound": "Kasutajat ei leitud",
+        "usernameNotAvailable": "Please confirm username availability"
       },
       "toasts": {
         "updatingUsername": "Kasutajanime uuendamine...",
@@ -300,6 +312,31 @@
       "title": "Arvustused",
       "subtitle": "Vaata ja halda oma kinnisvara arvustusi.",
       "propertyLabel": "Kinnisvara:"
+    },
+    "ProviderCalendar": {
+      "notProvider": "Kalender on saadaval ainult teenusepakkujatele.",
+      "selectListing": {
+        "placeholder": "Vali kuulutus",
+        "help": "Vali kuulutus, et näha selle kalendrit"
+      },
+      "fields": {
+        "start": "Algus",
+        "end": "Lõpp"
+      },
+      "actions": {
+        "addBlock": "Lisa blokeeritud aeg"
+      },
+      "errors": {
+        "noListing": "Palun vali kuulutus",
+        "noTime": "Palun vali algus ja lõpp",
+        "invalidRange": "Lõpp peab olema pärast algust",
+        "conflict": "Valitud aeg kattub olemasoleva broneeringuga"
+      },
+      "toasts": {
+        "creating": "Broneeringu loomine...",
+        "created": "Blokeeritud aeg lisatud",
+        "failed": "Loomine ebaõnnestus"
+      }
     }
   },
   "Reviews": {
@@ -388,7 +425,8 @@
       "sendResetLink": "Saada lähtestuslink",
       "errors": {
         "emailRequired": "E-post on kohustuslik",
-        "emailInvalid": "Vigane e-posti aadress"
+        "emailInvalid": "Vigane e-posti aadress",
+        "userNotFoundOrUnconfirmed": "Palun kontrollige oma e-posti ja proovige uuesti.."
       },
       "toasts": {
         "sending": "E-kirja saatmine...",
@@ -427,7 +465,11 @@
         "saving": "Salvestamine...",
         "create": "Loo kuulutus",
         "fetchCoordinates": "Hangi koordinaadid",
+        "pickOnMap": "Vali kaardilt",
         "remove": "Eemalda"
+      },
+      "map": {
+        "pickLocation": "Vali asukoht kaardilt"
       },
       "sections": {
         "basicDetails": "Põhiandmed",
@@ -729,7 +771,7 @@
       "generic": "Midagi läks valesti. Palun proovi uuesti."
     },
     "Auth": {
-      "noToken": "Autentimismärki ei leitud. Palun logi sisse.",
+      "noToken": "Kontrolli oma internetiühendust ja proovi uuesti",
       "invalidCredentials": "Kontrolli oma e-posti või parooli ja proovi uuesti!",
       "registerFailed": "Registreerimine ebaõnnestus. Palun proovi hiljem uuesti!",
       "emailConfirmFailed": "E-posti kinnitamine ebaõnnestus. Palun proovi uuesti.",
@@ -737,7 +779,7 @@
       "resetFailed": "Parooli lähtestamine ebaõnnestus. Palun proovi hiljem uuesti!",
       "updateUserFailed": "Kasutaja uuendamine ebaõnnestus, palun proovi hiljem uuesti!",
       "updatePasswordFailed": "Parooli uuendamine ebaõnnestus, palun proovi hiljem uuesti!",
-      "missingToken": "Sisselogimine ebaõnnestus — puudu on märk",
+      "missingToken": "Kontrolli oma internetiühendust ja proovi uuesti",
       "registerNoResponse": "Registreerimine ebaõnnestus — server ei vastanud",
       "userIdRequired": "Kasutaja ID on vajalik kasutaja andmete uuendamiseks"
     }
@@ -810,6 +852,7 @@
     "saving": "säästmine",
     "savechanges": " salvesta muudatused",
     "fetchcoordinates": "tooge koordinaadid",
+    "picklocation": "Vali asukoht kaardilt",
     "adamenity": "Lisage mugavus",
     "address": "aadress",
     "remove": "eemaldada",
@@ -949,6 +992,7 @@
     },
     "MyBookings": {
       "title": "Minu broneeringud",
+      "manage": "hallata",
       "labels": {
         "listing": "Kuulutus",
         "status": "Olek",

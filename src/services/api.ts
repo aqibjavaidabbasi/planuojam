@@ -59,8 +59,9 @@ export async function fetchAPI(
     throw new Error('Errors.Api.generic');
   }
 
+  
   const data = await response.json();
-  return data.data;
+  return data.data || data;
 }
 
 /**

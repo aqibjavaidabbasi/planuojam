@@ -17,7 +17,7 @@
       "passwordRequired": "Slaptažodis yra privalomas",
       "forgotPassword": "Pamiršote slaptažodį?",
       "signIn": "Prisijungti",
-      "missingToken":"Prisijungimas nepavyko — trūksta žetono",
+      "missingToken":"Patikrinkite interneto ryšį ir bandykite dar kartą",
       "loginNoResponse":"Prisijungimas nepavyko — serveris neatsakė"
     },
     "Register": {
@@ -37,6 +37,9 @@
       "usernameLabel": "Vartotojo vardas",
       "usernamePlaceholder": "Įveskite vartotojo vardą",
       "usernameRequired": "Įveskite vartotojo vardą",
+      "checkAvailability": "Patikrinti prieinamumą",
+      "usernameAvailable": "Vartotojo vardas laisvas",
+      "usernameTaken": "Vartotojo vardas užimtas",
       "emailLabel": "El. paštas",
       "emailPlaceholder": "Įveskite el. paštą",
       "emailRequired": "El. paštas yra privalomas",
@@ -136,7 +139,8 @@
       "failedToLoad": "Nepavyko įkelti",
       "notFound": "Nerasta"
     },
-    "loading": "Kraunama..."
+    "loading": "Kraunama...",
+    "saving": "Saugoma..."
   },
   "Listing": {
     "Edit": {
@@ -187,7 +191,10 @@
       "year": "Metai",
       "day": "Diena",
       "week": "Savaikis",
-      "today": "Dabar"
+      "today": "Dabar",
+      "legend": {
+        "booked": "Užimta (užtamsintos dienos)"
+      }
     }
   },
   "Map": {
@@ -250,7 +257,8 @@
       "sendResetLink": "Siųsti atkūrimo nuorodą",
       "errors": {
         "emailRequired": "El. paštas yra privalomas",
-        "emailInvalid": "Neteisingas el. pašto adresas"
+        "emailInvalid": "Neteisingas el. pašto adresas",
+        "userNotFoundOrUnconfirmed": "Patikrinkite el. paštą ir bandykite dar kartą."
       },
       "toasts": {
         "sending": "Siunčiamas el. laiškas...",
@@ -289,7 +297,11 @@
         "saving": "Saugoma...",
         "create": "Sukurti skelbimą",
         "fetchCoordinates": "Gauti koordinates",
+        "pickOnMap": "Pasirinkti žemėlapyje",
         "remove": "Pašalinti"
+      },
+      "map": {
+        "pickLocation": "Pasirinkite vietą žemėlapyje"
       },
       "sections": {
         "basicDetails": "Pagrindinė informacija",
@@ -569,12 +581,38 @@
       "messages": "Pranešimas",
       "reviews": "Apžvalgos",
       "bookings": "Užsakymai",
-      "manageBookings": "Tvarkyti užsakymus"
+      "manageBookings": "Tvarkyti užsakymus",
+      "calendar": "Kalendorius"
     },
     "ReviewsTab": {
       "title": "Atsiliepimai",
       "subtitle": "Peržiūrėkite ir tvarkykite savo turto atsiliepimus.",
       "propertyLabel": "Turtas:"
+    },
+    "ProviderCalendar": {
+      "notProvider": "Kalendorius prieinamas tik paslaugų teikėjams.",
+      "selectListing": {
+        "placeholder": "Pasirinkite įrašą",
+        "help": "Pasirinkite įrašą, kad peržiūrėtumėte jo kalendorių"
+      },
+      "fields": {
+        "start": "Pradžia",
+        "end": "Pabaiga"
+      },
+      "actions": {
+        "addBlock": "Pridėti užblokuotą laiką"
+      },
+      "errors": {
+        "noListing": "Pasirinkite įrašą",
+        "noTime": "Pasirinkite pradžią ir pabaigą",
+        "invalidRange": "Pabaiga turi būti po pradžios",
+        "conflict": "Pasirinktas laikas sutampa su esamu užsakymu"
+      },
+      "toasts": {
+        "creating": "Kuriamas užsakymas...",
+        "created": "Užblokuotas laikas pridėtas",
+        "failed": "Nepavyko sukurti"
+      }
     },
     "ProfileTab": {
       "title": "Paskyros nustatymai",
@@ -583,9 +621,13 @@
       "usernameLabel": "Vartotojo vardas",
       "usernamePlaceholder": "Vartotojo vardas",
       "saveUsername": "Išsaugoti vardą",
+      "checkAvailability": "Patikrinti prieinamumą",
+      "usernameAvailable": "Vartotojo vardas laisvas",
+      "usernameTaken": "Vartotojo vardas užimtas",
       "errors": {
         "usernameEmpty": "Vartotojo vardas negali būti tuščias",
-        "userNotFound": "Vartotojas nerastas"
+        "userNotFound": "Vartotojas nerastas",
+        "usernameNotAvailable": "Patvirtinkite vartotojo vardo prieinamumą"
       },
       "toasts": {
         "updatingUsername": "Atnaujinamas vartotojo vardas...",
@@ -720,7 +762,7 @@
       "generic": "Įvyko klaida. Bandykite dar kartą."
     },
     "Auth": {
-      "noToken": "Nerastas autentifikavimo žetonas. Prašome prisijungti.",
+      "noToken": "Patikrinkite interneto ryšį ir bandykite dar kartą",
       "invalidCredentials": "Patikrinkite el. paštą arba slaptažodį ir bandykite dar kartą!",
       "registerFailed": "Nepavyko užsiregistruoti. Bandykite vėliau!",
       "emailConfirmFailed": "Nepavyko patvirtinti el. pašto. Bandykite dar kartą.",
@@ -728,7 +770,7 @@
       "resetFailed": "Nepavyko atkurti slaptažodžio. Bandykite vėliau!",
       "updateUserFailed": "Nepavyko atnaujinti vartotojo. Bandykite vėliau!",
       "updatePasswordFailed": "Nepavyko atnaujinti slaptažodžio. Bandykite vėliau!",
-      "missingToken": "Prisijungimas nepavyko — trūksta žetono",
+      "missingToken": "Patikrinkite interneto ryšį ir bandykite dar kartą",
       "registerNoResponse": "Registracija nepavyko — serveris neatsakė",
       "userIdRequired": "Norint atnaujinti duomenis, būtinas vartotojo ID"
     }
@@ -801,6 +843,7 @@
     "saving": "taupymas",
     "savechanges": "išsaugoti pakeitimus",
     "fetchcoordinates": "gauti koordinates",
+    "picklocation": "Pasirinkite vietą žemėlapyje",
     "adamenity": "Pridėti patogumą",
     "address": "adresu",
     "remove": "pašalinti",
@@ -939,6 +982,7 @@
     },
     "MyBookings": {
       "title": "Mano užsakymai",
+      "manage": "valdyti",
       "labels": {
         "listing": "Skelbimas",
         "status": "Būsena",

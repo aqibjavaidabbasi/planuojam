@@ -60,32 +60,112 @@ function ListingDetailHero({
   return (
     <div className="rounded-2xl overflow-hidden mb-8 relative bg-gradient-to-r from-amber-500 to-pink-500">
       <div className="absolute inset-0 bg-black/20"></div>
-      <div className="relative z-10 p-4 md:p-6 text-white">
+      <div className="relative z-10 p-2.5 md:p-4 text-white">
         <div className="flex flex-col gap-2">
-          <div className="flex-1 mb-6 md:mb-0 flex justify-between items-center gap-2">
-            <div className="">
-              {category && <div className="flex items-center mb-4">
-                <span className="bg-white bg-opacity-20 text-black px-3 py-1 rounded-full text-sm font-medium">
-                  {category}
-                </span>
-              </div>}
-              <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2">{title}</h1>
-              <p className="text-base sm:text-lg text-white text-opacity-80 mb-3">
-                {username}
-              </p>
-              <p className="text-base sm:text-xl text-white text-opacity-90 mb-3">
-                {contact?.address}
-              </p>
-              <div className="flex flex-wrap gap-4 text-sm">
-                {contact?.email && <div className="flex items-center">
-                  <MdOutlineEmail className="mr-2" size={24} />
-                  <span>{contact?.email}</span>
-                </div>}
-                {contact?.phone && <div className="flex items-center">
-                  <MdOutlineLocalPhone className="mr-2" size={24} />
-                  <span>{contact?.phone}</span>
-                </div>}
+          {category && <div className="flex items-center mb-2">
+            <span className="bg-white bg-opacity-20 text-black px-3 py-1 rounded-full text-sm font-medium">
+              {category}
+            </span>
+          </div>}
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2">{title}</h1>
+          <div className="flex-1">
+            <p className="text-base sm:text-lg text-white text-opacity-80 mb-3">
+              {username}
+            </p>
+            <p className="text-base sm:text-xl text-white text-opacity-90 mb-3">
+              {contact?.address}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-4 text-sm">
+            {contact?.email && <div className="flex items-center">
+              <MdOutlineEmail className="mr-2" size={24} />
+              <span>{contact?.email}</span>
+            </div>}
+            {contact?.phone && <div className="flex items-center">
+              <MdOutlineLocalPhone className="mr-2" size={24} />
+              <span>{contact?.phone}</span>
+            </div>}
+          </div>
+          <div className="flex gap-1.5 items-end justify-between">
+            <div className="flex gap-2 flex-wrap">
+              {/* Website Link */}
+              {websiteLink && (
+                <div
+                  className="rounded-xl w-full px-6 py-2 text-center cursor-pointer transition-all duration-200 flex items-center justify-center"
+                  style={{
+                    backdropFilter: "blur(10px)",
+                    background: "rgba(255, 255, 255, 0.1)",
+                    border: "1px solid rgba(255, 255, 255, 0.3)",
+                  }}
+                  onMouseEnter={(e) =>
+                  (e.currentTarget.style.background =
+                    "rgba(255, 255, 255, 0.3)")
+                  }
+                  onMouseLeave={(e) =>
+                  (e.currentTarget.style.background =
+                    "rgba(255, 255, 255, 0.1)")
+                  }
+                  onClick={() => window.open(websiteLink, "_blank")}
+                >
+                  <span className="text-white">{t('visitWebsite')}</span>
+                </div>
+              )}
+
+              {/* View Available Slots -> scroll to calendar */}
+              <div
+                className="rounded-xl w-full px-6 py-2 text-center cursor-pointer transition-all duration-200 flex items-center justify-center"
+                style={{
+                  backdropFilter: "blur(10px)",
+                  background: "rgba(255, 255, 255, 0.1)",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
+                }}
+                onMouseEnter={(e) =>
+                (e.currentTarget.style.background =
+                  "rgba(255, 255, 255, 0.3)")
+                }
+                onMouseLeave={(e) =>
+                (e.currentTarget.style.background =
+                  "rgba(255, 255, 255, 0.1)")
+                }
+                onClick={() => {
+                  const el = document.getElementById('availability');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+              >
+                <span className="text-white">{t('viewAvailableSlots', { default: 'View available slots' })}</span>
               </div>
+
+              {typeof vendorUserId === 'number' && user?.id !== vendorUserId && (
+                <div
+                  className="rounded-xl w-full px-6 py-2 text-center cursor-pointer transition-all duration-200 flex items-center justify-center"
+                  style={{
+                    backdropFilter: "blur(10px)",
+                    background: "rgba(255, 255, 255, 0.1)",
+                    border: "1px solid rgba(255, 255, 255, 0.3)",
+                  }}
+                  onMouseEnter={(e) =>
+                  (e.currentTarget.style.background =
+                    "rgba(255, 255, 255, 0.3)")
+                  }
+                  onMouseLeave={(e) =>
+                  (e.currentTarget.style.background =
+                    "rgba(255, 255, 255, 0.1)")
+                  }
+                  onClick={() => {
+                    if (!user) {
+                      setShowLoginModal(true);
+                      return;
+                    }
+                    router.push(`/profile?tab=messages&withUser=${vendorUserId}`);
+                  }}
+                >
+                  <span className="text-white">
+                    {username
+                      ? `${t('messageVendor', { default: `Message` })} ${username.split(' ')[0]}`
+                      : t('sendMessage', { default: 'Send a message' })}
+                  </span>
+                </div>
+              )}
             </div>
             {price && (
               <div
@@ -134,86 +214,6 @@ function ListingDetailHero({
                 >
                   {t('getTicketCta')}
                 </Button>
-              </div>
-            )}
-          </div>
-          <div className="flex gap-2 flex-wrap">
-            {/* Website Link */}
-            {websiteLink && (
-              <div
-                className="rounded-xl w-full px-6 py-2 text-center mt-3 cursor-pointer transition-all duration-200 flex items-center justify-center"
-                style={{
-                  backdropFilter: "blur(10px)",
-                  background: "rgba(255, 255, 255, 0.1)",
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
-                }}
-                onMouseEnter={(e) =>
-                (e.currentTarget.style.background =
-                  "rgba(255, 255, 255, 0.3)")
-                }
-                onMouseLeave={(e) =>
-                (e.currentTarget.style.background =
-                  "rgba(255, 255, 255, 0.1)")
-                }
-                onClick={() => window.open(websiteLink, "_blank")}
-              >
-                <span className="text-white">{t('visitWebsite')}</span>
-              </div>
-            )}
-
-            {/* View Available Slots -> scroll to calendar */}
-            <div
-              className="rounded-xl w-full px-6 py-2 text-center mt-3 cursor-pointer transition-all duration-200 flex items-center justify-center"
-              style={{
-                backdropFilter: "blur(10px)",
-                background: "rgba(255, 255, 255, 0.1)",
-                border: "1px solid rgba(255, 255, 255, 0.3)",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background =
-                  "rgba(255, 255, 255, 0.3)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background =
-                  "rgba(255, 255, 255, 0.1)")
-              }
-              onClick={() => {
-                const el = document.getElementById('availability');
-                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }}
-            >
-              <span className="text-white">{t('viewAvailableSlots', { default: 'View available slots' })}</span>
-            </div>
-
-            {typeof vendorUserId === 'number' && user?.id !== vendorUserId && (
-              <div
-                className="rounded-xl w-full px-6 py-2 text-center mt-3 cursor-pointer transition-all duration-200 flex items-center justify-center"
-                style={{
-                  backdropFilter: "blur(10px)",
-                  background: "rgba(255, 255, 255, 0.1)",
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
-                }}
-                onMouseEnter={(e) =>
-                (e.currentTarget.style.background =
-                  "rgba(255, 255, 255, 0.3)")
-                }
-                onMouseLeave={(e) =>
-                (e.currentTarget.style.background =
-                  "rgba(255, 255, 255, 0.1)")
-                }
-                onClick={() => {
-                  if (!user) {
-                    setShowLoginModal(true);
-                    return;
-                  }
-                  router.push(`/profile?tab=messages&withUser=${vendorUserId}`);
-                }}
-              >
-                <span className="text-white">
-                  {username
-                    ? `${t('messageVendor', { default: `Message` })} ${username.split(' ')[0]}`
-                    : t('sendMessage', { default: 'Send a message' })}
-                </span>
               </div>
             )}
           </div>

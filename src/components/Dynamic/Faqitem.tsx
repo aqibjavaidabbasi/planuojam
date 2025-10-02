@@ -21,7 +21,7 @@ function Faqitem({ faq, idx, isOpen, setOpenIndexes }: FaqitemProps) {
   }
   return (
     <div
-      className="rounded-lg border border-gray-200 shadow-sm transition h-fit w-full"
+      className="rounded-lg border border-gray-200 shadow-sm transition h-fit w-full mt-2"
     >
       <button
         className="w-full flex justify-between items-center px-6 py-3 text-left hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"

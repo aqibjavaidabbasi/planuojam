@@ -17,7 +17,7 @@
       "passwordRequired": "Password is required",
       "forgotPassword": "Forgot password?",
       "signIn": "Sign in",
-      "missingToken":"Login failed — missing token",
+      "missingToken":"Check your Internet and try again",
       "invalidCredentials":"Check your email or password and try again!"
     },
     "Register": {
@@ -37,6 +37,9 @@
       "usernameLabel": "Username",
       "usernamePlaceholder": "Enter your username",
       "usernameRequired": "Please enter a username",
+      "checkAvailability": "Check availability",
+      "usernameAvailable": "Username is available",
+      "usernameTaken": "Username is taken",
       "emailLabel": "Email",
       "emailPlaceholder": "Enter your email",
       "emailRequired": "Email is required",
@@ -152,7 +155,8 @@
       "failedToLoad": "Failed to load",
       "notFound": "Not found"
     },
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "saving": "Saving..."
   },
   "Map": {
     "loading": "Loading map...",
@@ -221,7 +225,10 @@
       "year": "Year",
       "day": "Day",
       "week": "Week",
-      "today": "Today"
+      "today": "Today",
+      "legend": {
+        "booked": "Booked (shaded days)"
+      }
     }
   },
   "Profile": {
@@ -233,7 +240,8 @@
       "messages": "Messages",
       "reviews": "Reviews",
       "bookings": "Bookings",
-      "manageBookings": "Manage Bookings"
+      "manageBookings": "Manage Bookings",
+      "calendar": "Calendar"
     },
     "ProfileTab": {
       "title": "Profile Settings",
@@ -242,9 +250,13 @@
       "usernameLabel": "Username",
       "usernamePlaceholder": "Username",
       "saveUsername": "Save Username",
+      "checkAvailability": "Check availability",
+      "usernameAvailable": "Username is available",
+      "usernameTaken": "Username is taken",
       "errors": {
         "usernameEmpty": "Username can not be empty",
-        "userNotFound": "User not found"
+        "userNotFound": "User not found",
+        "usernameNotAvailable": "Please confirm username availability"
       },
       "toasts": {
         "updatingUsername": "Updating username...",
@@ -312,6 +324,31 @@
       "title": "Reviews",
       "subtitle": "View and manage your property reviews.",
       "propertyLabel": "Property:"
+    },
+    "ProviderCalendar": {
+      "notProvider": "Calendar is available for providers only.",
+      "selectListing": {
+        "placeholder": "Select a listing",
+        "help": "Select a listing to view its calendar"
+      },
+      "fields": {
+        "start": "Start",
+        "end": "End"
+      },
+      "actions": {
+        "addBlock": "Add Blocked Slot"
+      },
+      "errors": {
+        "noListing": "Please select a listing",
+        "noTime": "Please select start and end",
+        "invalidRange": "End must be after start",
+        "conflict": "Selected time overlaps existing booking"
+      },
+      "toasts": {
+        "creating": "Creating booking...",
+        "created": "Blocked slot added",
+        "failed": "Failed to create"
+      }
     }
   },
   "Vendors": {
@@ -377,7 +414,8 @@
       "sendResetLink": "Send Reset Link",
       "errors": {
         "emailRequired": "Email is required",
-        "emailInvalid": "Invalid email address"
+        "emailInvalid": "Invalid email address",
+        "userNotFoundOrUnconfirmed": "Please check your email and try again."
       },
       "toasts": {
         "sending": "Sending email...",
@@ -416,7 +454,11 @@
         "saving": "Saving...",
         "create": "Create Listing",
         "fetchCoordinates": "Fetch Coordinates",
+        "pickOnMap": "Pick on Map",
         "remove": "Remove"
+      },
+      "map": {
+        "pickLocation": "Pick location on map"
       },
       "sections": {
         "basicDetails": "Basic Details",
@@ -706,14 +748,14 @@
       "generic": "Something went wrong. Please try again."
     },
     "Auth": {
-      "noToken": "No authentication token found. Please log in.",
+      "noToken": "Check your Internet and try again",
       "invalidCredentials": "Check your email or password and try again!",
       "registerFailed": "We failed to register you. Please try again later!",
       "emailConfirmFailed": "Email confirmation failed. Please try again.",
       "forgotFailed": "Failed to send password reset email. Please try again later!",
       "resetFailed": "Failed to reset password. Please try again later!",
       "updatePasswordFailed": "Failed to update password, please try again later!",
-      "missingToken": "Login failed — missing token",
+      "missingToken": "Check your Internet and try again",
       "registerNoResponse": "Registration failed — no response from server",
       "userIdRequired": "User ID is required to update user data"
     },
@@ -803,6 +845,7 @@
     "savechanges": "Save  Changes",
     "adamenity": "Add amenity",
     "fetchcoordinates": "Fetch Coordinates",
+    "picklocation": "Pick location on map",
     "address": "Address",
     "remove": "Remove",
     "citylabel": "City ",
@@ -952,6 +995,7 @@
     },
     "MyBookings": {
       "title": "My Bookings",
+      "manage": "Manage",
       "labels": {
         "listing": "Listing",
         "status": "Status",
@@ -1073,125 +1117,6 @@
       "toasts": {
         "updated": "FAQs updated",
         "updateFailed": "Failed to update FAQs"
-      }
-    },
-    "Booking": {
-      "Modal": {
-        "title": "Create Booking",
-        "fields": {
-          "start": "Start Date & Time",
-          "end": "End Date & Time",
-          "autoEnd": "End Date & Time (auto {duration} {unit})",
-          "plan": "Select Plan",
-          "addons": "Addons"
-        },
-        "placeholders": {
-          "selectPlan": "Select a plan (optional)"
-        },
-        "units": {
-          "hours": "hour(s)",
-          "days": "day(s)"
-        },
-        "defaultPlan": "Default",
-        "errors": {
-          "requiredDateTime": "Please select a date and time.",
-          "futureOnly": "Please choose a future date and time.",
-          "invalidRange": "End time must be after start time.",
-          "slotUnavailable": "Selected time slot is not available."
-        },
-        "toasts": {
-          "creating": "Creating booking...",
-          "created": "Booking created successfully.",
-          "failedCreate": "Failed to create booking."
-        },
-        "actions": {
-          "cancel": "Cancel",
-          "checking": "Checking availability...",
-          "creating": "Creating...",
-          "create": "Create Booking"
-        }
-      },
-      "DetailsModal": {
-        "title": "Booking Details",
-        "labels": {
-          "status": "Status",
-          "start": "Start",
-          "end": "End",
-          "plan": "Plan",
-          "price": "Price",
-          "features": "Features",
-          "addons": "Addons",
-          "none": "None"
-        },
-        "actions": {
-          "close": "Close"
-        }
-      },
-      "MyBookings": {
-        "title": "My Bookings",
-        "labels": {
-          "listing": "Listing",
-          "status": "Status",
-          "dateTime": "Date/Time",
-          "start": "Start",
-          "end": "End"
-        },
-        "messages": {
-          "loginToView": "Please log in to view your bookings.",
-          "none": "No bookings yet."
-        },
-        "toasts": {
-          "updating": "Updating booking...",
-          "updated": "Booking updated.",
-          "updateFailed": "Failed to update booking.",
-          "deleting": "Deleting booking...",
-          "deleted": "Booking deleted.",
-          "deleteFailed": "Failed to delete booking."
-        },
-        "errors": {
-          "slotUnavailable": "Selected time slot is not available.",
-          "load": "Failed to load bookings."
-        },
-        "confirm": {
-          "delete": "Delete this booking?",
-          "acceptTitle": "Accept booking?",
-          "rejectTitle": "Reject booking?",
-          "accept": "Are you sure you want to accept this booking? Only accept if you can manage it.",
-          "reject": "Are you sure you want to reject (cancel) this booking?",
-          "cancelTitle": "Cancel this booking?",
-          "cancel": "Are you sure you want to cancel this booking?",
-          "markCompleted": "Mark this booking as completed?"
-        },
-        "actions": {
-          "saving": "Saving...",
-          "save": "Save",
-          "cancel": "Cancel",
-          "reschedule": "Reschedule",
-          "delete": "Delete",
-          "review": "Review",
-          "markCompleted": "Mark as Completed",
-          "accept": "Accept",
-          "reject": "Reject"
-        },
-        "filters": {
-          "status": "Filter by status",
-          "all": "All"
-        },
-        "status": {
-          "pending": "Pending",
-          "confirmed": "Confirmed",
-          "cancelled": "Cancelled",
-          "rejected": "Rejected",
-          "completed": "Completed"
-        },
-        "stats": {
-          "total": "Total",
-          "pending": "Pending",
-          "confirmed": "Confirmed",
-          "cancelled": "Cancelled",
-          "rejected": "Rejected",
-          "completed": "Completed"
-        }
       }
     }
   },

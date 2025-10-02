@@ -35,20 +35,28 @@ export type PaginatedResponse<T> = {
   };
 };
 
-function normalizeMessage(item: Message): Message {
-  // Support both Strapi default transformResponse and entityService direct
-  if (item) {
-    return {
-      id: item.id,
-      body: item.body,
-      createdAt: item.createdAt,
-      readAt: item.readAt,
-      sender: item.sender,
-      receiver: item.receiver,
-      attachments: item.attachments,
-    };
-  }
-  return item;
+
+// Fetch unread messages for a specific receiver (readAt is null)
+export async function fetchUnreadForReceiver(currentUserId: number, page = 1, pageSize = 200) {
+  const query = QueryString.stringify(
+    {
+      pagination: { page, pageSize },
+      sort: ["createdAt:desc"],
+      filters: {
+        receiver: { id: { $eq: currentUserId } },
+        readAt: { $null: true },
+      },
+      populate: {
+        sender: { fields: ["username", "email"] },
+        receiver: { fields: ["username", "email"] },
+      },
+    },
+    { encodeValuesOnly: true }
+  );
+  const token = getTokenOrThrow();
+  const res = await fetchAPIWithToken("messages", query, {}, token);
+  const data = Array.isArray(res?.data) ? res.data : [];
+  return { data, meta: res?.meta } as PaginatedResponse<Message>;
 }
 
 function getTokenOrThrow() {
@@ -75,7 +83,7 @@ export async function fetchInbox(currentUserId: number, page = 1, pageSize = 20)
   );
   const token = getTokenOrThrow();
   const res = await fetchAPIWithToken("messages", query, {}, token);
-  const data = Array.isArray(res?.data) ? res.data.map(normalizeMessage) : [];
+  const data = Array.isArray(res?.data) ? res.data : [];
   return { data, meta: res?.meta } as PaginatedResponse<Message>;
 }
 
@@ -97,7 +105,7 @@ export async function fetchOutbox(currentUserId: number, page = 1, pageSize = 20
   );
   const token = getTokenOrThrow();
   const res = await fetchAPIWithToken("messages", query, {}, token);
-  const data = Array.isArray(res?.data) ? res.data.map(normalizeMessage) : [];
+  const data = Array.isArray(res?.data) ? res.data : [];
   return { data, meta: res?.meta } as PaginatedResponse<Message>;
 }
 
@@ -106,12 +114,6 @@ export async function fetchThread(currentUserId: number, otherUserId: number, pa
     {
       pagination: { page, pageSize },
       sort: ["createdAt:asc"],
-      filters: {
-        $or: [
-          { sender: { id: { $eq: currentUserId } }, receiver: { id: { $eq: otherUserId } } },
-          { sender: { id: { $eq: otherUserId } }, receiver: { id: { $eq: currentUserId } } },
-        ],
-      },
       populate: {
         sender: { fields: ["username", "email"] },
         receiver: { fields: ["username", "email"] },
@@ -120,9 +122,17 @@ export async function fetchThread(currentUserId: number, otherUserId: number, pa
     },
     { encodeValuesOnly: true }
   );
+  const filters = {
+    filters: {
+      $or: [
+        { sender: { id: { $eq: currentUserId } }, receiver: { id: { $eq: otherUserId } } },
+        { sender: { id: { $eq: otherUserId } }, receiver: { id: { $eq: currentUserId } } },
+      ],
+    },
+  }
   const token = getTokenOrThrow();
-  const res = await fetchAPIWithToken("messages", query, {}, token);
-  const data = Array.isArray(res?.data) ? res.data.map(normalizeMessage) : [];
+  const res = await fetchAPIWithToken("messages", query, filters, token);
+  const data = Array.isArray(res?.data) ? res.data : [];
   return { data, meta: res?.meta } as PaginatedResponse<Message>;
 }
 
@@ -137,8 +147,8 @@ export async function sendMessage(senderId: number, receiverId: number, body: st
   }
   const res = await postAPIWithToken("messages", { data });
   // res should contain data
-  if (res?.data) return normalizeMessage(res.data);
-  return normalizeMessage(res);
+  if (res?.data) return res.data;
+  return res;
 }
 
 export async function markMessageRead(messageId: string) {
@@ -168,7 +178,7 @@ export async function fetchAllForUser(currentUserId: number, page = 1, pageSize 
   );
   const token = getTokenOrThrow();
   const res = await fetchAPIWithToken("messages", query, {}, token);
-  const data = Array.isArray(res?.data) ? res.data.map(normalizeMessage) : [];
+  const data = Array.isArray(res?.data) ? res.data : [];
   return { data, meta: res?.meta } as PaginatedResponse<Message>;
 }
 

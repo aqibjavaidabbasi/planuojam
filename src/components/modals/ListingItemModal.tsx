@@ -25,6 +25,7 @@ import { useAppSelector } from "@/store/hooks"
 import { geocodePlace } from "@/utils/mapboxLocation"
 import { slugify, shortId } from "@/utils/helpers"
 import { useLocale, useTranslations } from "next-intl"
+import MapPickerModal from "./MapPickerModal"
 
 interface ListingItemModalProps {
   isOpen: boolean
@@ -112,6 +113,10 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
   const serviceTypeRaw = user?.serviceType || ''
   const serviceType = (serviceTypeRaw || 'vendor').toLowerCase() as 'vendor' | 'venue'
   const serviceDocumentId = parentCategories.find((category) => category.name.trim() === serviceTypeRaw)?.documentId
+
+  // Map picker modal states
+  const [vendorPickerIndex, setVendorPickerIndex] = useState<number | null>(null)
+  const [venuePickerOpen, setVenuePickerOpen] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
@@ -231,7 +236,8 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
         // Wrap user relation
         payload.user = user.documentId
       }
-      if (imageIds.length === 0 && imageIds.length > 0) {
+      // Require at least 1 uploaded image
+      if (imageIds.length === 0) {
         setError(t('errors.noImage'))
         return
       }
@@ -405,7 +411,6 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 options={[
                   { label: t('fields.listingStatus.options.draft'), value: "draft" },
                   { label: t('fields.listingStatus.options.published'), value: "published" },
-                  { label: t('fields.listingStatus.options.pendingReview'), value: "pending review" },
                   { label: t('fields.listingStatus.options.archived'), value: "archived" },
                 ]}
               />
@@ -416,6 +421,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 type="number"
                 label={t('fields.price.label')}
                 disabled={isWorking}
+                min={0}
                 {...register("price", {
                   valueAsNumber: true,
                   min: { value: 0, message: t('fields.price.errors.min') },
@@ -460,6 +466,8 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 type="number"
                 label={t('fields.workingHours.label')}
                 disabled={isWorking}
+                min={1}
+                max={24}
                 {...register("workingHours", {
                   valueAsNumber: true,
                   min: { value: 1, message: t('fields.workingHours.errors.min') },
@@ -488,6 +496,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   type="number"
                   label={t('fields.experienceYears.label')}
                   disabled={isWorking}
+                  min={0}
                   value={form.listingItem?.[0]?.experienceYears || ""}
                   onChange={(e) => updateListingItem("experienceYears", Number(e.target.value))}
                 />
@@ -608,6 +617,14 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                           </Button>
                           <Button
                             type="button"
+                            style="secondary"
+                            disabled={isWorking}
+                            onClick={() => setVendorPickerIndex(idx)}
+                          >
+                            {t('buttons.pickOnMap')}
+                          </Button>
+                          <Button
+                            type="button"
                             style="ghost"
                             disabled={isWorking}
                             onClick={() => removeServiceArea(idx)}
@@ -653,7 +670,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
-                  <div className="col-span-2">
+                  <div className="col-span-3">
                     <Input
                       type="text"
                       label={t('fields.latitude.label')}
@@ -662,7 +679,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       onChange={(e) => updateListingItem("location.latitude", e.target.value)}
                     />
                   </div>
-                  <div className="col-span-2">
+                  <div className="col-span-3">
                     <Input
                       type="text"
                       label={t('fields.longitude.label')}
@@ -671,7 +688,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       onChange={(e) => updateListingItem("location.longitude", e.target.value)}
                     />
                   </div>
-                  <div className="col-span-2">
+                  <div className="col-span-6 flex items-center gap-2 justify-center">
                     <Button
                       type="button"
                       style="secondary"
@@ -690,12 +707,21 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                     >
                       {t('buttons.fetchCoordinates')}
                     </Button>
+                    <Button
+                      type="button"
+                      style="secondary"
+                      disabled={isWorking}
+                      onClick={() => setVenuePickerOpen(true)}
+                    >
+                      {t('buttons.pickOnMap')}
+                    </Button>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end mb-3">
                   <div className="col-span-2">
                     <Input
                       type="number"
+                      min={0}
                       label={t('fields.capacity.label')}
                       disabled={isWorking}
                       value={form.listingItem?.[0]?.capacity || ""}
@@ -720,6 +746,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   <div className="col-span-2">
                     <Input
                       type="number"
+                      min={0}
                       disabled={isWorking}
                       label={t('fields.bookingDuration.label')}
                       value={form.listingItem?.[0]?.bookingDuration || ""}
@@ -779,7 +806,6 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
             <h3 className="text-lg font-semibold mb-2">{t('portfolio.title')} </h3>
             <p className="text-sm text-gray-600">{tImage('uploadHint', { size: '20MB' })}</p>
             <ImageUploader setImageIds={setImageIds} disabled={isWorking} />
-            {imageIds.length > 0 && <p className="text-gray-500 font-medium text-sm" >{t('portfolio.imageUploaded')} </p> }
           </div>
           {/* Contact */}
           <div className="border-b-2 border-primary/20 py-4">
@@ -842,6 +868,56 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           </div>
         </div>
       </form>
+      {/* Vendor map picker (serviceArea by index) */}
+      {vendorPickerIndex !== null && (
+        <MapPickerModal
+          isOpen={vendorPickerIndex !== null}
+          onClose={() => setVendorPickerIndex(null)}
+          title={t('map.pickLocation')}
+          initial={(() => {
+            const sa = form.listingItem?.[0]?.serviceArea?.[vendorPickerIndex!]
+            const lat = sa?.latitude && !isNaN(Number(sa.latitude)) ? Number(sa.latitude) : undefined
+            const lng = sa?.longitude && !isNaN(Number(sa.longitude)) ? Number(sa.longitude) : undefined
+            return { lat, lng }
+          })()}
+          onSelect={(lat, lng) => {
+            const currentItems = getValues("listingItem") || []
+            const updatedItems = [...currentItems]
+            if (updatedItems[0]?.serviceArea && vendorPickerIndex !== null) {
+              const idx = vendorPickerIndex
+              updatedItems[0].serviceArea[idx] = {
+                ...updatedItems[0].serviceArea[idx],
+                latitude: String(lat),
+                longitude: String(lng),
+              }
+              setValue("listingItem", updatedItems, { shouldDirty: true })
+            }
+            setVendorPickerIndex(null)
+          }}
+        />
+      )}
+
+      {/* Venue map picker (single location) */}
+      {venuePickerOpen && (
+        <MapPickerModal
+          isOpen={venuePickerOpen}
+          onClose={() => setVenuePickerOpen(false)}
+          title={t('map.pickLocation')}
+          initial={(() => {
+            const lat = form.listingItem?.[0]?.location?.latitude
+            const lng = form.listingItem?.[0]?.location?.longitude
+            return {
+              lat: lat && !isNaN(Number(lat)) ? Number(lat) : undefined,
+              lng: lng && !isNaN(Number(lng)) ? Number(lng) : undefined,
+            }
+          })()}
+          onSelect={(lat, lng) => {
+            updateListingItem("location.latitude", String(lat))
+            updateListingItem("location.longitude", String(lng))
+            setVenuePickerOpen(false)
+          }}
+        />
+      )}
     </Modal>
   )
 }
