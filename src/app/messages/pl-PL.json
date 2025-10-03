@@ -107,7 +107,7 @@
       "title": "Porozmawiaj z nami",
       "liveChat": "Rozpocznij czat na żywo",
       "email": "Napisz do nas email",
-      "messageOnX": "Napisz do nas na X"
+      "messageOnX": "Napisz do nas "
     },
     "callUs": {
       "title": "Zadzwoń do nas",
@@ -131,7 +131,12 @@
       },
       "phonePlaceholder": "+1 (555) 000-0000",
       "messagePlaceholder": "Zostaw nam wiadomość...",
-      "send": "Wyślij wiadomość"
+      "send": "Wyślij wiadomość",
+      "sending": "Wysyłanie...",
+      "success": "Wiadomość została wysłana.",
+      "failure": "Nie udało się wysłać wiadomości. Spróbuj ponownie.",
+      "validationRequired": "Proszę wypełnić wymagane pola.",
+      "countryPlaceholder": "Wybierz kraj"
     }
   },
   "Common": {

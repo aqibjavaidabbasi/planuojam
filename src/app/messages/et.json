@@ -108,7 +108,7 @@
       "title": "Vestle meiega",
       "liveChat": "Alusta vestlust",
       "email": "Kirjuta meile e-postiga",
-      "messageOnX": "Kirjuta meile X-is"
+      "messageOn": "Kirjuta meile "
     },
     "callUs": {
       "title": "Helista meile",
@@ -132,7 +132,12 @@
       },
       "phonePlaceholder": "+1 (555) 000-0000",
       "messagePlaceholder": "Jäta meile sõnum...",
-      "send": "Saada sõnum"
+      "send": "Saada sõnum",
+      "sending": "Saatmine...",
+      "success": "Sõnum on edukalt saadetud.",
+      "failure": "Sõnumi saatmine ebaõnnestus. Palun proovi uuesti.",
+      "validationRequired": "Palun täitke nõutud väljad.",
+      "countryPlaceholder": "Vali riik"
     }
   },
   "Common": {

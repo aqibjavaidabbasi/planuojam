@@ -1,51 +1,109 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations } from 'next-intl';
 
-export default function ContactStatic() {
-  const t = useTranslations("Contact");
+type Props = {
+  address?: string;
+  email?: string;
+  phone?: string;
+  description?: string; // from site-setting.contactDescription
+  socialLinks?: { platform: string; link: string; visible?: boolean }[]; // from site-setting.socialLink
+};
+
+export default function ContactStatic({ address, email, phone, description, socialLinks }: Props) {
+  const t = useTranslations('Contact');
+  const visibleSocials = (socialLinks || []).filter((s) => s.link && s.visible !== false);
+
+  const platformName = (p: string) => {
+    switch (p) {
+      case 'twitter':
+        return 'Twitter';
+      case 'facebook':
+        return 'Facebook';
+      case 'linkedin':
+        return 'LinkedIn';
+      case 'youtube':
+        return 'YouTube';
+      case 'instagram':
+        return 'Instagram';
+      case 'tiktok':
+        return 'TikTok';
+      case 'pinterest':
+        return 'Pinterest';
+      case 'thread':
+        return 'Threads';
+      case 'reddit':
+        return 'Reddit';
+      default:
+        return p?.charAt(0).toUpperCase() + p?.slice(1);
+    }
+  };
+  const normalizeLink = (link: string) => {
+    if (!link) return '#';
+    const hasProtocol = /^https?:\/\//i.test(link);
+    return hasProtocol ? link : `https://${link.replace(/^\/+/, '')}`;
+  };
   return (
     <div className="space-y-8 text-gray-700">
+      {description && (
+        <div>
+          <p className="text-gray-700">{description}</p>
+        </div>
+      )}
       <div>
-        <h3 className="text-xl font-semibold mb-2">{t("chatWithUs.title")}</h3>
-        <ul className="space-y-1">
-          <li>
-            <a href="#" className="text-black hover:underline">
-              {t("chatWithUs.liveChat")}
-            </a>
-          </li>
-          <li>
-            <a href="#" className="text-black hover:underline">
-              {t("chatWithUs.email")}
-            </a>
-          </li>
-          <li>
-            <a href="#" className="text-black hover:underline">
-              {t("chatWithUs.messageOnX")}
-            </a>
-          </li>
+        <h3 className="text-xl font-semibold mb-2">{t('chatWithUs.title', { default: 'Chat with us' })}</h3>
+        <ul className="space-y-1 flex gap-1.5">
+          {visibleSocials.map((s, idx) => (
+            <li key={`${s.platform}-${idx}`}>
+              <a
+                href={normalizeLink(s.link)}
+                className="text-black hover:underline capitalize"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {platformName(s.platform)}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
-      <div>
-        <h3 className="text-xl font-semibold mb-2">{t("callUs.title")}</h3>
-        <p>
-          {t("callUs.hours")}
-          <br />
-          <a href="tel:+15550000000" className="text-black font-medium hover:underline">
-            {t("callUs.phone")}
-          </a>
-        </p>
-      </div>
-      <div>
-        <h3 className="text-xl font-semibold mb-2">{t("visitUs.title")}</h3>
-        <p>
-          {t("visitUs.description")}
-          <br />
-          <a href="https://maps.google.com" className="text-black font-medium hover:underline">
-            {t("visitUs.address")}
-          </a>
-        </p>
-      </div>
+      {email && (
+        <div>
+          <h3 className="text-xl font-semibold mb-2">Email us</h3>
+          <a href={`mailto:${email}`} className="text-black hover:underline">{email}</a>
+        </div>
+      )}
+      {phone && (
+        <div>
+          <h3 className="text-xl font-semibold mb-2">Call us</h3>
+          <a href={`tel:${phone}`} className="text-black hover:underline">{phone}</a>
+        </div>
+      )}
+      {address && (
+        <div>
+          <h3 className="text-xl font-semibold mb-2">{t('visitUs.title', { default: 'Visit us' })}</h3>
+          <p>
+            <a
+              href={`https://maps.google.com/?q=${encodeURIComponent(address)}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-black font-medium hover:underline"
+            >
+              {address}
+            </a>
+          </p>
+          {/* Embedded map */}
+          <div className="mt-4 w-full overflow-hidden rounded-md border">
+            <iframe
+              title="Location Map"
+              src={`https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`}
+              className="w-full h-64"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

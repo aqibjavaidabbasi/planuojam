@@ -123,7 +123,7 @@
       "title": "Chat with us",
       "liveChat": "Start a live chat",
       "email": "Shoot us an email",
-      "messageOnX": "Message us on X"
+      "messageOn": "Message us on "
     },
     "callUs": {
       "title": "Call us",
@@ -147,7 +147,12 @@
       },
       "phonePlaceholder": "+1 (555) 000-0000",
       "messagePlaceholder": "Leave us a message...",
-      "send": "Send message"
+      "send": "Send message",
+      "sending": "Sending...",
+      "success": "Message sent successfully.",
+      "failure": "Failed to send your message. Please try again.",
+      "validationRequired": "Please fill in required fields.",
+      "countryPlaceholder": "Select a country"
     }
   },
   "Common": {

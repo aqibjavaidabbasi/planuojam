@@ -107,7 +107,7 @@
       "title": "Susisiekite su mumis",
       "liveChat": "Pradėti pokalbį gyvai",
       "email": "Parašykite mums el. paštu",
-      "messageOnX": "Parašykite mums per X"
+      "messageOnX": "Parašykite mums žinutę"
     },
     "callUs": {
       "title": "Paskambinkite mums",
@@ -131,7 +131,12 @@
       },
       "phonePlaceholder": "+1 (555) 000-0000",
       "messagePlaceholder": "Palikite mums žinutę...",
-      "send": "Siųsti žinutę"
+      "send": "Siųsti žinutę",
+      "sending": "Siunčiama...",
+      "success": "Žinutė sėkmingai išsiųsta.",
+      "failure": "Nepavyko išsiųsti žinutės. Bandykite dar kartą.",
+      "validationRequired": "Užpildykite privalomus laukus.",
+      "countryPlaceholder": "Pasirinkite šalį"
     }
   },
   "Common": {
