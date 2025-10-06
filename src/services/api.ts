@@ -46,6 +46,7 @@ export async function fetchAPI(
   const response = await fetch(url, FETCH_OPTIONS);
 
   if (!response.ok) {
+    console.log(url)
     // Handle errors (e.g., 400, 401, 500, etc.)
     const errorData = await response.json();
     console.warn("DEBUG LOGGG:::", errorData);

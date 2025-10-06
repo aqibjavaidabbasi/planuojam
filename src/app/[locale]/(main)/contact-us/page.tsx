@@ -2,6 +2,9 @@
 import ContactStatic from './ContactStatic';
 import React from 'react';
 import { fetchAPI, createQuery } from '@/services/api';
+import type { Metadata } from 'next'
+import { getSeoMetadata } from '@/lib/getSeoMetadata'
+import { fetchFallbackSeo, fetchPageSeoBySlug, resolveSeoByUrl } from '@/services/seoApi'
 
 export default async function ContactUs() {
     // Fetch site-setting fields as per final schema
@@ -34,4 +37,20 @@ export default async function ContactUs() {
             </div>
         </section>
     );
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const slug = 'contact-us';
+  const pageUrl = `/${locale}/${slug}`;
+  const urlPath = pageUrl;
+
+  const pageSeo = await fetchPageSeoBySlug(slug, locale);
+  const fallbackSeo = await fetchFallbackSeo();
+  if (pageSeo) {
+    return getSeoMetadata(pageSeo, fallbackSeo, urlPath);
+  }
+
+  const mappedSeo = await resolveSeoByUrl({ pageUrl, locale });
+  return getSeoMetadata(mappedSeo, fallbackSeo, urlPath);
 }

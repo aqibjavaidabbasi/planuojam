@@ -9,7 +9,6 @@
       "loggedIn": "Вы успешно вошли!",
       "loginFailed": "Не удалось войти. Попробуйте ещё раз.",
       "emailLabel": "Email",
-      "emailPlaceholder": "Введите ваш email",
       "emailRequired": "Требуется email",
       "emailInvalid": "Некорректный email",
       "passwordLabel": "Пароль",
@@ -20,12 +19,12 @@
       "missingToken":"Проверьте свой Интернет и попробуйте еще раз.",
       "invalidCredentials":"Проверьте email или пароль и попробуйте снова!"
     },
-  "vendorvenueSection": {
-    "details": "Детали",
-    "vendor": "Поставщик",
-    "venue": "Площадка",
-    "about": "О себе",
-    "experienceYears": "Опыт (лет)",
+    "vendorvenueSection": {
+      "details": "Детали",
+      "vendor": "Поставщик",
+      "venue": "Площадка",
+      "about": "О себе",
+      "experienceYears": "Опыт (лет)",
     "city": "Город",
     "state": "Регион",
     "latitude": "Широта",

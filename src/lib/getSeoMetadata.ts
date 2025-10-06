@@ -8,7 +8,7 @@ interface ExtendedMetadata extends Metadata {
 }
 
 export function getSeoMetadata(
-  seo: StrapiSeo,
+  seo: StrapiSeo | null,
   fallbackSeo: StrapiSeo | null,
   urlPath: string, // e.g. '/en/about-us'
   options?: {
@@ -19,22 +19,22 @@ export function getSeoMetadata(
   const baseUrl = (options?.baseUrl ?? process.env.NEXT_PUBLIC_APP_URL ?? "").replace(/\/$/, "");
   const alternates = options?.alternates ?? {};
 
-  const data: StrapiSeo = seo ?? fallbackSeo ?? {};
-  const title = data.metaTitle || fallbackSeo?.metaTitle || process.env.NEXT_PUBLIC_SITE_NAME || "Planuojam";
-  const description = data.metaDescription || fallbackSeo?.metaDescription || "";
+  const data: StrapiSeo | null = seo ?? fallbackSeo ?? null;
+  const title = data?.metaTitle || fallbackSeo?.metaTitle || process.env.NEXT_PUBLIC_SITE_NAME || "Planuojam";
+  const description = data?.metaDescription || fallbackSeo?.metaDescription || "";
   const canonical =
-    data.canonicalUrl && data.canonicalUrl.startsWith("http")
+    data?.canonicalUrl && data.canonicalUrl.startsWith("http")
       ? data.canonicalUrl
       : (baseUrl ? `${baseUrl}${urlPath}` : urlPath);
 
-    const ogImageUrl = getCompleteImageUrl(data.ogImage?.url || fallbackSeo?.ogImage?.url || fallbackSeo?.metaImage?.url || data.metaImage?.url || "");
-  const twitterImageUrl = getCompleteImageUrl(data.twitterImage?.url || data.ogImage?.url || fallbackSeo?.twitterImage?.url || data.metaImage?.url || "");
+    const ogImageUrl = getCompleteImageUrl(data?.ogImage?.url || fallbackSeo?.ogImage?.url || fallbackSeo?.metaImage?.url || data?.metaImage?.url || "");
+  const twitterImageUrl = getCompleteImageUrl(data?.twitterImage?.url || data?.ogImage?.url || fallbackSeo?.twitterImage?.url || data?.metaImage?.url || "");
  
 
   // absolute image URL
-  const maybeImage = data.metaImage?.url;
+  const maybeImage = data?.metaImage?.url;
   const image = getCompleteImageUrl(maybeImage || "");
-  const robots = data.metaRobots
+  const robots = data?.metaRobots
     ? {
         index: data.metaRobots.includes("index"),
         follow: data.metaRobots.includes("follow"),
@@ -51,19 +51,19 @@ export function getSeoMetadata(
     },
     robots,
     openGraph: {
-      title: data.ogTitle || title,
-      description: data.ogDescription || description,
+      title: data?.ogTitle || title,
+      description: data?.ogDescription || description,
       url: baseUrl ? `${baseUrl}${urlPath}` : urlPath,
-      images: ogImageUrl ? [{ url: ogImageUrl, alt: data.ogTitle || title }] : [],
+      images: ogImageUrl ? [{ url: ogImageUrl, alt: data?.ogTitle || title }] : [],
     },
      twitter: {
       card: ogImageUrl || twitterImageUrl ? "summary_large_image" : "summary",
-      title: data.twitterTitle || data.ogTitle || title,
-      description: data.twitterDescription || data.ogDescription || description,
+      title: data?.twitterTitle || data?.ogTitle || title,
+      description: data?.twitterDescription || data?.ogDescription || description,
       images: twitterImageUrl ? [twitterImageUrl] : ogImageUrl ? [ogImageUrl] : [],
     },
     // NOTE: JSON-LD is returned here for convenience; many people inject it manually in head.tsx/page
-    other: data.schemaMarkup ? { "script:ld+json": JSON.stringify(data.schemaMarkup) } : {},
+    other: data?.schemaMarkup ? { "script:ld+json": JSON.stringify(data.schemaMarkup) } : {},
   };
 
   return metadata;
