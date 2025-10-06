@@ -220,7 +220,9 @@
       "week": "Nädal",
       "today": "Täna",
       "legend": {
-        "booked": "Broneeritud (varjutatud päevad)"
+        "booked": "Broneeritud (varjutatud päevad)",
+        "unavailable": "Pole saadaval (tööajakava puudub)",
+        "available": "Saadaval (tööajakava olemas)"
       }
     }
   },
@@ -678,6 +680,19 @@
       "contact": {
         "title": "Kontakt"
       },
+      "workingSchedule": {
+        "title": "Tööajakava",
+        "add": "Lisa kirje",
+        "day": "Päev",
+        "start": "Algus",
+        "end": "Lõpp",
+        "errors": {
+          "completeAll": "Palun täida kõik tööajakava väljad.",
+          "invalidTime": "Vigane aja formaat tööajakavas.",
+          "startBeforeEnd": "Algusaeg peab olema enne lõppaega.",
+          "conflictDay": "Konfliktsed sissekanded päeval {day}."
+        }
+      },
       "socialLinks": {
         "title": "Sotsiaalmeedia lingid",
         "sectionTitle": "Sektsiooni pealkiri",
@@ -811,7 +826,7 @@
     "price": "hind",
     "featured": "esile tõstetud",
     "description": "kirjeldus",
-    "websitelinks": "veebisaidi lingid",
+    "websitelink": "Veebilehe link",
     "workinghours(perday)": "töötunnid (päevas)",
     "saving": "säästmine",
     "savechanges": "salvesta muudatused",
@@ -819,6 +834,12 @@
     "toasts": {
       "updated": "Põhiandmed on uuendatud",
       "updateFailed": "Põhiandmete uuendamine ebaõnnestus"
+    },
+    "errors": {
+      "titleRequired": "Pealkiri on kohustuslik",
+      "priceRequired": "Hind on kohustuslik",
+      "descriptionRequired": "Kirjeldus on kohustuslik",
+      "invalidWebsiteLink": "Palun lisa kehtiv veebilehe link"
     }
   },
   "ImageSection": {
@@ -846,14 +867,24 @@
   },
   "vendorvenueSection": {
     "details": "üksikasjad",
+    "vendor": "Pakkuja",
+    "venue": "Koht",
+    "about": "Teave",
+    "experienceYears": "Aastad kogemust",
     "city": "linn",
     "state": "olek",
     "latitude": "laiuskraad",
     "longitude": "pikkuskraad",
     "capacity": "mahutavus",
     "bookingdurationtype": "broneerimise kestuse tüüp",
+    "selectdurationtype": "Vali kestuse tüüp",
+    "perday": "Päeva kohta",
+    "perhour": "Tunni kohta",
     "bookingduration": " broneerimise kestus",
     "amenities": "mugavused",
+    "amenityLabel": "Mugavus {index}",
+    "serviceareas": "Teeninduspiirkonnad",
+    "addservicearea": "Lisa teeninduspiirkond",
     "saving": "säästmine",
     "savechanges": " salvesta muudatused",
     "fetchcoordinates": "tooge koordinaadid",

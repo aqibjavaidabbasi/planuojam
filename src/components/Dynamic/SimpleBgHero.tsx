@@ -10,7 +10,7 @@ function SimpleBgHero({ data }: { data: HeroBannerBlock }) {
   const heroImage = getCompleteImageUrl(data.heroImage.url)
 
   return (
-    <section className="relative w-screen h-80 md:h-[450px] flex items-center justify-center overflow-hidden max-w-screen lg:max-w-[1700px] mx-auto">
+    <section className="relative w-full h-80 md:h-[450px] flex items-center justify-center overflow-hidden max-w-screen lg:max-w-[1700px] mx-auto">
       <Image
         src={heroImage}
         alt="Hero Image"

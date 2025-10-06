@@ -46,7 +46,11 @@ export type CreateListingFormTypes = {
         }[];
     }
     websiteLink?: string;
-    workingHours?: number;
+    workingSchedule?: {
+        day: "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
+        start: string;
+        end: string;
+    }[];
     pricingPackages?: {
         sectionTitle: string;
         plans: {

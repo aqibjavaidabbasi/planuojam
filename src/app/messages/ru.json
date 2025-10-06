@@ -20,6 +20,45 @@
       "missingToken":"Проверьте свой Интернет и попробуйте еще раз.",
       "invalidCredentials":"Проверьте email или пароль и попробуйте снова!"
     },
+  "vendorvenueSection": {
+    "details": "Детали",
+    "vendor": "Поставщик",
+    "venue": "Площадка",
+    "about": "О себе",
+    "experienceYears": "Опыт (лет)",
+    "city": "Город",
+    "state": "Регион",
+    "latitude": "Широта",
+    "longitude": "Долгота",
+    "capacity": "Вместимость",
+    "bookingdurationtype": "Тип продолжительности бронирования",
+    "selectdurationtype": "Выберите тип продолжительности",
+    "perday": "За день",
+    "perhour": "За час",
+    "bookingduration": "Продолжительность бронирования",
+    "amenities": "Удобства",
+    "amenityLabel": "Удобство {index}",
+    "serviceareas": "Зоны обслуживания",
+    "addservicearea": "Добавить зону обслуживания",
+    "saving": "Сохранение",
+    "savechanges": "Сохранить изменения",
+    "adamenity": "Добавить удобство",
+    "fetchcoordinates": "Получить координаты",
+    "picklocation": "Выбрать местоположение на карте",
+    "address": "Адрес",
+    "remove": "Удалить",
+    "citylabel": "Город",
+    "statelabel": "Регион",
+    "selectstate": "Выберите регион",
+    "selectcity": "Выберите город",
+    "errors": {
+      "cityStateRequired": "Каждая зона обслуживания должна иметь город и регион"
+    },
+    "toasts": {
+      "updated": "Данные поставщика/площадки обновлены",
+      "updateFailed": "Не удалось обновить данные поставщика/площадки"
+    }
+  },
     "Register": {
       "title": "Создать аккаунт",
       "subtitle": "Присоединяйтесь к нашему сообществу",
@@ -210,7 +249,9 @@
       "week": "Неделя",
       "today": "Сегодня",
       "legend": {
-        "booked": "Забронировано (затенённые дни)"
+        "booked": "Забронировано",
+        "unavailable": "Недоступно",
+        "available": "Доступно"
       }
     }
   },
@@ -653,7 +694,20 @@
         "imageUploaded": "Изображения были загружены"
       },
       "contact": {
-        "title": "Контакты"
+        "title": "Контакт"
+      },
+      "workingSchedule": {
+        "title": "График работы",
+        "add": "Добавить запись",
+        "day": "День",
+        "start": "Начало",
+        "end": "Конец",
+        "errors": {
+          "completeAll": "Пожалуйста, заполните все поля графика работы.",
+          "invalidTime": "Неверный формат времени в графике работы.",
+          "startBeforeEnd": "Время начала должно быть раньше времени окончания.",
+          "conflictDay": "Конфликтующие записи в день {day}."
+        }
       },
       "socialLinks": {
         "title": "Социальные сети",
@@ -789,7 +843,7 @@
     "price": "цена",
     "featured": "избранный",
     "description": "описание",
-    "websitelinks": "ссылки на веб-сайты",
+    "websitelink": "ссылка на веб-сайт",
     "workinghours(perday)": "рабочие часы (в день)",
     "saving": "экономия",
     "savingEllipsis": "Сохранение...",
@@ -798,6 +852,12 @@
     "toasts": {
       "updated": "Основные данные обновлены",
       "updateFailed": "Не удалось обновить основные данные"
+    },
+    "errors": {
+      "titleRequired": "Заголовок обязателен",
+      "priceRequired": "Цена обязательна",
+      "descriptionRequired": "Описание обязательно",
+      "invalidWebsiteLink": "Пожалуйста, добавьте правильную ссылку на веб-сайт"
     }
   },
   "ImageSection": {

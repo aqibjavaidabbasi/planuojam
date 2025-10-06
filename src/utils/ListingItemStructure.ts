@@ -40,6 +40,9 @@ export const LISTING_ITEM_POP_STRUCTURE = {
             }
         }
     },
+    workingSchedule: {
+        populate: '*'
+    },
     pricingPackages: {
         populate: {
             plans: {
@@ -121,6 +124,9 @@ export const LISTING_ITEM_POP_STRUCTURE = {
                         populate: '*'
                     }
                 }
+            },
+            workingSchedule: {
+                populate: '*'
             },
             pricingPackages: {
                 populate: {

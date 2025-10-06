@@ -60,6 +60,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
       featured: false,
       price: 0,
       description: "",
+      workingSchedule: [],
       listingItem: [
         {
           __component: "dynamic-blocks.vendor",
@@ -220,12 +221,91 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
     }
   }
 
+  // Working Schedule helpers
+  const addWorkingSchedule = () => {
+    const current = getValues("workingSchedule") || []
+    const updated = [...current, { day: "monday", start: "09:00", end: "17:00" }]
+    setValue("workingSchedule", updated as PathValue<CreateListingFormTypes, "workingSchedule">, { shouldDirty: true })
+  }
+
+  const removeWorkingSchedule = (index: number) => {
+    const current = getValues("workingSchedule") || []
+    const updated = current.filter((_, i) => i !== index)
+    setValue("workingSchedule", updated as PathValue<CreateListingFormTypes, "workingSchedule">, { shouldDirty: true })
+  }
+
+  const timeToMinutes = (t: string) => {
+    const [h, m] = t.split(":").map(Number)
+    if (Number.isNaN(h) || Number.isNaN(m)) return NaN
+    return h * 60 + m
+  }
+
+  const validateWorkingSchedule = () => {
+    const ws = getValues("workingSchedule") || []
+    // basic completeness and start < end
+    for (const item of ws) {
+      if (!item.day || !item.start || !item.end) {
+        return t('workingSchedule.errors.completeAll')
+      }
+      const s = timeToMinutes(item.start)
+      const e = timeToMinutes(item.end)
+      if (Number.isNaN(s) || Number.isNaN(e)) return t('workingSchedule.errors.invalidTime')
+      if (s >= e) return t('workingSchedule.errors.startBeforeEnd')
+    }
+    // conflict check per day (overlap)
+    const byDay: Record<string, { s: number; e: number }[]> = {}
+    ws.forEach(({ day, start, end }) => {
+      const s = timeToMinutes(start)
+      const e = timeToMinutes(end)
+      byDay[day] = byDay[day] || []
+      byDay[day].push({ s, e })
+    })
+    for (const day of Object.keys(byDay)) {
+      const ranges = byDay[day].sort((a, b) => a.s - b.s)
+      for (let i = 1; i < ranges.length; i++) {
+        const prev = ranges[i - 1]
+        const cur = ranges[i]
+        if (cur.s < prev.e) return t('workingSchedule.errors.conflictDay', { day })
+      }
+    }
+    return null
+  }
+
   const onSubmit = async () => {
     setSubmitting(true)
     setError(null)
     setIsLoading(true);
     try {
       const payload = getValues()
+      // Validate working schedule conflicts
+      const wsError = validateWorkingSchedule()
+      if (wsError) {
+        setError(wsError)
+        return
+      }
+      // Normalize workingSchedule time values to HH:mm:ss.SSS
+      if (Array.isArray(payload.workingSchedule)) {
+        const pad2 = (n: number) => String(n).padStart(2, '0')
+        const norm = (t: string) => {
+          // t may be HH:mm or HH:mm:ss or HH:mm:ss.SSS
+          const parts = t.split(':')
+          const hh = parts[0] || '00'
+          const mm = parts[1] || '00'
+          let ss = '00'
+          let ms = '000'
+          if (parts[2]) {
+            const sub = parts[2].split('.')
+            ss = sub[0] || '00'
+            ms = (sub[1] || '000').slice(0,3).padEnd(3,'0')
+          }
+          return `${pad2(Number(hh))}:${pad2(Number(mm))}:${pad2(Number(ss))}.${ms}`
+        }
+        payload.workingSchedule = payload.workingSchedule.map((w) => ({
+          day: w.day,
+          start: norm(w.start || '00:00'),
+          end: norm(w.end || '00:00'),
+        }))
+      }
       // Validate user service type and enforce into payload
       const st = (user?.serviceType || '').toLowerCase()
       if (st !== 'vendor' && st !== 'venue') {
@@ -256,10 +336,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
         // Wrap category relation
         payload.category = selectedCategory
       }
-      //if working hours is NAN then make it disappaer from payload
-      if (form.workingHours && isNaN(form.workingHours)) {
-        delete payload.workingHours
-      }
+      // workingHours removed in favor of workingSchedule (handled above)
       // ensure listingItem component type matches the enforced type
       if (payload.listingItem) {
         if (serviceType === "vendor") {
@@ -449,7 +526,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               />
               <ErrorMessage error={errors.description} />
             </div>
-            <div>
+            <div className="col-span-2" >
               <Input
                 type="text"
                 label={t('fields.websiteLink.label')}
@@ -461,20 +538,72 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               />
               <ErrorMessage error={errors.websiteLink} />
             </div>
-            <div>
-              <Input
-                type="number"
-                label={t('fields.workingHours.label')}
-                disabled={isWorking}
-                min={1}
-                max={24}
-                {...register("workingHours", {
-                  valueAsNumber: true,
-                  min: { value: 1, message: t('fields.workingHours.errors.min') },
-                  max: { value: 24, message: t('fields.workingHours.errors.max') },
-                })}
-              />
-              <ErrorMessage error={errors.workingHours} />
+            <div className="col-span-2" >
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium">{t('workingSchedule.title')}</h4>
+                <Button type="button" style="secondary" disabled={isWorking} onClick={addWorkingSchedule}>
+                  {t('workingSchedule.add')}
+                </Button>
+              </div>
+              {(form.workingSchedule || []).map((it, idx) => (
+                <div key={idx} className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-2">
+                  <div className="md:col-span-2">
+                    <Select
+                      label={t('workingSchedule.day')}
+                      disabled={isWorking}
+                      value={it.day || ""}
+                      onChange={(e) => {
+                        const current = getValues("workingSchedule") || []
+                        const updated = [...current]
+                        updated[idx] = { ...(updated[idx] || {}), day: e.target.value as "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday" }
+                        setValue("workingSchedule", updated, { shouldDirty: true })
+                      }}
+                      options={[
+                        { label: "Monday", value: "monday" },
+                        { label: "Tuesday", value: "tuesday" },
+                        { label: "Wednesday", value: "wednesday" },
+                        { label: "Thursday", value: "thursday" },
+                        { label: "Friday", value: "friday" },
+                        { label: "Saturday", value: "saturday" },
+                        { label: "Sunday", value: "sunday" },
+                      ]}
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Input
+                      type="time"
+                      label={t('workingSchedule.start')}
+                      disabled={isWorking}
+                      value={it.start || ""}
+                      onChange={(e) => {
+                        const current = getValues("workingSchedule") || []
+                        const updated = [...current]
+                        updated[idx] = { ...(updated[idx] || {}), start: e.target.value }
+                        setValue("workingSchedule", updated, { shouldDirty: true })
+                      }}
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Input
+                      type="time"
+                      label={t('workingSchedule.end')}
+                      disabled={isWorking}
+                      value={it.end || ""}
+                      onChange={(e) => {
+                        const current = getValues("workingSchedule") || []
+                        const updated = [...current]
+                        updated[idx] = { ...(updated[idx] || {}), end: e.target.value }
+                        setValue("workingSchedule", updated, { shouldDirty: true })
+                      }}
+                    />
+                  </div>
+                  <div className="md:col-span-7">
+                    <Button type="button" style="ghost" disabled={isWorking} onClick={() => removeWorkingSchedule(idx)} extraStyles="text-red-600 hover:text-red-700">
+                      {t('buttons.remove')}
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -666,7 +795,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       value={form.listingItem?.[0]?.location?.state || ""}
                       onChange={(e) => updateListingItem("location.state", e.target.value)}
                       options={[{ label: t('fields.state.placeholder'), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
-                    />
+                    /> 
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
@@ -735,7 +864,6 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       value={form.listingItem?.[0]?.bookingDurationType || ""}
                       onChange={(e) => updateListingItem("bookingDurationType", e.target.value)}
                       options={[
-                        { label: t('fields.bookingDurationType.placeholder'), value: "" },
                         { label: t('fields.bookingDurationType.options.perDay'), value: "Per Day" },
                         { label: t('fields.bookingDurationType.options.perHour'), value: "Per Hour" },
                       ]}

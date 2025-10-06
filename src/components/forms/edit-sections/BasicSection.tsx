@@ -19,14 +19,15 @@ export type BasicForm = {
   featured?: boolean
   description: string
   websiteLink?: string
-  workingHours?: number
+  workingSchedule?: { day: "" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday"; start: string; end: string }[]
 }
 
 export default function BasicSection({ listing, onSaved }: { listing: ListingItem; onSaved?: () => void }) {
   const [submitting, setSubmitting] = useState(false)
-  const t=useTranslations("basicSelectionForm")
+  const t = useTranslations("basicSelectionForm")
+  const tModal = useTranslations("Modals.ListingItem")
 
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<BasicForm>({
+  const { register, handleSubmit, watch, setValue, getValues, formState: { errors } } = useForm<BasicForm>({
     defaultValues: {
       title: listing.title || "",
       listingStatus: (listing.listingStatus as "draft" | "published" | "pending review" | "archived") || "draft",
@@ -34,9 +35,15 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
       featured: listing.featured || false,
       description: listing.description || "",
       websiteLink: listing.websiteLink || "",
-      workingHours: (listing.workingHours as number) ?? undefined,
+      workingSchedule: listing.workingSchedule || [],
     },
   })
+
+  function timeToMinutes(t: string) {
+    const [h, m] = (t || "").split(":").map(Number)
+    if (Number.isNaN(h) || Number.isNaN(m)) return NaN
+    return h * 60 + m
+  }
 
   const onSubmit = async (values: BasicForm) => {
     setSubmitting(true)
@@ -44,7 +51,64 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
       const payload = { ...values }
       if (values.websiteLink === "") delete payload.websiteLink
       if (values.price == null || isNaN(values.price)) delete payload.price
-      if (values.workingHours == null || isNaN(values.workingHours)) delete payload.workingHours
+      // validate workingSchedule
+      if (Array.isArray(values.workingSchedule)) {
+        for (const item of values.workingSchedule) {
+          if (!item?.day || !item?.start || !item?.end) {
+            setSubmitting(false)
+            return toast.error(tModal("workingSchedule.errors.completeAll", { default: "Please complete all working schedule fields." }))
+          }
+          const s = timeToMinutes(item.start)
+          const e = timeToMinutes(item.end)
+          if (Number.isNaN(s) || Number.isNaN(e)) {
+            setSubmitting(false)
+            return toast.error(tModal("workingSchedule.errors.invalidTime", { default: "Invalid time format in working schedule." }))
+          }
+          if (s >= e) {
+            setSubmitting(false)
+            return toast.error(tModal("workingSchedule.errors.startBeforeEnd", { default: "Start time must be earlier than end time." }))
+          }
+        }
+        // conflict check per day
+        const byDay: Record<string, { s: number; e: number }[]> = {}
+        values.workingSchedule.forEach(({ day, start, end }) => {
+          const s = timeToMinutes(start)
+          const e = timeToMinutes(end)
+          byDay[day] = byDay[day] || []
+          byDay[day].push({ s, e })
+        })
+        for (const day of Object.keys(byDay)) {
+          const ranges = byDay[day].sort((a, b) => a.s - b.s)
+          for (let i = 1; i < ranges.length; i++) {
+            const prev = ranges[i - 1]
+            const cur = ranges[i]
+            if (cur.s < prev.e) {
+              setSubmitting(false)
+              return toast.error(tModal("workingSchedule.errors.conflictDay", { default: `Conflicting schedule entries on ${day}.`, day }))
+            }
+          }
+        }
+        // normalize time format to HH:mm:ss.SSS for backend
+        const pad2 = (n: number) => String(n).padStart(2, '0')
+        const norm = (t: string) => {
+          const parts = (t || '').split(':')
+          const hh = parts[0] || '00'
+          const mm = parts[1] || '00'
+          let ss = '00'
+          let ms = '000'
+          if (parts[2]) {
+            const sub = parts[2].split('.')
+            ss = sub[0] || '00'
+            ms = (sub[1] || '000').slice(0, 3).padEnd(3, '0')
+          }
+          return `${pad2(Number(hh))}:${pad2(Number(mm))}:${pad2(Number(ss))}.${ms}`
+        }
+        payload.workingSchedule = values.workingSchedule.map(w => ({
+          day: w.day,
+          start: norm(w.start),
+          end: norm(w.end),
+        }))
+      }
       await updateListing(listing.documentId, { data: payload }, listing.locale)
       toast.success(t("toasts.updated"))
       onSaved?.()
@@ -54,7 +118,7 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
       setSubmitting(false)
     }
   }
-   
+
   return (
     <div className="py-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -66,14 +130,13 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
           {errors.title && (<p className="text-red-500 text-sm mt-1">{t("errors.title.message")}</p>)}
         </div>
         <div className="flex items-end">
-          <Select 
-            disabled={listing.listingStatus === "published" || listing.listingStatus === "rejected" || submitting}
+          <Select
+            disabled={submitting}
             {...register("listingStatus", { required: "Listing status is required" })}
             options={[
               { label: "Draft", value: "draft" },
               { label: "Published", value: "published" },
-              { label: "Pending Review", value: "pending review" },
-              { label: "Rejected", value: "rejected" },
+              { label: "Archived", value: "archived" },
             ]}
           />
           {errors.listingStatus && <p className="text-red-500 text-sm mt-1">{t("errors.listingStatus.message")}</p>}
@@ -86,16 +149,97 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
           <Checkbox label={t("featured")} checked={!!watch("featured")} onChange={(e) => setValue("featured", e.target.checked)} disabled={submitting} />
         </div>
         <div className="col-span-2">
-          <TextArea label={t("description")} placeholder={t("titleDescription")}   rows={4} disabled={submitting} {...register("description", { required: "Description is required" })} />
+          <TextArea label={t("description")} placeholder={t("titleDescription")} rows={4} disabled={submitting} {...register("description", { required: "Description is required" })} />
           {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
         </div>
-        <div>
-          <Input type="url" label={t("websitelinks")} disabled={submitting} {...register("websiteLink", { pattern: { value: /^https?:\/\/.+/, message: "Please enter a valid URL" } })} />
-          {errors.websiteLink && <p className="text-red-500 text-sm mt-1">{errors.websiteLink.message}</p>}
-        </div>
-        <div>
-          <Input type="number" label={t("workinghours(perday)")} disabled={submitting} {...register("workingHours", { valueAsNumber: true, min: { value: 1, message: "Min 1" }, max: { value: 24, message: "Max 24" } })} />
-          {errors.workingHours && <p className="text-red-500 text-sm mt-1">{errors.workingHours.message}</p>}
+        <div className="col-span-2" >
+          <Input
+            type="text"
+            label={t('websitelink')}
+            disabled={submitting}
+            {...register("websiteLink", {
+              pattern: {
+                value: /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})(\/[^\s]*)?$/
+                , message: t('errors.invalidWebsiteLink')
+              },
+            })}
+          />
+          {errors.websiteLink && <p className="text-red-500 text-sm mt-1">{errors.websiteLink.message}</p>}            </div>
+        {/* Working Schedule Editor */}
+        <div className="col-span-2">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="font-medium">{tModal('workingSchedule.title', { default: 'Working schedule' })}</h4>
+            <Button type="button" style="secondary" disabled={submitting} onClick={() => {
+              const current = getValues('workingSchedule') || []
+              setValue('workingSchedule', [...current, { day: '', start: '', end: '' }], { shouldDirty: true })
+            }}>
+              {tModal('workingSchedule.add', { default: 'Add entry' })}
+            </Button>
+          </div>
+          {(watch('workingSchedule') || []).map((it, idx) => (
+            <div key={idx} className="grid grid-cols-1 md:grid-cols-7 gap-3 items-end mb-2">
+              <div className="md:col-span-3">
+                <Select
+                  label={tModal('workingSchedule.day', { default: 'Day' })}
+                  disabled={submitting}
+                  value={it?.day || ''}
+                  onChange={(e) => {
+                    const current = getValues('workingSchedule') || []
+                    const updated = [...current]
+                    updated[idx] = { ...(updated[idx] || {}), day: e.target.value as "" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday" }
+                    setValue('workingSchedule', updated, { shouldDirty: true })
+                  }}
+                  options={[
+                    { label: tModal('workingSchedule.placeholder', { default: 'Select day' }) as string, value: '' },
+                    { label: 'Monday', value: 'monday' },
+                    { label: 'Tuesday', value: 'tuesday' },
+                    { label: 'Wednesday', value: 'wednesday' },
+                    { label: 'Thursday', value: 'thursday' },
+                    { label: 'Friday', value: 'friday' },
+                    { label: 'Saturday', value: 'saturday' },
+                    { label: 'Sunday', value: 'sunday' },
+                  ]}
+                />
+              </div>
+              <div className="md:col-span-2">
+                <Input
+                  type="time"
+                  label={tModal('workingSchedule.start', { default: 'Start' })}
+                  disabled={submitting}
+                  value={it?.start || ''}
+                  onChange={(e) => {
+                    const current = getValues('workingSchedule') || []
+                    const updated = [...current]
+                    updated[idx] = { ...(updated[idx] || {}), start: e.target.value }
+                    setValue('workingSchedule', updated, { shouldDirty: true })
+                  }}
+                />
+              </div>
+              <div className="md:col-span-2">
+                <Input
+                  type="time"
+                  label={tModal('workingSchedule.end', { default: 'End' })}
+                  disabled={submitting}
+                  value={it?.end || ''}
+                  onChange={(e) => {
+                    const current = getValues('workingSchedule') || []
+                    const updated = [...current]
+                    updated[idx] = { ...(updated[idx] || {}), end: e.target.value }
+                    setValue('workingSchedule', updated, { shouldDirty: true })
+                  }}
+                />
+              </div>
+              <div className="md:col-span-1">
+                <Button type="button" style="ghost" disabled={submitting} onClick={() => {
+                  const current = getValues('workingSchedule') || []
+                  const updated = current.filter((_, i) => i !== idx)
+                  setValue('workingSchedule', updated, { shouldDirty: true })
+                }}>
+                  {tModal('buttons.remove', { default: 'Remove' })}
+                </Button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
       <div className="flex justify-end mt-4">

@@ -219,7 +219,9 @@
       "week": "Tydzień",
       "today": "Dzisiaj",
       "legend": {
-        "booked": "Zarezerwowane (zacienione dni)"
+        "booked": "Zarezerwowane",
+        "unavailable": "Niedostępne",
+        "available": "Dostępne"
       }
     }
   },
@@ -677,6 +679,19 @@
       "contact": {
         "title": "Kontakt"
       },
+      "workingSchedule": {
+        "title": "Harmonogram pracy",
+        "add": "Dodaj wpis",
+        "day": "Dzień",
+        "start": "Początek",
+        "end": "Koniec",
+        "errors": {
+          "completeAll": "Uzupełnij wszystkie pola harmonogramu pracy.",
+          "invalidTime": "Nieprawidłowy format czasu w harmonogramie.",
+          "startBeforeEnd": "Czas rozpoczęcia musi być wcześniejszy niż zakończenia.",
+          "conflictDay": "Konfliktujące wpisy w dniu {day}."
+        }
+      },
       "socialLinks": {
         "title": "Linki społecznościowe",
         "sectionTitle": "Tytuł sekcji",
@@ -810,7 +825,7 @@
     "price": "cena",
     "featured": "wyróżniony",
     "description": "opis",
-    "websitelinks": "linki do stron internetowych",
+    "websitelink": "Link do strony internetowej",
     "workinghours(perday)": "godziny pracy (dziennie)",
     "titleDescription": "tytułOpis",
     "saving": "экономия",
@@ -819,6 +834,12 @@
     "toasts": {
       "updated": "Podstawowe dane zaktualizowane",
       "updateFailed": "Nie udało się zaktualizować podstawowych danych"
+    },
+    "errors": {
+      "titleRequired": "Tytuł jest wymagany",
+      "priceRequired": "Cena jest wymagana",
+      "descriptionRequired": "Opis jest wymagany",
+      "invalidWebsiteLink": "Proszę dodać poprawny link do strony internetowej"
     }
   },
   "ImageSection": {
@@ -847,14 +868,24 @@
   },
   "vendorvenueSection": {
     "details": "Bliższe dane",
+    "vendor": "Dostawca",
+    "venue": "Miejsce",
+    "about": "O mnie",
+    "experienceYears": "Lata doświadczenia",
     "city": "miasto",
     "state": "państwo",
     "latitude": "szerokość",
     "longitude": "długość geograficzna",
     "capacity": "pojemność",
     "bookingdurationtype": "typ trwania rezerwacji",
+    "selectdurationtype": "Wybierz rodzaj rezerwacji",
+    "perday": "Za dzień",
+    "perhour": "Za godzinę",
     "bookingduration": "czas rezerwacji",
     "amenities": "udogodnienia",
+    "amenityLabel": "Udogodnienie {index}",
+    "serviceareas": "Obszary usług",
+    "addservicearea": "Dodaj obszar usług",
     "saving": "экономия",
     "savingEllipsis": "Zapisywanie...",
     "savechanges": "zapisuje zmiany",

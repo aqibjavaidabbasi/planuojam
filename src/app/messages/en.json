@@ -232,7 +232,9 @@
       "week": "Week",
       "today": "Today",
       "legend": {
-        "booked": "Booked (shaded days)"
+        "booked": "Booked",
+        "unavailable": "Unavailable",
+        "available": "Available"
       }
     }
   },
@@ -660,6 +662,20 @@
       "contact": {
         "title": "Contact"
       },
+      "workingSchedule": {
+        "title": "Working schedule",
+        "add": "Add entry",
+        "placeholder": "Select day",
+        "day": "Day",
+        "start": "Start",
+        "end": "End",
+        "errors": {
+          "completeAll": "Please complete all working schedule fields.",
+          "invalidTime": "Invalid time format in working schedule.",
+          "startBeforeEnd": "Start time must be earlier than end time.",
+          "conflictDay": "Conflicting schedule entries on {day}."
+        }
+      },
       "socialLinks": {
         "title": "Social Links",
         "sectionTitle": "Section Title",
@@ -792,7 +808,7 @@
     "price": "Price",
     "featured": "Featured",
     "description": "Description",
-    "websitelinks": "Website Links",
+    "websitelink": "Website Link",
     "workinghours(perday)": "Working Hour (Per Day)",
     "titleDescription": "Title Description",
     "saving": "Saving",
@@ -800,7 +816,8 @@
     "errors": {
       "titleRequired": "Title is required",
       "priceRequired": "Price is required",
-      "descriptionRequired": "Description is required"
+      "descriptionRequired": "Description is required",
+      "invalidWebsiteLink": "Please add a valid website link"
     },
     "toasts": {
       "updated": "Basic details updated",
@@ -838,14 +855,24 @@
   },
   "vendorvenueSection": {
     "details": "Details",
+    "vendor": "Vendor",
+    "venue": "Venue",
+    "about": "About",
+    "experienceYears": "Experience Years",
     "city": "City",
     "state": "State",
     "latitude": "Latitude",
     "longitude": " Longitude",
     "capacity": "Capacity",
     "bookingdurationtype": "Booking Duration Type",
+    "selectdurationtype": "Select Duration Type",
+    "perday": "Per Day",
+    "perhour": "Per Hour",
     "bookingduration": "Booking Duration",
     "amenities": "Amenities",
+    "amenityLabel": "Amenity {index}",
+    "serviceareas": "Service Areas",
+    "addservicearea": "Add Service Area",
     "saving": "Saving",
     "savechanges": "Save  Changes",
     "adamenity": "Add amenity",

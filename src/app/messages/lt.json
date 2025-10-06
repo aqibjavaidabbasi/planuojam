@@ -198,7 +198,9 @@
       "week": "Savaikis",
       "today": "Dabar",
       "legend": {
-        "booked": "Užimta (užtamsintos dienos)"
+        "booked": "Užimta",
+        "unavailable": "Neprieinama",
+        "available": "Prieinama"
       }
     }
   },
@@ -510,6 +512,19 @@
       "contact": {
         "title": "Kontaktai"
       },
+      "workingSchedule": {
+        "title": "Darbo grafikas",
+        "add": "Pridėti įrašą",
+        "day": "Diena",
+        "start": "Pradžia",
+        "end": "Pabaiga",
+        "errors": {
+          "completeAll": "Užpildykite visus darbo grafiko laukus.",
+          "invalidTime": "Neteisingas laiko formatas darbo grafike.",
+          "startBeforeEnd": "Pradžios laikas turi būti ankstesnis nei pabaigos.",
+          "conflictDay": "Konfliktuojantys įrašai dieną {day}."
+        }
+      },
       "socialLinks": {
         "title": "Socialiniai tinklai",
         "sectionTitle": "Skyriaus pavadinimas",
@@ -802,7 +817,7 @@
     "price": "kaina",
     "featured": "rodomas",
     "description": "aprašymas",
-    "websitelinks": "svetainių nuorodos",
+    "websitelink": "Tinklalapio nuoroda",
     "workinghours(perday)": "darbo valandos (per dieną)",
     "titleDescription": "pavadinimas Aprašymas",
     "saving": "taupymas",
@@ -810,6 +825,12 @@
     "toasts": {
       "updated": "Pagrindinė informacija atnaujinta",
       "updateFailed": "Nepavyko atnaujinti pagrindinės informacijos"
+    },
+    "errors": {
+      "titleRequired": "Pavadinimas yra privalomas",
+      "priceRequired": "Kaina yra privaloma",
+      "descriptionRequired": "Aprašymas yra privalomas",
+      "invalidWebsiteLink": "Prašome pridėti keletą tinklalapio nuorodų"
     }
   },
   "ImageSection": {
@@ -837,14 +858,24 @@
   },
   "vendorvenueSection": {
     "details": " detales",
+    "vendor": "Tiekėjas",
+    "venue": "Vieta",
+    "about": "Apie",
+    "experienceYears": "Patirtis metais",
     "city": "miestas",
     "state": "valstybė",
     "latitude": "platumos",
     "longitude": "ilguma",
     "capacity": "talpa",
     "bookingdurationtype": "  užsakymo trukmės tipas",
+    "selectdurationtype": "Pasirinkite trukmės tipą",
+    "perday": "Per dieną",
+    "perhour": "Per valandą",
     "bookingduration": "užsakymo trukmė",
     "amenities": "patogumai",
+    "amenityLabel": "Patogumas {index}",
+    "serviceareas": "Paslaugų zonos",
+    "addservicearea": "Pridėti paslaugų zoną",
     "saving": "taupymas",
     "savechanges": "išsaugoti pakeitimus",
     "fetchcoordinates": "gauti koordinates",

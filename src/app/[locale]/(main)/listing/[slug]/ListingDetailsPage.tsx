@@ -290,7 +290,7 @@ export default function ListingDetailsPage() {
 
         <div id="availability" className="mt-6">
           {/* availability calendar */}
-          <ListingCalendar listingDocumentId={renderingContent.documentId} />
+          <ListingCalendar listingDocumentId={renderingContent.documentId} workingSchedule={renderingContent.workingSchedule || []} />
         </div>
 
         {/* Reviews Section */}
@@ -356,6 +356,7 @@ export default function ListingDetailsPage() {
           userDocumentId={user?.documentId || ""}
           bookingDurationType={venueBlock?.bookingDurationType as ("Per Day" | "Per Hour") | undefined}
           bookingDuration={venueBlock?.bookingDuration}
+          workingSchedule={renderingContent.workingSchedule || []}
           availablePlans={(renderingContent.pricingPackages?.plans || []).map(p => ({ name: p.name, price: p.price, features: (p.featuresList || []).map(f => f.statement) }))}
           availableAddons={renderingContent.pricingPackages?.optionalAddons || []}
           basePrice={renderingContent.price}

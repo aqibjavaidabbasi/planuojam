@@ -271,15 +271,11 @@ export interface ListingItem {
     socialLink: SocialLink[]
   }
   websiteLink: string;
-  workingHours: number;
-  pricingPackages: {
-    sectionTitle: string;
-    plans: Plans[];
-    optionalAddons: {
-      statement: string;
-      price: number;
-    }[]
-  }
+  workingSchedule: {
+    day: "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
+    start: string;
+    end: string;
+  }[];
   portfolio: strapiImage[];
   FAQs: {
     sectionTitle: string;
@@ -296,7 +292,27 @@ export interface ListingItem {
     dealNote: string;
     discount: Discount;
   }
-  localizations: ListingItem[]
+  localizations: ListingItem[];
+  pricingPackages: {
+    sectionTitle: string;
+    plans: {
+      id: number;
+      name: string;
+      price: number;
+      description: string;
+      featuresList:{
+        id: number;
+        statement: string;
+      }[];
+      isPopular: boolean;
+      cta: CallToActionComponentBlock;
+    }[];
+    optionalAddons: {
+      id: number;
+      statement: string;
+      price: number;
+    }[];
+  };
 }
 export interface Discount {
   discountType: 'Flat Rate' | 'Percentage'

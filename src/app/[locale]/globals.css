@@ -7,6 +7,12 @@ body {
   font-family: "Montserrat", sans-serif;
 }
 
+/* Prevent accidental horizontal scroll caused by 100vw or overflowing children */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 @theme {
   --color-primary: #cc922f;
   --color-border: #dfddddab;

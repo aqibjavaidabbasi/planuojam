@@ -10,6 +10,8 @@ import { useTranslations } from "next-intl";
 import Select from "@/components/custom/Select";
 import { translateError } from "@/utils/translateError";
 
+type Day = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
+
 interface BookingModalProps {
   showModal: boolean;
   setShowModal: (open: boolean) => void;
@@ -18,6 +20,7 @@ interface BookingModalProps {
   onCreated?: (res: unknown) => void;
   bookingDurationType?: "Per Day" | "Per Hour";
   bookingDuration?: number;
+  workingSchedule?: { day: Day; start: string; end: string }[];
   availablePlans?: Array<{
     name: string;
     price: number;
@@ -43,6 +46,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
   onCreated,
   bookingDurationType,
   bookingDuration,
+  workingSchedule = [],
   availablePlans = [],
   availableAddons = [],
   basePrice,
@@ -90,25 +94,19 @@ const BookingModal: React.FC<BookingModalProps> = ({
     e.preventDefault();
     setError(null);
 
-    const hasConfiguredDuration =
+    const hasMaxDuration =
       (bookingDurationType === "Per Day" || bookingDurationType === "Per Hour") &&
       typeof bookingDuration === "number" &&
       bookingDuration > 0;
 
-    if (!startDateTime || (!endDateTime && !hasConfiguredDuration)) {
+    if (!startDateTime || !endDateTime) {
       const msg = t("errors.requiredDateTime", { default: "Please select a date and time." });
       setError(msg);
       toast.error(msg);
       return;
     }
     const start = new Date(startDateTime);
-    const end = (() => {
-      if (!hasConfiguredDuration) return new Date(endDateTime);
-      const d = new Date(start);
-      if (bookingDurationType === "Per Hour") d.setHours(d.getHours() + (bookingDuration || 0));
-      if (bookingDurationType === "Per Day") d.setDate(d.getDate() + (bookingDuration || 0));
-      return d;
-    })();
+    const end = new Date(endDateTime);
     if (start.getTime() < Date.now()) {
       const msg = t("errors.futureOnly", { default: "Please choose a future date and time." });
       setError(msg);
@@ -122,10 +120,79 @@ const BookingModal: React.FC<BookingModalProps> = ({
       return;
     }
 
+    // Enforce maximum allowed duration when configured
+    if (hasMaxDuration) {
+      const diffMs = end.getTime() - start.getTime();
+      const limitMs = (bookingDurationType === "Per Hour")
+        ? (bookingDuration || 0) * 60 * 60 * 1000
+        : (bookingDuration || 0) * 24 * 60 * 60 * 1000;
+      if (diffMs > limitMs) {
+        const msg = t("errors.invalidRange", { default: `Selected duration exceeds the maximum of ${bookingDuration} ${bookingDurationType === 'Per Hour' ? 'hour(s)' : 'day(s)'} allowed.` });
+        setError(msg);
+        toast.error(msg);
+        return;
+      }
+    }
+
+    // Validate against working schedule
+    const dowToKey = (d: number): Day => {
+      return ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"][d] as Day;
+    }
+    const timeToMinutes = (dt: Date) => dt.getHours() * 60 + dt.getMinutes();
+    const withinSchedule = (dt: Date) => {
+      const key = dowToKey(dt.getDay());
+      const mins = timeToMinutes(dt);
+      const windows = (workingSchedule || []).filter(w => w.day === key);
+      if (windows.length === 0) return false;
+      return windows.some(w => {
+        const [sh, sm] = (w.start || "").split(":").map(Number);
+        const [eh, em] = (w.end || "").split(":").map(Number);
+        if ([sh, sm, eh, em].some(n => Number.isNaN(n))) return false;
+        const s = sh * 60 + sm; const e2 = eh * 60 + em;
+        return mins >= s && mins <= e2;
+      });
+    };
+    const sameDay = start.getFullYear() === end.getFullYear() && start.getMonth() === end.getMonth() && start.getDate() === end.getDate();
+    if (bookingDurationType === "Per Hour") {
+      // Must be within working windows and on same day
+      if (!sameDay || !withinSchedule(start) || !withinSchedule(end)) {
+        const msg = t("errors.invalidRange", { default: "Selected time must be within working hours on the same day." });
+        setError(msg);
+        toast.error(msg);
+        return;
+      }
+    } else if (bookingDurationType === "Per Day") {
+      // Basic rule: start and end should fall within working windows of their respective days
+      if (!withinSchedule(start) || !withinSchedule(end)) {
+        const msg = t("errors.invalidRange", { default: "Start and end must be within working hours." });
+        setError(msg);
+        toast.error(msg);
+        return;
+      }
+      // Optional: ensure every intermediate day has at least one window
+      const dayMs = 24 * 60 * 60 * 1000;
+      const daysBetween = Math.floor((end.setHours(0,0,0,0) - start.setHours(0,0,0,0)) / dayMs);
+      if (daysBetween > 0) {
+        const checkDate = new Date(start);
+        for (let i = 0; i <= daysBetween; i++) {
+          if (i > 0) checkDate.setDate(checkDate.getDate() + 1);
+          // Require at least one window that day
+          const key = dowToKey(checkDate.getDay());
+          const windows = (workingSchedule || []).filter(w => w.day === key);
+          if (windows.length === 0) {
+            const msg = t("errors.invalidRange", { default: "Booking overlaps a day without working hours." });
+            setError(msg);
+            toast.error(msg);
+            return;
+          }
+        }
+      }
+    }
+
     try {
       setSubmitting(true);
       const startISO = toISOFromLocal(startDateTime);
-      const endISO = hasConfiguredDuration ? end.toISOString() : toISOFromLocal(endDateTime);
+      const endISO = toISOFromLocal(endDateTime);
       // Check slot availability for this listing + range
       const slots = await getListingBookings(listingDocumentId, startISO, endISO);
       if (Array.isArray(slots) && slots.length > 0) {
@@ -199,24 +266,12 @@ const BookingModal: React.FC<BookingModalProps> = ({
     let cancelled = false;
     async function check() {
       setSlotAvailable(null);
-      const hasConfiguredDuration =
-        (bookingDurationType === "Per Day" || bookingDurationType === "Per Hour") &&
-        typeof bookingDuration === "number" &&
-        bookingDuration > 0;
       if (!startDateTime) return;
-      if (!hasConfiguredDuration && !endDateTime) return;
+      if (!endDateTime) return;
       setChecking(true);
       try {
         const startISO = toISOFromLocal(startDateTime);
-        let endISO: string;
-        if (hasConfiguredDuration) {
-          const d = new Date(startISO);
-          if (bookingDurationType === "Per Hour") d.setHours(d.getHours() + (bookingDuration || 0));
-          if (bookingDurationType === "Per Day") d.setDate(d.getDate() + (bookingDuration || 0));
-          endISO = d.toISOString();
-        } else {
-          endISO = toISOFromLocal(endDateTime);
-        }
+        const endISO = toISOFromLocal(endDateTime);
         const slots = await getListingBookings(listingDocumentId, startISO, endISO);
         if (!cancelled) setSlotAvailable(!(Array.isArray(slots) && slots.length > 0));
       } catch {
@@ -227,7 +282,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
     }
     check();
     return () => { cancelled = true; };
-  }, [listingDocumentId, startDateTime, endDateTime, bookingDurationType, bookingDuration]);
+  }, [listingDocumentId, startDateTime, endDateTime]);
 
   return (
     <Modal 
@@ -254,37 +309,23 @@ const BookingModal: React.FC<BookingModalProps> = ({
           min={minDateTime}
           onChange={(e) => setStartDateTime(e.target.value)}
         />
-        {((bookingDurationType === "Per Day" || bookingDurationType === "Per Hour") && (bookingDuration || 0) > 0) ? (
-          (() => {
-            // compute local datetime string for disabled end input
-            let endLocal = "";
-            if (startDateTime) {
-              const d = new Date(startDateTime);
-              if (bookingDurationType === "Per Hour") d.setHours(d.getHours() + (bookingDuration || 0));
-              if (bookingDurationType === "Per Day") d.setDate(d.getDate() + (bookingDuration || 0));
-              const pad = (n: number) => String(n).padStart(2, "0");
-              endLocal = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-            }
-            return (
-              <Input
-                type="datetime-local"
-                required
-                disabled
-                label={t('fields.autoEnd', { default: 'End Date & Time (auto {duration} {unit})', duration: bookingDuration || 0, unit: t(`units.${bookingDurationType === 'Per Hour' ? 'hours' : 'days'}`, { default: bookingDurationType === 'Per Hour' ? 'hour(s)' : 'day(s)' }) })}
-                value={endLocal}
-              />
-            );
-          })()
-        ) : (
-          <Input
-            type="datetime-local"
-            required
-            label={t('fields.end', { default: 'End Date & Time' })}
-            value={endDateTime}
-            min={startDateTime || minDateTime}
-            onChange={(e) => setEndDateTime(e.target.value)}
-          />
-        )}
+        <Input
+          type="datetime-local"
+          required
+          label={t('fields.end', { default: 'End Date & Time' })}
+          value={endDateTime}
+          min={startDateTime || minDateTime}
+          max={(() => {
+            const hasMax = (bookingDurationType === 'Per Day' || bookingDurationType === 'Per Hour') && (bookingDuration || 0) > 0;
+            if (!hasMax || !startDateTime) return undefined as unknown as string;
+            const d = new Date(startDateTime);
+            if (bookingDurationType === 'Per Hour') d.setHours(d.getHours() + (bookingDuration || 0));
+            if (bookingDurationType === 'Per Day') d.setDate(d.getDate() + (bookingDuration || 0));
+            const pad = (n: number) => String(n).padStart(2, '0');
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+          })()}
+          onChange={(e) => setEndDateTime(e.target.value)}
+        />
         {availablePlans && availablePlans.length > 0 && (
           <Select
             label={t('fields.plan', { default: 'Select Plan' })}
