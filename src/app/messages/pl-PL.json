@@ -186,6 +186,21 @@
         "faqs": "FAQ"
       }
     },
+    "promotions": {
+      "title": "Promocje",
+      "selectListing": "Wybierz ogłoszenie",
+      "choose": "Wybierz...",
+      "starsToSpend": "Gwiazdki do wydania",
+      "starsPlaceholder": "np. 10",
+      "starsAvailable": "Dostępne",
+      "startDate": "Data rozpoczęcia",
+      "endDate": "Data zakończenia",
+      "maxClickPerDay": "Maks. kliknięć dziennie",
+      "starsPerClick": "Gwiazdki za kliknięcie",
+      "creating": "Tworzenie...",
+      "create": "Utwórz promocję",
+      "created": "Promocja została utworzona"
+    },
     "Details": {
       "overview": "Przegląd",
       "rating": "Ocena",
@@ -227,6 +242,7 @@
   },
   "Profile": {
     "loginPrompt": "Zaloguj się, aby zobaczyć swój profil. Przekierowywanie...",
+    "creditStars": "Gwiazdy kredytowe",
     "tabs": {
       "profile": "Profil",
       "myListings": "Moje ogłoszenia",
@@ -235,7 +251,8 @@
       "reviews": "Opinie",
       "bookings": "Rezerwacje",
       "manageBookings": "Zarządzaj rezerwacjami",
-      "calendar": "Kalendarz"
+      "calendar": "Kalendarz",
+      "promotions": "Promocje"
     },
     "ProfileTab": {
       "title": "Ustawienia profilu",
@@ -439,6 +456,22 @@
         "sent": "Email został wysłany!",
         "errorDefault": "Nie udało się wysłać emaila. Spróbuj ponownie."
       }
+    },
+    "BuyStars": {
+      "title": "Wybierz pakiet gwiazdek",
+      "selectPackage": "Wybierz pakiet",
+      "buyCta": "Kup {stars} gwiazdek - ${price}",
+      "starsLabel": "{count} gwiazdek",
+      "noPackages": "Nie znaleziono pakietów",
+      "paymentErrorTitle": "Błąd płatności",
+      "paymentClientSecretMissing": "Nie udało się rozpocząć płatności. Spróbuj ponownie.",
+      "cardInputNotReady": "Pole karty nie jest gotowe.",
+      "paymentFailedTitle": "Płatność nie powiodła się",
+      "paymentFailed": "Płatność nie powiodła się",
+      "paymentSuccessTitle": "Płatność zakończona sukcesem",
+      "paymentSuccessMessage": "Płatność zakończona sukcesem za {stars} gwiazdek w kwocie ${amount}",
+      "ok": "OK",
+      "processing": "przetwarzanie"
     },
     "LoginNavigate": {
       "title": "Zaloguj się, aby polubić to ogłoszenie",

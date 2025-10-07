@@ -17,7 +17,6 @@ export const SiteSettingsProvider = ({ children }: { children: ReactNode }) => {
     useEffect(function () {
         async function fetchSettings() {
             const res = await fetchSiteSettings();
-            console.log('Fetched site settings:', res);
             setSiteSettings(res);
         }
         fetchSettings();

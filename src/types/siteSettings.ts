@@ -14,4 +14,12 @@ export interface SiteSettings{
         id: number;
         seo: StrapiSeo | null;
     }
+    starPackages?: {
+        id: number;
+        package?: {
+            id: number;
+            stars: number;
+            amount: number;
+        }[]
+    }
 }

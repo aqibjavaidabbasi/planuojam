@@ -240,6 +240,7 @@
   },
   "Profile": {
     "loginPrompt": "Please login to view your profile. Redirecting...",
+    "creditStars": "Credit Stars",
     "tabs": {
       "profile": "Profile",
       "myListings": "My Listings",
@@ -248,7 +249,8 @@
       "reviews": "Reviews",
       "bookings": "Bookings",
       "manageBookings": "Manage Bookings",
-      "calendar": "Calendar"
+      "calendar": "Calendar",
+      "promotions": "Promotions"
     },
     "ProfileTab": {
       "title": "Profile Settings",
@@ -290,6 +292,21 @@
           "noMatch": "Passwords do not match"
         }
       }
+    },
+    "promotions": {
+      "title": "Promotions",
+      "selectListing": "Select Listing",
+      "choose": "Choose...",
+      "starsToSpend": "Stars to spend",
+      "starsPlaceholder": "e.g. 10",
+      "starsAvailable": "Available",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "maxClickPerDay": "Max Clicks Per Day",
+      "starsPerClick": "Stars Per Click",
+      "creating": "Creating...",
+      "create": "Create Promotion",
+      "created": "Promotion created successfully"
     },
     "FavouriteListings": {
       "title": "Favourite Listings",
@@ -429,6 +446,22 @@
         "sent": "Email sent successfully!",
         "errorDefault": "Could not send email. Please try again."
       }
+    },
+    "BuyStars": {
+      "title": "Choose Your Stars Package",
+      "selectPackage": "Select a Package",
+      "buyCta": "Buy {stars} Stars - ${price}",
+      "starsLabel": "{count} Stars",
+      "noPackages": "No Packages Available",
+      "paymentErrorTitle": "Payment Error",
+      "paymentClientSecretMissing": "Unable to start payment. Please try again.",
+      "cardInputNotReady": "Card input not ready.",
+      "paymentFailedTitle": "Payment failed",
+      "paymentFailed": "Payment failed",
+      "paymentSuccessTitle": "Payment successful",
+      "paymentSuccessMessage": "Payment successful for {stars} stars at ${amount}",
+      "ok": "OK",
+      "processing": "Processing"
     },
     "LoginNavigate": {
       "title": "Login to like this listing",

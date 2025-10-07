@@ -304,6 +304,7 @@
   },
   "Profile": {
     "loginPrompt": "Пожалуйста, войдите, чтобы просмотреть профиль. Перенаправление...",
+    "creditStars": "Кредит Старс",
     "tabs": {
       "profile": "Профиль",
       "myListings": "Мои объявления",
@@ -312,7 +313,8 @@
       "reviews": "Отзывы",
       "bookings": "Бронирования",
       "manageBookings": "Управление бронированиями",
-      "calendar": "Календарь"
+      "calendar": "Календарь",
+      "promotions": "Промо"
     },
     "ProfileTab": {
       "title": "Настройки профиля",
@@ -354,6 +356,21 @@
           "noMatch": "Пароли не совпадают"
         }
       }
+    },
+    "promotions": {
+      "title": "Промо",
+      "selectListing": "Выберите объявление",
+      "choose": "Выберите...",
+      "starsToSpend": "Звёзды для списания",
+      "starsPlaceholder": "например, 10",
+      "starsAvailable": "Доступно",
+      "startDate": "Дата начала",
+      "endDate": "Дата окончания",
+      "maxClickPerDay": "Макс. кликов в день",
+      "starsPerClick": "Звёзд за клик",
+      "creating": "Создание...",
+      "create": "Создать промо",
+      "created": "Промо успешно создано"
     },
     "FavouriteListings": {
       "title": "Избранные объявления",
@@ -462,6 +479,22 @@
         "sent": "Письмо успешно отправлено!",
         "errorDefault": "Не удалось отправить письмо. Попробуйте ещё раз."
       }
+    },
+    "BuyStars": {
+      "title": "Выберите пакет звёзд",
+      "selectPackage": "Выберите пакет",
+      "buyCta": "Купить {stars} звёзд — ${price}",
+      "starsLabel": "{count} звёзд",
+      "noPackages": "Пакетов нет",
+      "paymentErrorTitle": "Ошибка оплаты",
+      "paymentClientSecretMissing": "Не удалось начать оплату. Попробуйте ещё раз.",
+      "cardInputNotReady": "Ввод карты не готов.",
+      "paymentFailedTitle": "Оплата не удалась",
+      "paymentFailed": "Оплата не удалась",
+      "paymentSuccessTitle": "Оплата успешно завершена",
+      "paymentSuccessMessage": "Оплата успешно завершена за {stars} звёзд в сумме ${amount}",
+      "ok": "хорошо",
+      "processing": "обработка"
     },
     "LoginNavigate": {
       "title": "Войдите, чтобы поставить лайк",

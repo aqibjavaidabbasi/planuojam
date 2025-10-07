@@ -10,7 +10,7 @@ import Button from "@/components/custom/Button";
 import { useAppSelector } from "@/store/hooks";
 import React, { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
-import { FaArrowCircleDown, FaList, FaCalendarAlt, FaCalendarCheck } from "react-icons/fa";
+import { FaArrowCircleDown, FaList, FaCalendarAlt, FaCalendarCheck, FaPlus, FaBullhorn } from "react-icons/fa";
 import { LuMessageSquareText } from "react-icons/lu";
 import { MdEditCalendar, MdOutlineFavorite, MdStarBorderPurple500 } from "react-icons/md";
 import { usePathname, useRouter } from "@/i18n/navigation";
@@ -19,6 +19,8 @@ import { useTranslations } from "next-intl";
 import ManageBookings from "@/components/profile/ManageBookings";
 import ProviderCalendar from "@/components/profile/ProviderCalendar";
 import { fetchUnreadForReceiver } from "@/services/messages";
+import BuyStarsModal from "@/components/modals/BuyStarsModal";
+import PromotionsTab from "@/components/profile/PromotionsTab";
 
 function ProfilePage() {
   const t = useTranslations("Profile");
@@ -27,6 +29,7 @@ function ProfilePage() {
   const initialTab = searchParams?.get("tab") || "profile";
   const [activeTab, setActiveTab] = useState(initialTab);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [openStarModal, setOpenStarModal] = useState(false);
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const user = useAppSelector((state) => state.auth.user);
   const router = useRouter()
@@ -88,7 +91,7 @@ function ProfilePage() {
         const locallyRead = new Set<string>(localIdsRaw ? JSON.parse(localIdsRaw) : []);
         const adjusted = res.data.filter((m) => !locallyRead.has(String(m.id)));
         setUnreadCount(adjusted.length);
-      } catch {}
+      } catch { }
     };
     // On tab change
     refresh();
@@ -103,14 +106,14 @@ function ProfilePage() {
     return () => {
       if (typeof window !== 'undefined') {
         window.removeEventListener('focus', onFocus);
-        document.removeEventListener('visibilitychange', () => {});
+        document.removeEventListener('visibilitychange', () => { });
       }
     };
   }, [activeTab, user?.id]);
 
   return (
     <div className="bg-gray-50 min-h-screen font-inter">
-      {!user && <p>{t("loginPrompt")}</p> }
+      {!user && <p>{t("loginPrompt")}</p>}
       {/* Main Dashboard Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8 min-h-[calc(100vh-200px)]">
@@ -119,8 +122,8 @@ function ProfilePage() {
             className={`w-full lg:w-80 bg-white rounded-2xl shadow-sm border border-gray-100 p-3 md:p-6 transition-all duration-300`}
           >
             <div className="flex justify-between items-center lg:justify-center mx-2 mb-2">
-              <div className="bg-gray-50 rounded-xl p-6">
-                <div className="flex flex-row lg:flex-col items-center space-y-2 gap-2.5 lg:gap-0">
+              <div className="">
+                <div className="bg-gray-50 rounded-xl p-6 flex flex-row lg:flex-col items-center space-y-2 gap-2.5 lg:gap-0">
                   <div className="w-12 sm:w-15 h-12 sm:h-15 bg-primary rounded-full flex items-center justify-center">
                     <span className="text-white font-bold text-2xl">
                       {user?.username?.slice(0, 2)}
@@ -138,31 +141,37 @@ function ProfilePage() {
                     )}
                   </div>
                 </div>
+                <div className="bg-gray-50 rounded-xl p-6 my-2 flex items-center justify-between gap-2.5 text-gray-600">
+                  <div>
+                    <p>{t("creditStars")}</p>
+                    <p>{user?.totalStars ? user?.totalStars : 0}</p>
+                  </div>
+                  <Button style="primary" extraStyles="!rounded-full !p-2" size="small" onClick={() => setOpenStarModal(true)}>
+                    <FaPlus size={20} />
+                  </Button>
+                </div>
               </div>
-              <div className="lg:hidden" onClick={()=>setSidebarOpen(!sidebarOpen)}>
+              <div className="lg:hidden" onClick={() => setSidebarOpen(!sidebarOpen)}>
                 <Button style="secondary">
                   <FaArrowCircleDown
                     size={20}
-                    className={`transition-transform ${
-                      sidebarOpen ? "rotate-180" : ""
-                    }`}
+                    className={`transition-transform ${sidebarOpen ? "rotate-180" : ""
+                      }`}
                   />
                 </Button>
               </div>
             </div>
 
             <nav
-              className={`space-y-2 ${
-                sidebarOpen ? "block" : "hidden lg:block"
-              }`}
+              className={`space-y-2 ${sidebarOpen ? "block" : "hidden lg:block"
+                }`}
             >
               <button
                 onClick={() => showTab("profile")}
-                className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${
-                  activeTab === "profile"
+                className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${activeTab === "profile"
                     ? "text-white bg-[#cc922f]"
                     : "text-gray-600 hover:text-[#cc922f] hover:bg-gray-50"
-                }`}
+                  }`}
               >
                 <CgProfile size={20} className="mr-3" />
                 {t("tabs.profile")}
@@ -171,11 +180,10 @@ function ProfilePage() {
               {user?.serviceType !== null && (
                 <button
                   onClick={() => showTab("my-listings")}
-                  className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${
-                    activeTab === "my-listings"
+                  className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${activeTab === "my-listings"
                       ? "text-white bg-[#cc922f]"
                       : "text-gray-600 hover:text-[#cc922f] hover:bg-gray-50"
-                  }`}
+                    }`}
                 >
                   <FaList size={20} className="mr-3" />
                   {t("tabs.myListings")}
@@ -184,12 +192,24 @@ function ProfilePage() {
 
               {user?.serviceType !== null && (
                 <button
-                  onClick={() => showTab("manage-bookings")}
-                  className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${
-                    activeTab === "manage-bookings"
+                  onClick={() => showTab("promotions")}
+                  className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${activeTab === "promotions"
                       ? "text-white bg-[#cc922f]"
                       : "text-gray-600 hover:text-[#cc922f] hover:bg-gray-50"
-                  }`}
+                    }`}
+                >
+                  <FaBullhorn size={20} className="mr-3" />
+                  {t("tabs.promotions", { default: "Promotions" })}
+                </button>
+              )}
+
+              {user?.serviceType !== null && (
+                <button
+                  onClick={() => showTab("manage-bookings")}
+                  className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${activeTab === "manage-bookings"
+                      ? "text-white bg-[#cc922f]"
+                      : "text-gray-600 hover:text-[#cc922f] hover:bg-gray-50"
+                    }`}
                 >
                   <FaCalendarAlt size={20} className="mr-3" />
                   {t("tabs.manageBookings", { default: "Manage Bookings" })}
@@ -199,11 +219,10 @@ function ProfilePage() {
               {user?.serviceType !== null && (
                 <button
                   onClick={() => showTab("calendar")}
-                  className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${
-                    activeTab === "calendar"
+                  className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${activeTab === "calendar"
                       ? "text-white bg-[#cc922f]"
                       : "text-gray-600 hover:text-[#cc922f] hover:bg-gray-50"
-                  }`}
+                    }`}
                 >
                   <MdEditCalendar size={20} className="mr-3" />
                   {t("tabs.calendar", { default: "Calendar" })}
@@ -212,11 +231,10 @@ function ProfilePage() {
 
               <button
                 onClick={() => showTab("bookings")}
-                className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${
-                  activeTab === "bookings"
+                className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${activeTab === "bookings"
                     ? "text-white bg-[#cc922f]"
                     : "text-gray-600 hover:text-[#cc922f] hover:bg-gray-50"
-                }`}
+                  }`}
               >
                 <FaCalendarCheck size={20} className="mr-3" />
                 {t("tabs.bookings", { default: "Bookings" })}
@@ -224,11 +242,10 @@ function ProfilePage() {
 
               <button
                 onClick={() => showTab("favourite-listings")}
-                className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${
-                  activeTab === "favourite-listings"
+                className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${activeTab === "favourite-listings"
                     ? "text-white bg-[#cc922f]"
                     : "text-gray-600 hover:text-[#cc922f] hover:bg-gray-50"
-                }`}
+                  }`}
               >
                 <MdOutlineFavorite size={20} className="mr-3" />
                 {t("tabs.favouriteListings")}
@@ -236,11 +253,10 @@ function ProfilePage() {
 
               <button
                 onClick={() => showTab("messages")}
-                className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${
-                  activeTab === "messages"
+                className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${activeTab === "messages"
                     ? "text-white bg-[#cc922f]"
                     : "text-gray-600 hover:text-[#cc922f] hover:bg-gray-50"
-                }`}
+                  }`}
               >
                 <LuMessageSquareText size={20} className="mr-3" />
                 <span className="relative">
@@ -256,11 +272,10 @@ function ProfilePage() {
               {!user?.serviceType === null && (
                 <button
                   onClick={() => showTab("reviews")}
-                  className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${
-                    activeTab === "reviews"
+                  className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${activeTab === "reviews"
                       ? "text-white bg-[#cc922f]"
                       : "text-gray-600 hover:text-[#cc922f] hover:bg-gray-50"
-                  }`}
+                    }`}
                 >
                   <MdStarBorderPurple500 size={20} className="mr-3" />
                   {t("tabs.reviews")}
@@ -273,6 +288,7 @@ function ProfilePage() {
           <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100">
             {activeTab === "profile" && <ProfileTab user={user} />}
             {activeTab === "my-listings" && <Mylistings />}
+            {activeTab === "promotions" && <PromotionsTab />}
             {activeTab === "manage-bookings" && <ManageBookings />}
             {activeTab === "calendar" && <ProviderCalendar />}
             {activeTab === "bookings" && <MyBookings />}
@@ -287,6 +303,12 @@ function ProfilePage() {
           </div>
         </div>
       </div>
+
+      <BuyStarsModal
+        isOpen={openStarModal}
+        onClose={() => setOpenStarModal(false)}
+        currentUserId={String(user?.id ?? '')}
+      />
     </div>
   );
 }

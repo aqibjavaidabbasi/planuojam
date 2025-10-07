@@ -273,6 +273,22 @@
         "errorDefault": "Nepavyko išsiųsti el. laiško. Bandykite dar kartą."
       }
     },
+    "BuyStars": {
+      "title": "Pasirinkite žvaigždučių paketą",
+      "selectPackage": "Pasirinkite paketą",
+      "buyCta": "Pirkti {stars} žvaigždes - ${price}",
+      "starsLabel": "{count} žvaigždės",
+      "noPackages": "Paketo nėra prieinami",
+      "paymentErrorTitle": "Mokėjimo klaida",
+      "paymentClientSecretMissing": "Nepavyko pradėti mokėjimo. Bandykite dar kartą.",
+      "cardInputNotReady": "Kortelės laukas neparuoštas.",
+      "paymentFailedTitle": "Mokėjimas nepavyko",
+      "paymentFailed": "Mokėjimas nepavyko",
+      "paymentSuccessTitle": "Mokėjimas sėkmingas",
+      "paymentSuccessMessage": "Mokėjimas sėkmingai atliktas už {stars} žvaigždes už ${amount}",
+      "ok": "Gerai",
+      "processing": "apdorojimas"
+    },
     "LoginNavigate": {
       "title": "Prisijunkite, kad pamėgtumėte šį įrašą",
       "description": "Prisijungę galėsite išsaugoti šį įrašą į mėgstamus ir gauti pranešimus, kai jis bus pasiekiamas.",
@@ -594,6 +610,7 @@
   },
   "Profile": {
     "loginPrompt": "Norėdami peržiūrėti savo profilį, prisijunkite. Peradresuojama...",
+    "creditStars": "Kredito žvaigždės",
     "tabs": {
       "profile": "Profilis",
       "myListings": "Mano sąrašai",
@@ -602,7 +619,8 @@
       "reviews": "Apžvalgos",
       "bookings": "Užsakymai",
       "manageBookings": "Tvarkyti užsakymus",
-      "calendar": "Kalendorius"
+      "calendar": "Kalendorius",
+      "promotions": "Akcijos"
     },
     "ReviewsTab": {
       "title": "Atsiliepimai",
@@ -633,6 +651,21 @@
         "created": "Užblokuotas laikas pridėtas",
         "failed": "Nepavyko sukurti"
       }
+    },
+    "promotions": {
+      "title": "Akcijos",
+      "selectListing": "Pasirinkti įrašą",
+      "choose": "Pasirinkti...",
+      "starsToSpend": "Žvaigždutės išleidimui",
+      "starsPlaceholder": "pvz. 10",
+      "starsAvailable": "Prieinama",
+      "startDate": "Pradžios data",
+      "endDate": "Pabaigos data",
+      "maxClickPerDay": "Didžiausias paspaudimų skaičius per dieną",
+      "starsPerClick": "Žvaigždutės už paspaudimą",
+      "creating": "Kuriama...",
+      "create": "Sukurti akciją",
+      "created": "Akcija sėkmingai sukurta"
     },
     "ProfileTab": {
       "title": "Paskyros nustatymai",

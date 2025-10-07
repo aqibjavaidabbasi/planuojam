@@ -35,6 +35,8 @@ export interface User{
     id: number;
     documentId: string;
     serviceType: string | null;
+    totalStars?: number;
+    stripeCustomerId?: string;
 }
 
 export type StrapiSeo = {

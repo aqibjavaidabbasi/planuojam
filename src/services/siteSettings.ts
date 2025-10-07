@@ -14,6 +14,13 @@ export async function fetchSiteSettings() {
                     populate: '*'
                 }
             }
+        },
+        starPackages: {
+            populate: {
+                package: {
+                    populate: '*'
+                }
+            }
         }
     };
     const query = createQuery(populate);
