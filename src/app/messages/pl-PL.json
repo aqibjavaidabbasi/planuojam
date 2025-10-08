@@ -186,21 +186,6 @@
         "faqs": "FAQ"
       }
     },
-    "promotions": {
-      "title": "Promocje",
-      "selectListing": "Wybierz ogłoszenie",
-      "choose": "Wybierz...",
-      "starsToSpend": "Gwiazdki do wydania",
-      "starsPlaceholder": "np. 10",
-      "starsAvailable": "Dostępne",
-      "startDate": "Data rozpoczęcia",
-      "endDate": "Data zakończenia",
-      "maxClickPerDay": "Maks. kliknięć dziennie",
-      "starsPerClick": "Gwiazdki za kliknięcie",
-      "creating": "Tworzenie...",
-      "create": "Utwórz promocję",
-      "created": "Promocja została utworzona"
-    },
     "Details": {
       "overview": "Przegląd",
       "rating": "Ocena",
@@ -293,6 +278,46 @@
           "minLength": "Hasło musi mieć co najmniej 8 znaków",
           "noMatch": "Hasła nie są zgodne"
         }
+      }
+    },
+    "promotions": {
+      "title": "Promocje",
+      "selectListing": "Wybierz ogłoszenie",
+      "choose": "Wybierz...",
+      "starsToSpend": "Gwiazdki do wydania",
+      "starsPlaceholder": "np. 10",
+      "starsAvailable": "Dostępne",
+      "startDate": "Data rozpoczęcia",
+      "endDate": "Data zakończenia",
+      "maxClickPerDay": "Maks. kliknięć dziennie",
+      "starsPerClick": "Gwiazdki za kliknięcie",
+      "creating": "Tworzenie...",
+      "create": "Utwórz promocję",
+      "created": "Promocja została utworzona",
+      "failed": "Nie udało się utworzyć promocji",
+      "cancel": "Anulować",
+      "loading": "Załadunek...",
+      "none": "Brak promocji.",
+      "maxStarsLimit": "Maksymalny limit gwiazdek",
+      "updateTitle": "Zaktualizuj promocję",
+      "updating": "Aktualizowanie...",
+      "updated": "Promocja zaktualizowana",
+      "update": "Zaktualizuj",
+      "endNow": "Zakończ teraz",
+      "errors": {
+        "required": "To pole jest wymagane",
+        "inSufficientStars": "Niewystarczająca liczba gwiazdek"
+      },
+      "card": {
+        "successLabel": "Sukces",
+        "defaultTitle": "Kampania Złotej Gwiazdy",
+        "start": "Start",
+        "end": "Koniec",
+        "maxDailyClicks": "Maks. kliknięć dziennie",
+        "starsPerClick": "Gwiazdki za kliknięcie",
+        "starsLimit": "Limit gwiazdek",
+        "progressEarned": "{earned} / {limit} zdobytych gwiazdek",
+        "progressPercentOfGoal": "{success}% celu"
       }
     },
     "FavouriteListings": {

@@ -306,7 +306,32 @@
       "starsPerClick": "Stars Per Click",
       "creating": "Creating...",
       "create": "Create Promotion",
-      "created": "Promotion created successfully"
+      "created": "Promotion created successfully",
+      "failed": "Failed to create promotion",
+      "cancel": "Cancel",
+      "loading": "Loading...",
+      "none": "No promotions yet.",
+      "maxStarsLimit": "Max Stars Limit",
+      "updateTitle": "Update Promotion",
+      "updating": "Updating...",
+      "updated": "Promotion updated",
+      "update": "Update",
+      "endNow": "End now",
+      "errors": {
+        "required": "This field is required",
+        "inSufficientStars": "Insufficient stars"
+      },
+      "card": {
+        "successLabel": "Success",
+        "defaultTitle": "Gold Star Campaign",
+        "start": "Start",
+        "end": "End",
+        "maxDailyClicks": "Max Daily Clicks",
+        "starsPerClick": "Stars per Click",
+        "starsLimit": "Stars Limit",
+        "progressEarned": "{earned} / {limit} stars earned",
+        "progressPercentOfGoal": "{success}% of goal"
+      }
     },
     "FavouriteListings": {
       "title": "Favourite Listings",

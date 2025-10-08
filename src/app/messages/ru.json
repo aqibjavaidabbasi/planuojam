@@ -370,7 +370,32 @@
       "starsPerClick": "Звёзд за клик",
       "creating": "Создание...",
       "create": "Создать промо",
-      "created": "Промо успешно создано"
+      "created": "Промо успешно создано",
+      "failed": "Не удалось создать акцию",
+      "cancel": "Отмена",
+      "loading": "Загрузка...",
+      "none": "Пока нет акций.",
+      "maxStarsLimit": "Максимальный лимит звезд",
+      "updateTitle": "Обновить промо",
+      "updating": "Обновляется...",
+      "updated": "Промо обновлено",
+      "update": "Обновить",
+      "endNow": "Завершить сейчас",
+      "errors": {
+        "required": "Это поле обязательно к заполнению",
+        "inSufficientStars": "Недостаточно звезд"
+      },
+      "card": {
+        "successLabel": "Успех",
+        "defaultTitle": "Кампания Золотых Звёзд",
+        "start": "Начало",
+        "end": "Конец",
+        "maxDailyClicks": "Макс. кликов в день",
+        "starsPerClick": "Звёзд за клик",
+        "starsLimit": "Лимит звёзд",
+        "progressEarned": "{earned} / {limit} заработанных звёзд",
+        "progressPercentOfGoal": "{success}% от цели"
+      }
     },
     "FavouriteListings": {
       "title": "Избранные объявления",

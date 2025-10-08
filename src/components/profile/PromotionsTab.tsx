@@ -1,155 +1,152 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAppSelector } from "@/store/hooks";
 import { fetchListingsByUser } from "@/services/listing";
-import Button from "@/components/custom/Button";
-import Input from "@/components/custom/Input";
-import { useTranslations } from "next-intl";
-import { createPromotionWithStars } from "@/services/promotion";
+import { useLocale, useTranslations } from "next-intl";
+import CreatePromotionForm from "../forms/CreatePromotionForm";
+import Button from "../custom/Button";
+import { FaPlus } from "react-icons/fa";
+import NoDataCard from "@/components/custom/NoDataCard";
+import { fetchPromotionsByUser } from "@/services/promotion";
+import { RootState } from "@/store";
+import PromotionCard from "@/components/promotions/PromotionCard";
 
-interface UserListingOption {
+export interface UserListingOption {
   id: string; // listing documentId for relations
   title: string;
+  locale?: string;
+  localizations?: UserListingOption[]
 }
 
 export default function PromotionsTab() {
   const t = useTranslations("Profile");
-  const user = useAppSelector((s) => s.auth.user);
+  const user = useAppSelector((s: RootState) => s.auth.user);
   const [listings, setListings] = useState<UserListingOption[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedListingId, setSelectedListingId] = useState<string>("");
-  const [starsUsed, setStarsUsed] = useState<string>("");
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
-  const [maxClickPerDay, setMaxClickPerDay] = useState<string>("");
-  const [starsPerClick, setStarsPerClick] = useState<string>("");
-  const [message, setMessage] = useState<string>("");
+  const [openPromotionsModal, setOpenPromotionsModal] = useState(false);
+  const [promotions, setPromotions] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const canCreate = useMemo(() => {
-    const stars = Number(starsUsed || 0);
-    return !!selectedListingId && stars > 0 && (user?.totalStars ?? 0) >= stars;
-  }, [selectedListingId, starsUsed, user?.totalStars]);
+  const locale = useLocale();
 
+  // Load user's listings for the creation form
   useEffect(() => {
-    const load = async () => {
+    const loadListings = async () => {
       if (!user?.documentId) return;
-      try {
-        const data = await fetchListingsByUser(String(user.documentId), "all");
-        const opts = data.map((l) => ({ id: String(l.documentId), title: l.title ?? l.slug ?? String(l.id) }));
+      const data = await fetchListingsByUser(String(user.documentId), "published", 'en');
+      if (locale === 'en') {
+        const opts = data.map((l) => ({
+          id: String(l.documentId),
+          title: l.title ?? l.slug ?? String(l.id),
+          locale: l.locale,
+          localizations: l.localizations?.map((loc) => ({
+            id: String(loc.documentId),
+            title: loc.title ?? loc.slug ?? String(loc.id),
+            locale: loc.locale,
+          })),
+        }));
         setListings(opts);
-      } catch (e) {
-        console.warn(e);
+      } else {
+        const entry = data.map(l => l.localizations.find((l) => l.locale === locale));
+        const opts = entry?.map((l) => ({
+          id: String(l?.documentId),
+          title: l?.title ?? l?.slug ?? String(l?.id),
+          locale: l?.locale,
+          localizations: l?.localizations?.map((loc) => ({
+            id: String(loc.documentId),
+            title: loc.title ?? loc.slug ?? String(loc.id),
+            locale: loc.locale,
+          })),
+        })) as UserListingOption[];
+        setListings(opts);
       }
     };
-    load();
-  }, [user?.documentId]);
+    loadListings();
+  }, [user?.documentId, locale]);
 
-  const handleCreate = async () => {
-    setMessage("");
+  // Load user's promotions
+  const loadPromotions = async () => {
+    if (!user?.documentId) return;
+    setLoading(true);
     try {
-      setLoading(true);
-      const stars = Number(starsUsed);
-      const res = await createPromotionWithStars({
-        listingDocumentId: selectedListingId,
-        starsUsed: stars,
-        startDate: startDate || undefined,
-        endDate: endDate || undefined,
-        maxClickPerDay: maxClickPerDay ? Number(maxClickPerDay) : undefined,
-        starsPerClick: starsPerClick ? Number(starsPerClick) : undefined,
-        currentUserId: Number(user?.id),
-        currentUserStars: Number(user?.totalStars ?? 0),
-      });
-      setMessage(t("promotions.created", { default: "Promotion created successfully" }));
-      // optimistic update of user stars if present in response
-      if (res?.data?.totalStars != null) {
-        // Do nothing here; global state update would typically happen via a separate action.
-      }
-      setStarsUsed("");
-      setSelectedListingId("");
-      setStartDate("");
-      setEndDate("");
-      setMaxClickPerDay("");
-      setStarsPerClick("");
-    } catch (e: any) {
-      setMessage(e?.message || "Failed to create promotion");
+      const data = await fetchPromotionsByUser(String(user.documentId));
+      setPromotions(Array.isArray(data) ? data : []);
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    loadPromotions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.documentId, locale]);
+
+  // Compute which listings are available (no active promotion)
+  const availableListings = React.useMemo(() => {
+    if (!Array.isArray(listings) || listings.length === 0) return [] as UserListingOption[];
+
+    const now = new Date();
+    const activeByListingDocId = new Set<string>();
+
+    for (const p of promotions) {
+      const status = String(p?.promotionStatus || '').toLowerCase();
+      const endDateStr = p?.endDate as string | undefined;
+      const listingDocId = String(p?.listing?.documentId || p?.listingDocumentId || '');
+      if (!listingDocId) continue;
+
+      const hasEnded = (() => {
+        if (!endDateStr) return false; // no end date means potentially ongoing
+        const end = new Date(endDateStr);
+        return isFinite(end.getTime()) && end < now;
+      })();
+
+      const isCompleted = status === 'completed' || status === 'ended' || status === 'finished';
+      const isActive = !isCompleted && !hasEnded;
+      if (isActive) activeByListingDocId.add(listingDocId);
+    }
+
+    return listings.filter(l => !activeByListingDocId.has(String(l.id)));
+  }, [listings, promotions]);
+
   return (
     <div className="p-4 sm:p-6">
-      <h2 className="text-xl font-semibold mb-4">{t("promotions.title", { default: "Promotions" })}</h2>
-      <div className="grid gap-4 max-w-xl">
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            {t("promotions.selectListing", { default: "Select Listing" })}
-          </label>
-          <select
-            className="w-full border rounded-lg p-2"
-            value={selectedListingId}
-            onChange={(e) => setSelectedListingId(e.target.value)}
-          >
-            <option value="">{t("promotions.choose", { default: "Choose..." })}</option>
-            {listings.map((l) => (
-              <option key={l.id} value={String(l.id)}>
-                {l.title}
-              </option>
+      <div className="flex items-center justify-between gap-2.5">
+        <h2 className="text-xl font-semibold">{t("promotions.title")}</h2>
+        <Button style="secondary" onClick={() => setOpenPromotionsModal(true)}>
+          <FaPlus />
+        </Button>
+      </div>
+
+      {/* Promotions content */}
+      <div className="mt-6">
+        {loading && <p>{t("promotions.loading")}</p>}
+        {!loading && promotions.length === 0 && (
+          <NoDataCard>{t("promotions.none")}</NoDataCard>
+        )}
+        {/* Placeholder for promotions list when available */}
+        {!loading && promotions.length > 0 && (
+          <div className="flex flex-col gap-4">
+            {promotions.map((p) => (
+              <PromotionCard key={p.documentId || p.id} promotion={p} onUpdated={loadPromotions} />
             ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            {t("promotions.starsToSpend", { default: "Stars to spend" })}
-          </label>
-          <Input
-            type="number"
-            min={1}
-            value={starsUsed}
-            onChange={(e: any) => setStarsUsed(e.target.value)}
-            placeholder={t("promotions.starsPlaceholder", { default: "e.g. 10" })}
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            {t("promotions.starsAvailable", { default: "Available" })}: {user?.totalStars ?? 0}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">{t("promotions.startDate", { default: "Start Date" })}</label>
-            <Input type="date" value={startDate} onChange={(e: any) => setStartDate(e.target.value)} />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">{t("promotions.endDate", { default: "End Date" })}</label>
-            <Input type="date" value={endDate} onChange={(e: any) => setEndDate(e.target.value)} />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">{t("promotions.maxClickPerDay", { default: "Max Clicks Per Day" })}</label>
-            <Input type="number" min={1} value={maxClickPerDay} onChange={(e: any) => setMaxClickPerDay(e.target.value)} placeholder="10" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">{t("promotions.starsPerClick", { default: "Stars Per Click" })}</label>
-            <Input type="number" min={1} value={starsPerClick} onChange={(e: any) => setStarsPerClick(e.target.value)} placeholder="1" />
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button style="primary" disabled={!canCreate || loading} onClick={handleCreate}>
-            {loading ? t("promotions.creating", { default: "Creating..." }) : t("promotions.create", { default: "Create Promotion" })}
-          </Button>
-        </div>
-
-        {message && (
-          <div className={`text-sm mt-2 ${message.toLowerCase().includes('success') ? 'text-green-700' : 'text-red-700'}`}>
-            {message}
           </div>
         )}
       </div>
+
+      <CreatePromotionForm
+        isOpen={openPromotionsModal}
+        onClose={() => setOpenPromotionsModal(false)}
+        listings={availableListings}
+        userId={user?.id}
+        userStars={user?.totalStars ?? 0}
+        userDocumentId={user?.documentId}
+        onCreated={() => {
+          setOpenPromotionsModal(false);
+          // Refresh promotions after creation
+          loadPromotions();
+        }}
+      />
     </div>
   );
 }
+

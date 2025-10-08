@@ -665,7 +665,32 @@
       "starsPerClick": "Žvaigždutės už paspaudimą",
       "creating": "Kuriama...",
       "create": "Sukurti akciją",
-      "created": "Akcija sėkmingai sukurta"
+      "created": "Akcija sėkmingai sukurta",
+      "failed": "Nepavyko sukurti reklamos",
+      "cancel": "Atšaukti",
+      "loading": "Įkeliama...",
+      "none": "Dar nėra jokių akcijų.",
+      "maxStarsLimit": "Maksimalus žvaigždžių limitas",
+      "updateTitle": "Atnaujinti akciją",
+      "updating": "Atnaujinama...",
+      "updated": "Akcija atnaujinta",
+      "update": "Atnaujinti",
+      "endNow": "Baigti dabar",
+      "errors": {
+        "required": "Šis laukas yra būtinas",
+        "inSufficientStars": "Nepakankamai žvaigždžių"
+      },
+      "card": {
+        "successLabel": "Sėkmė",
+        "defaultTitle": "Auksinių žvaigždžių kampanija",
+        "start": "Pradžia",
+        "end": "Pabaiga",
+        "maxDailyClicks": "Maks. paspaudimų per dieną",
+        "starsPerClick": "Žvaigždės už paspaudimą",
+        "starsLimit": "Žvaigždžių limitas",
+        "progressEarned": "{earned} / {limit} uždirbtų žvaigždžių",
+        "progressPercentOfGoal": "{success}% tikslo"
+      }
     },
     "ProfileTab": {
       "title": "Paskyros nustatymai",

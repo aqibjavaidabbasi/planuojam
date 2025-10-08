@@ -109,3 +109,10 @@ html, body {
       opacity: 1;
   }
 }
+
+/* Gradient border for promotion cards (Design 2) */
+.gradient-border {
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #cc922f, #e6a940) border-box;
+  border: 2px solid transparent;
+}

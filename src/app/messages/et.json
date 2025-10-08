@@ -237,7 +237,8 @@
       "reviews": "Arvustused",
       "bookings": "Broneeringud",
       "manageBookings": "Halda broneeringuid",
-      "calendar": "Kalender"
+      "calendar": "Kalender",
+      "promotions": "Kampaaniad"
     },
     "ProfileTab": {
       "title": "Profiili seaded",
@@ -281,19 +282,43 @@
       }
     },
     "promotions": {
-      "title": "Promotions",
-      "selectListing": "Select Listing",
-      "choose": "Choose...",
-      "starsToSpend": "Stars to spend",
-      "starsPlaceholder": "e.g. 10",
-      "starsAvailable": "Available",
-      "startDate": "Start Date",
-      "endDate": "End Date",
-      "maxClickPerDay": "Max Clicks Per Day",
-      "starsPerClick": "Stars Per Click",
-      "creating": "Creating...",
-      "create": "Create Promotion",
-      "created": "Promotion created successfully"
+      "title": "Kampaaniad",
+      "selectListing": "Valige loend",
+      "starsToSpend": "Tähed, mida kulutada",
+      "starsPlaceholder": "nt 10",
+      "starsAvailable": "Saadaval",
+      "startDate": "Alguskuupäev",
+      "endDate": "Lõppkuupäev",
+      "maxClickPerDay": "Maksimaalne klikkide arv päevas",
+      "starsPerClick": "Tärni klõpsu kohta",
+      "creating": "Loomine...",
+      "create": "Loo reklaam",
+      "created": "Reklaam on edukalt loodud",
+      "failed": "Pakkumise loomine ebaõnnestus",
+      "cancel": "Anulować",
+      "loading": "Laadimine...",
+      "none": "Pakkumisi veel pole.",
+      "maxStarsLimit": "Maksimaalne tähtede limiit",
+      "updateTitle": "Uuenda promotsiooni",
+      "updating": "Uuendatakse...",
+      "updated": "Reklaam uuendatud",
+      "update": "Uuenda",
+      "endNow": "Lõpeta kohe",
+      "errors": {
+        "required": "See väli on kohustuslik",
+        "inSufficientStars": "Ebapiisavalt tähti"
+      },
+      "card": {
+        "successLabel": "Edu",
+        "defaultTitle": "Kuldse tähe kampaania",
+        "start": "Algus",
+        "end": "Lõpp",
+        "maxDailyClicks": "Maks. klikke päevas",
+        "starsPerClick": "Tärni kliki kohta",
+        "starsLimit": "Tähtede limiit",
+        "progressEarned": "{earned} / {limit} teenitud tähte",
+        "progressPercentOfGoal": "{success}% eesmärgist"
+      }
     },
     "FavouriteListings": {
       "title": "Lemmikkuulutused",
