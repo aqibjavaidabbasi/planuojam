@@ -323,7 +323,7 @@
       },
       "card": {
         "successLabel": "Success",
-        "defaultTitle": "Gold Star Campaign",
+        "starsUsed": "Stars Used",
         "start": "Start",
         "end": "End",
         "maxDailyClicks": "Max Daily Clicks",

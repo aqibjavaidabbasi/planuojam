@@ -682,7 +682,7 @@
       },
       "card": {
         "successLabel": "Sėkmė",
-        "defaultTitle": "Auksinių žvaigždžių kampanija",
+        "starsUsed": "Naudotos žvaigždės",
         "start": "Pradžia",
         "end": "Pabaiga",
         "maxDailyClicks": "Maks. paspaudimų per dieną",

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -25,8 +26,11 @@ import { useTranslations } from "next-intl";
 import { fetchListingBySlug } from "@/services/listing";
 import MapboxMap, { Location as MapLocation } from "@/components/global/MapboxMap";
 import geocodeLocations from "@/utils/mapboxLocation";
+import Button from "@/components/custom/Button";
+import { TbArrowBackUp } from "react-icons/tb";
 
 export default function ListingDetailsPage() {
+  const router = useRouter();
   const [listing, setListing] = useState<ListingItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +49,7 @@ export default function ListingDetailsPage() {
   useEffect(() => {
     async function loadListing() {
       try {
+        //use en for fetching no matter which locale
         const res = await fetchListingBySlug(String(slug), 'en');
         setListing(res);
       } catch (err) {
@@ -157,7 +162,10 @@ export default function ListingDetailsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background py-6 md:py-8 lg:py-12 px-4 sm:px-6">
+    <div className="min-h-screen bg-background py-6 md:py-8 px-4 sm:px-6">
+      <Button style="ghost" extraStyles="!my-4" onClick={() => router.back()}>
+        <TbArrowBackUp size={20} />
+      </Button>
       <div className="max-w-[1700px] mx-auto">
 
         {/* gallery */}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react'
+import React from 'react'
 import Modal from '../custom/Modal'
 import Button from '../custom/Button';
 import { useTranslations } from 'next-intl';
@@ -14,7 +14,6 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHEABLE_KEY
 function BuyStarsModal({ isOpen, onClose, currentUserId }: { isOpen: boolean; onClose: () => void; currentUserId: string }) {
   const t = useTranslations('Modals.BuyStars')
   const [selectedIndex, setSelectedIndex] = React.useState<number | null>(null);
-  const [pending, setPending] = useState(false)
   const { siteSettings } = useSiteSettings();
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
@@ -27,12 +26,11 @@ function BuyStarsModal({ isOpen, onClose, currentUserId }: { isOpen: boolean; on
     const elements = useElements();
     
     const proceedToCheckout = async () => {
-      setPending(true);
       if (!selected || !stripe || !elements) return;
 
       const amount = Number(selected.amount);
       const currency = siteSettings?.currency?.shortCode ?? 'usd';
-      const packageId = (selected as any)?.id ?? (selectedIndex !== null ? String(selectedIndex) : undefined);
+      const packageId = selected?.id ?? (selectedIndex !== null ? String(selectedIndex) : undefined);
 
       const response = await fetch('/api/create-payment-intent', {
         method: 'POST',
@@ -88,8 +86,6 @@ function BuyStarsModal({ isOpen, onClose, currentUserId }: { isOpen: boolean; on
           }),
           type: 'success',
         });
-
-        setPending(false);
     };
 
     return (

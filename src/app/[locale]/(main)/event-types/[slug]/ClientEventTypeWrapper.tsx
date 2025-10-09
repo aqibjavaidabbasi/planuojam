@@ -6,7 +6,7 @@ import Button from "@/components/custom/Button";
 import Heading from "@/components/custom/heading";
 import Loader from "@/components/custom/Loader";
 import { useEventTypes } from "@/context/EventTypesContext";
-import { fetchListingsPerEvents } from "@/services/common";
+import { fetchPromotedListingsPerEvents } from "@/services/listing";
 import { fetchPageById } from "@/services/pagesApi";
 import {
   DynamicBlocks,
@@ -40,8 +40,8 @@ function ClientEventTypeWrapper() {
         const pageRes = await fetchPageById(eventType.page.documentId, locale);
         setEventBlocks(pageRes.blocks);
 
-        // Fetch listings
-        const listingsRes = await fetchListingsPerEvents(
+        // Fetch listings (promoted-first)
+        const listingsRes = await fetchPromotedListingsPerEvents(
           eventType.documentId,
           locale
         );

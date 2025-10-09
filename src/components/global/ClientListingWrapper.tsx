@@ -5,7 +5,7 @@ import ListingCard from "@/components/Dynamic/ListingCard";
 import FiltersAndMap from "@/components/global/FiltersAndMap";
 import Loader from "@/components/custom/Loader";
 import { useEventTypes } from "@/context/EventTypesContext";
-import { fetchChildCategories, fetchListings } from "@/services/common";
+import { fetchChildCategories } from "@/services/common";
 import { ListingItem, Venue } from "@/types/pagesTypes";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -13,6 +13,7 @@ import { Location } from "@/components/global/MapboxMap";
 import { useLocale, useTranslations } from "next-intl";
 import geocodeLocations from "@/utils/mapboxLocation";
 import { useParentCategories } from "@/context/ParentCategoriesContext";
+import { fetchSortedListings } from "@/services/listing";
 
 export type ListingWrapperProps = {
   service: string;
@@ -58,9 +59,9 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
 
   const fetcher = useCallback(
     async (appliedFilters: Record<string, unknown>) => {
-      // Delegate to service function filtered by parent slug and locale
-      return await fetchListings(
-        service as "vendor" | "venue",
+      // Use new promoted-first endpoint
+      return await fetchSortedListings(
+        service as 'vendor' | 'venue',
         appliedFilters,
         locale
       );
@@ -118,7 +119,7 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
           };
         }
         try {
-          const res = fetcher ? await fetcher(filters) : await fetchListings(service as 'vendor' | 'venue', filters,locale);
+          const res = await fetcher(filters);
           setList(res);
         } catch (err) {
           console.error(err);

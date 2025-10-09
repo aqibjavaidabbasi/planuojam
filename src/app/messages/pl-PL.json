@@ -310,7 +310,7 @@
       },
       "card": {
         "successLabel": "Sukces",
-        "defaultTitle": "Kampania Złotej Gwiazdy",
+        "starsUsed": "Użyte gwiazdy",
         "start": "Start",
         "end": "Koniec",
         "maxDailyClicks": "Maks. kliknięć dziennie",

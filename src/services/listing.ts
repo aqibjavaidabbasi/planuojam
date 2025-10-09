@@ -3,16 +3,47 @@ import { createQuery, deleteAPI, fetchAPI, postAPIWithToken, putAPI } from "./ap
 import type { ListingItem } from "@/types/pagesTypes";
 
 export async function createListing(data: Record<string, unknown>, locale?: string) {
-    const headers = locale
-        ? {
-            'X-Strapi-Locale': locale,
-            'Content-Language': locale,
-            'Accept-Language': locale,
-          }
-        : undefined;
+    const headers = locale ? {
+        'X-Strapi-Locale': locale,
+        'Content-Language': locale,
+        'Accept-Language': locale,
+      } : undefined;
     const query = locale ? `locale=${encodeURIComponent(locale)}` : undefined;
+
     const res = await postAPIWithToken("listings", data, { headers }, query);
     return res;
+}
+
+// Promoted-first listings filtered by event type documentId
+export async function fetchPromotedListingsPerEvents(eventTypeDocId: string, locale?: string) {
+    const populate = LISTING_ITEM_POP_STRUCTURE;
+    const baseFilters = {
+        filters: {
+            eventTypes: {
+                documentId: eventTypeDocId
+            },
+        },
+    } as Record<string, unknown>;
+
+    const query = createQuery(populate, locale ? { locale } : undefined);
+    const data = await fetchAPI('listings/promoted', query, baseFilters);
+    return Array.isArray(data) ? (data as ListingItem[]) : [];
+}
+
+// Promoted-first hot deal listings
+export async function fetchPromotedHotDealListings(locale?: string) {
+    const populate = LISTING_ITEM_POP_STRUCTURE;
+    const baseFilters = {
+        filters: {
+            hotDeal: {
+                enableHotDeal: true,
+            },
+        },
+    } as Record<string, unknown>;
+
+    const query = createQuery(populate, locale ? { locale } : undefined);
+    const data = await fetchAPI('listings/promoted', query, baseFilters);
+    return Array.isArray(data) ? (data as ListingItem[]) : [];
 }
 
 export async function updateListing(
@@ -84,5 +115,21 @@ export async function fetchListingsByUser(documentId: string, status?: string, l
     // Final fallback: no locale constraint
     const queryBase = createQuery(populate);
     const dataBase = await fetchAPI('listings', queryBase, baseFilters);
+    return Array.isArray(dataBase) ? (dataBase as ListingItem[]) : [];
+}
+
+
+export async function fetchSortedListings(type: 'venue' | 'vendor', appliedFilters = {}, locale?: string){
+    const populate = LISTING_ITEM_POP_STRUCTURE;
+    const baseFilters: Record<string, unknown> = {
+        filters: {
+            listingStatus: { $eq: "published" },
+            type: type,
+            ...appliedFilters
+        },
+    };
+
+    const queryBase = createQuery(populate, {locale});
+    const dataBase = await fetchAPI('listings/promoted', queryBase, baseFilters);
     return Array.isArray(dataBase) ? (dataBase as ListingItem[]) : [];
 }

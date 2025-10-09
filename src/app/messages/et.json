@@ -310,7 +310,7 @@
       },
       "card": {
         "successLabel": "Edu",
-        "defaultTitle": "Kuldse tähe kampaania",
+        "starsUsed": "Kasutatud tähed",
         "start": "Algus",
         "end": "Lõpp",
         "maxDailyClicks": "Maks. klikke päevas",

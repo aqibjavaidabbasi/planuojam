@@ -387,7 +387,7 @@
       },
       "card": {
         "successLabel": "Успех",
-        "defaultTitle": "Кампания Золотых Звёзд",
+        "starsUsed": "Использованные звёзды",
         "start": "Начало",
         "end": "Конец",
         "maxDailyClicks": "Макс. кликов в день",

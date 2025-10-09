@@ -4,7 +4,7 @@ import NoDataCard from '@/components/custom/NoDataCard'
 import ListingCard from '@/components/Dynamic/ListingCard'
 import HotDealFilter from '@/components/global/HotDealFilter'
 import Heading from '@/components/custom/heading'
-import { fetchHotDealListings } from '@/services/common'
+import { fetchPromotedHotDealListings } from '@/services/listing'
 import { ListingItem, TitleDescriptionBlock } from '@/types/pagesTypes'
 import React, { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
@@ -15,7 +15,7 @@ function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: T
 
     useEffect(function(){
         async function fetchListings(){
-            const res = await fetchHotDealListings();
+            const res = await fetchPromotedHotDealListings();
             // filter to only currently active hot deals
             const now = new Date();
             const active = (res || []).filter((l: ListingItem) => {

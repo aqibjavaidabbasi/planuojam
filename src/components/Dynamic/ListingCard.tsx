@@ -19,6 +19,7 @@ import { addToLikedListing, removeFromLikedListing } from '@/store/thunks/likedL
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
+import { registerPromotionClick } from '@/services/promotion'
 
 function ListingCard({ item }: { item: ListingItem }) {
   const router = useRouter();
@@ -225,7 +226,15 @@ function ListingCard({ item }: { item: ListingItem }) {
               {t('edit')} <IoNavigateOutline />
             </Button>
           ) : (
-            <Button style="secondary" size="small" onClick={() => router.push(getListingItemUrl() as string)}>
+            <Button
+              style="secondary"
+              size="small"
+              onClick={async () => {
+                // Fire-and-forget promotion click registration; backend will no-op if no active promo
+                try { await registerPromotionClick(item.documentId, user?.id); } catch {}
+                // router.push(getListingItemUrl() as string);
+              }}
+            >
               {t('view')} <IoNavigateOutline />
             </Button>
           )}

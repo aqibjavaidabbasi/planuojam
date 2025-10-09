@@ -31,8 +31,13 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ clientSecret: paymentIntent.client_secret });
-  } catch (error: any) {
-    console.error('Stripe Error:', error?.message || error);
-    return NextResponse.json({ error: error?.message || 'Server error' }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Stripe Error:', error.message);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }else {
+      console.error('Stripe Error:', error);
+      return NextResponse.json({ error: error || 'Server error' }, { status: 500 });
+    }
   }
 }

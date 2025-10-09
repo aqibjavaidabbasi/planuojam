@@ -8,6 +8,10 @@ import Button from "@/components/custom/Button";
 import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import { updatePromotion } from "@/services/promotion";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { updateUserData as updateUserDataService } from "@/services/auth";
+import { setUser } from "@/store/slices/authSlice";
+import { createStarUsageLog } from "@/services/promotion";
 
 export interface UpdatePromotionFormValues {
   startDate?: string;
@@ -15,14 +19,15 @@ export interface UpdatePromotionFormValues {
   maxClickPerDay?: number | null;
   starsPerClick?: number | null;
   maxStarsLimit?: number | null;
-  successPercentage?: number | null;
   promotionStatus?: string;
+  // Provided via initialValues for refund calculation when ending now
+  starsUsed?: number | null;
 }
 
 interface UpdatePromotionFormProps {
   isOpen: boolean;
   onClose: () => void;
-  promotionId: string | number;
+  promotionId: string;
   initialValues: UpdatePromotionFormValues;
   onUpdated?: () => void;
 }
@@ -35,6 +40,8 @@ const UpdatePromotionForm: React.FC<UpdatePromotionFormProps> = ({
   onUpdated,
 }) => {
   const t = useTranslations("Profile");
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((s) => s.auth.user);
 
   const {
     register,
@@ -48,8 +55,8 @@ const UpdatePromotionForm: React.FC<UpdatePromotionFormProps> = ({
       maxClickPerDay: initialValues.maxClickPerDay ?? undefined,
       starsPerClick: initialValues.starsPerClick ?? undefined,
       maxStarsLimit: initialValues.maxStarsLimit ?? undefined,
-      successPercentage: initialValues.successPercentage ?? undefined,
       promotionStatus: initialValues.promotionStatus ?? undefined,
+      starsUsed: initialValues.starsUsed ?? undefined,
       endNow: false,
     },
   });
@@ -62,7 +69,6 @@ const UpdatePromotionForm: React.FC<UpdatePromotionFormProps> = ({
         maxClickPerDay: values.maxClickPerDay ?? null,
         starsPerClick: values.starsPerClick ?? null,
         maxStarsLimit: values.maxStarsLimit ?? null,
-        successPercentage: values.successPercentage ?? null,
       };
 
       if (values.endNow) {
@@ -83,6 +89,32 @@ const UpdatePromotionForm: React.FC<UpdatePromotionFormProps> = ({
           error: (err) => (typeof err === "string" ? err : t(err?.message) || t("promotions.failed")),
         }
       );
+
+      // If ended now, refund unspent stars back to user (backend + redux)
+      if (values.endNow) {
+        const maxLimit = Number(initialValues.maxStarsLimit ?? 0);
+        const used = Number(initialValues.starsUsed ?? 0);
+        const refund = Math.max(0, maxLimit - used);
+        if (refund > 0 && currentUser?.id) {
+          const newStars = Math.max(0, Number(currentUser.totalStars ?? 0) + refund);
+          try {
+            await updateUserDataService(currentUser.id, { totalStars: newStars });
+            dispatch(setUser({ ...currentUser, totalStars: newStars }));
+            // Log refund in star-usage-log (non-blocking)
+            try {
+              await createStarUsageLog({
+                starsUsed: refund,
+                type: "refund",
+                promotionDocumentId: String(promotionId),
+              });
+            } catch (e) {
+              console.warn("Failed to create star-usage-log (refund)", e);
+            }
+          } catch (err) {
+            console.warn("Failed to refund stars on manual promotion end", err);
+          }
+        }
+      }
 
       onUpdated?.();
       reset();

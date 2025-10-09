@@ -77,13 +77,11 @@ const CreatePromotionForm: React.FC<CreatePromotionFormProps> = ({
       await toast.promise(
         createPromotionWithStars({
           listingDocumentId: values.listingDocumentId,
-          starsUsed: usedStars,
           startDate: values.startDate || undefined,
           endDate: values.endDate || undefined,
           maxClickPerDay: values.maxClickPerDay ? Number(values.maxClickPerDay) : undefined,
           starsPerClick: values.starsPerClick ? Number(values.starsPerClick) : undefined,
-          maxStarsLimit: values.maxStarsLimit ? Number(values.maxStarsLimit) : undefined,
-          successPercentage: values.successPercentage ? Number(values.successPercentage) : undefined,
+          maxStarsLimit: values.maxStarsLimit ?? Number(values.maxStarsLimit),
           userDocumentId: userDocumentId,
           currentUserId: userId ?? 0,
           currentUserStars: userStars,

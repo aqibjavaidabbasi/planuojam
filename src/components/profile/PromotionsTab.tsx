@@ -11,20 +11,15 @@ import NoDataCard from "@/components/custom/NoDataCard";
 import { fetchPromotionsByUser } from "@/services/promotion";
 import { RootState } from "@/store";
 import PromotionCard from "@/components/promotions/PromotionCard";
+import { Promotion, UserListingOption } from "@/types/promotion";
 
-export interface UserListingOption {
-  id: string; // listing documentId for relations
-  title: string;
-  locale?: string;
-  localizations?: UserListingOption[]
-}
 
 export default function PromotionsTab() {
   const t = useTranslations("Profile");
   const user = useAppSelector((s: RootState) => s.auth.user);
   const [listings, setListings] = useState<UserListingOption[]>([]);
   const [openPromotionsModal, setOpenPromotionsModal] = useState(false);
-  const [promotions, setPromotions] = useState<any[]>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   const locale = useLocale();
@@ -43,7 +38,9 @@ export default function PromotionsTab() {
             id: String(loc.documentId),
             title: loc.title ?? loc.slug ?? String(loc.id),
             locale: loc.locale,
+            documentId: l.documentId
           })),
+          documentId: l.documentId
         }));
         setListings(opts);
       } else {
@@ -56,7 +53,9 @@ export default function PromotionsTab() {
             id: String(loc.documentId),
             title: loc.title ?? loc.slug ?? String(loc.id),
             locale: loc.locale,
+            documentId: l.documentId
           })),
+          documentId: l?.documentId
         })) as UserListingOption[];
         setListings(opts);
       }
@@ -91,7 +90,7 @@ export default function PromotionsTab() {
     for (const p of promotions) {
       const status = String(p?.promotionStatus || '').toLowerCase();
       const endDateStr = p?.endDate as string | undefined;
-      const listingDocId = String(p?.listing?.documentId || p?.listingDocumentId || '');
+      const listingDocId = String(p?.listing?.documentId || '');
       if (!listingDocId) continue;
 
       const hasEnded = (() => {

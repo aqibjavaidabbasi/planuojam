@@ -23,8 +23,12 @@ export async function POST(req: NextRequest) {
       sig,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-  } catch (err: any) {
-    console.error("Webhook signature verification failed:", err.message);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error("Webhook signature verification failed:", err.message);
+      return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+    }
+    console.error("Webhook signature verification failed:", err);
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
@@ -48,7 +52,7 @@ export async function POST(req: NextRequest) {
               headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
             }
           );
-          const checkJson = await checkRes.json().catch(() => ({} as any));
+          const checkJson = await checkRes.json().catch(() => ({}));
           if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
             console.warn("Transaction already recorded, skipping create and user update.", intent.id);
             return NextResponse.json({ received: true });
@@ -82,7 +86,7 @@ export async function POST(req: NextRequest) {
           const userGet = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`, {
             headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
           });
-          const userData = await userGet.json().catch(() => ({} as any));
+          const userData = await userGet.json().catch(() => ({}));
           const currentStars = Number(userData?.totalStars ?? 0);
           const addStars = parseInt(starsBought || "0");
           const newTotal = currentStars + (isNaN(addStars) ? 0 : addStars);
@@ -100,6 +104,30 @@ export async function POST(req: NextRequest) {
           }),
           });
           await user.json().catch(() => ({}));
+
+          // Create a star-usage-log entry for crediting stars into the account
+          if (!isNaN(addStars) && addStars > 0) {
+            try {
+              await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/star-usage-logs`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+                },
+                body: JSON.stringify({
+                  data: {
+                    starsUsed: addStars,
+                    type: "credit",
+                    usedAt: new Date().toISOString(),
+                    users_permissions_user: userId,
+                    // Optional: listing / promotion left null for pure credit events
+                  },
+                }),
+              });
+            } catch (e) {
+              console.warn("Failed to create star-usage-log (credit)", e);
+            }
+          }
         } else {
           console.warn("No userId provided in PaymentIntent metadata; skipping star update.");
         }
@@ -119,7 +147,7 @@ export async function POST(req: NextRequest) {
               headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
             }
           );
-          const checkJson = await checkRes.json().catch(() => ({} as any));
+          const checkJson = await checkRes.json().catch(() => ({}));
           if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
             console.warn("Failed transaction already recorded, skipping create.", intent.id);
             return NextResponse.json({ received: true });
