@@ -209,6 +209,7 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId, wo
         </div>
       </div>
       <div className="w-full overflow-x-auto">
+        <div className="calendar-center">
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, multiMonthPlugin, interactionPlugin]}
           initialView={isMobile ? 'dayGridMonth' : 'dayGridMonth'}
@@ -234,6 +235,7 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId, wo
           }}
 
         />
+        </div>
       </div>
       {loading && (
         <div className="text-sm text-gray-500 mt-2">{t("loading", { default: "Loading calendar..." })}</div>

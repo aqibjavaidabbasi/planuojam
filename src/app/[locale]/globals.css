@@ -116,3 +116,23 @@ html, body {
               linear-gradient(135deg, #cc922f, #e6a940) border-box;
   border: 2px solid transparent;
 }
+
+/* Center FullCalendar toolbar title within calendar-center wrapper */
+.calendar-center .fc .fc-toolbar.fc-header-toolbar {
+  display: flex;
+  align-items: center;
+}
+.calendar-center .fc .fc-toolbar-chunk {
+  display: flex;
+  align-items: center;
+  flex: 1 1 0%;
+}
+.calendar-center .fc .fc-toolbar-chunk:nth-child(1) { justify-content: flex-start; }
+.calendar-center .fc .fc-toolbar-chunk:nth-child(2) { justify-content: center; }
+.calendar-center .fc .fc-toolbar-chunk:nth-child(3) { justify-content: flex-end; }
+
+/* Ensure the title itself is centered and not constrained */
+.calendar-center .fc .fc-toolbar-title {
+  text-align: center;
+  width: 100%;
+}

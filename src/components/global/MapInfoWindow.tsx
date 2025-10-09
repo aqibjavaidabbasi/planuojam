@@ -44,10 +44,10 @@ const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href }) => {
       {/* Content */}
       <div className="px-6 pb-5 grid grid-cols-2 md:grid-cols-1 gap-2">
         {/* Header: title and category badge (replaces price in v3) */}
-        <div className="flex items-start justify-between mb-2">
-          <h2 className="text-base font-semibold text-gray-800 leading-snug pr-2 truncate">
+          <h2 className="text-base col-span-2 font-semibold text-gray-800 leading-snug pr-2 truncate">
             {selectedLocation.name}
           </h2>
+        <div className="flex items-start justify-between mb-2">
           {selectedLocation?.category?.name && (
             <span className="shrink-0 rounded-full border border-gray-200 bg-white text-gray-700 text-[11px] px-2 py-1 leading-none">
               {selectedLocation.category.name}
@@ -56,7 +56,7 @@ const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href }) => {
         </div>
 
         {/* Location */}
-        <div className="text-gray-600 text-[13px] mb-3 flex items-center gap-1.5">
+        <div className="text-gray-600 text-[13px] mb-3 flex items-center gap-1.5 ">
           <span className="leading-none">📍</span>
           <span className="truncate" title={selectedLocation.address}>{selectedLocation.address}</span>
         </div>

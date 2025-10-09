@@ -232,7 +232,7 @@ function ListingCard({ item }: { item: ListingItem }) {
               onClick={async () => {
                 // Fire-and-forget promotion click registration; backend will no-op if no active promo
                 try { await registerPromotionClick(item.documentId, user?.id); } catch {}
-                // router.push(getListingItemUrl() as string);
+                router.push(getListingItemUrl() as string);
               }}
             >
               {t('view')} <IoNavigateOutline />

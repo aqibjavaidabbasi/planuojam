@@ -1,6 +1,6 @@
 "use client";
 import { Review } from "@/types/pagesTypes";
-import React, { useRef } from "react";
+import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -12,9 +12,6 @@ function ListingReviews({ reviews }: { reviews: Review[] }) {
   const approvedReviews = reviews.filter(
     (review: Review) => review.review.reviewStatus === "Approved"
   );
-
-  const prevRef = useRef(null);
-  const nextRef = useRef(null);
 
   return (
     <div className="w-full relative">
@@ -31,17 +28,8 @@ function ListingReviews({ reviews }: { reviews: Review[] }) {
           },
         }}
         className="w-[75%] md:w-[85%] lg:w-[95%]"
-        navigation={{
-          prevEl: prevRef.current,
-          nextEl: nextRef.current,
-        }}
+        navigation={{ prevEl: ".custom-prev", nextEl: ".custom-next" }}
         autoplay={{ delay: 3000, disableOnInteraction: false }}
-        onBeforeInit={(swiper) => {
-          // @ts-expect-error: Swiper navigation params type does not match ref type
-          swiper.params.navigation.prevEl = prevRef.current;
-          // @ts-expect-error: Swiper navigation params type does not match ref type
-          swiper.params.navigation.nextEl = nextRef.current;
-        }}
       >
         {approvedReviews.map((review: Review, index: number) => (
           <SwiperSlide key={index}>
