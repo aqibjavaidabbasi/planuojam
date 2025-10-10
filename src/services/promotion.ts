@@ -169,7 +169,6 @@ export async function updatePromotion(
   id: string | number,
   data: Record<string, unknown>,
 ) {
-  console.log("id:", id)
 
   const url = `${API_URL}/api/promotions/${id}`;
   const mergedHeaders = {

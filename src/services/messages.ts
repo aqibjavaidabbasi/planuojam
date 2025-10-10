@@ -1,4 +1,4 @@
-import { fetchAPIWithToken, postAPIWithToken, putAPI } from "./api";
+import { createQuery, fetchAPIWithToken, postAPIWithToken, putAPI } from "./api";
 import QueryString from "qs";
 
 export type UserLite = {
@@ -145,7 +145,16 @@ export async function sendMessage(senderId: number, receiverId: number, body: st
   if (attachmentsIds && attachmentsIds.length > 0) {
     data.attachments = attachmentsIds;
   }
-  const res = await postAPIWithToken("messages", { data });
+  const populate = {
+    sender: {
+      populate: true
+    },
+    receiver: {
+      populate: true
+    }
+  }
+  const query = createQuery(populate)
+  const res = await postAPIWithToken("messages", { data }, {}, query);
   // res should contain data
   if (res?.data) return res.data;
   return res;

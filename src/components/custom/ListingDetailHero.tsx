@@ -79,11 +79,11 @@ function ListingDetailHero({
           <div className="flex flex-wrap gap-4 text-sm">
             {contact?.email && <div className="flex items-center">
               <MdOutlineEmail className="mr-2" size={24} />
-              <span>{contact?.email}</span>
+              <a href={`mailto:${contact.email}`} className="hover:underline">{contact.email}</a>
             </div>}
             {contact?.phone && <div className="flex items-center">
               <MdOutlineLocalPhone className="mr-2" size={24} />
-              <span>{contact?.phone}</span>
+              <a href={`tel:${contact.phone}`} className="hover:underline">{contact.phone}</a>
             </div>}
           </div>
           <div className="flex gap-1.5 items-end justify-between">

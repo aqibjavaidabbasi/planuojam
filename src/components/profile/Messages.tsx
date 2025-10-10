@@ -48,6 +48,20 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
   const refreshingRef = useRef<number>(0);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedCounterpartName, setSelectedCounterpartName] = useState<string>("");
+  // Keep refs in sync to avoid unstable useCallback deps
+  const locallyReadIdsRef = useRef<Set<string>>(new Set());
+  const clearedUserIdsRef = useRef<Set<number>>(new Set());
+  const threadLengthRef = useRef<number>(0);
+  useEffect(() => {
+    locallyReadIdsRef.current = locallyReadIds;
+  }, [locallyReadIds]);
+  useEffect(() => {
+    clearedUserIdsRef.current = clearedUserIds;
+  }, [clearedUserIds]);
+  useEffect(() => {
+    // Keep a stable ref for thread length so loadThread doesn't depend on thread
+    threadLengthRef.current = thread.length;
+  }, [thread.length]);
 
   const counterpartFromMessage = useCallback(
     (m: Message) => {
@@ -75,11 +89,14 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
         if (mTime > eTime) map.set(id, m);
       }
     }
-    return Array.from(map.entries()).map(([id, m]) => ({
-      id,
-      message: m,
-      counterpart: counterpartFromMessage(m),
-    }));
+    // Sort conversations by latest message time desc to avoid jumping/reordering flicker
+    return Array.from(map.entries())
+      .sort(([, a], [, b]) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
+      .map(([id, m]) => ({
+        id,
+        message: m,
+        counterpart: counterpartFromMessage(m),
+      }));
   }, [list, counterpartFromMessage]);
 
   const loadList = useCallback(async (opts?: { silent?: boolean }) => {
@@ -95,16 +112,16 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
         const unreadRes = await fetchUnreadForReceiver(user.id, 1, 200);
         let map = unreadRes.data.reduce((acc, m) => {
           const mid = (typeof m.documentId === 'string' ? m.documentId : String(m.id));
-          if (locallyReadIds.has(mid)) return acc; // skip locally marked read
+          if (locallyReadIdsRef.current.has(mid)) return acc; // skip locally marked read
           const senderId = (m.sender as UserLite | undefined)?.id ?? (m.sender as unknown as number);
           const sid = Number(senderId);
           if (Number.isFinite(sid)) acc[sid] = (acc[sid] || 0) + 1;
           return acc;
         }, {} as Record<number, number>);
         // apply local clears
-        if (clearedUserIds.size > 0) {
+        if (clearedUserIdsRef.current.size > 0) {
           map = { ...map };
-          clearedUserIds.forEach((id) => { map[id] = 0; });
+          clearedUserIdsRef.current.forEach((id) => { map[id] = 0; });
         }
         setUnreadByUser(map);
       } catch {
@@ -123,17 +140,18 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
     } finally {
       if (!silent) setListLoading(false);
     }
-  }, [user?.id, list.length, locallyReadIds, clearedUserIds]);
+  }, [user?.id, list.length]);
 
   const loadThread = useCallback(
     async (uid: number, opts?: { silent?: boolean }) => {
-      const silent = opts?.silent ?? (thread.length > 0);
+      // Intentionally use a ref to avoid including `thread.length` in deps and recreating the callback on every fetch.
+      // This prevents the polling effect from resetting and causing render/update loops.
+      const silent = opts?.silent ?? (threadLengthRef.current > 0);
       if (!silent) setThreadLoading(true);
       setThreadError(null);
       try {
         if (!user?.id) throw new Error("Errors.Auth.noToken");
         const res = await fetchThread(user.id, uid, 1, 200);
-        console.log(res)
         setThread(res.data);
         // Mark received messages as read
         const myId = user?.id;
@@ -168,16 +186,16 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
             const unreadRes = await fetchUnreadForReceiver(myId, 1, 200);
             let map = unreadRes.data.reduce((acc, m) => {
               const mid = String(m.id);
-              if (locallyReadIds.has(mid)) return acc; // skip locally marked read
+              if (locallyReadIdsRef.current.has(mid)) return acc; // skip locally marked read
               const senderId = (m.sender as UserLite | undefined)?.id ?? (m.sender as unknown as number);
               const sid = Number(senderId);
               if (Number.isFinite(sid)) acc[sid] = (acc[sid] || 0) + 1;
               return acc;
             }, {} as Record<number, number>);
             // apply local clears
-            if (clearedUserIds.size > 0) {
+            if (clearedUserIdsRef.current.size > 0) {
               map = { ...map };
-              clearedUserIds.forEach((id) => { map[id] = 0; });
+              clearedUserIdsRef.current.forEach((id) => { map[id] = 0; });
             }
             setUnreadByUser(map);
           } catch {
@@ -200,7 +218,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
         if (!silent) setThreadLoading(false);
       }
     },
-    [user?.id, thread.length, locallyReadIds, clearedUserIds]
+    [user?.id]
   );
 
   // Load list on mount and when user changes
@@ -215,7 +233,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
         if (!user?.id) return;
         const unreadRes = await fetchUnreadForReceiver(user.id, 1, 200);
         const map = unreadRes.data.reduce((acc, m) => {
-          const senderId = (m.sender as UserLite | undefined)?.id ?? (m.sender as unknown as number);
+          const senderId = (m.sender as UserLite)?.id ?? (m.sender as unknown as number);
           const sid = Number(senderId);
           if (Number.isFinite(sid)) acc[sid] = (acc[sid] || 0) + 1;
           return acc;
@@ -229,7 +247,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
         // ignore
       }
     })();
-  }, [user?.id, locallyReadIds, clearedUserIds, onUnreadChange]);
+  }, [user?.id, onUnreadChange]);
 
   // Preselect conversation if initialUserId provided
   useEffect(() => {
@@ -268,14 +286,22 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
     setUnreadByUser((prev) => ({ ...prev, [selectedUserId]: 0 }));
     // Optimistically mark currently loaded thread messages as read in client state
     if (user?.id) {
-      setThread((prev) => prev.map((m) => {
+      let changed = false;
+      const mapped = thread.map((m) => {
         const isToMe = ((m.receiver as UserLite | undefined)?.id ?? (m.receiver as unknown as number)) === user.id;
-        if (isToMe && !m.readAt) return { ...m, readAt: new Date().toISOString() } as Message;
+        if (isToMe && !m.readAt) {
+          changed = true;
+          return { ...m, readAt: new Date().toISOString() } as Message;
+        }
         return m;
-      }));
+      });
+      if (changed) {
+        setThread(mapped);
+      }
     }
     // persist cleared id in sessionStorage
     setClearedUserIds((prev) => {
+      if (prev.has(selectedUserId)) return prev;
       const next = new Set(prev);
       next.add(selectedUserId);
       try {
@@ -288,19 +314,26 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
     // persist locally read message ids for this thread (based on current thread state)
     setLocallyReadIds((prev) => {
       const next = new Set(prev);
+      let added = false;
       thread.forEach((m) => {
         const isToMe = ((m.receiver as UserLite | undefined)?.id ?? (m.receiver as unknown as number)) === user?.id;
         if (isToMe) {
           const mid = (typeof m.documentId === 'string' ? m.documentId : String(m.id));
-          next.add(mid);
+          if (!next.has(mid)) {
+            next.add(mid);
+            added = true;
+          }
         }
       });
-      try {
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem('locallyReadMessageIds', JSON.stringify(Array.from(next)));
-        }
-      } catch {}
-      return next;
+      if (added) {
+        try {
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem('locallyReadMessageIds', JSON.stringify(Array.from(next)));
+          }
+        } catch {}
+        return next;
+      }
+      return prev;
     });
   }, [selectedUserId, thread, user?.id]);
 
@@ -337,7 +370,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
         body: composedBody,
         createdAt: new Date().toISOString(),
         sender: { id: user.id, username: user.username || String(user.id) },
-        receiver: { id: selectedUserId, username: `User ${selectedUserId}` },
+        receiver: { id: selectedUserId, username: `User ${selectedUserId}`},
         attachments: (uploaded || []).map((u) => ({
           id: Number(u?.id),
           url: (u?.url || "").startsWith("http") ? u?.url : `${API_URL}${u?.url}`,
@@ -398,17 +431,15 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
         {/* Left: conversations list */}
         <div className="md:col-span-1 rounded-md shadow overflow-hidden flex flex-col p-1 max-h-[80vh]">
           <div className="flex-1 overflow-auto">
-            {listLoading && (
-              <div className="p-4 text-sm text-gray-500"></div>
-            )}
-            {listError && (
+            {!listLoading && listError && (
               <div className="p-4 text-sm text-red-600">{listError}</div>
             )}
             {!listLoading && !listError && conversationItems.length === 0 && (
               <div className="p-6 text-sm text-gray-500">{t("noMessages", { default: "No messages yet" })}</div>
             )}
 
-            <ul>
+            {!listLoading && !listError && conversationItems.length > 0 && (
+              <ul>
               {conversationItems.map(({ id, counterpart }) => {
                 const isActive = selectedUserId === id;
                 const unread = (id !== user?.id) ? (unreadByUser[id] || 0) : 0;
@@ -429,7 +460,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                   </li>
                 );
               })}
-            </ul>
+            </ul>)}
           </div>
         </div>
 
@@ -454,27 +485,26 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                 )}
 
                 {thread.map((m) => {
-                  type WithAttributes = { attributes?: Partial<Message> };
-                  const mAttr = m as Message & WithAttributes;
-                  const senderId = (typeof m.sender === "object" && m.sender && "id" in m.sender)
+                  // Normalize sender id to avoid initial wrong side rendering when sender is a numeric id
+                  const senderId = (typeof m.sender === "object" && m.sender)
                     ? (m.sender as UserLite).id
-                    : undefined;
+                    : (typeof m.sender === "number" ? m.sender : undefined);
                   const mine = senderId === user?.id;
-                  const createdAt = mAttr.attributes?.createdAt || m.createdAt;
-                  const rawBody = (m.body ?? mAttr.attributes?.body ?? "") as string;
+                  const createdAt = m.createdAt;
+                  const rawBody = (m.body ?? "") as string;
                   const lines = rawBody.split(/\n+/).map((s) => s.trim()).filter(Boolean);
                   const urlRegex = /https?:\/\/[^\s]+/i;
                   // Prefer dedicated attachments field when present
                   type MaybeAttrAttachment = NonNullable<Message["attachments"]>[number] & {
                     attributes?: { url?: string; mime?: string; name?: string };
                   };
-                  const att = (m.attachments ?? mAttr.attributes?.attachments ?? []) as MaybeAttrAttachment[];
+                  const att = (m.attachments ?? []) as MaybeAttrAttachment[];
                   const attachments = Array.isArray(att)
                     ? att.map((a) => ({
                         id: a?.id ?? 0,
-                        url: a?.url ?? a?.attributes?.url ?? "",
-                        mime: a?.mime ?? a?.attributes?.mime,
-                        name: a?.name ?? a?.attributes?.name,
+                        url: a?.url ?? "",
+                        mime: a?.mime,
+                        name: a?.name,
                       }))
                     : [];
                   const normalizedAtt = attachments
@@ -499,7 +529,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                             {normalizedAtt.map((a) => (
                               <a key={`${a.id}-${a.url}`} href={a.url} target="_blank" rel="noreferrer">
                                 {a.mime?.startsWith("image/") ? (
-                                  <Image src={a.url} alt={a.name || "attachment"} className="rounded-md max-h-40 object-cover" />
+                                  <Image src={a.url} alt={a.name || "attachment"} width={320} height={240} className="rounded-md object-cover" />
                                 ) : (
                                   <div className="px-2 py-1 bg-white/70 rounded text-xs break-all underline">
                                     {a.name || a.url}
@@ -513,7 +543,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                           <div className={`mt-2 grid grid-cols-2 gap-2 ${mine ? "" : ""}`}>
                             {legacyImageUrls.map((u) => (
                               <a key={u} href={u} target="_blank" rel="noreferrer">
-                                <Image src={u} alt="attachment" className="rounded-md max-h-40 object-cover" />
+                                <Image src={u} alt="attachment" width={320} height={240} className="rounded-md object-cover" />
                               </a>
                             ))}
                           </div>
@@ -541,7 +571,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                   <div className="flex flex-wrap gap-2">
                     {attachmentPreviews.map((src, idx) => (
                       <div key={idx} className="relative">
-                        <Image src={src} className="h-16 w-16 object-cover rounded" alt="preview" />
+                        <Image src={src} width={64} height={64} className="h-16 w-16 object-cover rounded" alt="preview" />
                         <button
                           onClick={() => {
                             setAttachments((prev) => prev.filter((_, i) => i !== idx));

@@ -207,7 +207,10 @@ const ManageBookings: React.FC = () => {
                     </h3>
 
                     {b?.userInfo && (
-                      <div className="text-sm text-gray-500 mb-2">{b.userInfo.username} • {b.userInfo.email}</div>
+                      <div className="text-sm text-gray-500 mb-2">
+                        {b.userInfo.username} • {" "}
+                        <a href={`mailto:${b.userInfo.email}`} className="hover:underline">{b.userInfo.email}</a>
+                      </div>
                     )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
