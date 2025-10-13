@@ -1,9 +1,9 @@
 "use client";
-
-import NoDataCard from "@/components/custom/NoDataCard";
-import ListingCard from "@/components/Dynamic/ListingCard";
-import FiltersAndMap from "@/components/global/FiltersAndMap";
-import Loader from "@/components/custom/Loader";
+import dynamic from "next/dynamic";
+const FiltersAndMap = dynamic(()=>import("@/components/global/FiltersAndMap"),{ssr:false})
+const ListingCard  = dynamic(()=>import("@/components/Dynamic/ListingCard"),{ssr:false})
+const NoDataCard = dynamic(()=>import("@/components/custom/NoDataCard"),{ssr:false})
+const Loader = dynamic(()=>import("@/components/custom/Loader"),{ssr:false})
 import { useEventTypes } from "@/context/EventTypesContext";
 import { fetchChildCategories } from "@/services/common";
 import { ListingItem, Venue } from "@/types/pagesTypes";

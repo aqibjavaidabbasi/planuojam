@@ -1,11 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
-
-
-
-body {
-  font-family: "Montserrat", sans-serif;
-}
 
 /* Prevent accidental horizontal scroll caused by 100vw or overflowing children */
 html, body {

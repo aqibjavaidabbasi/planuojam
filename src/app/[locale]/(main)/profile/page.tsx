@@ -1,11 +1,17 @@
 "use client";
+import dynamic from "next/dynamic";
 
-import FavouriteListings from "@/components/profile/FavouriteListings";
-import MyBookings from "@/components/profile/MyBookings";
-import Messages from "@/components/profile/Messages";
-import Mylistings from "@/components/profile/Mylistings";
-import ProfileTab from "@/components/profile/ProfileTab";
-import ReviewsTab from "@/components/profile/ReviewsTab";
+const ProfileTab = dynamic(() => import("@/components/profile/ProfileTab"), { ssr: false });
+const Mylistings = dynamic(() => import("@/components/profile/Mylistings"), { ssr: false });
+const PromotionsTab = dynamic(() => import("@/components/profile/PromotionsTab"), { ssr: false });
+const ManageBookings = dynamic(() => import("@/components/profile/ManageBookings"), { ssr: false });
+const ProviderCalendar = dynamic(() => import("@/components/profile/ProviderCalendar"), { ssr: false });
+const MyBookings = dynamic(() => import("@/components/profile/MyBookings"), { ssr: false });
+const FavouriteListings = dynamic(() => import("@/components/profile/FavouriteListings"), { ssr: false });
+const Messages = dynamic(() => import("@/components/profile/Messages"), { ssr: false, loading: () => <div /> });
+const ReviewsTab = dynamic(() => import("@/components/profile/ReviewsTab"), { ssr: false });
+const BuyStarsModal = dynamic(() => import("@/components/modals/BuyStarsModal"), { ssr: false });
+
 import Button from "@/components/custom/Button";
 import { useAppSelector } from "@/store/hooks";
 import React, { useEffect, useState } from "react";
@@ -16,11 +22,7 @@ import { MdEditCalendar, MdOutlineFavorite, MdStarBorderPurple500 } from "react-
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import ManageBookings from "@/components/profile/ManageBookings";
-import ProviderCalendar from "@/components/profile/ProviderCalendar";
 import { fetchUnreadForReceiver } from "@/services/messages";
-import BuyStarsModal from "@/components/modals/BuyStarsModal";
-import PromotionsTab from "@/components/profile/PromotionsTab";
 
 function ProfilePage() {
   const t = useTranslations("Profile");

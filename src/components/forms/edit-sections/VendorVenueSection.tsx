@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useEffect, useMemo, useState } from "react"
+import dynamic from "next/dynamic";
 import { useFieldArray, useForm } from "react-hook-form"
 import Input from "../../custom/Input"
 import TextArea from "../../custom/TextArea"
@@ -13,7 +14,7 @@ import { useCities } from "@/context/CitiesContext"
 import { useStates } from "@/context/StatesContext"
 import { geocodePlace } from "@/utils/mapboxLocation"
 import { useTranslations } from "next-intl"
-import MapPickerModal from "@/components/modals/MapPickerModal"
+const MapPickerModal = dynamic(() => import("@/components/modals/MapPickerModal"))
 
 // Vendor form
 type ServiceArea = { city?: string; state?: string; latitude?: string; longitude?: string }

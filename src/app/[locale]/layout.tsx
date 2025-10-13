@@ -11,7 +11,17 @@ import ReduxProvider from "@/store/provider";
 import { Toaster } from "react-hot-toast";
 import dynamic from "next/dynamic";
 import "./globals.css";
+import { Montserrat } from "next/font/google";
 
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: [
+    "100", "200", "300", "400", "500", "600", "700", "800", "900"
+  ], // All weights available
+  style: ["normal", "italic"], // Both normal and italic
+  display: "swap",
+  variable: "--font-montserrat", // Optional for CSS variable usage
+});
 
 const MapboxWrapper = dynamic(() => import("./MapboxWrapper"));
 
@@ -36,7 +46,7 @@ export default async function LocaleLayout({
   }
 
   return (
-    <html>
+    <html className={montserrat.className}>
       <body className="min-h-screen overflow-x-hidden">
         <ReduxProvider>
           <MapboxWrapper>

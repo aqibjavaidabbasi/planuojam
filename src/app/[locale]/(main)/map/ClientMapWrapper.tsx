@@ -1,5 +1,7 @@
 'use client'
-import MapboxMap, { Location } from '@/components/global/MapboxMap'
+import dynamic from "next/dynamic";
+const MapboxMap = dynamic(()=>import("@/components/global/MapboxMap"),{ssr:false})
+import { Location } from '@/components/global/MapboxMap'
 import { fetchListings } from '@/services/common'
 import { ListingItem, Venue } from '@/types/pagesTypes'
 import geocodeLocations from '@/utils/mapboxLocation'

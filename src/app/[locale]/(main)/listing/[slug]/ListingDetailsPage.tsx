@@ -1,74 +1,48 @@
 "use client";
+import dynamic from "next/dynamic";
+// Move Swiper CSS import inside the Gallery component file if possible
+const ListingGallery = dynamic(() => import("@/components/custom/ListingGallery"), { ssr: false, loading: () => null });
+const MapboxMap = dynamic(() => import("@/components/global/MapboxMap"), { ssr: false });
+const ListingCalendar = dynamic(() => import("@/components/custom/ListingCalendar"), { ssr: false });
+const BookingModal = dynamic(() => import("@/components/modals/BookingModal"), { ssr: false });
+const ListingDetailHero = dynamic(()=>import("@/components/custom/ListingDetailHero"))
+const Faqitem = dynamic(() => import("@/components/Dynamic/Faqitem"), { ssr: false });
+const VenueCard = dynamic(() => import("@/components/custom/VenueCard"), { ssr: false });
+const VendorCard = dynamic(() => import("@/components/custom/VendorCard"), { ssr: false });
+const StarRating = dynamic(() => import("@/components/global/StarRating"), { ssr: false });
+const SocialIcon = dynamic(() => import("@/components/global/SocialIcon"), { ssr: false });
+const ListingReviews = dynamic(() => import("@/components/custom/ListingReviews"), { ssr: false });
+const NoDataCard = dynamic(() => import("@/components/custom/NoDataCard"), { ssr: false });
+const PricingPlans = dynamic(() => import("@/components/custom/PricingPlans"), { ssr: false });
 
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { ListingItem, Venue } from "@/types/pagesTypes";
-import Faqitem from "@/components/Dynamic/Faqitem";
-import Loader from "@/components/custom/Loader";
-import ListingDetailHero from "@/components/custom/ListingDetailHero";
-import VenueCard from "@/components/custom/VenueCard";
-import VendorCard from "@/components/custom/VendorCard";
-import ListingGallery from "@/components/custom/ListingGallery";
-import StarRating from "@/components/global/StarRating";
-import SocialIcon from "@/components/global/SocialIcon";
-import ListingReviews from "@/components/custom/ListingReviews";
-import NoDataCard from "@/components/custom/NoDataCard";
-import PricingPlans from "@/components/custom/PricingPlans";
-import BookingModal from "@/components/modals/BookingModal";
-import ListingCalendar from "@/components/custom/ListingCalendar";
 import { useAppSelector } from "@/store/hooks";
-import { useLocale } from "next-intl";
 import { useTranslations } from "next-intl";
-import { fetchListingBySlug } from "@/services/listing";
-import MapboxMap, { Location as MapLocation } from "@/components/global/MapboxMap";
 import geocodeLocations from "@/utils/mapboxLocation";
 import Button from "@/components/custom/Button";
 import { TbArrowBackUp } from "react-icons/tb";
+import { Location as MapLocation } from "@/components/global/MapboxMap";
 
-export default function ListingDetailsPage() {
+export default function ListingDetailsPage({ initialListing, locale }: { initialListing: ListingItem; locale: string }) {
   const router = useRouter();
-  const [listing, setListing] = useState<ListingItem | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { slug } = useParams();
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
-  const locale = useLocale();
   const t = useTranslations("Listing.Details");
-  const tCommon = useTranslations("Common");
   const [detailLocation, setDetailLocation] = useState<MapLocation | null>(null);
   const user = useAppSelector((s) => s.auth.user);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [preselectPlanIndex, setPreselectPlanIndex] = useState<number | null>(null);
 
-
-  // Fetch listing data
-  useEffect(() => {
-    async function loadListing() {
-      try {
-        //use en for fetching no matter which locale
-        const res = await fetchListingBySlug(String(slug), 'en');
-        setListing(res);
-      } catch (err) {
-        console.log(err);
-        setError(tCommon("errors.failedToLoad"));
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadListing();
-  }, [slug, locale, tCommon]);
-
-
   const renderingContent = useMemo(() => {
-    if (!listing) return null;
-    if (locale === 'en') return listing;
-    const entry = listing.localizations?.find((loc) => loc.locale === locale);
-    return entry || listing;
-  }, [listing, locale]) as ListingItem;
+    if (!initialListing) return null;
+    if (locale === 'en') return initialListing;
+    const entry = initialListing.localizations?.find((loc) => loc.locale === locale);
+    return entry || initialListing;
+  }, [initialListing, locale]) as ListingItem;
 
   // typed access to venue block (if listing type is venue)
   const venueBlock = useMemo(() => {
@@ -82,16 +56,16 @@ export default function ListingDetailsPage() {
   // Compute a single map location for this listing
   useEffect(() => {
     async function computeLocation() {
-      if (!listing) {
+      if (!initialListing) {
         setDetailLocation(null);
         return;
       }
       // Prefer localized content for display values
-      const content = listing;
+      const content = initialListing;
       try {
-        if (listing.type === "venue") {
+        if (initialListing.type === "venue") {
           // Coordinates are taken from the base listing (usually locale-invariant)
-          const venueBlockBase = (listing.listingItem || []).find(
+          const venueBlockBase = (initialListing.listingItem || []).find(
             (i) => i.__component === "dynamic-blocks.venue"
           ) as unknown as { location?: { latitude?: number; longitude?: number; address?: string } } | undefined;
           // Prefer localized address if available
@@ -103,20 +77,20 @@ export default function ListingDetailsPage() {
           const lng = venueBlockBase?.location?.longitude;
           if (typeof lat === "number" && typeof lng === "number") {
 
-            const primaryImage = (listing.portfolio && listing.portfolio.length > 0)
-              ? listing.portfolio[0]
-              : listing.category?.image;
+            const primaryImage = (initialListing.portfolio && initialListing.portfolio.length > 0)
+              ? initialListing.portfolio[0]
+              : initialListing.category?.image;
             const path = (() => {
-              if (!listing) return "#";
-              if (listing.listingItem.length === 0) return "#";
-              if (listing.locale === "en") return `/listing/${listing.slug}`;
-              const entry = listing.localizations.find((loc) => loc.locale === "en");
+              if (!initialListing) return "#";
+              if (initialListing.listingItem.length === 0) return "#";
+              if (initialListing.locale === "en") return `/listing/${initialListing.slug}`;
+              const entry = initialListing.localizations.find((loc) => loc.locale === "en");
               return entry ? `/listing/${entry.slug}` : "#";
             })();
             setDetailLocation({
-              id: listing.id,
+              id: initialListing.id,
               name: content.title || "",
-              username: listing.user?.username || "",
+              username: initialListing.user?.username || "",
               description: content.description || "",
               category: { name: content.category?.name || "", type: "venue" },
               position: { lat, lng },
@@ -126,7 +100,7 @@ export default function ListingDetailsPage() {
             });
             return;
           }
-        } else if (listing.type === "vendor") {
+        } else if (initialListing.type === "vendor") {
           // Geocode vendor using localized content for better display/address coherency
           const res = await geocodeLocations([content as ListingItem]);
           const first = res?.[0] || null;
@@ -149,17 +123,8 @@ export default function ListingDetailsPage() {
       }
     }
     computeLocation();
-  }, [listing, renderingContent]);
+  }, [initialListing]);
 
-  if (loading) return <Loader />;
-
-  if (error || !listing) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p className="text-xl text-secondary">{error || tCommon("errors.notFound")}</p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background py-6 md:py-8 px-4 sm:px-6">

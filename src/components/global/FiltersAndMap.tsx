@@ -1,7 +1,8 @@
 'use client';
-
+import dynamic from "next/dynamic";
 import React, { useEffect, useState } from 'react';
-import MapboxMap, { Location } from './MapboxMap';
+const MapboxMap = dynamic(()=>import('./MapboxMap'),{ssr:false})
+import { Location } from './MapboxMap';
 import Select from '../custom/Select';
 import Button from '../custom/Button';
 import { fetchListings } from '@/services/common';

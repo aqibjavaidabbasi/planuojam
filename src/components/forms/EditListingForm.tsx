@@ -1,14 +1,16 @@
 "use client"
 
 import type React from "react"
-import SocialLinksSection from "./edit-sections/SocialLinksSection"
-import PricingSection from "./edit-sections/PricingSection"
-import ContactSection from "./edit-sections/ContactSection"
-import FAQsSection from "./edit-sections/FAQsSection"
-import ImagesSection from "./edit-sections/ImagesSection"
-import HotDealSection from "./edit-sections/HotDealSection"
-import BasicSection from "./edit-sections/BasicSection"
-import VendorVenueSection from "./edit-sections/VendorVenueSection"
+import dynamic from "next/dynamic";
+
+const SocialLinksSection = dynamic(() => import("./edit-sections/SocialLinksSection"));
+const PricingSection = dynamic(() => import("./edit-sections/PricingSection"));
+const ContactSection = dynamic(() => import("./edit-sections/ContactSection"));
+const FAQsSection = dynamic(() => import("./edit-sections/FAQsSection"));
+const ImagesSection = dynamic(() => import("./edit-sections/ImagesSection"));
+const HotDealSection = dynamic(() => import("./edit-sections/HotDealSection"));
+const BasicSection = dynamic(() => import("./edit-sections/BasicSection"));
+const VendorVenueSection = dynamic(() => import("./edit-sections/VendorVenueSection"));
 import { ListingItem } from "@/types/pagesTypes"
 
 type EditTabKey = "basic" | "vv" | "deal" | "images" | "contact" | "social" | "pricing" | "faqs"
