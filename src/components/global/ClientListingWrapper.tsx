@@ -201,8 +201,8 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
         {list.length === 0 ? (
           <NoDataCard>{getTranslation(placeholders.emptyList)}</NoDataCard>
         ) : (
-          list.map((item, idx) => (
-            <ListingCard key={item.documentId} item={item} highPriority={idx === 0} />
+          list.map((item) => (
+            <ListingCard key={item.documentId} item={item} />
           ))
         )}
       </div>

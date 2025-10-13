@@ -52,6 +52,18 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
       console.log("Map container not ready");
       return;
     }
+    const containerEl = mapContainer.current;
+
+    // Prevent double-initialization (e.g., in React Strict Mode) and ensure empty container
+    if (map.current) {
+      return;
+    }
+    // Ensure the container is completely empty before creating the map
+    try {
+      while (containerEl.firstChild) {
+        containerEl.removeChild(containerEl.firstChild);
+      }
+    } catch {}
 
     const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY;
     if (!mapboxToken) {
@@ -71,6 +83,18 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
       cooperativeGestures: true, //uses ctrl/command for zooming
     });
 
+    // Ensure browser does not try to treat touch as scroll on the map surface
+    try {
+      const canvas = map.current.getCanvas();
+      const canvasContainer = map.current.getCanvasContainer();
+      if (canvas) {
+        canvas.style.touchAction = 'none';
+      }
+      if (canvasContainer) {
+        canvasContainer.style.touchAction = 'none';
+      }
+    } catch {}
+
     // Add navigation controls
     map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
     map.current.addControl(new mapboxgl.GeolocateControl({
@@ -86,7 +110,14 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
     return () => {
       if (map.current) {
         map.current.remove();
+        map.current = null;
       }
+      // Also clear any remaining nodes inside the container to keep it empty
+      try {
+        while (containerEl.firstChild) {
+          containerEl.removeChild(containerEl.firstChild);
+        }
+      } catch {}
     };
   }, []);
 
@@ -180,7 +211,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
     if (map.current.loaded()) {
       addMarkers();
     } else {
-      map.current.on('load', addMarkers);
+      map.current.once('load', addMarkers);
     }
   }, [locations, t, locale]);
 
@@ -195,10 +226,11 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
   }, [selectedPlace]);
 
   return (
-    <div className="w-full h-full relative border border-gray-200 rounded-lg overflow-hidden">
+    <div className="w-full h-full relative border border-gray-200 rounded-lg overflow-hidden" style={{ overscrollBehavior: 'contain' }}>
       <div
         ref={mapContainer}
         className="w-full h-full"
+        style={{ touchAction: 'none' }}
       />
     </div>
   );

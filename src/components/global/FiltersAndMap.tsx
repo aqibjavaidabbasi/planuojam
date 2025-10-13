@@ -1,6 +1,6 @@
 'use client';
 import dynamic from "next/dynamic";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 const MapboxMap = dynamic(()=>import('./MapboxMap'),{ssr:false})
 import { Location } from './MapboxMap';
 import Select from '../custom/Select';
@@ -31,6 +31,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
     const [appliedFilters, setAppliedFilters] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [keyword, setKeyword] = useState<string>('');
+    const [isPending, startTransition] = useTransition();
 
     // Normalize simple initial filter values into Strapi filter object shape
     const normalizeInitialFilters = (vals: Record<string, string>): Record<string, unknown> => {
@@ -128,7 +129,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
                 : keywordClause;
         }
         const res = fetcher ? await fetcher(finalFilters) : await fetchListings(type, finalFilters);
-        setList(res);
+        startTransition(() => setList(res));
         setIsLoading(false);
     };
 
@@ -145,7 +146,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
             setAppliedFilters({});
             res = fetcher ? await fetcher({}) : await fetchListings(type);
         }
-        setList(res);
+        startTransition(() => setList(res));
         setIsLoading(false);
     };
 
@@ -172,16 +173,16 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
                             onChange={(e) => handleFilterChange(name, e.target.value)}
                             options={options.map((opt) => ({ value: opt, label: opt }))}
                             placeholder={placeholder || `Choose ${name}`}
-                            disabled={isLoading}
+                            disabled={isLoading || isPending}
                         />
                     ))}
                     <div className="flex gap-2">
-                        <Button style='secondary' onClick={handleApply} disabled={isLoading}>{t("apply")}</Button>
-                        <Button style='secondary' onClick={handleClear} disabled={isLoading} >{t("clear")}</Button>
+                        <Button style='secondary' onClick={handleApply} disabled={isLoading || isPending}>{t("apply")}</Button>
+                        <Button style='secondary' onClick={handleClear} disabled={isLoading || isPending} >{t("clear")}</Button>
                     </div>
                 </div>
             </div>
-            <div className='h-[60vh] md:h-[90vh] lg:h-[calc(100vh-150px)]'>
+            <div className='h-[60vh] md:h-[90vh] lg:h-[calc(100vh-150px)]' style={{ contain: 'layout paint size' }}>
                 <MapboxMap locations={locations} />
             </div>
         </div>

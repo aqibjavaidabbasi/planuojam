@@ -91,20 +91,8 @@ function ListingDetailHero({
               {/* Website Link */}
               {websiteLink && (
                 <div
-                  className="rounded-xl w-full px-6 py-2 text-center cursor-pointer transition-all duration-200 flex items-center justify-center"
-                  style={{
-                    backdropFilter: "blur(10px)",
-                    background: "rgba(255, 255, 255, 0.1)",
-                    border: "1px solid rgba(255, 255, 255, 0.3)",
-                  }}
-                  onMouseEnter={(e) =>
-                  (e.currentTarget.style.background =
-                    "rgba(255, 255, 255, 0.3)")
-                  }
-                  onMouseLeave={(e) =>
-                  (e.currentTarget.style.background =
-                    "rgba(255, 255, 255, 0.1)")
-                  }
+                  className="rounded-xl w-full px-6 py-2 text-center cursor-pointer transition-all duration-200 flex items-center justify-center
+             bg-white/10 border border-white/30 hover:bg-white/30 backdrop-blur"
                   onClick={() => window.open(websiteLink, "_blank")}
                 >
                   <span className="text-white">{t('visitWebsite')}</span>
@@ -113,20 +101,7 @@ function ListingDetailHero({
 
               {/* View Available Slots -> scroll to calendar */}
               <div
-                className="rounded-xl w-full px-6 py-2 text-center cursor-pointer transition-all duration-200 flex items-center justify-center"
-                style={{
-                  backdropFilter: "blur(10px)",
-                  background: "rgba(255, 255, 255, 0.1)",
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
-                }}
-                onMouseEnter={(e) =>
-                (e.currentTarget.style.background =
-                  "rgba(255, 255, 255, 0.3)")
-                }
-                onMouseLeave={(e) =>
-                (e.currentTarget.style.background =
-                  "rgba(255, 255, 255, 0.1)")
-                }
+                className="rounded-xl w-full px-6 py-2 text-center cursor-pointer transition-all duration-200 flex items-center justify-center bg-white/10 border border-white/30 hover:bg-white/30 backdrop-blur"
                 onClick={() => {
                   const el = document.getElementById('availability');
                   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -137,20 +112,7 @@ function ListingDetailHero({
 
               {typeof vendorUserId === 'number' && user?.id !== vendorUserId && (
                 <div
-                  className="rounded-xl w-full px-6 py-2 text-center cursor-pointer transition-all duration-200 flex items-center justify-center"
-                  style={{
-                    backdropFilter: "blur(10px)",
-                    background: "rgba(255, 255, 255, 0.1)",
-                    border: "1px solid rgba(255, 255, 255, 0.3)",
-                  }}
-                  onMouseEnter={(e) =>
-                  (e.currentTarget.style.background =
-                    "rgba(255, 255, 255, 0.3)")
-                  }
-                  onMouseLeave={(e) =>
-                  (e.currentTarget.style.background =
-                    "rgba(255, 255, 255, 0.1)")
-                  }
+                  className="rounded-xl w-full px-6 py-2 text-center cursor-pointer transition-all duration-200 flex items-center justify-center bg-white/10 border border-white/30 hover:bg-white/30 backdrop-blur"
                   onClick={() => {
                     if (!user) {
                       setShowLoginModal(true);
@@ -164,7 +126,7 @@ function ListingDetailHero({
                       ? `${t('messageVendor', { default: `Message` })} ${username.split(' ')[0]}`
                       : t('sendMessage', { default: 'Send a message' })}
                   </span>
-                </div>
+                </div> 
               )}
             </div>
             {price && (
