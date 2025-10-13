@@ -1,7 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 const FiltersAndMap = dynamic(()=>import("@/components/global/FiltersAndMap"),{ssr:false})
-const ListingCard  = dynamic(()=>import("@/components/Dynamic/ListingCard"),{ssr:false})
+const ListingCard  = dynamic(()=>import("@/components/Dynamic/ListingCard"))
 const NoDataCard = dynamic(()=>import("@/components/custom/NoDataCard"),{ssr:false})
 const Loader = dynamic(()=>import("@/components/custom/Loader"),{ssr:false})
 import { useEventTypes } from "@/context/EventTypesContext";
@@ -201,7 +201,9 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
         {list.length === 0 ? (
           <NoDataCard>{getTranslation(placeholders.emptyList)}</NoDataCard>
         ) : (
-          list.map((item) => <ListingCard key={item.documentId} item={item} />)
+          list.map((item, idx) => (
+            <ListingCard key={item.documentId} item={item} highPriority={idx === 0} />
+          ))
         )}
       </div>
     </div>

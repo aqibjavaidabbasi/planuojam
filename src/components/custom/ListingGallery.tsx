@@ -37,6 +37,9 @@ function ListingGallery({
                 onClick={() => setSelectedIndex(0)}
                 className="w-full h-[500px] object-cover rounded-lg cursor-pointer"
                 priority
+                fetchPriority="high"
+                loading="eager"
+                sizes="100vw"
               />
             </div>
 

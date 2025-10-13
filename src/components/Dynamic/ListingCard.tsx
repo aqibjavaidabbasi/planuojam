@@ -21,7 +21,7 @@ import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
 import { registerPromotionClick } from '@/services/promotion'
 
-function ListingCard({ item }: { item: ListingItem }) {
+function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?: boolean }) {
   const router = useRouter();
   const { siteSettings } = useSiteSettings();
   const { user } = useAppSelector(state => state.auth);
@@ -135,7 +135,9 @@ function ListingCard({ item }: { item: ListingItem }) {
                       fill
                       style={{ objectFit: 'cover' }}
                       sizes="(max-width: 768px) 100vw, 400px"
-                      priority={idx === 0}
+                      priority={idx === 0 && !!highPriority}
+                      fetchPriority={idx === 0 && highPriority ? 'high' : undefined}
+                      loading={idx === 0 && highPriority ? 'eager' : undefined}
                     />
                   </div>
                 </SwiperSlide>

@@ -1,7 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 // Move Swiper CSS import inside the Gallery component file if possible
-const ListingGallery = dynamic(() => import("@/components/custom/ListingGallery"), { ssr: false, loading: () => null });
+const ListingGallery = dynamic(() => import("@/components/custom/ListingGallery"));
 const MapboxMap = dynamic(() => import("@/components/global/MapboxMap"), { ssr: false });
 const ListingCalendar = dynamic(() => import("@/components/custom/ListingCalendar"), { ssr: false });
 const BookingModal = dynamic(() => import("@/components/modals/BookingModal"), { ssr: false });
