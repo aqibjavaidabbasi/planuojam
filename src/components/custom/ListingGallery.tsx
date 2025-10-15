@@ -26,7 +26,7 @@ function ListingGallery({
     <div className="relative w-full">
       {firstImage && (
         <div className="mb-6 flex">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
             {/* Left: Main image */}
             <div className="w-full h-[500px] bg-black rounded-lg">
               <Image

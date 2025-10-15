@@ -27,13 +27,15 @@ import geocodeLocations from "@/utils/mapboxLocation";
 import Button from "@/components/custom/Button";
 import { TbArrowBackUp } from "react-icons/tb";
 import { Location as MapLocation } from "@/components/global/MapboxMap";
+import { notFound } from "next/navigation";
+import { RootState } from "@/store";
 
 export default function ListingDetailsPage({ initialListing, locale }: { initialListing: ListingItem; locale: string }) {
   const router = useRouter();
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
   const t = useTranslations("Listing.Details");
   const [detailLocation, setDetailLocation] = useState<MapLocation | null>(null);
-  const user = useAppSelector((s) => s.auth.user);
+  const user = useAppSelector((s: RootState) => s.auth.user);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [preselectPlanIndex, setPreselectPlanIndex] = useState<number | null>(null);
 
@@ -127,6 +129,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
 
 
   console.log(renderingContent)
+  if(!renderingContent) notFound();
 
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6">
