@@ -4,6 +4,7 @@ import TextArea from '@/components/custom/TextArea';
 import Button from '@/components/custom/Button';
 import React from 'react'
 import { useTranslations } from 'next-intl';
+import toast from 'react-hot-toast';
 
 type Props = {
     countries?: string[];
@@ -18,16 +19,12 @@ const ContactForm: React.FC<Props> = ({ countries = [] }) => {
     const [phone, setPhone] = React.useState('');
     const [message, setMessage] = React.useState('');
     const [loading, setLoading] = React.useState(false);
-    const [success, setSuccess] = React.useState<string | null>(null);
-    const [error, setError] = React.useState<string | null>(null);
 
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setSuccess(null);
-        setError(null);
 
         if (!firstName || !email || !message) {
-            setError(t('validationRequired', { default: 'Please fill in required fields.' }));
+            toast.error(t('validationRequired'));
             return;
         }
         setLoading(true);
@@ -41,7 +38,7 @@ const ContactForm: React.FC<Props> = ({ countries = [] }) => {
                 const data = await res.json().catch(() => ({}));
                 throw new Error(data?.error || 'Request failed');
             }
-            setSuccess(t('success', { default: 'Message sent successfully.' }));
+            toast.success(t('success'));
             setFirstName('');
             setLastName('');
             setEmail('');
@@ -49,7 +46,7 @@ const ContactForm: React.FC<Props> = ({ countries = [] }) => {
             setPhone('');
             setMessage('');
         } catch {
-            setError(t('failure', { default: 'Failed to send your message. Please try again.' }));
+            toast.error(t('failure'));
         } finally {
             setLoading(false);
         }
@@ -86,7 +83,7 @@ const ContactForm: React.FC<Props> = ({ countries = [] }) => {
                                 <option key={c} value={c}>{c}</option>
                             ))
                         ) : (
-                            <option value="">{t('countryPlaceholder', { default: 'Select a country' })}</option>
+                            <option value="">{t('countryPlaceholder')}</option>
                         )}
                     </select>
                     <Input
@@ -108,10 +105,8 @@ const ContactForm: React.FC<Props> = ({ countries = [] }) => {
                     disabled={loading}
                     form='contact-form'
                 >
-                    {loading ? t('sending', { default: 'Sending...' }) : t('send')}
+                    {loading ? t('sending') : t('send')}
                 </Button>
-                {success && <p className="text-green-600 text-sm">{success}</p>}
-                {error && <p className="text-red-600 text-sm">{error}</p>}
             </form>
         </div>
     )

@@ -1,5 +1,6 @@
-  import ContactForm from '@/components/global/ContactForm';
-import ContactStatic from './ContactStatic';
+import dynamic from 'next/dynamic';
+const ContactForm = dynamic(()=>import('@/components/global/ContactForm'))
+const ContactStatic = dynamic(()=>import('./ContactStatic'))
 import React from 'react';
 import { fetchAPI, createQuery } from '@/services/api';
 import type { Metadata } from 'next'

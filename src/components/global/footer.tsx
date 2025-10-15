@@ -58,7 +58,7 @@ function Footer({ footerData }: { footerData: footer }) {
                             {section.pages.map(item => (<Link className='hover:underline capitalize' href={item.documentId === IMP_IDS.privacy ? '/privacy-policy' : item.documentId === IMP_IDS.tos ? '/terms-of-service' : item.documentId === IMP_IDS.about ? '/about-us' : '/'} key={item.documentId}>
                                 {item.title}
                             </Link>))}
-                            <Link href={'/contact-us'} >{t('contact')}</Link>
+                            <Link className='hover:underline capitalize' href={'/contact-us'} >{t('contact')}</Link>
                         </div>}
                     </div>))}
             </div>

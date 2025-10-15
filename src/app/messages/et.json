@@ -110,6 +110,9 @@
       "email": "Kirjuta meile e-postiga",
       "messageOn": "Kirjuta meile "
     },
+    "emailUs": {
+      "title": "Kirjuta meile e-postiga"
+    },
     "callUs": {
       "title": "Helista meile",
       "hours": "Helista meie tiimile E–R 8–17.",
@@ -118,7 +121,8 @@
     "visitUs": {
       "title": "Külasta meid",
       "description": "Kohtu meiega isiklikult meie Melbourne'i peakontoris.",
-      "address": "100 Smith Street, Collingwood VIC 3066"
+      "address": "100 Smith Street, Collingwood VIC 3066",
+      "mapTitle": "Asukoha kaart"
     },
     "Form": {
       "title": "Võta meie tiimiga ühendust",

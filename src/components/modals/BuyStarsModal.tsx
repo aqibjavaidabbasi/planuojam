@@ -128,17 +128,17 @@ function BuyStarsModal({ isOpen, onClose, currentUserId }: { isOpen: boolean; on
                 <button
                   key={idx}
                   onClick={() => setSelectedIndex(idx)}
-                  className={`text-left rounded-2xl border-2 p-4 cursor-pointer transition-all w-[150px] h-[100px] ${
+                  className={`text-left rounded-2xl border-2 p-2 cursor-pointer transition-all w-[150px] h-[100px] ${
                     isSelected
                       ? 'border-primary bg-gradient-to-br from-primary to-[#e6a942] text-white shadow-lg -translate-y-0.5'
                       : 'border-gray-200 bg-white hover:border-primary hover:shadow-md hover:-translate-y-0.5'
                   }`}
                 >
                   <div className="flex flex-col items-center text-center">
-                    <h3 className={`text-xl font-bold mb-1 ${isSelected ? 'text-white' : 'text-primary'}`}>
+                    <h3 className={`text-base font-bold mb-1 ${isSelected ? 'text-white' : 'text-primary'}`}>
                       {t('starsLabel', { count: pkg.stars.toLocaleString() })}
                     </h3>
-                    <div className={`text-2xl font-extrabold mb-3 ${isSelected ? 'text-white' : 'text-gray-900'}`}>
+                    <div className={`text-lg font-extrabold ${isSelected ? 'text-white' : 'text-gray-900'}`}>
                       {siteSettings?.currency?.symbol}{pkg.amount}
                     </div>
                   </div>

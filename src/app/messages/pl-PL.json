@@ -109,6 +109,9 @@
       "email": "Napisz do nas email",
       "messageOnX": "Napisz do nas "
     },
+    "emailUs": {
+      "title": "Napisz do nas email"
+    },
     "callUs": {
       "title": "Zadzwoń do nas",
       "hours": "Zadzwoń do naszego zespołu od poniedziałku do piątku w godz. 8:00–17:00.",
@@ -117,7 +120,8 @@
     "visitUs": {
       "title": "Odwiedź nas",
       "description": "Porozmawiaj z nami osobiście w naszej siedzibie w Melbourne.",
-      "address": "100 Smith Street, Collingwood VIC 3066"
+      "address": "100 Smith Street, Collingwood VIC 3066",
+      "mapTitle": "Mapa lokalizacji"
     },
     "Form": {
       "title": "Skontaktuj się z naszym zespołem",

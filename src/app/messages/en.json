@@ -125,6 +125,9 @@
       "email": "Shoot us an email",
       "messageOn": "Message us on "
     },
+    "emailUs": {
+      "title": "Email us"
+    },
     "callUs": {
       "title": "Call us",
       "hours": "Call our team Mon–Fri from 8am to 5pm.",
@@ -133,7 +136,8 @@
     "visitUs": {
       "title": "Visit us",
       "description": "Chat to us in person at our Melbourne HQ.",
-      "address": "100 Smith Street, Collingwood VIC 3066"
+      "address": "100 Smith Street, Collingwood VIC 3066",
+      "mapTitle": "Location Map"
     },
     "Form": {
       "title": "Contact our team",

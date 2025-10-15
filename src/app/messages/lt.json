@@ -109,6 +109,9 @@
       "email": "Parašykite mums el. paštu",
       "messageOnX": "Parašykite mums žinutę"
     },
+    "emailUs": {
+      "title": "Parašykite mums el. paštu"
+    },
     "callUs": {
       "title": "Paskambinkite mums",
       "hours": "Skambinkite mūsų komandai I–V nuo 8 iki 17 val.",
@@ -117,7 +120,8 @@
     "visitUs": {
       "title": "Apsilankykite pas mus",
       "description": "Apsilankykite mūsų būstinėje Melburne.",
-      "address": "100 Smith Street, Collingwood VIC 3066"
+      "address": "100 Smith Street, Collingwood VIC 3066",
+      "mapTitle": "Vietos žemėlapis"
     },
     "Form": {
       "title": "Susisiekite su mūsų komanda",

@@ -92,9 +92,7 @@ export async function fetchListingBySlug(slug: string, locale?: string) {
 
 // Fetch all listings created by a user, optionally filtered by listingStatus
 export async function fetchListingsByUser(documentId: string, status?: string, locale?: string): Promise<ListingItem[]> {
-    const populate = {
-        localizations: true
-    };
+    const populate = LISTING_ITEM_POP_STRUCTURE;
     const baseFilters: Record<string, unknown> = {
         filters: {
             user: { documentId: { $eq: documentId } },

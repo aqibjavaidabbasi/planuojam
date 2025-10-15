@@ -66,12 +66,12 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
   return (
     <div className="py-4">
       <p className="text-sm text-gray-600 mb-2">{t("uploadHint", { size: "20MB" })}</p>
-      <div className="flex gap-2 items-center ">
+      <div className="flex gap-2 items-center flex-wrap">
         {listing.portfolio?.map((image, id) => {
           const imagePath = getCompleteImageUrl(image.url);
           return (
             <div key={id} className="relative group">
-              <Image src={imagePath} alt="Portfolio image" width={200} height={200} className="rounded" />
+              <Image src={imagePath} alt="Portfolio image" width={150} height={150} className="rounded" />
               <Button
                 style="destructive"
                 extraStyles="absolute top-1 right-1 opacity-90 group-hover:opacity-100 !p-2 !rounded-full"

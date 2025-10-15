@@ -159,6 +159,9 @@
       "email": "Напишите нам по email",
       "messageOnX": "Напишите нам "
     },
+    "emailUs": {
+      "title": "Напишите нам по email"
+    },
     "callUs": {
       "title": "Позвоните нам",
       "hours": "Звоните нашей команде Пн–Пт с 8:00 до 17:00.",
@@ -167,7 +170,8 @@
     "visitUs": {
       "title": "Посетите нас",
       "description": "Приходите к нам в штаб-квартиру в Мельбурне.",
-      "address": "100 Smith Street, Collingwood VIC 3066"
+      "address": "100 Smith Street, Collingwood VIC 3066",
+      "mapTitle": "Карта расположения"
     },
     "Form": {
       "title": "Свяжитесь с нашей командой",

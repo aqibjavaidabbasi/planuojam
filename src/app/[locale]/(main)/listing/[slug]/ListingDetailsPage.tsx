@@ -126,12 +126,14 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
   }, [initialListing]);
 
 
+  console.log(renderingContent)
+
   return (
-    <div className="min-h-screen bg-background py-6 md:py-8 px-4 sm:px-6">
-      <Button style="ghost" extraStyles="!my-4" onClick={() => router.back()}>
+    <div className="min-h-screen bg-background px-4 sm:px-6">
+      <Button style="ghost" extraStyles="" onClick={() => router.back()}>
         <TbArrowBackUp size={20} />
       </Button>
-      <div className="max-w-[1700px] mx-auto">
+      <div className="max-w-[1400px] mx-auto">
 
         {/* gallery */}
         {
