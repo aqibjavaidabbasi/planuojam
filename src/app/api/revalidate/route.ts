@@ -96,7 +96,7 @@ export async function POST(req: Request) {
             for (const locale of SUPPORTED_LOCALES) {
                 if (bodyModal.includes('listing')) {
                     //for home page
-                    targets.push(`/${locale}/`)
+                    targets.push(`/${locale}`)
                     //for listing details page
                     targets.push(`/${locale}/listing/${slugToValidate}`);
                     //for hot deal page
@@ -115,7 +115,7 @@ export async function POST(req: Request) {
                     //for pages like about-us, privacy-policy
                     targets.push(`/${locale}/${slugToValidate}`)
                     // for pages like home page
-                    targets.push(`/${locale}/`)
+                    targets.push(`/${locale}`)
                     //for hot deal page
                     targets.push(`/${locale}/hot-deal`)
                     //for event types page
@@ -132,7 +132,7 @@ export async function POST(req: Request) {
                 }
                 if (bodyModal.includes('category')) {
                     //for home page
-                    targets.push(`/${locale}/`)
+                    targets.push(`/${locale}`)
                      //services pages
                     nav.categories.forEach((category: { slug: string; }) => {
                         targets.push(`/${locale}/service/${category.slug}`)
@@ -142,13 +142,13 @@ export async function POST(req: Request) {
                 }
                 if (bodyModal.includes('city') || bodyModal.includes('country') || bodyModal.includes('state')) {
                     //for home page
-                    targets.push(`/${locale}/`)
+                    targets.push(`/${locale}`)
                     //profile page as it include create listing form which uses cities, countries and states
                     targets.push(`/${locale}/profile`)
                 }
                 if (bodyModal.includes('liked-listing')) {
                     //for home page
-                    targets.push(`/${locale}/`)
+                    targets.push(`/${locale}`)
                     //for profile page as it has liked listing tab
                     targets.push(`/${locale}/profile`)
                     //services pages
@@ -164,14 +164,14 @@ export async function POST(req: Request) {
                 }
                 if (bodyModal.includes('header') || bodyModal.includes('footer') || bodyModal.includes('site-setting')) {
                     //just refresh home page, it should revalidate all single types
-                    targets.push(`/${locale}/`)
+                    targets.push(`/${locale}`)
                 }
             }
         }
-
+        console.log(body?.event)
+        console.log("revalidating path::", targets)
 
         for (const p of targets) {
-            console.log("revalidating path::", p)
             revalidatePath(p)
         };
 
