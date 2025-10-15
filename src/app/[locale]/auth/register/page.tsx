@@ -4,11 +4,8 @@ import Input from "@/components/custom/Input";
 import Select from "@/components/custom/Select";
 import Button from "@/components/custom/Button";
 import { useParentCategories } from "@/context/ParentCategoriesContext";
-import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { useAppDispatch } from "@/store/hooks";
 import { registerUser } from "@/store/thunks/authThunks";
-import { getCompleteImageUrl } from "@/utils/helpers";
-import Image from "next/image";
 import { Link, useRouter } from "@/i18n/navigation";
 import React, { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -20,6 +17,7 @@ import SocialAuthButtons from "@/components/auth/SocialAuthButtons";
 import { useLocale } from "next-intl";
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import { checkUsernameAvailability } from "@/services/auth";
+import Logo from "@/components/global/Logo";
 
 type FormValues = {
   role: string;
@@ -32,7 +30,6 @@ type FormValues = {
 };
 
 function RegisterPage() {
-  const { siteSettings } = useSiteSettings();
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -125,12 +122,7 @@ function RegisterPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-20 h-20 mb- cursor-pointer" onClick={() => router.push("/")}>
-            <Image
-              src={getCompleteImageUrl(siteSettings.siteLogo.url)}
-              alt="site logo"
-              width={80}
-              height={80}
-            />
+            <Logo className="w-20 h-20" variant="sm" />
           </div>
           <h1 className="text-2xl font-bold text-gray-800">{t("title")}</h1>
           <p className="text-gray-600 mt-2">{t("subtitle")}</p>

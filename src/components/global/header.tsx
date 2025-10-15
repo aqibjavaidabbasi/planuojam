@@ -1,14 +1,12 @@
 "use client";
 import { header as HeaderType } from "@/types/pagesTypes";
-import Image from "next/image";
 import React, { useState } from "react";
 import Search from "../custom/Search";
-import { getCompleteImageUrl } from "@/utils/helpers";
 import { FaBars } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
-import { useSiteSettings } from "@/context/SiteSettingsContext";
 import ProfileBtn from "./ProfileBtn";
+import Logo from "./Logo";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchLikedListing } from "@/store/thunks/likedListing";
@@ -24,8 +22,6 @@ import { RootState } from "@/store";
 
 function Header({ headerData }: { headerData: HeaderType }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const { siteSettings } = useSiteSettings();
-  const imageUrl = getCompleteImageUrl(siteSettings.siteLogo.url);
   const router = useRouter();
   const pathname = usePathname();
   const dispatch = useAppDispatch();
@@ -155,13 +151,9 @@ function Header({ headerData }: { headerData: HeaderType }) {
         <div className="max-w-screen lg:max-w-[1700px] mx-auto flex items-center justify-between">
           {/* Left: Logo and Nav */}
           <div className="flex items-center gap-3 w-full md:w-auto">
-            <Image
-              src={imageUrl}
-              alt="Planuojam Logo"
-              width={100}
-              height={100}
+            <Logo
+              variant="md"
               onClick={() => router.push("/")}
-              className="w-10 h-10 md:w-[95px] md:h-[60px] object-contain cursor-pointer"
               priority
             />
 
@@ -224,13 +216,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
             <div className="fixed inset-0 z-40 bg-black/40 flex overflow-y-hidden">
               <div className="bg-white w-[90%] max-w-xs h-full p-5 flex flex-col gap-4 animate-slide-in-left overflow-y-auto">
                 <div className="flex items-center justify-between">
-                  <Image
-                    src={imageUrl}
-                    alt="Planuojam Logo"
-                    width={40}
-                    height={40}
-                    className="w-10 h-10 object-contain"
-                  />
+                  <Logo variant="sm" />
                   <button
                     className="p-2 rounded hover:bg-gray-100"
                     aria-label="Close navigation menu"

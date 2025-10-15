@@ -95,6 +95,8 @@ export async function POST(req: Request) {
             slugToValidate = body?.slug ?? body?.entry?.slug;
             for (const locale of SUPPORTED_LOCALES) {
                 if (bodyModal.includes('listing')) {
+                    //for home page
+                    targets.push(`/${locale}/`)
                     //for listing details page
                     targets.push(`/${locale}/listing/${slugToValidate}`);
                     //for hot deal page

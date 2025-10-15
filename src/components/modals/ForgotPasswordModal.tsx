@@ -1,7 +1,4 @@
 "use client";
-import { useSiteSettings } from "@/context/SiteSettingsContext";
-import { getCompleteImageUrl } from "@/utils/helpers";
-import Image from "next/image";
 import React from "react";
 import Input from "../custom/Input";
 import Button from "../custom/Button";
@@ -10,13 +7,13 @@ import { forgotPassword, publicFindUserByEmail } from "@/services/auth";
 import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import Logo from "@/components/global/Logo";
 
 interface ForgotPasswordModalProps {
   onClose: () => void;
 }
 
 function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
-  const { siteSettings } = useSiteSettings();
   const router = useRouter();
   const t = useTranslations("Modals.ForgotPassword");
   const {
@@ -53,14 +50,8 @@ function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
   return (
     <div>
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-20 h-20 mb-4 overflow-hidden relative cursor-pointer" onClick={() => router.push('/')}>
-          <Image
-            alt="site logo"
-            src={getCompleteImageUrl(siteSettings.siteLogo.url)}
-            width={80}
-            height={80}
-            style={{ objectFit: "cover" }}
-          />
+        <div className="inline-flex items-center justify-center w-20 h-20 mb-4 overflow-hidden relative">
+          <Logo className="w-20 h-20" variant="sm" onClick={() => router.push('/')} />
         </div>
         <h1 className="text-2xl font-bold mb-2">{t("title")}</h1>
         <p className="text-sm">{t("description")}</p>

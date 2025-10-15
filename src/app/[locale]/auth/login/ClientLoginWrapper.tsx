@@ -4,30 +4,19 @@ import LoginForm from "./LoginForm";
 import { Link, useRouter } from "@/i18n/navigation";
 import Modal from "@/components/custom/Modal";
 import ForgotPasswordModal from "@/components/modals/ForgotPasswordModal";
-import Image from "next/image";
-import { getCompleteImageUrl } from "@/utils/helpers";
-import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { useTranslations } from "next-intl";
+import Logo from "@/components/global/Logo";
 
 function ClientLoginWrapper() {
   const [isOpen, setIsOpen] = useState(false);
-  const { siteSettings } = useSiteSettings();
   const t = useTranslations("Auth.Login");
   const router = useRouter();
 
   return (
     <div className="w-full max-w-md">
         <div className="text-center mb-4">
-          <div 
-            onClick={() => router.push("/")}
-            className="inline-flex items-center justify-center w-20 h-20 mb-2 overflow-hidden relative cursor-pointer">
-            <Image
-              alt="site logo"
-              src={getCompleteImageUrl(siteSettings.siteLogo.url)}
-              width={80}
-              height={80}
-              style={{ objectFit: "cover" }}
-            />
+          <div className="inline-flex items-center justify-center w-20 h-20 mb-2 overflow-hidden relative">
+            <Logo className="w-20 h-20" variant="sm" onClick={() => router.push("/")} />
           </div>
           <h1 className="text-2xl font-bold text-gray-800">{t("title")}</h1>
           <p className="text-gray-600 mt-2">{t("subtitle")}</p>
