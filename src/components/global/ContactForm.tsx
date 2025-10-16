@@ -5,6 +5,7 @@ import Button from '@/components/custom/Button';
 import React from 'react'
 import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
+import PhoneInputField from '@/components/custom/PhoneInputField';
 
 type Props = {
     countries?: string[];
@@ -76,23 +77,12 @@ const ContactForm: React.FC<Props> = ({ countries = [] }) => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
-                <div className="flex gap-2">
-                    <select className="border border-gray-300 rounded-md px-3 py-2" value={country} onChange={(e) => setCountry(e.target.value)}>
-                        {countries.length > 0 ? (
-                            countries.map((c) => (
-                                <option key={c} value={c}>{c}</option>
-                            ))
-                        ) : (
-                            <option value="">{t('countryPlaceholder')}</option>
-                        )}
-                    </select>
-                    <Input
-                        type="tel"
-                        placeholder={t('phonePlaceholder')}
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                    />
-                </div>
+                <PhoneInputField
+                    placeholder={t('phonePlaceholder')}
+                    value={phone}
+                    onChange={(value: string | undefined) => setPhone(value || '')}
+                    onCountryChange={(c?: string) => setCountry(c || '')}
+                />
                 <TextArea
                     placeholder={t('messagePlaceholder')}
                     rows={4}

@@ -9,6 +9,7 @@ import { useAppSelector } from "@/store/hooks";
 import LoginNavigateModal from "@/components/modals/LoginNavigateModal";
 import { useRouter } from "@/i18n/navigation";
 import { RootState } from "@/store";
+import { formatPhoneDisplay, getTelHref } from "@/utils/phone";
 
 interface ListingDetailHeroProps {
   category: string;
@@ -81,10 +82,17 @@ function ListingDetailHero({
               <MdOutlineEmail className="mr-2" size={24} />
               <a href={`mailto:${contact.email}`} className="hover:underline">{contact.email}</a>
             </div>}
-            {contact?.phone && <div className="flex items-center">
-              <MdOutlineLocalPhone className="mr-2" size={24} />
-              <a href={`tel:${contact.phone}`} className="hover:underline">{contact.phone}</a>
-            </div>}
+            {(() => {
+              const formatted = formatPhoneDisplay(contact?.phone)
+              const telHref = getTelHref(contact?.phone)
+              if (!formatted || !telHref) return null
+              return (
+                <div className="flex items-center">
+                  <MdOutlineLocalPhone className="mr-2" size={24} />
+                  <a href={telHref} className="hover:underline">{formatted}</a>
+                </div>
+              )
+            })()}
           </div>
           <div className="flex gap-1.5 items-end justify-between">
             <div className="flex gap-2 flex-wrap">

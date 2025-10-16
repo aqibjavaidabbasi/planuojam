@@ -1,13 +1,14 @@
 "use client"
 
 import React, { useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import Input from "../../custom/Input"
 import Button from "../../custom/Button"
 import { toast } from "react-hot-toast"
 import { updateListing } from "@/services/listing"
 import type { ListingItem } from "@/types/pagesTypes"
 import { useTranslations } from "next-intl"
+import PhoneInputField from "@/components/custom/PhoneInputField"
 
 export type ContactForm = {
   email: string
@@ -21,6 +22,7 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<ContactForm>({
     defaultValues: {
@@ -57,7 +59,19 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
           {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
         </div>
         <div>
-          <Input type="text" label={t("phone")} disabled={submitting} {...register("phone", { required: "Phone is required" })} />
+          <Controller
+            name="phone"
+            rules={{ required: "Phone is required" }}
+            control={control}
+            render={({ field }) => (
+              <PhoneInputField
+                label={t("phone")}
+                disabled={submitting}
+                value={field.value}
+                onChange={(val?: string) => field.onChange(val || "")}
+              />
+            )}
+          />
           {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
         </div>
         <div className="col-span-3">

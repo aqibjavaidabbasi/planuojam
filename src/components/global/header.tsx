@@ -2,6 +2,7 @@
 import { header as HeaderType } from "@/types/pagesTypes";
 import React, { useState } from "react";
 import Search from "../custom/Search";
+import Select from "../custom/Select";
 import { FaBars } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
@@ -181,18 +182,17 @@ function Header({ headerData }: { headerData: HeaderType }) {
 
           {/* Right: Language, Search, User, Mobile Toggle */}
           <div className="flex items-center gap-2 md:gap-3">
-            <select
-              className="bg-white border border-border rounded-md h-9 px-2 text-sm md:text-base"
-              value={selectedLocale}
-              onChange={handleLocaleChange}
-            >
-              {LOCALE_OPTIONS.map((opt: { code: string; label: string }) => (
-                <option key={opt.code} value={opt.code}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-
+            <div>
+              <Select
+                className="text-sm md:text-base"
+                value={selectedLocale}
+                onChange={handleLocaleChange}
+                options={LOCALE_OPTIONS.map((opt: { code: string; label: string }) => ({
+                  value: opt.code,
+                  label: opt.label,
+                }))}
+              />
+            </div>
             {/* Search: hidden on xs, visible from sm */}
             <div className="hidden sm:block max-w-[160px] md:max-w-full">
               <Search />
@@ -269,7 +269,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                                 setMobileNavOpen(false)
                               }}
                               href={getEventTypeUrl(eventType.documentId) as string}
-                              className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${isActive ? "bg-primary text-white" : ""}`}
+                              className={`cursor-pointer p-2.5 my-1 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${isActive ? "bg-primary text-white" : ""}`}
                               key={id}
                             >
                               {eventType.eventName}
@@ -282,7 +282,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                           //close mobile menu
                           setMobileNavOpen(false)
                         }}
-                          className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Hot Deal"
+                          className={`cursor-pointer p-2.5 my-1 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Hot Deal"
                             ? "bg-primary text-white"
                             : ""
                             }
@@ -299,7 +299,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                           //close mobile menu
                           setMobileNavOpen(false)
                         }}
-                          className={`cursor-pointer p-2.5 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Map" ? "bg-primary text-white" : ""
+                          className={`cursor-pointer p-2.5 my-1 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Map" ? "bg-primary text-white" : ""
                             }
                              `}
                           href="/map"
@@ -344,7 +344,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                   <Link
                     key={id}
                     href={getEventTypeUrl(eventType.documentId) as string}
-                    className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors
+                    className={`cursor-pointer text-sm px-3 mx-1 py-1 rounded-sm transition-colors
                                     ${isActive
                         ? "bg-primary text-white"
                         : "text-primary hover:bg-primary hover:text-white"
@@ -355,7 +355,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                 );
               })}
               <Link
-                className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${isHotDealActive()
+                className={`cursor-pointer text-sm px-3  mx-1 py-1 rounded-sm transition-colors ${isHotDealActive()
                   ? "bg-primary text-white"
                   : "text-primary hover:bg-primary hover:text-white"
                   }`}

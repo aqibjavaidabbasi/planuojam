@@ -45,14 +45,32 @@ export const getStrapiErrorMessage = (error: unknown): string => {
   return "An unexpected error occurred";
 };
 
+// Basic transliteration for Cyrillic → Latin
+const cyrillicMap: Record<string, string> = {
+  а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "yo", ж: "zh", з: "z", и: "i",
+  й: "y", к: "k", л: "l", м: "m", н: "n", о: "o", п: "p", р: "r", с: "s", т: "t",
+  у: "u", ф: "f", х: "h", ц: "ts", ч: "ch", ш: "sh", щ: "sch", ы: "y", э: "e",
+  ю: "yu", я: "ya", ъ: "", ь: "",
+  А: "a", Б: "b", В: "v", Г: "g", Д: "d", Е: "e", Ё: "yo", Ж: "zh", З: "z", И: "i",
+  Й: "y", К: "k", Л: "l", М: "m", Н: "n", О: "o", П: "p", Р: "r", С: "s", Т: "t",
+  У: "u", Ф: "f", Х: "h", Ц: "ts", Ч: "ch", Ш: "sh", Щ: "sch", Ы: "y", Э: "e",
+  Ю: "yu", Я: "ya", Ъ: "", Ь: ""
+};
+
 export function slugify(input: string): string {
   if (!input) return "";
 
-  return input
-    .normalize("NFKD") // split accented characters into base + diacritic
+
+  const transliterated = input
+    .split("")
+    .map((ch) => cyrillicMap[ch] ?? ch)
+    .join("");
+
+  return transliterated
+    .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "") // remove diacritics
-    .replace(/ß/g, "ss") // German sharp S
-    .replace(/æ/g, "ae") // Latin ligature
+    .replace(/ß/g, "ss")
+    .replace(/æ/g, "ae")
     .replace(/ø/g, "o")
     .replace(/đ/g, "d")
     .replace(/ħ/g, "h")
@@ -62,10 +80,11 @@ export function slugify(input: string): string {
     .replace(/©/g, "c")
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9]+/g, "-") // keep only alphanumerics, replace others with `-`
-    .replace(/^-+|-+$/g, "") // trim leading/trailing dashes
-    .replace(/-{2,}/g, "-"); // collapse multiple dashes
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-");
 }
+
 
 // Generate a short alphanumeric string suitable for appending to slugs
 // Uses crypto.getRandomValues when available for better randomness; falls back to Math.random.

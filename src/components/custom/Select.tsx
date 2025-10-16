@@ -21,12 +21,13 @@ const Select: React.FC<SelectProps> = ({
   ...props
 }) => {
   const isControlled = value !== undefined;
+  const [isOpen, setIsOpen] = React.useState(false);
 
   // Compose className with disabled state styling
   const selectClassName = `
     w-full py-1.5 md:py-2.5 px-2.5 md:px-5 border border-border rounded-md text-base font-normal bg-white 
     focus:outline-none focus:ring-2 focus:ring-primary appearance-none
-    ${disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60' : ''}
+    ${disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60' : 'cursor-pointer'}
     ${className}
   `;
 
@@ -52,9 +53,9 @@ const Select: React.FC<SelectProps> = ({
           {label}{required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
-      <div className="relative">
+      <div className="relative group" onClick={()=>setIsOpen(!isOpen)}>
         <select {...selectProps} id={selectProps.id}>
-          {placeholder && (
+          {placeholder && placeholder !== 'Choose an option' && placeholder !== '' && (
             <option value="">
               {placeholder}
             </option>
@@ -67,7 +68,8 @@ const Select: React.FC<SelectProps> = ({
         </select>
         <div
           className={`
-          pointer-events-none absolute right-3 top-1/2 -translate-y-1/2
+          pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 transform transition-transform duration-200
+          ${isOpen ? 'rotate-180' : ''}
           ${disabled ? 'text-gray-400' : ''}
         `}
         >

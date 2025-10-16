@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from 'next-intl';
+import { formatPhoneDisplay, getTelHref } from '@/utils/phone';
 
 type Props = {
   address?: string;
@@ -49,12 +50,17 @@ export default function ContactStatic({ address, email, phone, description, soci
           <a href={`mailto:${email}`} className="text-black hover:underline">{email}</a>
         </div>
       )}
-      {phone && (
-        <div>
-          <h3 className="text-xl font-semibold mb-2">{t('callUs.title')}</h3>
-          <a href={`tel:${phone}`} className="text-black hover:underline">{phone}</a>
-        </div>
-      )}
+      {(() => {
+        const formatted = formatPhoneDisplay(phone)
+        const telHref = getTelHref(phone)
+        if (!formatted || !telHref) return null
+        return (
+          <div>
+            <h3 className="text-xl font-semibold mb-2">{t('callUs.title')}</h3>
+            <a href={telHref} className="text-black hover:underline">{formatted}</a>
+          </div>
+        )
+      })()}
       {address && (
         <div>
           <h3 className="text-xl font-semibold mb-2">{t('visitUs.title')}</h3>

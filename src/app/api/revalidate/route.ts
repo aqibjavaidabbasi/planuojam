@@ -95,6 +95,8 @@ export async function POST(req: Request) {
             slugToValidate = body?.slug ?? body?.entry?.slug;
             for (const locale of SUPPORTED_LOCALES) {
                 if (bodyModal.includes('listing')) {
+                    //root page
+                    targets.push('/')
                     //for home page
                     targets.push(`/${locale}`)
                     //for listing details page
@@ -112,6 +114,8 @@ export async function POST(req: Request) {
                     targets.push(`/${locale}/listing/${slugToValidate}/edit`)
                 }
                 if (bodyModal.includes('page')) {
+                    //root page
+                    targets.push('/')
                     //for pages like about-us, privacy-policy
                     targets.push(`/${locale}/${slugToValidate}`)
                     // for pages like home page
@@ -123,6 +127,8 @@ export async function POST(req: Request) {
 
                 }
                 if (bodyModal.includes('event-type')) {
+                    //root page
+                    targets.push('/')
                      //event type pages
                     eventTypes.forEach((et: { eventType: { slug: string; }; }) => {
                         targets.push(`/${locale}/event-types/${et.eventType.slug}`)
@@ -131,6 +137,8 @@ export async function POST(req: Request) {
                     targets.push(`/${locale}/hot-deal`)
                 }
                 if (bodyModal.includes('category')) {
+                    //root page
+                    targets.push('/')
                     //for home page
                     targets.push(`/${locale}`)
                      //services pages
@@ -141,35 +149,39 @@ export async function POST(req: Request) {
                     targets.push(`/${locale}/hot-deal`)
                 }
                 if (bodyModal.includes('city') || bodyModal.includes('country') || bodyModal.includes('state')) {
+                    //root page
+                    targets.push('/')
                     //for home page
                     targets.push(`/${locale}`)
                     //profile page as it include create listing form which uses cities, countries and states
                     targets.push(`/${locale}/profile`)
                 }
-                if (bodyModal.includes('liked-listing')) {
-                    //for home page
-                    targets.push(`/${locale}`)
-                    //for profile page as it has liked listing tab
-                    targets.push(`/${locale}/profile`)
-                    //services pages
-                    nav.categories.forEach((category: { slug: string; }) => {
-                        targets.push(`/${locale}/service/${category.slug}`)
-                    })
-                    //event type pages
-                    eventTypes.forEach((et: { eventType: { slug: string; }; }) => {
-                        targets.push(`/${locale}/event-types/${et.eventType.slug}`)
-                    })
-                    //for hot deal page
-                    targets.push(`/${locale}/hot-deal`)
-                }
+                // if (bodyModal.includes('liked-listing')) {
+                //     //root page
+                //     targets.push('/')
+                //     //for home page
+                //     targets.push(`/${locale}`)
+                //     //for profile page as it has liked listing tab
+                //     targets.push(`/${locale}/profile`)
+                //     //services pages
+                //     nav.categories.forEach((category: { slug: string; }) => {
+                //         targets.push(`/${locale}/service/${category.slug}`)
+                //     })
+                //     //event type pages
+                //     eventTypes.forEach((et: { eventType: { slug: string; }; }) => {
+                //         targets.push(`/${locale}/event-types/${et.eventType.slug}`)
+                //     })
+                //     //for hot deal page
+                //     targets.push(`/${locale}/hot-deal`)
+                // }
                 if (bodyModal.includes('header') || bodyModal.includes('footer') || bodyModal.includes('site-setting')) {
+                    //root page
+                    targets.push('/')
                     //just refresh home page, it should revalidate all single types
                     targets.push(`/${locale}`)
                 }
             }
         }
-        console.log(body?.event)
-        console.log("revalidating path::", targets)
 
         for (const p of targets) {
             revalidatePath(p)

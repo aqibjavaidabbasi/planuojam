@@ -1,15 +1,55 @@
 import React from 'react'
-import ClientListingWrapper from "@/components/global/ClientListingWrapper";
+import dynamic from 'next/dynamic';
+const ClientListingWrapper = dynamic(()=>import("@/components/global/ClientListingWrapper"));
 import type { Metadata } from 'next'
 import { getSeoMetadata } from '@/lib/getSeoMetadata'
 import { fetchFallbackSeo, fetchPageSeoBySlug, resolveSeoByUrl } from '@/services/seoApi'
+import { fetchSortedListings } from '@/services/listing'
+import { fetchChildCategories, fetchParentCategories } from '@/services/common'
+import type { category } from '@/types/pagesTypes'
 
-export default async function ServicePage({ params }: { params: Promise<{ service: string }> }) {
-  const { service } = await params;
+export default async function ServicePage({ params, searchParams }: { params: Promise<{ locale?: string; service: string }>, searchParams?: Promise<Record<string, string | string[]>> }) {
+  const { service, locale } = await params;
+  const sp = (await searchParams) as Record<string, string | string[]> | undefined;
+
+  const rawCat = sp?.["cat"];
+  const rawEventType = sp?.["eventType"];
+  const categoryFromUrl = typeof rawCat === 'string' ? rawCat : Array.isArray(rawCat) ? rawCat[0] : undefined;
+  const eventTypeFromUrl = typeof rawEventType === 'string' ? rawEventType : Array.isArray(rawEventType) ? rawEventType[0] : undefined;
+
+  const initialFilters: Record<string, string> = {};
+  if (categoryFromUrl) initialFilters.category = categoryFromUrl;
+  if (eventTypeFromUrl) initialFilters.eventType = eventTypeFromUrl;
+
+  const appliedFilters: Record<string, unknown> = {};
+  if (categoryFromUrl) {
+    appliedFilters.category = { name: { $eq: categoryFromUrl } };
+  }
+  if (eventTypeFromUrl) {
+    appliedFilters.eventTypes = { eventName: { $eq: eventTypeFromUrl } };
+  }
+
+  const [initialList, initialCategoryNames] = await Promise.all([
+    fetchSortedListings(service as 'vendor' | 'venue', appliedFilters, locale),
+    (async () => {
+      try {
+        const parents = await fetchParentCategories('en');
+        const parent = Array.isArray(parents) ? parents.find((p: category) => p?.slug === service) : undefined;
+        if (!parent?.documentId) return [] as string[];
+        const cats = await fetchChildCategories(parent.documentId, locale);
+        return Array.isArray(cats) ? (cats as Array<Pick<category, 'name'>>).map((c) => c.name).filter(Boolean) as string[] : [];
+      } catch {
+        return [] as string[];
+      }
+    })()
+  ]);
 
   return (
     <ClientListingWrapper
       service={service}
+      initialList={initialList}
+      initialFilters={initialFilters}
+      initialCategoryNames={initialCategoryNames}
     />
   );
 }

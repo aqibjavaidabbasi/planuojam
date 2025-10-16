@@ -3,32 +3,28 @@ import dynamic from "next/dynamic";
 const FiltersAndMap = dynamic(()=>import("@/components/global/FiltersAndMap"),{ssr:false})
 const ListingCard  = dynamic(()=>import("@/components/Dynamic/ListingCard"))
 const NoDataCard = dynamic(()=>import("@/components/custom/NoDataCard"),{ssr:false})
-const Loader = dynamic(()=>import("@/components/custom/Loader"),{ssr:false})
 import { useEventTypes } from "@/context/EventTypesContext";
-import { fetchChildCategories } from "@/services/common";
 import { ListingItem, Venue } from "@/types/pagesTypes";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Location } from "@/components/global/MapboxMap";
 import { useLocale, useTranslations } from "next-intl";
 import geocodeLocations from "@/utils/mapboxLocation";
-import { useParentCategories } from "@/context/ParentCategoriesContext";
 import { fetchSortedListings } from "@/services/listing";
 
 export type ListingWrapperProps = {
   service: string;
+  initialList?: ListingItem[];
+  initialFilters?: Record<string, string>;
+  initialCategoryNames?: string[];
 };
 
-function ClientListingWrapper({ service }: ListingWrapperProps) {
-  const [list, setList] = useState<ListingItem[]>([]);
-  const [loading, setLoading] = useState(false);
+function ClientListingWrapper({ service, initialList, initialFilters: initialFiltersFromServer, initialCategoryNames }: ListingWrapperProps) {
+  const [list, setList] = useState<ListingItem[]>(initialList || []);
   const { localizedEventTypes } = useEventTypes();
   const searchParams = useSearchParams();
   const locale = useLocale();
-  const { getServiceCategoryBySlug } = useParentCategories();
-  const serviceCategory = useMemo(() => getServiceCategoryBySlug(service), [getServiceCategoryBySlug, service]);
-  const [categoryNames, setCategoryNames] = useState<string[]>([]);
-  const [loadingCats, setLoadingCats] = useState(false);
+  const categoryNames = useMemo(() => initialCategoryNames || [], [initialCategoryNames]);
   // Get translations based on service type
   const vendorsT = useTranslations("Vendors");
   const venuesT = useTranslations("Venues");
@@ -39,11 +35,12 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
   const eventTypeFromUrl = searchParams.get("eventType");
 
   const initialFilters = useMemo(() => {
+    if (initialFiltersFromServer && Object.keys(initialFiltersFromServer).length) return initialFiltersFromServer;
     const obj: Record<string, string> = {};
     if (categoryFromUrl) obj.category = categoryFromUrl;
     if (eventTypeFromUrl) obj.eventType = eventTypeFromUrl;
     return obj;
-  }, [categoryFromUrl, eventTypeFromUrl]);
+  }, [categoryFromUrl, eventTypeFromUrl, initialFiltersFromServer]);
 
   // Helper function to get the correct translation based on service type
   const getTranslation = useCallback((key: string) => {
@@ -101,7 +98,14 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
   // Fetch listings when URL filters change
   useEffect(
     function () {
-      setLoading(true);
+      const hasServerList = Array.isArray(initialList) && initialList.length > 0;
+      // On first render, if server provided initial list and current URL matches initialFilters, skip client fetch
+      const urlMatchesInitial = (
+        (!initialFiltersFromServer?.category || initialFiltersFromServer.category === categoryFromUrl) &&
+        (!initialFiltersFromServer?.eventType || initialFiltersFromServer.eventType === eventTypeFromUrl)
+      );
+      const shouldSkip = hasServerList && urlMatchesInitial;
+      if (shouldSkip) return;
       const filters = {} as Record<string, unknown>;
       async function fetchItems() {
         if (categoryFromUrl) {
@@ -124,11 +128,10 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
         } catch (err) {
           console.error(err);
         }
-        setLoading(false);
       }
       fetchItems();
     },
-    [service, categoryFromUrl, eventTypeFromUrl, fetcher, locale]
+    [service, categoryFromUrl, eventTypeFromUrl, fetcher, locale, initialList, initialFiltersFromServer]
   );
 
   // Derive locations from current list based on type/__component
@@ -160,32 +163,7 @@ function ClientListingWrapper({ service }: ListingWrapperProps) {
     };
   }, [list, service]);
 
-  useEffect(() => {
-    let canceled = false;
-    async function run() {
-      if (!serviceCategory) return;
-      setLoadingCats(true);
-      try {
-        const cats = await fetchChildCategories(serviceCategory.documentId, locale);
-        if (!canceled) {
-          const names = (cats || []).map((c: { name: string; }) => c.name).filter(Boolean);
-          setCategoryNames(names);
-        }
-      } catch (err) {
-        console.error(err);
-        if (!canceled) setCategoryNames([]);
-      } finally {
-        if (!canceled) setLoadingCats(false);
-      }
-    }
-    run();
-    return () => {
-      canceled = true;
-    };
-  }, [serviceCategory, locale]);
-
-  if (loading || loadingCats)
-    return ( <Loader />);
+  
 
   return (
     <div className="py-2">
