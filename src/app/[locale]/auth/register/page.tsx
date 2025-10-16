@@ -47,10 +47,18 @@ function RegisterPage() {
   const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
 
   const currentUsername = watch("username");
+  const passwordValue = watch("password") || "";
+  const hasMinLen = passwordValue.length >= 8;
+  const hasUpper = /[A-Z]/.test(passwordValue);
+  const hasDigit = /\d/.test(passwordValue);
+  const strengthScore = useMemo(() => {
+    return [hasMinLen, hasUpper, hasDigit].filter(Boolean).length;
+  }, [hasMinLen, hasUpper, hasDigit]);
+  const isPasswordStrong = strengthScore === 3;
   const canRegister = useMemo(() => {
-    // Require explicit availability confirmation
-    return usernameStatus === "available" && isChecked && !isSubmitting;
-  }, [usernameStatus, isChecked, isSubmitting]);
+    // Require explicit availability confirmation and strong password
+    return usernameStatus === "available" && isChecked && isPasswordStrong && !isSubmitting;
+  }, [usernameStatus, isChecked, isPasswordStrong, isSubmitting]);
 
   function onUsernameChangeReset() {
     if (usernameStatus !== "unchecked") {
@@ -88,6 +96,10 @@ function RegisterPage() {
     }
     if (usernameStatus !== "available") {
       toast.error(t("usernameRequired"));
+      return;
+    }
+    if (!isPasswordStrong) {
+      toast.error(t("passwordTooWeak", { default: "Password is too weak (need 8+ chars, 1 uppercase, 1 number)" }));
       return;
     }
     //filter role, terms, confirm
@@ -238,7 +250,7 @@ function RegisterPage() {
                 <button
                   type="button"
                   onClick={handleCheckUsername}
-                  className="text-xs text-primary hover:underline disabled:opacity-50"
+                  className="text-xs text-primary hover:underline disabled:opacity-50 cursor-pointer"
                   disabled={isSubmitting || !currentUsername}
                 >
                   {usernameStatus === "checking" ? t("registering") : t("checkAvailability", { default: "Check availability" })}
@@ -297,6 +309,36 @@ function RegisterPage() {
                   minLength: 8,
                 })}
               />
+              {/* Password strength meter */}
+              <div className="mt-1">
+                <div className="h-2 w-full bg-gray-200 rounded">
+                  <div
+                    className={`h-2 rounded transition-all ${
+                      strengthScore === 0
+                        ? "w-0 bg-transparent"
+                        : strengthScore === 1
+                        ? "w-1/3 bg-red-500"
+                        : strengthScore === 2
+                        ? "w-2/3 bg-yellow-500"
+                        : "w-full bg-green-500"
+                    }`}
+                  />
+                </div>
+                <div className="mt-2 grid grid-cols-3 gap-2 text-[11px] text-gray-600">
+                  <div className={`flex items-center gap-1 ${hasMinLen ? "text-green-600" : "text-gray-500"}`}>
+                    <AiOutlineCheckCircle className={`${hasMinLen ? "opacity-100" : "opacity-40"}`} />
+                    <span>{t("passwordCriteriaLength", { default: "8+ chars" })}</span>
+                  </div>
+                  <div className={`flex items-center gap-1 ${hasUpper ? "text-green-600" : "text-gray-500"}`}>
+                    <AiOutlineCheckCircle className={`${hasUpper ? "opacity-100" : "opacity-40"}`} />
+                    <span>{t("passwordCriteriaUpper", { default: "1 uppercase" })}</span>
+                  </div>
+                  <div className={`flex items-center gap-1 ${hasDigit ? "text-green-600" : "text-gray-500"}`}>
+                    <AiOutlineCheckCircle className={`${hasDigit ? "opacity-100" : "opacity-40"}`} />
+                    <span>{t("passwordCriteriaNumber", { default: "1 number" })}</span>
+                  </div>
+                </div>
+              </div>
               {errors.password && (
                 <p className="text-red-500">{errors?.password?.message}</p>
               )}
@@ -320,11 +362,21 @@ function RegisterPage() {
 
             <div className="">
               <Checkbox
-                label={!isChecked ? t("tosRequired") : t("tosAgree")}
-                onChange={(e)=>setIsChecked(e.target.checked)}
+                label={
+                  <>
+                    <span className="mr-1">{t("agreePrefix", { default: "I agree to the" })}</span>
+                    <Link href="/terms-of-service" className="text-primary hover:underline">
+                      {t("termsOfService", { default: "Terms of Service" })}
+                    </Link>
+                    <span className="mx-1">{t("and", { default: "and" })}</span>
+                    <Link href="/privacy-policy" className="text-primary hover:underline">
+                      {t("privacyPolicy", { default: "Privacy Policy" })}
+                    </Link>
+                  </>
+                }
+                onChange={(e) => setIsChecked(e.target.checked)}
                 checked={isChecked}
                 disabled={isSubmitting}
-                linkHref="/privacy-policy"
               />
             </div>
 

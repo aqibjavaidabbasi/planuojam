@@ -9,7 +9,6 @@ import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 import { FaHeart, FaSpinner } from 'react-icons/fa'
-import { CiHeart } from 'react-icons/ci'
 import Button from '../custom/Button'
 import { IoNavigateOutline } from 'react-icons/io5'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
@@ -87,16 +86,6 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
           '2px 0px 4px rgba(0,0,0,0.1), 0px 2px 4px rgba(0,0,0,0.1), 0px -2px 4px rgba(0,0,0,0.1), -2px 0px 4px rgba(0,0,0,0.1)'
       }}
     >
-      {/* Heart icon */}
-      <div className="absolute top-1 md:top-2 left-1 md:left-2 z-20">
-        {status === 'loading' ? (
-          <FaSpinner size={32} color="#e53e3e" className="cursor-not-allowed" />
-        ) : isLiked ? (
-          <FaHeart onClick={handleHeartClick} size={32} color="#e53e3e" className="cursor-pointer" />
-        ) : (
-          <CiHeart onClick={handleHeartClick} size={32} color="#e2e8f0" className="cursor-pointer" />
-        )}
-      </div>
 
       {/* Hot Deal Badge (only when currently active) */}
       {isHotDealActive && (
@@ -126,37 +115,37 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
       >
         {item.portfolio?.length > 0
           ? item.portfolio?.map((img, idx) => {
-              const imageUrl = getCompleteImageUrl(img.url);
-              return (
-                <SwiperSlide key={idx}>
-                  <div className="relative w-full h-40 md:h-56 lg:h-64">
-                    <Image
-                      src={imageUrl}
-                      alt={t('imageAlt', { index: idx + 1 })}
-                      fill
-                      style={{ objectFit: 'cover' }}
-                      sizes="(max-width: 768px) 100vw, 400px"
-                      priority={idx === 0 && !!highPriority}
-                      fetchPriority={idx === 0 && highPriority ? 'high' : undefined}
-                      loading={idx === 0 && highPriority ? 'eager' : undefined}
-                    />
-                  </div>
-                </SwiperSlide>
-              );
-            })
-          : [1, 2, 3].map((_, idx) => (
+            const imageUrl = getCompleteImageUrl(img.url);
+            return (
               <SwiperSlide key={idx}>
                 <div className="relative w-full h-40 md:h-56 lg:h-64">
                   <Image
-                    src={"/placeholder.png"}
-                    alt={t('placeholderAlt')}
+                    src={imageUrl}
+                    alt={t('imageAlt', { index: idx + 1 })}
                     fill
                     style={{ objectFit: 'cover' }}
                     sizes="(max-width: 768px) 100vw, 400px"
+                    priority={idx === 0 && !!highPriority}
+                    fetchPriority={idx === 0 && highPriority ? 'high' : undefined}
+                    loading={idx === 0 && highPriority ? 'eager' : undefined}
                   />
                 </div>
               </SwiperSlide>
-            ))}
+            );
+          })
+          : [1, 2, 3].map((_, idx) => (
+            <SwiperSlide key={idx}>
+              <div className="relative w-full h-40 md:h-56 lg:h-64">
+                <Image
+                  src={"/placeholder.png"}
+                  alt={t('placeholderAlt')}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  sizes="(max-width: 768px) 100vw, 400px"
+                />
+              </div>
+            </SwiperSlide>
+          ))}
       </Swiper>
 
       {/* Content */}
@@ -180,15 +169,15 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
                     <>
                       {item.listingItem[0].serviceArea?.length > 0
                         ? (() => {
-                            const locations = item.listingItem[0].serviceArea
-                              .map(area => {
-                                const city = area?.city?.name ?? '';
-                                const state = area?.state?.name ?? '';
-                                return city || state ? `${city} ${state}`.trim() : '';
-                              })
-                              .filter(Boolean);
-                            return locations.length > 0 ? locations.join(', ') : t('noLocation');
-                          })()
+                          const locations = item.listingItem[0].serviceArea
+                            .map(area => {
+                              const city = area?.city?.name ?? '';
+                              const state = area?.state?.name ?? '';
+                              return city || state ? `${city} ${state}`.trim() : '';
+                            })
+                            .filter(Boolean);
+                          return locations.length > 0 ? locations.join(', ') : t('noLocation');
+                        })()
                         : t('noLocation')
                       }
                     </>
@@ -224,23 +213,38 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
               <span>{t('contactForPricing')}</span>
             )}
           </div>
-          {user?.serviceType && user?.documentId && item?.user?.documentId === user.documentId ? (
-            <Button style="secondary" size="small" onClick={() => router.push(`${getListingItemUrl() as string}/edit`)}>
-              {t('edit')} <IoNavigateOutline />
-            </Button>
-          ) : (
-            <Button
-              style="secondary"
-              size="small"
-              onClick={async () => {
-                // Fire-and-forget promotion click registration; backend will no-op if no active promo
-                try { await registerPromotionClick(item.documentId, user?.id); } catch {}
-                router.push(getListingItemUrl() as string);
-              }}
-            >
-              {t('view')} <IoNavigateOutline />
-            </Button>
-          )}
+
+          <div className="flex gap-2.5 items-center justify-center">
+            {/* Heart icon */}
+            <div className="">
+              {status === 'loading' ? (
+                <FaSpinner size={24} color="#c4a7a7" className="cursor-not-allowed" />
+              ) : isLiked ? (
+                <FaHeart onClick={handleHeartClick} size={24} color="#e53e3e" className="cursor-pointer" />
+              ) : (
+                <FaHeart onClick={handleHeartClick} size={24} color="#9ea2a7" className="cursor-pointer" />
+              )}
+            </div>
+            <div>
+              {user?.serviceType && user?.documentId && item?.user?.documentId === user.documentId ? (
+                <Button style="secondary" size="small" onClick={() => router.push(`${getListingItemUrl() as string}/edit`)}>
+                  {t('edit')} <IoNavigateOutline />
+                </Button>
+              ) : (
+                <Button
+                  style="secondary"
+                  size="small"
+                  onClick={async () => {
+                    // Fire-and-forget promotion click registration; backend will no-op if no active promo
+                    try { await registerPromotionClick(item.documentId, user?.id); } catch { }
+                    router.push(getListingItemUrl() as string);
+                  }}
+                >
+                  {t('view')} <IoNavigateOutline />
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 

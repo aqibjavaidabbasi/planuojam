@@ -2,16 +2,50 @@ import React from "react";
 import { Link } from "@/i18n/navigation";
 
 interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string;
+  label: React.ReactNode;
   error?: boolean;
-  // When provided, the label will be rendered as a link with a hover effect
+  // Deprecated: prefer passing rich content via `label` instead of linking the entire text
   linkHref?: string;
+  // Extra styling hooks for flexibility
+  containerClassName?: string;
+  labelClassName?: string; // applied to the text wrapper (span) or link when linkHref is used
+  linkClassName?: string;  // additional classes for anchor when linkHref is provided
+  // Control whether clicks on inner links should avoid toggling the checkbox
+  stopToggleOnLinkClick?: boolean; // default true
 }
 
-function Checkbox({ label, disabled = false, error = false, className, linkHref, ...props }: CheckboxProps) {
+function Checkbox({
+  label,
+  disabled = false,
+  error = false,
+  className,
+  linkHref,
+  containerClassName,
+  labelClassName,
+  linkClassName,
+  stopToggleOnLinkClick = true,
+  ...props
+}: CheckboxProps) {
   return (
     <label
-      className={`flex items-center ${disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
+      className={`flex items-center ${disabled ? 'opacity-60 cursor-not-allowed' : ''} ${containerClassName || ''}`}
+      onMouseDownCapture={(e) => {
+        // Prevent label activation (which toggles the checkbox) when mousedown originates on a link
+        if (!stopToggleOnLinkClick) return;
+        const target = e.target as HTMLElement | null;
+        if (target && target.closest('a')) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }}
+      onClickCapture={(e) => {
+        // If a link inside the label is clicked, avoid toggling the checkbox
+        if (!stopToggleOnLinkClick) return;
+        const target = e.target as HTMLElement | null;
+        if (target && target.closest('a')) {
+          e.stopPropagation();
+        }
+      }}
     >
       <input
         type="checkbox"
@@ -20,21 +54,13 @@ function Checkbox({ label, disabled = false, error = false, className, linkHref,
         {...props}
       />
       {linkHref ? (
+        // Backward compatibility: if linkHref is provided, render the label as a single link
         <Link
           href={linkHref}
           className={`ml-2 text-sm capitalize transition-colors ${
             error ? 'text-red-500' : 'text-gray-600'
-          } hover:text-primary underline-offset-2 hover:underline`}
-          title={label}
-          onClick={(e) => {
-            // Prevent toggling checkbox when clicking the link
-            e.stopPropagation();
-          }}
-          onMouseDown={(e) => {
-            // Prevent label default activation behavior from toggling the checkbox
-            e.preventDefault();
-            e.stopPropagation();
-          }}
+          } hover:text-primary underline-offset-2 hover:underline ${linkClassName || labelClassName || ''}`}
+          title={typeof label === 'string' ? label : undefined}
         >
           {label}
         </Link>
@@ -42,7 +68,7 @@ function Checkbox({ label, disabled = false, error = false, className, linkHref,
         <span
           className={`ml-2 text-sm capitalize ${
             error ? 'text-red-500' : 'text-gray-600'
-          }`}
+          } ${labelClassName || ''}`}
         >
           {label}
         </span>

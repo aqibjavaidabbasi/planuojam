@@ -51,6 +51,14 @@
       "confirmPasswordPlaceholder": "Kinnita oma parool",
       "confirmPasswordRequired": "Parooli kinnitamine on kohustuslik",
       "tosAgree": "Nõustun kasutustingimuste ja privaatsuspoliitikaga",
+      "agreePrefix": "Nõustun",
+      "termsOfService": "Kasutustingimustega",
+      "and": "ja",
+      "privacyPolicy": "Privaatsuspoliitikaga",
+      "passwordCriteriaLength": "8+ märki",
+      "passwordCriteriaUpper": "1 suur täht",
+      "passwordCriteriaNumber": "1 number",
+      "passwordTooWeak": "Parool on liiga nõrk (vajalik 8+ märki, 1 suur täht, 1 number)",
       "tosRequired": "Palun loe ja nõustu kasutustingimuste ning privaatsuspoliitikaga",
       "tosNotAccepted": "Palun nõustu kasutustingimuste ja privaatsuspoliitikaga",
       "registerCta": "Registreeru",
@@ -461,7 +469,10 @@
   "Global": {
     "SubscriptionForm": {
       "emailPlaceholder": "Sisesta oma e-post",
-      "subscribe": "Telli"
+      "subscribe": "Telli",
+      "subscribing": "Tellimine...",
+      "success": "Tellimus loodud",
+      "error": "Tellimine ebaõnnestus. Palun proovi uuesti."
     }
   },
   "NotFound": {

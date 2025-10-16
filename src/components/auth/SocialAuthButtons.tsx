@@ -31,7 +31,7 @@ const SocialAuthButtons: React.FC<Props> = ({ onGoogleClick, onFacebookClick, cl
         <button
           type="button"
           onClick={onGoogleClick}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 active:scale-[0.99] transition shadow-sm"
+          className="w-full inline-flex items-center cursor-pointer justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 active:scale-[0.99] transition shadow-sm"
           aria-label={t("google")}
         >
           <FaGoogle className="text-[#DB4437]" />
@@ -41,7 +41,7 @@ const SocialAuthButtons: React.FC<Props> = ({ onGoogleClick, onFacebookClick, cl
         <button
           type="button"
           onClick={onFacebookClick}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-white bg-[#1877F2] hover:bg-[#166FE5] active:scale-[0.99] transition shadow-sm"
+          className="w-full inline-flex items-center cursor-pointer justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-white bg-[#1877F2] hover:bg-[#166FE5] active:scale-[0.99] transition shadow-sm"
           aria-label={t("facebook")}
         >
           <FaFacebookF />

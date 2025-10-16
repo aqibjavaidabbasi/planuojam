@@ -89,6 +89,14 @@
       "confirmPasswordPlaceholder": "Повторите пароль",
       "confirmPasswordRequired": "Подтвердите пароль",
       "tosAgree": "Я согласен с Условиями использования и Политикой конфиденциальности",
+      "agreePrefix": "Я согласен с",
+      "termsOfService": "Условиями использования",
+      "and": "и",
+      "privacyPolicy": "Политикой конфиденциальности",
+      "passwordCriteriaLength": "8+ символов",
+      "passwordCriteriaUpper": "1 заглавная буква",
+      "passwordCriteriaNumber": "1 цифра",
+      "passwordTooWeak": "Слабый пароль (нужно 8+ символов, 1 заглавная буква, 1 цифра)",
       "tosRequired": "Пожалуйста, прочитайте и согласитесь с Условиями использования и Политикой конфиденциальности",
       "registerCta": "Зарегистрироваться",
       "alreadyHaveAccount": "Уже есть аккаунт?",
@@ -303,7 +311,10 @@
   "Global": {
     "SubscriptionForm": {
       "emailPlaceholder": "Введите ваш email",
-      "subscribe": "Подписаться"
+      "subscribe": "Подписаться",
+      "subscribing": "Оформление подписки...",
+      "success": "Подписка оформлена",
+      "error": "Не удалось оформить подписку. Попробуйте ещё раз."
     }
   },
   "Profile": {

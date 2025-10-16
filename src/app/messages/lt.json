@@ -51,6 +51,14 @@
       "confirmPasswordPlaceholder": "Pakartokite slaptažodį",
       "confirmPasswordRequired": "Slaptažodis yra privalomas",
       "tosAgree": "Sutinku su Paslaugų teikimo sąlygomis ir Privatumo politika",
+      "agreePrefix": "Sutinku su",
+      "termsOfService": "Paslaugų teikimo sąlygomis",
+      "and": "ir",
+      "privacyPolicy": "Privatumo politika",
+      "passwordCriteriaLength": "8+ simbolių",
+      "passwordCriteriaUpper": "1 didžioji raidė",
+      "passwordCriteriaNumber": "1 skaičius",
+      "passwordTooWeak": "Slaptažodis per silpnas (reikia 8+ simbolių, 1 didžiosios raidės, 1 skaičiaus)",
       "tosRequired": "Perskaitykite ir sutikite su Paslaugų teikimo sąlygomis ir Privatumo politika",
       "registerCta": "Registruotis",
       "alreadyHaveAccount": "Jau turite paskyrą?",
@@ -256,7 +264,10 @@
   "Global": {
     "SubscriptionForm": {
       "emailPlaceholder": "Įveskite savo el. paštą",
-      "subscribe": "Prenumeruoti"
+      "subscribe": "Prenumeruoti",
+      "subscribing": "Prenumeruojama...",
+      "success": "Prenumerata sėkmingai sukurta",
+      "error": "Prenumerata nepavyko. Bandykite dar kartą."
     }
   },
   "Modals": {

@@ -3,7 +3,7 @@ import ClientLoginWrapper from "./ClientLoginWrapper";
 
 function LoginPage() {
   return (
-    <div className="flex items-center justify-center h-dvh w-screen max-w-screen">
+    <div className="flex items-center justify-center py-5 w-screen">
         <ClientLoginWrapper />
     </div>
   );

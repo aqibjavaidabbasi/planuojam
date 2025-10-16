@@ -51,6 +51,14 @@
       "confirmPasswordPlaceholder": "Potwierdź swoje hasło",
       "confirmPasswordRequired": "Potwierdzenie hasła jest wymagane",
       "tosAgree": "Zgadzam się z Regulaminem i Polityką prywatności",
+      "agreePrefix": "Zgadzam się z",
+      "termsOfService": "Regulaminem",
+      "and": "i",
+      "privacyPolicy": "Polityką prywatności",
+      "passwordCriteriaLength": "8+ znaków",
+      "passwordCriteriaUpper": "1 wielka litera",
+      "passwordCriteriaNumber": "1 cyfra",
+      "passwordTooWeak": "Hasło jest zbyt słabe (wymagane 8+ znaków, 1 wielka litera, 1 cyfra)",
       "tosRequired": "Przeczytaj i zaakceptuj Regulamin oraz Politykę prywatności",
       "registerCta": "Zarejestruj się",
       "alreadyHaveAccount": "Masz już konto?",
@@ -461,7 +469,10 @@
   "Global": {
     "SubscriptionForm": {
       "emailPlaceholder": "Wpisz swój email",
-      "subscribe": "Subskrybuj"
+      "subscribe": "Subskrybuj",
+      "subscribing": "Subskrybowanie...",
+      "success": "Subskrypcja zakończona pomyślnie",
+      "error": "Nie udało się subskrybować. Spróbuj ponownie."
     }
   },
   "NotFound": {

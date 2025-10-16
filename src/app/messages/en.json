@@ -51,6 +51,14 @@
       "confirmPasswordPlaceholder": "Confirm your password",
       "confirmPasswordRequired": "Password is required",
       "tosAgree": "I agree to the Terms of Service and Privacy Policy",
+      "agreePrefix": "I agree to the",
+      "termsOfService": "Terms of Service",
+      "and": "and",
+      "privacyPolicy": "Privacy Policy",
+      "passwordCriteriaLength": "8+ chars",
+      "passwordCriteriaUpper": "1 uppercase",
+      "passwordCriteriaNumber": "1 number",
+      "passwordTooWeak": "Password is too weak (need 8+ chars, 1 uppercase, 1 number)",
       "tosRequired": "Please read and agree to our Terms of Service and Privacy Policy",
       "tosNotAccepted": "Please accept the Terms of Service and Privacy Policy",
       "registerCta": "Register",
@@ -451,7 +459,10 @@
   "Global": {
     "SubscriptionForm": {
       "emailPlaceholder": "Enter your email",
-      "subscribe": "Subscribe"
+      "subscribe": "Subscribe",
+      "subscribing": "Subscribing...",
+      "success": "Subscribed successfully",
+      "error": "Subscription failed. Please try again."
     }
   },
   "NotFound": {
