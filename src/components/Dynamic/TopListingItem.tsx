@@ -5,7 +5,7 @@ import ListingCard from './ListingCard';
 
 function TopListingItem({ data }: { data: topListingItemsBlock }) {
     if (!data || !data.topListings || !data.topListings.listings) {
-        return <div>No listings available.</div>;
+        return null;
     }
 
     const listings = data.topListings.listings;
@@ -20,6 +20,8 @@ function TopListingItem({ data }: { data: topListingItemsBlock }) {
         return true;
     });
 
+    if (filteredListings.length === 0) return null;
+
     return (
         <div className='w-screen py-5 md:py-10 px-3 md:px-6 max-w-screen lg:max-w-[1700px] mx-auto'>
             <div className='mb-5 flex w-full flex-col items-center justify-center'>
@@ -27,15 +29,11 @@ function TopListingItem({ data }: { data: topListingItemsBlock }) {
                 <p className='text-center max-w-prose'>{data.sectionheader.sectionDescription}</p>
             </div>
             <div className='flex items-center justify-center'>
-                {filteredListings.length === 0 ? (
-                    <div className='flex items-center justify-center'>No {data.listingType} found.</div>
-                ) : (
-                    <div className='flex flex-wrap items-center justify-center gap-4'>
-                        {filteredListings.map(item => (
-                            <ListingCard key={item.documentId} item={item} />
-                        ))}
-                    </div>
-                )}
+                <div className='flex flex-wrap items-center justify-center gap-4'>
+                    {filteredListings.map(item => (
+                        <ListingCard key={item.documentId} item={item} />
+                    ))}
+                </div>
             </div>
         </div>
     );

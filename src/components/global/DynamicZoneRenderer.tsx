@@ -26,41 +26,17 @@ function DynamicZoneRenderer({ blocks }: { blocks: DynamicBlocks[] }) {
                         case 'dynamic-blocks.hero-banner': {
                             return <HeroBanner key={key} data={singleBlock} />
                         }
-                        case 'general.location': {
-                            return <div key={key}>Location component</div>
-                        }
-                        case 'dynamic-blocks.video-embed': {
-                            return <div key={key}>video embed component</div>
-                        }
                         case 'dynamic-blocks.text-image-block': {
                             return <CardComponent key={key} card={singleBlock} />
                         }
-                        case 'dynamic-blocks.testimonials': {
-                            return <div key={key}>Testimonials component</div>
-                        }
-                        case 'dynamic-blocks.pricing-table': {
-                            return <div key={key}>Pricing Table component</div>
-                        }
-                        case 'dynamic-blocks.html-block': {
-                            return <div key={key}>HTML BLOCK component</div>
-                        }
                         case 'dynamic-blocks.faqs': {
                             return <FaqBlock key={key} data={singleBlock} />
-                        }
-                        case 'dynamic-blocks.call-to-action': {
-                            return <div key={key}>call to action</div>
                         }
                         case 'dynamic-blocks.image-blocks-group': {
                             return <CardsGroup key={key} data={singleBlock} />
                         }
                         case 'general.city-list': {
                             return <CityList key={key} data={singleBlock} />
-                        }
-                        case 'typography.heading': {
-                            return <div key={key}>a heading component</div>
-                        }
-                        case 'dynamic-blocks.image-block': {
-                            return <div key={key}>image block with background</div>
                         }
                         case 'dynamic-blocks.block-groups': {
                             return <BackgroundImageBlock key={key} data={singleBlock} />

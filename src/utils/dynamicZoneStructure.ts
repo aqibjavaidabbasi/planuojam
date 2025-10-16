@@ -190,6 +190,9 @@ export const PAGES_DYNAMIC_ZONE = {
                                     },
                                     'localizations': {
                                         populate: '*'
+                                    },
+                                    'portfolio': {
+                                        populate: '*'
                                     }
                                 }
                             }

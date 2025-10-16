@@ -20,12 +20,13 @@ import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
 import { registerPromotionClick } from '@/services/promotion'
+import { RootState } from '@/store'
 
 function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?: boolean }) {
   const router = useRouter();
   const { siteSettings } = useSiteSettings();
-  const { user } = useAppSelector(state => state.auth);
-  const { status, items: likedListings } = useAppSelector(state => state.likedListings);
+  const { user } = useAppSelector((state: RootState) => state.auth);
+  const { status, items: likedListings } = useAppSelector((state: RootState) => state.likedListings);
   const dispatch = useAppDispatch();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const t = useTranslations('Dynamic.ListingCard');
