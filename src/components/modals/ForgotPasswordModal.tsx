@@ -3,7 +3,7 @@ import React from "react";
 import Input from "../custom/Input";
 import Button from "../custom/Button";
 import { useForm } from "react-hook-form";
-import { forgotPassword, publicFindUserByEmail } from "@/services/auth";
+import { customForgotPassword } from "@/services/authCustom";
 import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
@@ -16,6 +16,7 @@ interface ForgotPasswordModalProps {
 function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
   const router = useRouter();
   const t = useTranslations("Modals.ForgotPassword");
+  const tGlobal = useTranslations();
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -26,21 +27,20 @@ function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
     const email = String(data?.email || "").trim();
     await toast.promise(
       (async () => {
-        const user = await publicFindUserByEmail(email);
-        if (!user || !user.confirmed) {
-          // use key relative to the current namespace (Modals.ForgotPassword)
-          throw "errors.userNotFoundOrUnconfirmed";
-        }
-        await forgotPassword({ email });
+        await customForgotPassword({ email });
         onClose();
+        // Navigate user to OTP reset page where they can enter code + new password
+        router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
       })(),
       {
         loading: t("toasts.sending"),
         success: t("toasts.sent"),
         error: (err) => {
+          const key = (err as { error?: { key?: string } })?.error?.key;
+          if (key) return tGlobal(key);
           if (typeof err === "string") return t(err);
-          if (err && typeof err === "object" && "message" in err)
-            return t(String(err.message));
+          if (err && typeof err === "object" && "message" in (err as Record<string, unknown>))
+            return t(String((err as Record<string, unknown>).message));
           return t("toasts.errorDefault");
         },
       }

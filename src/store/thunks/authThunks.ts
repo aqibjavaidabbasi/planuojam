@@ -1,30 +1,32 @@
-import { login, register, updateUserData } from "@/services/auth";
-import { getStrapiErrorMessage } from "@/utils/helpers";
+import { updateUserData } from "@/services/auth";
+import { customLogin, customRegister, JwtUserResponse, RegisterRequest, OtpSentResponse } from "@/services/authCustom";
+import { User } from "@/types/common";
+import { ExpectedError, getStrapiErrorMessage } from "@/utils/helpers";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-export const loginUser = createAsyncThunk(
+export const loginUser = createAsyncThunk<User, { email: string; password: string }, { rejectValue: string }>(
   "auth/loginUser",
-  async (credentials: Record<string, unknown>, thunkAPI) => {
+  async (credentials, thunkAPI) => {
     try {
-      const res = await login(credentials);
+      const res = await customLogin(credentials) as JwtUserResponse;
       if (!res?.jwt) throw new Error('missingToken');
       localStorage.setItem("token", res.jwt);
-      return res.user;
+      return res.user as User;
     } catch (error: unknown) {
-      return thunkAPI.rejectWithValue(getStrapiErrorMessage(error));
+      return thunkAPI.rejectWithValue(getStrapiErrorMessage(error as ExpectedError));
     }
   }
 );
 
-export const registerUser = createAsyncThunk(
+export const registerUser = createAsyncThunk<OtpSentResponse, RegisterRequest, { rejectValue: string }>(
   "auth/register",
-  async (data: Record<string, unknown>, thunkAPI) => {
+  async (data: RegisterRequest, thunkAPI) => {
     try {
-      const res = await register(data);
+      const res = await customRegister(data) as OtpSentResponse;
       if (!res) throw new Error('registerNoResponse');
-      return res.user
+      return res;
     } catch (error: unknown) {
-      return thunkAPI.rejectWithValue(getStrapiErrorMessage(error));
+      return thunkAPI.rejectWithValue(getStrapiErrorMessage(error as ExpectedError));
     }
   }
 );
@@ -40,7 +42,7 @@ export const updateUser = createAsyncThunk(
       const res = await updateUserData(id, updateFields);
       return res;
     } catch (error: unknown) {
-      return thunkAPI.rejectWithValue(getStrapiErrorMessage(error));
+      return thunkAPI.rejectWithValue(getStrapiErrorMessage(error as ExpectedError));
     }
   }
 );

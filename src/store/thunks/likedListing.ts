@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { getLikedListings } from "@/services/likedListing"
-import { getStrapiErrorMessage } from "@/utils/helpers"
+import { ExpectedError, getStrapiErrorMessage } from "@/utils/helpers"
 import { RootState } from "../index"
 import { createLikedListing, deleteLikedListing } from "@/services/likedListing"
 // Async thunks for server sync
@@ -14,7 +14,7 @@ export const fetchLikedListing = createAsyncThunk(
         const res = await getLikedListings(userId, locale)
         return res.data
       } catch (err: unknown) {
-        return thunkApi.rejectWithValue(getStrapiErrorMessage(err))
+        return thunkApi.rejectWithValue(getStrapiErrorMessage(err as ExpectedError))
       }
     }
   )
@@ -42,7 +42,7 @@ export const fetchLikedListing = createAsyncThunk(
         const res = await createLikedListing(data)
         return res.data
       } catch (err: unknown) {
-        return thunkApi.rejectWithValue(getStrapiErrorMessage(err))
+        return thunkApi.rejectWithValue(getStrapiErrorMessage(err as ExpectedError))
       }
     }
   )
@@ -61,7 +61,7 @@ export const fetchLikedListing = createAsyncThunk(
         await deleteLikedListing(listingId)
         return listingId
       } catch (err: unknown) {
-        return thunkApi.rejectWithValue(getStrapiErrorMessage(err))
+        return thunkApi.rejectWithValue(getStrapiErrorMessage(err as ExpectedError))
       }
     }
   )

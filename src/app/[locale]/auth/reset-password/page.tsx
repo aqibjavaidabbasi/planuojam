@@ -1,19 +1,22 @@
 "use client";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter, Link } from "@/i18n/navigation";
 import Input from "@/components/custom/Input";
 import Button from "@/components/custom/Button";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { resetPassword } from "@/services/auth";
+import { customResetPassword } from "@/services/authCustom";
 import { useTranslations } from "next-intl";
+import { AiOutlineCheckCircle } from "react-icons/ai";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const code = searchParams.get("code") || "";
+  const prefillEmail = (searchParams.get("email") || "").toLowerCase();
   const t = useTranslations("Auth.ResetPassword");
+  const tGlobal = useTranslations();
+  const OTP_LENGTH = 6;
 
   // Add state to track if password reset is successful
   const [resetSuccess, setResetSuccess] = useState(false);
@@ -23,24 +26,36 @@ export default function ResetPasswordPage() {
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm();
+  } = useForm<{ email: string; code: string; password: string; confirmPassword: string }>({
+    defaultValues: { email: prefillEmail },
+  });
 
+  const passwordValue = watch("password") || "";
+  const hasMinLen = passwordValue.length >= 8;
+  const hasUpper = /[A-Z]/.test(passwordValue);
+  const hasDigit = /\d/.test(passwordValue);
+  const strengthScore = useMemo(() => {
+    return [hasMinLen, hasUpper, hasDigit].filter(Boolean).length;
+  }, [hasMinLen, hasUpper, hasDigit]);
+
+  type FormValues = { email: string; code: string; password: string; confirmPassword: string };
   const onSubmit = async (data: Record<string, unknown>) => {
-    const resetData = {
-      code,
-      password: data.password,
-      passwordConfirmation: data.confirmPassword,
+    const resetData: { email: string; code: string; password: string } = {
+      email: String((data as FormValues).email || "").trim().toLowerCase(),
+      code: String((data as FormValues).code || "").trim(),
+      password: (data as FormValues).password,
     };
     await toast.promise(
-      resetPassword(resetData).then(() => setResetSuccess(true)),
+      customResetPassword(resetData).then(() => setResetSuccess(true)),
       {
         loading: t("resetting"),
         success: t("resetSuccessToast"),
         error: (err) => {
+          const key = (err as { error?: { key?: string } })?.error?.key;
+          if (key) return tGlobal(key);
           if (typeof err === "string") return t(err);
-          if (err && typeof err === "object" && "message" in err)
-            return t(String(err.message));
-          return t("resetFailed");
+          if (err && typeof err === "object" && "message" in (err as Record<string, unknown>)) return t(String((err as Record<string, unknown>).message));
+          return tGlobal("Errors.Auth.resetFailed");
         },
       }
     );
@@ -69,6 +84,41 @@ export default function ResetPasswordPage() {
           <>
             <form className="flex flex-col gap-4" id="resetPasswordForm" onSubmit={handleSubmit(onSubmit)}>
               <Input
+                type="email"
+                placeholder={tGlobal("Auth.Login.emailPlaceholder")}
+                disabled={isSubmitting}
+                {...register("email", {
+                  required: tGlobal("Auth.Login.emailRequired"),
+                })}
+                required
+              />
+              <Input
+                type="text"
+                placeholder={tGlobal("Auth.EmailConfirmation.tokenPlaceholder")}
+                disabled={isSubmitting}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={OTP_LENGTH}
+                onInput={(e) => {
+                  const target = e.currentTarget as HTMLInputElement;
+                  const digits = target.value.replace(/\D/g, "").slice(0, OTP_LENGTH);
+                  if (target.value !== digits) target.value = digits;
+                }}
+                onPaste={(e) => {
+                  e.preventDefault();
+                  const text = (e.clipboardData.getData("text") || "").replace(/\D/g, "").slice(0, OTP_LENGTH);
+                  const target = e.currentTarget as HTMLInputElement;
+                  target.value = text;
+                }}
+                {...register("code", {
+                  required: tGlobal("Auth.EmailConfirmation.tokenRequired"),
+                  minLength: { value: OTP_LENGTH, message: tGlobal("Auth.EmailConfirmation.tokenRequired") },
+                  maxLength: { value: OTP_LENGTH, message: tGlobal("Auth.EmailConfirmation.tokenRequired") },
+                  validate: (v) => (/^\d+$/.test(String(v)) && String(v).length === OTP_LENGTH) || tGlobal("Auth.EmailConfirmation.tokenRequired"),
+                })}
+                required
+              />
+              <Input
                 type="password"
                 placeholder={t("newPasswordPlaceholder")}
                 disabled={isSubmitting}
@@ -81,6 +131,35 @@ export default function ResetPasswordPage() {
                 })}
                 required
               />
+              <div className="mt-1">
+                <div className="h-2 w-full bg-gray-200 rounded">
+                  <div
+                    className={`h-2 rounded transition-all ${
+                      strengthScore === 0
+                        ? "w-0 bg-transparent"
+                        : strengthScore === 1
+                        ? "w-1/3 bg-red-500"
+                        : strengthScore === 2
+                        ? "w-2/3 bg-yellow-500"
+                        : "w-full bg-green-500"
+                    }`}
+                  />
+                </div>
+                <div className="mt-2 grid grid-cols-3 gap-2 text-[11px] text-gray-600">
+                  <div className={`flex items-center gap-1 ${hasMinLen ? "text-green-600" : "text-gray-500"}`}>
+                    <AiOutlineCheckCircle className={`${hasMinLen ? "opacity-100" : "opacity-40"}`} />
+                    <span>{t("passwordCriteriaLength", { default: "8+ chars" })}</span>
+                  </div>
+                  <div className={`flex items-center gap-1 ${hasUpper ? "text-green-600" : "text-gray-500"}`}>
+                    <AiOutlineCheckCircle className={`${hasUpper ? "opacity-100" : "opacity-40"}`} />
+                    <span>{t("passwordCriteriaUpper", { default: "1 uppercase" })}</span>
+                  </div>
+                  <div className={`flex items-center gap-1 ${hasDigit ? "text-green-600" : "text-gray-500"}`}>
+                    <AiOutlineCheckCircle className={`${hasDigit ? "opacity-100" : "opacity-40"}`} />
+                    <span>{t("passwordCriteriaNumber", { default: "1 number" })}</span>
+                  </div>
+                </div>
+              </div>
               {errors.password?.message && (
                 <div className="text-red-600 text-sm text-center">
                   {String(errors.password.message)}

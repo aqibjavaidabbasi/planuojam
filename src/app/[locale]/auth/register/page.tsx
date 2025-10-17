@@ -104,7 +104,7 @@ function RegisterPage() {
     }
     //filter role, terms, confirm
     const filteredData = {
-      serviceType: data.serviceType ?? null,
+      serviceType: data.serviceType,
       username: data.username,
       email: data.email,
       password: data.password,
@@ -113,7 +113,8 @@ function RegisterPage() {
       dispatch(registerUser(filteredData))
         .unwrap()
         .then(() => {
-          router.push(`/auth/email-confirmation`);
+          try { sessionStorage.setItem('pendingEmail', data.email); } catch {}
+          router.push(`/auth/email-confirmation?email=${encodeURIComponent(data.email)}`);
         }),
       {
         loading: t("registering"),

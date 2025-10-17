@@ -4,7 +4,7 @@ import Button from "@/components/custom/Button";
 import { useAppDispatch } from "@/store/hooks";
 import { loginUser } from "@/store/thunks/authThunks";
 import { useRouter } from "@/i18n/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
@@ -29,15 +29,19 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const t = useTranslations("Auth.Login");
+  const tGlobal = useTranslations();
   const locale = useLocale();
+  const [showUnconfirmed, setShowUnconfirmed] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState<string>("");
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await toast.promise(
-      dispatch(loginUser(data))
+      dispatch(loginUser({ email: data.identifier, password: data.password }))
         .unwrap()
         .then((user) => {
           // Redirect based on role
-          if (user?.serviceType === null) {
+          const u = user as { serviceType: string | null } | undefined;
+          if (u?.serviceType === null) {
             router.push('/profile?tab=bookings');
           } else {
             router.push('/profile?tab=my-listings');
@@ -47,11 +51,17 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
         loading: t("loggingIn"),
         success: t("loggedIn"),
         error: (err) => {
-          console.log(err)
-          // err is exactly what rejectWithValue() returned in the thunk
+          const key = (err as { error?: { key?: string } })?.error?.key || (typeof err === 'string' ? err : undefined);
+          if (key === 'Errors.Auth.emailNotConfirmed') {
+            setShowUnconfirmed(true);
+            setPendingEmail(data.identifier);
+            try { sessionStorage.setItem('pendingEmail', data.identifier); } catch {}
+            return tGlobal(key);
+          }
+          if (key) return tGlobal(key);
           if (typeof err === "string") return t(err);
-          if (err && typeof err === "object" && "message" in err)
-            return t(String(err.message));
+          if (err && typeof err === "object" && "message" in (err as Record<string, unknown>))
+            return t(String((err as Record<string, unknown>).message));
           return t("loginFailed");
         },
       }
@@ -90,6 +100,31 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
           <p className="text-red-500">{errors.password.message}</p>
         )}
       </div>
+      {showUnconfirmed && (
+        <div className="rounded-md border border-amber-300 bg-amber-50 text-amber-900 p-3 text-sm">
+          <div className="mb-2">{tGlobal('Errors.Auth.emailNotConfirmed')}</div>
+          <div className="flex gap-2">
+            <Button
+              style="primary"
+              type="button"
+              extraStyles="!rounded-md !py-1 !px-3"
+              onClick={() => {
+                const url = '/auth/email-confirmation' + (pendingEmail ? `?email=${encodeURIComponent(pendingEmail)}` : '');
+                router.push(url);
+              }}
+            >
+              {t("goToConfirm", { default: "Confirm email" })}
+            </Button>
+            <Button
+              style="link"
+              type="button"
+              onClick={() => setShowUnconfirmed(false)}
+            >
+              {t("dismiss", { default: "Dismiss" })}
+            </Button>
+          </div>
+        </div>
+      )}
       <div className="flex items-center justify-center">
         <Button
           style="link"

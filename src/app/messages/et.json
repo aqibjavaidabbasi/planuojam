@@ -18,7 +18,9 @@
       "forgotPassword": "Unustasid parooli?",
       "signIn": "Logi sisse",
       "missingToken":"Kontrolli oma internetiühendust ja proovi uuesti",
-      "invalidCredentials":"Kontrolli oma e-posti või parooli ja proovi uuesti!"
+      "invalidCredentials":"Kontrolli oma e-posti või parooli ja proovi uuesti!",
+      "goToConfirm": "Mine e-posti kinnitamisele",
+      "dismiss": "Sulge"
     },
     "Register": {
       "title": "Loo konto",
@@ -82,6 +84,9 @@
       "newPasswordPlaceholder": "Uus parool",
       "passwordRequired": "Parool on kohustuslik",
       "passwordMinLength": "Parool peab olema vähemalt 8 tähemärki",
+      "passwordCriteriaLength": "8+ märki",
+      "passwordCriteriaUpper": "1 suur täht",
+      "passwordCriteriaNumber": "1 number",
       "confirmNewPasswordPlaceholder": "Kinnita uus parool",
       "confirmPasswordRequired": "Palun kinnita parool",
       "passwordsDoNotMatch": "Paroolid ei ühti",
@@ -863,17 +868,28 @@
       "generic": "Midagi läks valesti. Palun proovi uuesti."
     },
     "Auth": {
+      "emailInvalid": "Palun sisesta korrektne e-posti aadress.",
+      "emailTaken": "See e-post on juba kasutusel.",
+      "usernameTaken": "See kasutajanimi on juba kasutusel.",
       "noToken": "Kontrolli oma internetiühendust ja proovi uuesti",
       "invalidCredentials": "Kontrolli oma e-posti või parooli ja proovi uuesti!",
       "registerFailed": "Registreerimine ebaõnnestus. Palun proovi hiljem uuesti!",
       "emailConfirmFailed": "E-posti kinnitamine ebaõnnestus. Palun proovi uuesti.",
+      "emailNotConfirmed": "Palun kinnita oma e-post, et jätkata.",
+      "userBlocked": "Sinu konto on blokeeritud.",
+      "userNotFound": "Me ei leidnud selle e-postiga kontot.",
       "forgotFailed": "Parooli lähtestamise e-kirja saatmine ebaõnnestus. Palun proovi hiljem uuesti!",
       "resetFailed": "Parooli lähtestamine ebaõnnestus. Palun proovi hiljem uuesti!",
+      "emailNotRegistered": "See e-post ei ole registreeritud.",
+      "otpInvalid": "Sisestatud kood on vale.",
+      "otpExpired": "Kood on aegunud. Palun taotle uus.",
+      "tooManyRequests": "Liiga palju päringuid. Palun oota enne uuesti proovimist.",
+      "resetTokenInvalid": "Vale või aegunud lähtestamise token.",
       "updateUserFailed": "Kasutaja uuendamine ebaõnnestus, palun proovi hiljem uuesti!",
       "updatePasswordFailed": "Parooli uuendamine ebaõnnestus, palun proovi hiljem uuesti!",
       "missingToken": "Kontrolli oma internetiühendust ja proovi uuesti",
       "registerNoResponse": "Registreerimine ebaõnnestus — server ei vastanud",
-      "userIdRequired": "Kasutaja ID on vajalik kasutaja andmete uuendamiseks"
+      "userIdRequired": "Kasutaja andmete uuendamiseks on vajalik kasutaja ID"
     }
   },
   "Search": {

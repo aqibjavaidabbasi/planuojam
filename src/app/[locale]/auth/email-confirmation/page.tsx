@@ -1,12 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Button from "@/components/custom/Button";
 import Input from "@/components/custom/Input";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useAppSelector } from "@/store/hooks";
 import { useRouter } from "@/i18n/navigation";
-import { emailConfirmation, resendEmailConfirmation } from "@/services/auth";
+import { customConfirmEmail, customResendConfirmation } from "@/services/authCustom";
 import { useTranslations } from "next-intl";
 
 function EmailConfirmationPage() {
@@ -16,22 +15,34 @@ function EmailConfirmationPage() {
     formState: { errors },
   } = useForm();
   const router = useRouter();
-  const user = useAppSelector((state) => state.auth.user);
+  const derivedEmail = useMemo(() => {
+    try {
+      const stored = sessionStorage.getItem("pendingEmail") || "";
+      return stored.trim().toLowerCase();
+    } catch {
+      return "";
+    }
+  }, []);
   const [emailConfirm, setEmailConfirmed] = useState(false);
   const t = useTranslations("Auth.EmailConfirmation");
+  const tGlobal = useTranslations();
+  const OTP_LENGTH = 6;
 
   const handleResend = async () => {
-    const data = {
-      email: user?.email,
-    };
-    await toast.promise(resendEmailConfirmation(data), {
+    if (!derivedEmail) {
+      toast.error(tGlobal("Errors.Auth.emailNotRegistered"));
+      return;
+    }
+    const data = { email: derivedEmail };
+    await toast.promise(customResendConfirmation(data), {
       loading: t("resendLoading"),
       success: t("resendSuccess"),
       error: (err) => {
-        // err is exactly what rejectWithValue() returned in the thunk
+        const key = err?.error?.key as string | undefined;
+        if (key) return tGlobal(key);
         if (typeof err === "string") return t(err);
-        if (err && typeof err === "object" && "message" in err)
-          return t(String(err.message));
+        if (err && typeof err === "object" && "message" in (err as Record<string, unknown>))
+          return t(String((err as Record<string, unknown>).message));
         return t("resendFailed");
       },
     });
@@ -39,19 +50,27 @@ function EmailConfirmationPage() {
 
   async function onSubmit(data: Record<string, string>) {
     const confirmationToken = data?.confirmation;
+    if (!derivedEmail) {
+      toast.error(tGlobal("Errors.Auth.emailNotRegistered"));
+      return;
+    }
+    const email = derivedEmail;
 
     await toast.promise(
-      emailConfirmation(confirmationToken).then(() => {
-          setEmailConfirmed(true); // set state on success
+      customConfirmEmail({ email: String(email || "").trim().toLowerCase(), code: String(confirmationToken || "").trim() })
+        .then(() => {
+          setEmailConfirmed(true);
+          try { sessionStorage.removeItem("pendingEmail"); } catch {}
         }),
       {
         loading: t("confirming"),
         success: t("confirmed"),
         error: (err) => {
-          // err is exactly what rejectWithValue() returned in the thunk
+          const key = (err as { error?: { key?: string } })?.error?.key;
+          if (key) return tGlobal(key);
           if (typeof err === "string") return t(err);
-          if (err && typeof err === "object" && "message" in err)
-            return t(String(err.message));
+          if (err && typeof err === "object" && "message" in (err as Record<string, unknown>))
+            return t(String((err as Record<string, unknown>).message));
           return t("confirmFailed");
         },
       }
@@ -92,8 +111,25 @@ function EmailConfirmationPage() {
                   type="text"
                   label={t("tokenLabel")}
                   placeholder={t("tokenPlaceholder")}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={OTP_LENGTH}
+                  onInput={(e) => {
+                    const target = e.currentTarget as HTMLInputElement;
+                    const digits = target.value.replace(/\D/g, "").slice(0, OTP_LENGTH);
+                    if (target.value !== digits) target.value = digits;
+                  }}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                    const text = (e.clipboardData.getData("text") || "").replace(/\D/g, "").slice(0, OTP_LENGTH);
+                    const target = e.currentTarget as HTMLInputElement;
+                    target.value = text;
+                  }}
                   {...register("confirmation", {
                     required: t("tokenRequired"),
+                    minLength: { value: OTP_LENGTH, message: t("tokenRequired") },
+                    maxLength: { value: OTP_LENGTH, message: t("tokenRequired") },
+                    validate: (v) => (/^\d+$/.test(String(v)) && String(v).length === OTP_LENGTH) || t("tokenRequired"),
                   })}
                 />
                 {errors.confirmation && (

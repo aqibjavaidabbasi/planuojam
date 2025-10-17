@@ -22,8 +22,16 @@ export function filterUniqueCategoriesByParent(data: SelectedCategoriesList) {
   );
 }
 
+export type ExpectedError = {
+  error: {
+    key: string;
+    field?: string;
+    [k: string]: unknown;
+  };
+};
+
 // Utility: safely extract Strapi v5 error message
-export const getStrapiErrorMessage = (error: unknown): string => {
+export const getStrapiErrorMessage = (error: ExpectedError): string => {
   if (error && typeof error === 'object') {
     const errorObj = error as Record<string, unknown>;
     if (errorObj.response && typeof errorObj.response === 'object') {
@@ -38,6 +46,7 @@ export const getStrapiErrorMessage = (error: unknown): string => {
         }
       }
     }
+    if (error && typeof error === 'object' && 'error' in error && 'key' in error.error) return error.error.key as string;
     if (typeof errorObj.message === 'string') {
       return errorObj.message;
     }

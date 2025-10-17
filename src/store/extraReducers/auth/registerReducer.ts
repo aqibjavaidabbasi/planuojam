@@ -6,17 +6,16 @@ export const registerExtraReducers = (
   builder: ActionReducerMapBuilder<AuthState>
 ) => {
   builder
-    .addCase(registerUser.fulfilled, (state, action) => {
-      state.user = action.payload;
+    .addCase(registerUser.fulfilled, (state) => {
+      // registerUser returns OtpSentResponse (OTP flow). We don't have a User yet.
       state.status = "succeeded";
     })
     .addCase(registerUser.pending, (state) => {
       state.status = "loading";
     })
     .addCase(registerUser.rejected, (state, action) => {
-      state.user = null;
       state.status = "failed";
       state.error =
-        typeof action.payload === "string" ? action.payload : "Login Failed";
+        typeof action.payload === "string" ? action.payload : "Register Failed";
     });
 };
