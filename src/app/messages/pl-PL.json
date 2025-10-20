@@ -266,6 +266,9 @@
       "checkAvailability": "Sprawdź dostępność",
       "usernameAvailable": "Nazwa użytkownika jest dostępna",
       "usernameTaken": "Nazwa użytkownika jest zajęta",
+      "passwordCriteriaLength": "8+ znaków",
+      "passwordCriteriaUpper": "1 wielka litera",
+      "passwordCriteriaNumber": "1 cyfra",
       "errors": {
         "usernameEmpty": "Nazwa użytkownika nie może być pusta",
         "userNotFound": "Nie znaleziono użytkownika",
@@ -564,7 +567,8 @@
       "fields": {
         "title": {
           "label": "Tytuł",
-          "required": "Tytuł jest wymagany"
+          "required": "Tytuł jest wymagany",
+          "placeholder": "Wpisz tytuł"
         },
         "type": {
           "placeholder": "Wybierz typ",
@@ -585,7 +589,8 @@
           "errors": {
             "min": "Cena nie może być mniejsza niż 0",
             "max": "Cena nie może być większa niż 1000000"
-          }
+          },
+          "placeholder": "np. 100"
         },
         "featured": {
           "label": "Polecane?"
@@ -597,6 +602,7 @@
         },
         "websiteLink": {
           "label": "Link do strony",
+          "placeholder": "https://example.com",
           "errors": {
             "invalid": "Proszę dodać prawidłowy link"
           }
@@ -623,13 +629,16 @@
           "placeholder": "Wybierz województwo"
         },
         "latitude": {
-          "label": "Szerokość geograficzna"
+          "label": "Szerokość geograficzna",
+          "placeholder": "np. 40.7128"
         },
         "longitude": {
-          "label": "Długość geograficzna"
+          "label": "Długość geograficzna",
+          "placeholder": "np. -74.0060"
         },
         "capacity": {
-          "label": "Pojemność"
+          "label": "Pojemność",
+          "placeholder": "np. 100"
         },
         "bookingDurationType": {
           "label": "Rodzaj czasu rezerwacji",
@@ -640,18 +649,22 @@
           }
         },
         "bookingDuration": {
-          "label": "Czas rezerwacji"
+          "label": "Czas rezerwacji",
+          "placeholder": "np. 4"
         },
         "email": {
           "label": "Email",
+          "placeholder": "you@company.com",
           "message": "Nieprawidłowy format adresu email"
         },
         "phone": {
           "label": "Telefon",
+          "placeholder": "+1 (555) 000-0000",
           "message": "Numer telefonu jest wymagany"
         },
         "address": {
           "label": "Adres",
+          "placeholder": "Wpisz adres",
           "message": "Adres jest wymagany"
         },
         "platform": {
@@ -736,7 +749,8 @@
       "amenities": {
         "title": "Udogodnienia",
         "add": "Dodaj udogodnienie",
-        "itemLabel": "Element"
+        "itemLabel": "Element",
+        "itemPlaceholder": "Wpisz udogodnienie"
       },
       "hotDeal": {
         "title": "Gorąca oferta",
@@ -760,9 +774,12 @@
       "workingSchedule": {
         "title": "Harmonogram pracy",
         "add": "Dodaj wpis",
+        "placeholder": "Wybierz dzień",
         "day": "Dzień",
         "start": "Początek",
         "end": "Koniec",
+        "startPlaceholder": "HH:mm",
+        "endPlaceholder": "HH:mm",
         "errors": {
           "completeAll": "Uzupełnij wszystkie pola harmonogramu pracy.",
           "invalidTime": "Nieprawidłowy format czasu w harmonogramie.",

@@ -2,7 +2,6 @@
 import NoDataCard from "@/components/custom/NoDataCard";
 import ListingCard from "@/components/Dynamic/ListingCard";
 import DynamicZoneRenderer from "@/components/global/DynamicZoneRenderer";
-import Button from "@/components/custom/Button";
 import Heading from "@/components/custom/heading";
 import Loader from "@/components/custom/Loader";
 import { useEventTypes } from "@/context/EventTypesContext";
@@ -13,8 +12,7 @@ import {
   ListingItem,
   TitleDescriptionBlock,
 } from "@/types/pagesTypes";
-import { useParams } from "next/navigation";
-import { useRouter } from "@/i18n/navigation";
+import { notFound, useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 import { useParentCategories } from "@/context/ParentCategoriesContext";
@@ -25,7 +23,6 @@ function ClientEventTypeWrapper() {
   const  { slug } = params;
   const eventType = getEventTypeBySlug(slug as string);
   const [eventBlock, setEventBlocks] = useState<DynamicBlocks[]>([]);
-  const router = useRouter();
   // Type assertion for now since we know the API returns compatible data
   const [listings, setListings] = useState<ListingItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,42 +32,28 @@ function ClientEventTypeWrapper() {
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      if (eventType && eventType.page) {
-        // Fetch page data
-        const pageRes = await fetchPageById(eventType.page.documentId, locale);
-        setEventBlocks(pageRes.blocks);
-
-        // Fetch listings (promoted-first)
-        const listingsRes = await fetchPromotedListingsPerEvents(
-          eventType.documentId,
-          locale
-        );
-        setListings(listingsRes);
+      try {
+        if (eventType && eventType.page) {
+          const pageRes = await fetchPageById(eventType.page.documentId, locale);
+          setEventBlocks(Array.isArray(pageRes?.blocks) ? pageRes.blocks : []);
+          const listingsRes = await fetchPromotedListingsPerEvents(
+            eventType.documentId,
+            locale
+          );
+          setListings(Array.isArray(listingsRes) ? listingsRes : []);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     fetchData();
   }, [eventType, locale]);
 
   if (!eventType || loading) return <Loader />;
 
-  if (!eventType?.page)
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full text-center border border-gray-200 flex flex-col items-center justify-center">
-          <p className="p-3 rounded-md text-lg font-semibold text-red-500">
-            {eventType?.eventName}
-          </p>
-          <p className="text-gray-700 text-lg font-medium">
-            This page has not yet been created in Strapi, or if it is created,
-            the link to this page is missing.
-          </p>
-          <Button style="ghost" onClick={() => router.push("/")}>
-            Go to homepage
-          </Button>
-        </div>
-      </div>
-    );
+  if (!eventType?.page) return notFound();
 
   // derived states for better data management
   const heroBlock = eventBlock.filter(

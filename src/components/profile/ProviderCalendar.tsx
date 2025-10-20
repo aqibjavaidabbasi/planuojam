@@ -116,7 +116,7 @@ const ProviderCalendar: React.FC = () => {
       {selectedListing ? (
         <ListingCalendar listingDocumentId={selectedListing} />
       ) : (
-        <div className="p-4 text-gray-500">{t("selectListing.help", { default: "Select a listing to view its calendar" })}</div>
+        <div className="p-4 text-gray-500">{t("selectListing.help")}</div>
       )}
     </div>
   );

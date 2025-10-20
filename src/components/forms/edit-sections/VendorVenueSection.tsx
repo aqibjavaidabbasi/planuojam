@@ -320,10 +320,38 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                   />
                 </div>
                 <div className="col-span-1">
-                  <Input type="text" label={t("latitude")} disabled={submitting} {...vendorRegister(`serviceArea.${idx}.latitude` as const)} />
+                  <Input
+                    type="number"
+                    step="any"
+                    min={-90}
+                    max={90}
+                    label={t("latitude")}
+                    disabled={submitting}
+                    {...vendorRegister(`serviceArea.${idx}.latitude` as const, {
+                      validate: (v) => {
+                        if (v == null || v === "") return true
+                        const n = Number(v)
+                        return (Number.isFinite(n) && n >= -90 && n <= 90) || t("errors.invalidLatitude", { default: "Latitude must be between -90 and 90" })
+                      },
+                    })}
+                  />
                 </div>
                 <div className="col-span-1">
-                  <Input type="text" label={t("longitude")} disabled={submitting} {...vendorRegister(`serviceArea.${idx}.longitude` as const)} />
+                  <Input
+                    type="number"
+                    step="any"
+                    min={-180}
+                    max={180}
+                    label={t("longitude")}
+                    disabled={submitting}
+                    {...vendorRegister(`serviceArea.${idx}.longitude` as const, {
+                      validate: (v) => {
+                        if (v == null || v === "") return true
+                        const n = Number(v)
+                        return (Number.isFinite(n) && n >= -180 && n <= 180) || t("errors.invalidLongitude", { default: "Longitude must be between -180 and 180" })
+                      },
+                    })}
+                  />
                 </div>
                 <div className="col-span-6 flex gap-3">
                   <Button type="button" style="secondary" disabled={submitting} onClick={() => onFetchVendorCoords(idx)}>
@@ -373,10 +401,38 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
           </div>
           <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
             <div className="col-span-3">
-              <Input type="text" label={t("latitude")} disabled={submitting} {...venueRegister("location.latitude")} />
+              <Input
+                type="number"
+                step="any"
+                min={-90}
+                max={90}
+                label={t("latitude")}
+                disabled={submitting}
+                {...venueRegister("location.latitude", {
+                  validate: (v) => {
+                    if (v == null || v === "") return true
+                    const n = Number(v)
+                    return (Number.isFinite(n) && n >= -90 && n <= 90) || t("errors.invalidLatitude", { default: "Latitude must be between -90 and 90" })
+                  },
+                })}
+              />
             </div>
             <div className="col-span-3">
-              <Input type="text" label={t("longitude")} disabled={submitting} {...venueRegister("location.longitude")} />
+              <Input
+                type="number"
+                step="any"
+                min={-180}
+                max={180}
+                label={t("longitude")}
+                disabled={submitting}
+                {...venueRegister("location.longitude", {
+                  validate: (v) => {
+                    if (v == null || v === "") return true
+                    const n = Number(v)
+                    return (Number.isFinite(n) && n >= -180 && n <= 180) || t("errors.invalidLongitude", { default: "Longitude must be between -180 and 180" })
+                  },
+                })}
+              />
             </div>
             <div className="col-span-6 flex gap-3">
               <Button type="button" style="secondary" disabled={submitting} onClick={onFetchVenueCoords}>

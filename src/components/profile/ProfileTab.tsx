@@ -1,17 +1,17 @@
 'use client'
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Input from "../custom/Input";
 import Button from "../custom/Button";
 import { User } from "@/types/common";
 import { TbLogout } from "react-icons/tb";
 import LogoutModal from "../modals/LogoutModal";
-import { useAppDispatch } from "@/store/hooks";
-import { updateUser } from "@/store/thunks/authThunks";
+// removed redux dispatch import (no longer used)
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import { checkUsernameAvailability } from "@/services/auth";
+import { customUpdatePassword, customUpdateProfile } from "@/services/authCustom";
 
 type PasswordForm = {
   currentPassword: string;
@@ -21,14 +21,21 @@ type PasswordForm = {
 
 function ProfileTab({ user }: { user: User | null }) {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-
   const [username, setUsername] = useState("");
-  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const [usernameStatus, setUsernameStatus] = useState<"unchecked" | "checking" | "available" | "taken">("unchecked");
   const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
   const { register, handleSubmit, watch, formState: { errors }, reset } = useForm<PasswordForm>()
   const t = useTranslations('Profile.ProfileTab');
+
+  // Password strength (same logic as register/reset pages)
+  const newPasswordValue = watch('password') || "";
+  const hasMinLen = newPasswordValue.length >= 8;
+  const hasUpper = /[A-Z]/.test(newPasswordValue);
+  const hasDigit = /\d/.test(newPasswordValue);
+  const strengthScore = useMemo(() => {
+    return [hasMinLen, hasUpper, hasDigit].filter(Boolean).length;
+  }, [hasMinLen, hasUpper, hasDigit]);
 
   useEffect(function () {
     setUsername(user?.username ?? "");
@@ -53,7 +60,7 @@ function ProfileTab({ user }: { user: User | null }) {
 
     setLoading(true);
     await toast.promise(
-      dispatch(updateUser({ id: user.id, username })).unwrap(),
+      customUpdateProfile({ username }),
       {
         loading: t('toasts.updatingUsername'),
         success: t('toasts.usernameUpdated'),
@@ -107,13 +114,11 @@ function ProfileTab({ user }: { user: User | null }) {
     setLoading(true);
     const payload = {
       currentPassword: data.currentPassword,
-      password: data.password,
-      passwordConfirmation: data.passwordConfirmation,
+      newPassword: data.password,
     };
     try {
-      const { updateUserPassword } = await import("@/services/auth");
       await toast.promise(
-        updateUserPassword(payload),
+        customUpdatePassword(payload),
         {
           loading: t('toasts.updatingPassword'),
           success: t('toasts.passwordUpdated'),
@@ -172,16 +177,16 @@ function ProfileTab({ user }: { user: User | null }) {
                 className="text-xs text-primary hover:underline disabled:opacity-50 cursor-pointer"
                 disabled={loading || !username}
               >
-                {usernameStatus === 'checking' ? t('toasts.updatingUsername') : t('checkAvailability', { default: 'Check availability' })}
+                {usernameStatus === 'checking' ? t('toasts.updatingUsername') : t('checkAvailability')}
               </button>
               {usernameStatus === 'available' && (
-                <span className="flex items-center text-green-600 text-xs">
-                  <AiOutlineCheckCircle className="mr-1" /> {t('usernameAvailable', { default: 'Username is available' })}
+                <span className="flex items-center text-green-600 text-xs ml-3">
+                  <AiOutlineCheckCircle className="mr-1" /> {t('usernameAvailable')}
                 </span>
               )}
               {usernameStatus === 'taken' && (
-                <span className="flex items-center text-red-600 text-xs">
-                  <AiOutlineCloseCircle className="mr-1" /> {t('usernameTaken', { default: 'Username is taken' })}
+                <span className="flex items-center text-red-600 text-xs ml-3">
+                  <AiOutlineCloseCircle className="mr-1" /> {t('usernameTaken')}
                 </span>
               )}
             </div>
@@ -250,6 +255,36 @@ function ProfileTab({ user }: { user: User | null }) {
               })}
               disabled={loading}
             />
+            {/* Password strength meter */}
+            <div className="mt-1">
+              <div className="h-2 w-full bg-gray-200 rounded">
+                <div
+                  className={`h-2 rounded transition-all ${
+                    strengthScore === 0
+                      ? "w-0 bg-transparent"
+                      : strengthScore === 1
+                      ? "w-1/3 bg-red-500"
+                      : strengthScore === 2
+                      ? "w-2/3 bg-yellow-500"
+                      : "w-full bg-green-500"
+                  }`}
+                />
+              </div>
+              <div className="mt-2 grid grid-cols-3 gap-2 text-[11px] text-gray-600">
+                <div className={`flex items-center gap-1 ${hasMinLen ? "text-green-600" : "text-gray-500"}`}>
+                  <AiOutlineCheckCircle className={`${hasMinLen ? "opacity-100" : "opacity-40"}`} />
+                  <span>{t('passwordCriteriaLength', { default: '8+ chars' })}</span>
+                </div>
+                <div className={`flex items-center gap-1 ${hasUpper ? "text-green-600" : "text-gray-500"}`}>
+                  <AiOutlineCheckCircle className={`${hasUpper ? "opacity-100" : "opacity-40"}`} />
+                  <span>{t('passwordCriteriaUpper', { default: '1 uppercase' })}</span>
+                </div>
+                <div className={`flex items-center gap-1 ${hasDigit ? "text-green-600" : "text-gray-500"}`}>
+                  <AiOutlineCheckCircle className={`${hasDigit ? "opacity-100" : "opacity-40"}`} />
+                  <span>{t('passwordCriteriaNumber', { default: '1 number' })}</span>
+                </div>
+              </div>
+            </div>
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.password.message}

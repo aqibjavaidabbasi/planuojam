@@ -355,7 +355,8 @@
       "fields": {
         "title": {
           "label": "Pavadinimas",
-          "required": "Pavadinimas yra privalomas"
+          "required": "Pavadinimas yra privalomas",
+          "placeholder": "Įveskite pavadinimą"
         },
         "type": {
           "placeholder": "Pasirinkite tipą",
@@ -376,7 +377,8 @@
           "errors": {
             "min": "Kaina negali būti mažesnė nei 0",
             "max": "Kaina negali būti didesnė nei 1000000"
-          }
+          },
+          "placeholder": "pvz. 100"
         },
         "featured": {
           "label": "Rekomenduojamas?"
@@ -388,6 +390,7 @@
         },
         "websiteLink": {
           "label": "Svetainės nuoroda",
+          "placeholder": "https://example.com",
           "errors": {
             "invalid": "Prašome pridėti galiojančią nuorodą"
           }
@@ -400,10 +403,12 @@
           }
         },
         "about": {
-          "label": "Apie"
+          "label": "Apie",
+          "placeholder": "Aprašykite savo paslaugą"
         },
         "experienceYears": {
-          "label": "Patirtis (metais)"
+          "label": "Patirtis (metais)",
+          "placeholder": "pvz. 5"
         },
         "city": {
           "label": "Miestas",
@@ -414,13 +419,16 @@
           "placeholder": "Pasirinkite regioną"
         },
         "latitude": {
-          "label": "Platuma"
+          "label": "Platuma",
+          "placeholder": "pvz. 40.7128"
         },
         "longitude": {
-          "label": "Ilguma"
+          "label": "Ilguma",
+          "placeholder": "pvz. -74.0060"
         },
         "capacity": {
-          "label": "Talpa"
+          "label": "Talpa",
+          "placeholder": "pvz. 100"
         },
         "bookingDurationType": {
           "label": "Užsakymo trukmės tipas",
@@ -431,18 +439,22 @@
           }
         },
         "bookingDuration": {
-          "label": "Užsakymo trukmė"
+          "label": "Užsakymo trukmė",
+          "placeholder": "pvz. 4"
         },
         "email": {
           "label": "El. paštas",
+          "placeholder": "jus@imone.com",
           "message": "Neteisingas el. pašto formatas"
         },
         "phone": {
           "label": "Telefonas",
+          "placeholder": "+1 (555) 000-0000",
           "message": "Telefono numeris yra privalomas"
         },
         "address": {
           "label": "Adresas",
+          "placeholder": "Įveskite adresą",
           "message": "Adresas yra privalomas"
         },
         "platform": {
@@ -527,7 +539,8 @@
       "amenities": {
         "title": "Patogumai",
         "add": "Pridėti patogumą",
-        "itemLabel": "Elementas"
+        "itemLabel": "Elementas",
+        "itemPlaceholder": "Įveskite patogumą"
       },
       "hotDeal": {
         "title": "Karštas pasiūlymas",
@@ -551,9 +564,12 @@
       "workingSchedule": {
         "title": "Darbo grafikas",
         "add": "Pridėti įrašą",
+        "placeholder": "Pasirinkite dieną",
         "day": "Diena",
         "start": "Pradžia",
         "end": "Pabaiga",
+        "startPlaceholder": "HH:mm",
+        "endPlaceholder": "HH:mm",
         "errors": {
           "completeAll": "Užpildykite visus darbo grafiko laukus.",
           "invalidTime": "Neteisingas laiko formatas darbo grafike.",
@@ -722,6 +738,9 @@
       "checkAvailability": "Patikrinti prieinamumą",
       "usernameAvailable": "Vartotojo vardas laisvas",
       "usernameTaken": "Vartotojo vardas užimtas",
+      "passwordCriteriaLength": "8+ simbolių",
+      "passwordCriteriaUpper": "1 didžioji raidė",
+      "passwordCriteriaNumber": "1 skaičius",
       "errors": {
         "usernameEmpty": "Vartotojo vardas negali būti tuščias",
         "userNotFound": "Vartotojas nerastas",

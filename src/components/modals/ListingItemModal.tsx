@@ -474,8 +474,9 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               <Input
                 type="text"
                 label={t('fields.title.label')}
+                placeholder={t('fields.title.placeholder')}
                 disabled={isWorking}
-                required={true}
+                required
                 {...register("title", { required: t('fields.title.required') })}
               />
               <ErrorMessage error={errors.title} />
@@ -484,6 +485,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               <Select
                 placeholder={t('fields.listingStatus.placeholder')}
                 disabled={isWorking}
+                required
                 {...register("listingStatus", { required: t('fields.listingStatus.required') })}
                 options={[
                   { label: t('fields.listingStatus.options.draft'), value: "draft" },
@@ -497,8 +499,10 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               <Input
                 type="number"
                 label={t('fields.price.label')}
+                placeholder={t('fields.price.placeholder')}
                 disabled={isWorking}
                 min={0}
+                required
                 {...register("price", {
                   valueAsNumber: true,
                   min: { value: 0, message: t('fields.price.errors.min') },
@@ -521,6 +525,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 label={t('fields.description.label')}
                 placeholder={t('fields.description.placeholder')}
                 disabled={isWorking}
+                required
                 rows={4}
                 {...register("description", { required: t('fields.description.required') })}
               />
@@ -530,7 +535,9 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               <Input
                 type="text"
                 label={t('fields.websiteLink.label')}
+                placeholder={t('fields.websiteLink.placeholder')}
                 disabled={isWorking}
+                required
                 {...register("websiteLink", {
                   pattern: { value: /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})(\/[^\s]*)?$/
                   , message: t('fields.websiteLink.errors.invalid') },
@@ -550,6 +557,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   <div className="md:col-span-2">
                     <Select
                       label={t('workingSchedule.day')}
+                      placeholder={t('workingSchedule.placeholder')}
                       disabled={isWorking}
                       value={it.day || ""}
                       onChange={(e) => {
@@ -573,6 +581,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                     <Input
                       type="time"
                       label={t('workingSchedule.start')}
+                      placeholder={t('workingSchedule.startPlaceholder')}
                       disabled={isWorking}
                       value={it.start || ""}
                       onChange={(e) => {
@@ -587,6 +596,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                     <Input
                       type="time"
                       label={t('workingSchedule.end')}
+                      placeholder={t('workingSchedule.endPlaceholder')}
                       disabled={isWorking}
                       value={it.end || ""}
                       onChange={(e) => {
@@ -617,6 +627,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               <div className="flex flex-col gap-4">
                 <TextArea
                   label={t('fields.about.label')}
+                  placeholder={t('fields.about.placeholder')}
                   disabled={isWorking}
                   value={form.listingItem?.[0]?.about || ""}
                   onChange={(e) => updateListingItem("about", e.target.value)}
@@ -624,6 +635,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 <Input
                   type="number"
                   label={t('fields.experienceYears.label')}
+                  placeholder={t('fields.experienceYears.placeholder')}
                   disabled={isWorking}
                   min={0}
                   value={form.listingItem?.[0]?.experienceYears || ""}
@@ -678,17 +690,33 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       </div>
                       <div className="col-span-1">
                         <Input
-                          type="text"
+                          type="number"
+                          step="any"
+                          min={-90}
+                          max={90}
                           label={t('fields.latitude.label')}
+                          placeholder={t('fields.latitude.placeholder')}
                           disabled={isWorking}
                           value={sa.latitude || ""}
                           onChange={(e) => {
                             const currentItems = getValues("listingItem") || []
                             const updatedItems = [...currentItems]
                             if (updatedItems[0]?.serviceArea) {
-                              updatedItems[0].serviceArea[idx] = {
-                                ...updatedItems[0].serviceArea[idx],
-                                latitude: e.target.value,
+                              const raw = e.target.value
+                              if (raw === "") {
+                                updatedItems[0].serviceArea[idx] = {
+                                  ...updatedItems[0].serviceArea[idx],
+                                  latitude: "",
+                                }
+                              } else {
+                                const n = Number(raw)
+                                if (!Number.isNaN(n)) {
+                                  const clamped = Math.max(-90, Math.min(90, n))
+                                  updatedItems[0].serviceArea[idx] = {
+                                    ...updatedItems[0].serviceArea[idx],
+                                    latitude: String(clamped),
+                                  }
+                                }
                               }
                               setValue("listingItem", updatedItems, { shouldDirty: true })
                             }
@@ -697,17 +725,33 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       </div>
                       <div className="col-span-1">
                         <Input
-                          type="text"
+                          type="number"
+                          step="any"
+                          min={-180}
+                          max={180}
                           label={t('fields.longitude.label')}
+                          placeholder={t('fields.longitude.placeholder')}
                           disabled={isWorking}
                           value={sa.longitude || ""}
                           onChange={(e) => {
                             const currentItems = getValues("listingItem") || []
                             const updatedItems = [...currentItems]
                             if (updatedItems[0]?.serviceArea) {
-                              updatedItems[0].serviceArea[idx] = {
-                                ...updatedItems[0].serviceArea[idx],
-                                longitude: e.target.value,
+                              const raw = e.target.value
+                              if (raw === "") {
+                                updatedItems[0].serviceArea[idx] = {
+                                  ...updatedItems[0].serviceArea[idx],
+                                  longitude: "",
+                                }
+                              } else {
+                                const n = Number(raw)
+                                if (!Number.isNaN(n)) {
+                                  const clamped = Math.max(-180, Math.min(180, n))
+                                  updatedItems[0].serviceArea[idx] = {
+                                    ...updatedItems[0].serviceArea[idx],
+                                    longitude: String(clamped),
+                                  }
+                                }
                               }
                               setValue("listingItem", updatedItems, { shouldDirty: true })
                             }
@@ -774,6 +818,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                     <Input
                       type="text"
                       label={t('fields.address.label')}
+                      placeholder={t('fields.address.placeholder')}
                       disabled={isWorking}
                       value={form.listingItem?.[0]?.location?.address || ""}
                       onChange={(e) => updateListingItem("location.address", e.target.value)}
@@ -801,20 +846,42 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
                   <div className="col-span-3">
                     <Input
-                      type="text"
+                      type="number"
+                      step="any"
+                      min={-90}
+                      max={90}
                       label={t('fields.latitude.label')}
+                      placeholder={t('fields.latitude.placeholder')}
                       disabled={isWorking}
                       value={form.listingItem?.[0]?.location?.latitude || ""}
-                      onChange={(e) => updateListingItem("location.latitude", e.target.value)}
+                      onChange={(e) => {
+                        const raw = e.target.value
+                        if (raw === "") return updateListingItem("location.latitude", "")
+                        const n = Number(raw)
+                        if (Number.isNaN(n)) return
+                        const clamped = Math.max(-90, Math.min(90, n))
+                        updateListingItem("location.latitude", String(clamped))
+                      }}
                     />
                   </div>
                   <div className="col-span-3">
                     <Input
-                      type="text"
+                      type="number"
+                      step="any"
+                      min={-180}
+                      max={180}
                       label={t('fields.longitude.label')}
+                      placeholder={t('fields.longitude.placeholder')}
                       disabled={isWorking}
                       value={form.listingItem?.[0]?.location?.longitude || ""}
-                      onChange={(e) => updateListingItem("location.longitude", e.target.value)}
+                      onChange={(e) => {
+                        const raw = e.target.value
+                        if (raw === "") return updateListingItem("location.longitude", "")
+                        const n = Number(raw)
+                        if (Number.isNaN(n)) return
+                        const clamped = Math.max(-180, Math.min(180, n))
+                        updateListingItem("location.longitude", String(clamped))
+                      }}
                     />
                   </div>
                   <div className="col-span-6 flex items-center gap-2 justify-center">
@@ -852,6 +919,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       type="number"
                       min={0}
                       label={t('fields.capacity.label')}
+                      placeholder={t('fields.capacity.placeholder')}
                       disabled={isWorking}
                       value={form.listingItem?.[0]?.capacity || ""}
                       onChange={(e) => updateListingItem("capacity", Number(e.target.value))}
@@ -877,6 +945,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       min={0}
                       disabled={isWorking}
                       label={t('fields.bookingDuration.label')}
+                      placeholder={t('fields.bookingDuration.placeholder')}
                       value={form.listingItem?.[0]?.bookingDuration || ""}
                       onChange={(e) => updateListingItem("bookingDuration", Number(e.target.value))}
                     />
@@ -896,6 +965,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                           type="text"
                           disabled={isWorking}
                           label={`${t('amenities.itemLabel')} ${idx + 1}`}
+                          placeholder={t('amenities.itemPlaceholder')}
                           value={amenity.text || ""}
                           onChange={(e) => {
                             const currentItems = getValues("listingItem") || []
@@ -943,7 +1013,9 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 <Input
                   type="email"
                   label={t('fields.email.label')}
+                  placeholder={t('fields.email.placeholder')}
                   disabled={isWorking}
+                  required
                   {...register("contact.email", {
                     required: "Email is required",
                     pattern: { value: /^\S+@\S+$/i, message: t('fields.email.message') },
@@ -952,7 +1024,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 <ErrorMessage error={errors.contact?.email} />
               </div>
               <div>
-                <Input type="text" label={t('fields.phone.label')} disabled={isWorking} {...register("contact.phone", { required: t('fields.phone.message') })} />
+                <Input type="text" label={t('fields.phone.label')} placeholder={t('fields.phone.placeholder')} disabled={isWorking} required {...register("contact.phone", { required: t('fields.phone.message') })} />
                 <ErrorMessage error={errors.contact?.phone} />
               </div>
               <div className="col-span-3">
@@ -960,6 +1032,8 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   type="text"
                   disabled={isWorking}
                   label={t('fields.address.label')}
+                  placeholder={t('fields.address.placeholder')}
+                  required
                   {...register("contact.address", { required: t('fields.address.message')})}
                 />
                 <ErrorMessage error={errors.contact?.address} />

@@ -47,7 +47,7 @@ export default function ContactStatic({ address, email, phone, description, soci
       {email && (
         <div>
           <h3 className="text-xl font-semibold mb-2">{t('emailUs.title')}</h3>
-          <a href={`mailto:${email}`} className="text-black hover:underline">{email}</a>
+          <a href={`mailto:${email}`} target="_blank" rel="noopener noreferrer" className="text-black hover:underline">{email}</a>
         </div>
       )}
       {(() => {

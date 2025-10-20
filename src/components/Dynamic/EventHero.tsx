@@ -7,11 +7,11 @@ import { getCompleteImageUrl } from '@/utils/helpers'
 import { useRouter } from '@/i18n/navigation'
 
 function EventHero({data}: {data: HeroBannerBlock}) {
-    const heroImage = getCompleteImageUrl(data.heroImage.formats.medium.url);
+    const heroImage = getCompleteImageUrl(data.heroImage.formats.banner?.url || data.heroImage.formats.medium?.url);
     const router = useRouter();
 
   return (
-    <section className="relative w-screen h-80 md:h-[450px] flex items-center justify-start overflow-hidden max-w-screen lg:max-w-[1700px] mx-auto">
+    <section className="relative w-screen h-80 md:h-[450px] flex items-center justify-start overflow-hidden max-w-screen">
        <Image
         src={heroImage}
         alt="Hero Image"
@@ -24,16 +24,7 @@ function EventHero({data}: {data: HeroBannerBlock}) {
       <div className="absolute inset-0 bg-black/20 pointer-events-none" />
       <div className="relative z-10 flex items-center h-full w-full">
         <div
-          className="
-            max-w-lg w-full
-            flex flex-col gap-4 items-start
-            rounded-xl shadow-xl
-            px-5 py-5 md:px-8 md:py-8
-            ml-0 md:ml-10
-            bg-white/30
-            backdrop-blur-3xl
-            border border-white/30
-          "
+          className="max-w-lg w-full flex flex-col gap-4 items-start rounded-xl shadow-xl px-5 py-5 md:px-8 md:py-8 ml-0 md:ml-10 bg-white/30 backdrop-blur-3xl border border-white/30"
           style={{
             // fallback for glass effect if needed
             background:

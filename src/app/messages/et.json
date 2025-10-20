@@ -267,6 +267,9 @@
       "checkAvailability": "Check availability",
       "usernameAvailable": "Username is available",
       "usernameTaken": "Username is taken",
+      "passwordCriteriaLength": "8+ märki",
+      "passwordCriteriaUpper": "1 suur täht",
+      "passwordCriteriaNumber": "1 number",
       "errors": {
         "usernameEmpty": "Kasutajanimi ei tohi olla tühi",
         "userNotFound": "Kasutajat ei leitud",
@@ -564,7 +567,8 @@
       "fields": {
         "title": {
           "label": "Pealkiri",
-          "required": "Pealkiri on kohustuslik"
+          "required": "Pealkiri on kohustuslik",
+          "placeholder": "Sisesta pealkiri"
         },
         "type": {
           "placeholder": "Vali tüüp",
@@ -585,7 +589,8 @@
           "errors": {
             "min": "Hind ei tohi olla väiksem kui 0",
             "max": "Hind ei tohi ületada 1000000"
-          }
+          },
+          "placeholder": "nt 100"
         },
         "featured": {
           "label": "Esile tõstetud?"
@@ -597,6 +602,7 @@
         },
         "websiteLink": {
           "label": "Veebilehe link",
+          "placeholder": "https://example.com",
           "errors": {
             "invalid": "Palun lisa kehtiv link"
           }
@@ -609,10 +615,12 @@
           }
         },
         "about": {
-          "label": "Teave"
+          "label": "Teave",
+          "placeholder": "Räägi oma teenusest"
         },
         "experienceYears": {
-          "label": "Aastad kogemust"
+          "label": "Aastad kogemust",
+          "placeholder": "nt 5"
         },
         "city": {
           "label": "Linn",
@@ -623,13 +631,16 @@
           "placeholder": "Vali maakond"
         },
         "latitude": {
-          "label": "Laiuskraad"
+          "label": "Laiuskraad",
+          "placeholder": "nt 40.7128"
         },
         "longitude": {
-          "label": "Pikkuskraad"
+          "label": "Pikkuskraad",
+          "placeholder": "nt -74.0060"
         },
         "capacity": {
-          "label": "Mahutavus"
+          "label": "Mahutavus",
+          "placeholder": "nt 100"
         },
         "bookingDurationType": {
           "label": "Broneeringu kestuse tüüp",
@@ -640,18 +651,22 @@
           }
         },
         "bookingDuration": {
-          "label": "Broneeringu kestus"
+          "label": "Broneeringu kestus",
+          "placeholder": "nt 4"
         },
         "email": {
           "label": "E-post",
+          "placeholder": "you@company.com",
           "message": "Vale e-posti vorming"
         },
         "phone": {
           "label": "Telefon",
+          "placeholder": "+1 (555) 000-0000",
           "message": "Telefoninumber on kohustuslik"
         },
         "address": {
           "label": "Aadress",
+          "placeholder": "Sisesta aadress",
           "message": "Aadress on kohustuslik"
         },
         "platform": {
@@ -736,7 +751,8 @@
       "amenities": {
         "title": "Mugavused",
         "add": "Lisa mugavus",
-        "itemLabel": "Element"
+        "itemLabel": "Element",
+        "itemPlaceholder": "Lisa mugavus"
       },
       "hotDeal": {
         "title": "Eripakkumine",
@@ -760,9 +776,12 @@
       "workingSchedule": {
         "title": "Tööajakava",
         "add": "Lisa kirje",
+        "placeholder": "Vali päev",
         "day": "Päev",
         "start": "Algus",
         "end": "Lõpp",
+        "startPlaceholder": "HH:mm",
+        "endPlaceholder": "HH:mm",
         "errors": {
           "completeAll": "Palun täida kõik tööajakava väljad.",
           "invalidTime": "Vigane aja formaat tööajakavas.",

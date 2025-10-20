@@ -149,7 +149,7 @@ export default function EditListingPage() {
                   key={t.key}
                   type="button"
                   onClick={() => setActiveTab(t.key)}
-                  className={`text-left px-3 py-2 rounded-md border text-sm transition-colors ${activeTab === t.key
+                  className={`text-left px-3 py-2 rounded-md border text-sm cursor-pointer transition-colors ${activeTab === t.key
                     ? "bg-primary text-white border-primary"
                     : "bg-white text-gray-700 hover:bg-gray-50 border-gray-200"
                     }`}

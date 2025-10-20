@@ -383,10 +383,20 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
       setAttachments([]);
       setAttachmentPreviews([]);
       const saved = await sendMessage(user.id, selectedUserId, composedBody, uploadedIds);
-      // reconcile: replace optimistic by saved if needed
-      setThread((prev) => prev.map((m) => (m.id === optimisticId ? saved : m)));
-      // refresh list to update preview ordering
+      // reconcile: replace optimistic by saved using string id comparison; append if optimistic missing
+      setThread((prev) => {
+        const optId = String(optimisticId);
+        const idx = prev.findIndex((m) => String(m.id) === optId);
+        if (idx >= 0) {
+          const next = prev.slice();
+          next[idx] = saved;
+          return next;
+        }
+        return [...prev, saved];
+      });
+      // refresh list to update preview ordering and sync thread silently
       loadList({ silent: true });
+      loadThread(selectedUserId, { silent: true });
     } catch {
       // rollback optimistic
       if (optimisticId !== null) {
@@ -531,8 +541,9 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                                 {a.mime?.startsWith("image/") ? (
                                   <Image src={a.url} alt={a.name || "attachment"} width={320} height={240} className="rounded-md object-cover" />
                                 ) : (
-                                  <div className="px-2 py-1 bg-white/70 rounded text-xs break-all underline">
-                                    {a.name || a.url}
+                                  <div className={`px-3 py-2 bg-white/80 rounded text-xs flex items-center gap-2 ${mine ? "text-gray-800" : "text-gray-800"}`}>
+                                    <MdAttachFile size={16} />
+                                    <span className="underline break-all">{a.name || a.url}</span>
                                   </div>
                                 )}
                               </a>
@@ -569,21 +580,32 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
               <div className="border-t p-3 flex flex-col gap-3">
                 {attachmentPreviews.length > 0 && (
                   <div className="flex flex-wrap gap-2">
-                    {attachmentPreviews.map((src, idx) => (
-                      <div key={idx} className="relative">
-                        <Image src={src} width={64} height={64} className="h-16 w-16 object-cover rounded" alt="preview" />
-                        <button
-                          onClick={() => {
-                            setAttachments((prev) => prev.filter((_, i) => i !== idx));
-                            setAttachmentPreviews((prev) => prev.filter((_, i) => i !== idx));
-                          }}
-                          className="absolute -top-2 -right-2 bg-black/60 text-white rounded-full h-6 w-6 text-xs"
-                          aria-label="remove"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
+                    {attachmentPreviews.map((src, idx) => {
+                      const f = attachments[idx];
+                      const isImg = !!f?.type && f.type.startsWith("image/");
+                      return (
+                        <div key={idx} className="relative">
+                          {isImg ? (
+                            <Image src={src} width={64} height={64} className="h-16 w-16 object-cover rounded" alt="preview" />
+                          ) : (
+                            <a href={src} target="_blank" rel="noreferrer" className="h-16 w-40 px-3 py-2 bg-gray-100 rounded flex items-center gap-2 text-xs text-gray-800">
+                              <MdAttachFile size={16} />
+                              <span className="truncate" title={f?.name || "file"}>{f?.name || "file"}</span>
+                            </a>
+                          )}
+                          <button
+                            onClick={() => {
+                              setAttachments((prev) => prev.filter((_, i) => i !== idx));
+                              setAttachmentPreviews((prev) => prev.filter((_, i) => i !== idx));
+                            }}
+                            className="absolute -top-2 -right-2 bg-black/60 text-white rounded-full h-6 w-6 text-xs cursor-pointer transition-colors hover:bg-black/80 focus:outline-none focus:ring-2 focus:ring-white/60"
+                            aria-label="remove"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
                 <div className="flex items-center gap-2">

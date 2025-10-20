@@ -346,6 +346,9 @@
       "checkAvailability": "Проверить доступность",
       "usernameAvailable": "Имя пользователя доступно",
       "usernameTaken": "Имя пользователя занято",
+      "passwordCriteriaLength": "8+ символов",
+      "passwordCriteriaUpper": "1 заглавная буква",
+      "passwordCriteriaNumber": "1 цифра",
       "errors": {
         "usernameEmpty": "Имя пользователя не может быть пустым",
         "userNotFound": "Пользователь не найден",
@@ -587,7 +590,8 @@
       "fields": {
         "title": {
           "label": "Заголовок",
-          "required": "Заголовок обязателен"
+          "required": "Заголовок обязателен",
+          "placeholder": "Введите заголовок"
         },
         "type": {
           "placeholder": "Выберите тип",
@@ -608,7 +612,8 @@
           "errors": {
             "min": "Цена не может быть меньше 0",
             "max": "Цена не может превышать 1000000"
-          }
+          },
+          "placeholder": "напр. 100"
         },
         "featured": {
           "label": "Рекомендуемое?"
@@ -620,6 +625,7 @@
         },
         "websiteLink": {
           "label": "Ссылка на сайт",
+          "placeholder": "https://example.com",
           "errors": {
             "invalid": "Пожалуйста, добавьте правильную ссылку"
           }
@@ -646,13 +652,16 @@
           "placeholder": "Выберите регион"
         },
         "latitude": {
-          "label": "Широта"
+          "label": "Широта",
+          "placeholder": "напр. 40.7128"
         },
         "longitude": {
-          "label": "Долгота"
+          "label": "Долгота",
+          "placeholder": "напр. -74.0060"
         },
         "capacity": {
-          "label": "Вместимость"
+          "label": "Вместимость",
+          "placeholder": "напр. 100"
         },
         "bookingDurationType": {
           "label": "Тип продолжительности бронирования",
@@ -663,18 +672,22 @@
           }
         },
         "bookingDuration": {
-          "label": "Продолжительность бронирования"
+          "label": "Продолжительность бронирования",
+          "placeholder": "напр. 4"
         },
         "email": {
           "label": "Email",
+          "placeholder": "you@company.com",
           "message": "Неверный формат email"
         },
         "phone": {
           "label": "Телефон",
+          "placeholder": "+1 (555) 000-0000",
           "message": "Номер телефона обязателен"
         },
         "address": {
           "label": "Адрес",
+          "placeholder": "Введите адрес",
           "message": "Адрес обязателен"
         },
         "platform": {
@@ -752,7 +765,8 @@
       "amenities": {
         "title": "Удобства",
         "add": "Добавить удобство",
-        "itemLabel": "Элемент"
+        "itemLabel": "Элемент",
+        "itemPlaceholder": "Введите удобство"
       },
       "hotDeal": {
         "title": "Горячее предложение",
@@ -776,12 +790,15 @@
       "workingSchedule": {
         "title": "График работы",
         "add": "Добавить запись",
+        "placeholder": "Выберите день",
         "day": "День",
         "start": "Начало",
-        "end": "Конец",
+        "end": "Окончание",
+        "startPlaceholder": "HH:mm",
+        "endPlaceholder": "HH:mm",
         "errors": {
-          "completeAll": "Пожалуйста, заполните все поля графика работы.",
-          "invalidTime": "Неверный формат времени в графике работы.",
+          "completeAll": "Пожалуйста, заполните все поля графика.",
+          "invalidTime": "Неверный формат времени в графике.",
           "startBeforeEnd": "Время начала должно быть раньше времени окончания.",
           "conflictDay": "Конфликтующие записи в день {day}."
         }

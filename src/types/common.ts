@@ -16,6 +16,10 @@ export interface strapiImage{
         thumbnail: {
             url: string;
             width: number;
+        },
+        banner: {
+            url: string;
+            width: number;
         }
     }
 }

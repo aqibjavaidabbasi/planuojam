@@ -55,16 +55,16 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
 
         <div className="flex flex-col gap-3">
           {fields.map((field, idx) => (
-            <div key={field.id} className="grid grid-cols-12 gap-3 items-end">
-              <div className="col-span-5">
+            <div key={field.id} className="flex items-center gap-3 w-full">
+              <div className="flex-1">
                 <Input type="text" label={`${t("question")} ${idx + 1}`} disabled={submitting} {...register(`items.${idx}.question` as const, { required: "Required" })} />
                 {errors.items?.[idx]?.question && <p className="text-red-500 text-sm mt-1">{errors.items[idx]?.question?.message}</p>}
               </div>
-              <div className="col-span-6">
+              <div className="flex-1">
                 <Input type="text" label={`${t("answer")} ${idx + 1}`} disabled={submitting} {...register(`items.${idx}.answer` as const, { required: "Required" })} />
                 {errors.items?.[idx]?.answer && <p className="text-red-500 text-sm mt-1">{errors.items[idx]?.answer?.message}</p>}
               </div>
-              <div className="col-span-1 flex justify-end">
+              <div className="flex justify-end">
                 <Button type="button" style="destructive" disabled={submitting} onClick={() => remove(idx)}>
                   <FaRegTrashAlt />
                 </Button>

@@ -146,6 +146,12 @@ const MapboxSearch = ({ onPlaceSelect, placeholder = "Search for a place" }: Map
           ))}
         </div>
       )}
+
+      {showSuggestions && !isLoading && suggestions.length === 0 && query.length >= 3 && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+          <div className="px-4 py-2 text-sm text-gray-500">No results found</div>
+        </div>
+      )}
     </div>
   );
 };

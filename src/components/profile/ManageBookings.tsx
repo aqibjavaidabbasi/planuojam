@@ -209,7 +209,7 @@ const ManageBookings: React.FC = () => {
                     {b?.userInfo && (
                       <div className="text-sm text-gray-500 mb-2">
                         {b.userInfo.username} • {" "}
-                        <a href={`mailto:${b.userInfo.email}`} className="hover:underline">{b.userInfo.email}</a>
+                        <a href={`mailto:${b.userInfo.email}`} target="_blank" rel="noopener noreferrer" className="hover:underline">{b.userInfo.email}</a>
                       </div>
                     )}
 

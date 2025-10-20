@@ -128,7 +128,6 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
   }, [initialListing]);
 
 
-  console.log(renderingContent)
   if(!renderingContent) notFound();
 
   return (

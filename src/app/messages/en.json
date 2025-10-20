@@ -279,6 +279,9 @@
       "checkAvailability": "Check availability",
       "usernameAvailable": "Username is available",
       "usernameTaken": "Username is taken",
+      "passwordCriteriaLength": "8+ chars",
+      "passwordCriteriaUpper": "1 uppercase",
+      "passwordCriteriaNumber": "1 number",
       "errors": {
         "usernameEmpty": "Username can not be empty",
         "userNotFound": "User not found",
@@ -554,7 +557,8 @@
       "fields": {
         "title": {
           "label": "Title",
-          "required": "Title is required"
+          "required": "Title is required",
+          "placeholder": "Enter title"
         },
         "type": {
           "placeholder": "Choose a type",
@@ -575,7 +579,8 @@
           "errors": {
             "min": "Price can not be less than 0",
             "max": "Price can not be more than 1000000"
-          }
+          },
+          "placeholder": "e.g. 100"
         },
         "featured": {
           "label": "Is Featured?"
@@ -587,6 +592,7 @@
         },
         "websiteLink": {
           "label": "Website Link",
+          "placeholder": "https://example.com",
           "errors": {
             "invalid": "Please add a valid link"
           }
@@ -599,10 +605,12 @@
           }
         },
         "about": {
-          "label": "About"
+          "label": "About",
+          "placeholder": "Tell about your service"
         },
         "experienceYears": {
-          "label": "Experience Years"
+          "label": "Experience Years",
+          "placeholder": "e.g. 5"
         },
         "city": {
           "label": "City",
@@ -613,13 +621,16 @@
           "placeholder": "Choose a State"
         },
         "latitude": {
-          "label": "Latitude"
+          "label": "Latitude",
+          "placeholder": "e.g. 40.7128"
         },
         "longitude": {
-          "label": "Longitude"
+          "label": "Longitude",
+          "placeholder": "e.g. -74.0060"
         },
         "capacity": {
-          "label": "Capacity"
+          "label": "Capacity",
+          "placeholder": "e.g. 100"
         },
         "bookingDurationType": {
           "label": "Booking Duration Type",
@@ -630,18 +641,22 @@
           }
         },
         "bookingDuration": {
-          "label": "Booking Duration"
+          "label": "Booking Duration",
+          "placeholder": "e.g. 4"
         },
         "email": {
           "label": "Email",
+          "placeholder": "you@company.com",
           "message": "Invalid email format"
         },
         "phone": {
           "label": "Phone",
+          "placeholder": "+1 (555) 000-0000",
           "message": "Phone number is required"
         },
         "address": {
           "label": "Address",
+          "placeholder": "Enter address",
           "message": "Address number is required"
         },
         "platform": {
@@ -719,7 +734,8 @@
       "amenities": {
         "title": "Amenities",
         "add": "Add Amenities",
-        "itemLabel": "Item"
+        "itemLabel": "Item",
+        "itemPlaceholder": "Enter amenity"
       },
       "hotDeal": {
         "title": "Hot Deal",
@@ -747,6 +763,8 @@
         "day": "Day",
         "start": "Start",
         "end": "End",
+        "startPlaceholder": "HH:mm",
+        "endPlaceholder": "HH:mm",
         "errors": {
           "completeAll": "Please complete all working schedule fields.",
           "invalidTime": "Invalid time format in working schedule.",

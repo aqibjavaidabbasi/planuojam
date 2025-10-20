@@ -80,7 +80,7 @@ function ListingDetailHero({
           <div className="flex flex-wrap gap-4 text-sm">
             {contact?.email && <div className="flex items-center">
               <MdOutlineEmail className="mr-2" size={24} />
-              <a href={`mailto:${contact.email}`} className="hover:underline">{contact.email}</a>
+              <a href={`mailto:${contact.email}`} target="_blank" rel="noopener noreferrer" className="hover:underline">{contact.email}</a>
             </div>}
             {(() => {
               const formatted = formatPhoneDisplay(contact?.phone)
@@ -89,7 +89,7 @@ function ListingDetailHero({
               return (
                 <div className="flex items-center">
                   <MdOutlineLocalPhone className="mr-2" size={24} />
-                  <a href={telHref} className="hover:underline">{formatted}</a>
+                  <a href={telHref} target="_blank" rel="noopener noreferrer" className="hover:underline">{formatted}</a>
                 </div>
               )
             })()}

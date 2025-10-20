@@ -48,16 +48,28 @@ function expandBookingToDayBackgrounds(b: BookingItem): BackgroundEvent[] {
   }
 }
 
-const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId, workingSchedule = [] }) => {
+// Shared empty schedule reference to avoid creating a new [] each render
+const EMPTY_SCHEDULE: { day: Day; start: string; end: string }[] = [];
+
+const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId, workingSchedule }) => {
   const [events, setEvents] = useState<BackgroundEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const currentRange = useRef<{ start: string; end: string } | null>(null);
+  const lastFetchKey = useRef<string | null>(null);
   const currentViewType = useRef<string>("dayGridMonth");
   const t = useTranslations("Listing.Calendar");
   const locale = useLocale();
 
+  // Stable reference for schedule
+  const schedule = workingSchedule ?? EMPTY_SCHEDULE;
+
   const fetchRange = useCallback(async (rangeStartISO: string, rangeEndISO: string) => {
+    const key = `${listingDocumentId}::${rangeStartISO}::${rangeEndISO}`;
+    if (lastFetchKey.current === key) {
+      return; // prevent redundant refetch causing loading flicker
+    }
+    lastFetchKey.current = key;
     try {
       setLoading(true);
       const bookings = await getListingBookingsPublic(listingDocumentId, rangeStartISO, rangeEndISO);
@@ -77,7 +89,7 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId, wo
       const availabilityEvents: BackgroundEvent[] = [];
 
       const dayKey = (d: Date): Day => ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"][d.getDay()] as Day;
-      const windowsForDay = (d: Date) => (workingSchedule || []).filter(w => w.day === dayKey(d));
+      const windowsForDay = (d: Date) => (schedule).filter(w => w.day === dayKey(d));
       const hasWindows = (d: Date) => windowsForDay(d).length > 0;
 
       const red = "rgba(255, 99, 132, 0.6)"; // unavailable
@@ -147,7 +159,7 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId, wo
     } finally {
       setLoading(false);
     }
-  }, [listingDocumentId, workingSchedule]);
+  }, [listingDocumentId, schedule]);
 
   const onDatesSet = useCallback((arg: DatesSetArg) => {
     const startISO = arg.start.toISOString();
@@ -237,9 +249,11 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId, wo
         />
         </div>
       </div>
-      {loading && (
-        <div className="text-sm text-gray-500 mt-2">{t("loading", { default: "Loading calendar..." })}</div>
-      )}
+      <div className="mt-2 h-5">
+        {loading && (
+          <div className="text-sm text-gray-500">{t("loading", { default: "Loading calendar..." })}</div>
+        )}
+      </div>
     </div>
   );
 };
