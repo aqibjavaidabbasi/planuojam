@@ -12,6 +12,8 @@ import { useTranslations } from "next-intl";
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import { checkUsernameAvailability } from "@/services/auth";
 import { customUpdatePassword, customUpdateProfile } from "@/services/authCustom";
+import { useAppDispatch } from "@/store/hooks";
+import { setUser } from "@/store/slices/authSlice";
 
 type PasswordForm = {
   currentPassword: string;
@@ -20,6 +22,7 @@ type PasswordForm = {
 };
 
 function ProfileTab({ user }: { user: User | null }) {
+  const dispatch = useAppDispatch();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
@@ -59,17 +62,25 @@ function ProfileTab({ user }: { user: User | null }) {
     }
 
     setLoading(true);
-    await toast.promise(
-      customUpdateProfile({ username }),
-      {
-        loading: t('toasts.updatingUsername'),
-        success: t('toasts.usernameUpdated'),
-        error: (err: unknown) =>
-          err && typeof err === "object" && "message" in err
-            ? String((err as { message?: unknown }).message)
-            : t('toasts.usernameUpdateFailed'),
+    try {
+      const resp = await toast.promise(
+        customUpdateProfile({ username }),
+        {
+          loading: t('toasts.updatingUsername'),
+          success: t('toasts.usernameUpdated'),
+          error: (err: unknown) =>
+            err && typeof err === "object" && "message" in err
+              ? String((err as { message?: unknown }).message)
+              : t('toasts.usernameUpdateFailed'),
+        }
+      );
+      if (resp && typeof resp === 'object' && 'user' in resp) {
+        // Update global user state so header/profile reflect immediately
+        dispatch(setUser((resp as { user: unknown }).user));
       }
-    ).finally(() => setLoading(false));
+    } finally {
+      setLoading(false);
+    }
   }
 
   function onUsernameChangeReset() {

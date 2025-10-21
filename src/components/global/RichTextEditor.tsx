@@ -71,21 +71,21 @@ const renderNode = (node: RichTextNode | null | undefined, index: number): React
       );
 
     case 'text': {
-      let text: React.ReactNode = parse(String(node.text ?? ''));
-
+      let text: React.ReactNode;
+      if (node.code){
+        text = (
+          <span
+            key={index}
+            className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono"
+          >
+            {node.text as React.ReactNode}
+          </span>
+        )}
+      text = parse(String(node.text ?? ''))
       if (node.bold) text = <strong key={index}>{text}</strong>;
       if (node.italic) text = <em key={index}>{text}</em>;
       if (node.underline) text = <u key={index}>{text}</u>;
       if (node.strikethrough) text = <s key={index}>{text}</s>;
-      if (node.code)
-        text = (
-          <code
-            key={index}
-            className="bg-gray-100 px-1 py-0.5 rounded text-sm font-mono"
-          >
-            {text}
-          </code>
-        );
 
       return <span key={index}>{text}</span>;
     }

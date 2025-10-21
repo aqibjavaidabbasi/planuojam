@@ -806,9 +806,13 @@
         "title": "KKK",
         "sectionTitle": "Sektsiooni pealkiri",
         "add": "+ Lisa küsimus-vastus",
+        "saving": "Salvestamine...",
+        "savechanges": "Salvesta muudatused",
         "errors": {
           "addAtLeastOne": "Lisage vähemalt üks KKK",
-          "eachNeedsQnA": "Iga KKK vajab küsimust ja vastust"
+          "eachNeedsQnA": "Iga KKK vajab küsimust ja vastust",
+          "questionRequired": "KKK {index} küsimus on kohustuslik",
+          "answerRequired": "KKK {index} vastus on kohustuslik"
         },
         "toasts": {
           "updated": "KKK-d on uuendatud",
@@ -1066,15 +1070,18 @@
     }
   },
   "FAQsSection": {
-    "sectiontitle": "jaotise pealkiri",
-    "saving": "säästmine",
-    "savechanges": "salvesta muudatused ",
-    "+addFAQ": "+lisa KKK",
-    "answer": "vastama",
+    "title": "KKK",
+    "sectiontitle": "Sektsiooni pealkiri",
+    "saving": "Salvestamine...",
+    "savechanges": "Salvesta muudatused",
+    "+addFAQ": "+ Lisa KKK",
+    "answer": "Vastus",
     "question": "Küsimus",
     "errors": {
       "addAtLeastOne": "Lisage vähemalt üks KKK",
-      "eachNeedsQnA": "Iga KKK vajab küsimust ja vastust"
+      "eachNeedsQnA": "Iga KKK vajab küsimust ja vastust",
+      "questionRequired": "KKK {index} küsimus on kohustuslik",
+      "answerRequired": "KKK {index} vastus on kohustuslik"
     },
     "toasts": {
       "updated": "KKK-d on uuendatud",

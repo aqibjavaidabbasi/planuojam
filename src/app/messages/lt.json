@@ -586,9 +586,13 @@
         "title": "DUK",
         "sectionTitle": "Skyriaus pavadinimas",
         "add": "+ Pridėti klausimą-atsakymą",
+        "saving": "Saugoma...",
+        "savechanges": "Išsaugoti pakeitimus",
         "errors": {
           "addAtLeastOne": "Pridėkite bent vieną DUK",
-          "eachNeedsQnA": "Kiekvienam DUK reikia klausimo ir atsakymo"
+          "eachNeedsQnA": "Kiekvienam DUK reikia klausimo ir atsakymo",
+          "questionRequired": "DUK {index} klausimas yra privalomas",
+          "answerRequired": "DUK {index} atsakymas yra privalomas"
         },
         "toasts": {
           "updated": "DUK atnaujinti",
@@ -1057,15 +1061,18 @@
     }
   },
   "FAQsSection": {
-    "sectiontitle": "skyriaus pavadinimas ",
-    "saving": "taupymas",
-    "savechanges": "išsaugoti pakeitimus",
-    "+addFAQ": "+pridėti DUK",
-    "answer": "atsakyti",
+    "title": "DUK",
+    "sectiontitle": "Skyriaus pavadinimas",
+    "saving": "Saugoma...",
+    "savechanges": "Išsaugoti pakeitimus",
+    "+addFAQ": "+ Pridėti DUK",
+    "answer": "Atsakymas",
     "question": "Klausimas",
     "errors": {
       "addAtLeastOne": "Pridėkite bent vieną DUK",
-      "eachNeedsQnA": "Kiekvienam DUK reikia klausimo ir atsakymo"
+      "eachNeedsQnA": "Kiekvienam DUK reikia klausimo ir atsakymo",
+      "questionRequired": "DUK {index} klausimas yra privalomas",
+      "answerRequired": "DUK {index} atsakymas yra privalomas"
     },
     "toasts": {
       "updated": "DUK atnaujinti",

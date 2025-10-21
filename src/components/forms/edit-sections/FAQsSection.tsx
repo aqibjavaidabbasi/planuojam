@@ -23,7 +23,7 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
   })
 
   const { fields, append, remove } = useFieldArray({ control, name: "items" })
-  const t=useTranslations("FAQsSection")
+  const t = useTranslations("FAQsSection")
 
   const onSubmit = async (values: FAQsForm) => {
     if (!values.items || values.items.length === 0) {
@@ -49,30 +49,46 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
   }
   return (
     <div className="py-4">
-      <h3 className="text-lg font-semibold mb-2">FAQs</h3>
+      <h3 className="text-lg font-semibold mb-2">{t("title")}</h3>
       <form onSubmit={handleSubmit(onSubmit)} id="faqsForm" className="flex flex-col gap-4">
         <Input type="text" label={t("sectiontitle")} disabled={submitting} {...register("sectionTitle")} />
 
         <div className="flex flex-col gap-3">
           {fields.map((field, idx) => (
-            <div key={field.id} className="flex items-center gap-3 w-full">
-              <div className="flex-1">
-                <Input type="text" label={`${t("question")} ${idx + 1}`} disabled={submitting} {...register(`items.${idx}.question` as const, { required: "Required" })} />
-                {errors.items?.[idx]?.question && <p className="text-red-500 text-sm mt-1">{errors.items[idx]?.question?.message}</p>}
+            <div key={field.id} className={`grid grid-cols-12 gap-3 w-full items-end`}>
+              <div className="col-span-5">
+                <Input
+                  type="text"
+                  label={`${t("question")} ${idx + 1}`}
+                  disabled={submitting}
+                  {...register(`items.${idx}.question` as const, {
+                    required: t("errors.questionRequired", { index: idx + 1 }) as string,
+                  })}
+                />
               </div>
-              <div className="flex-1">
-                <Input type="text" label={`${t("answer")} ${idx + 1}`} disabled={submitting} {...register(`items.${idx}.answer` as const, { required: "Required" })} />
-                {errors.items?.[idx]?.answer && <p className="text-red-500 text-sm mt-1">{errors.items[idx]?.answer?.message}</p>}
+              <div className="col-span-6">
+                <Input
+                  type="text"
+                  label={`${t("answer")} ${idx + 1}`}
+                  disabled={submitting}
+                  {...register(`items.${idx}.answer` as const, {
+                    required: t("errors.answerRequired", { index: idx + 1 }) as string,
+                  })}
+                />
               </div>
-              <div className="flex justify-end">
+              <div className="col-span-1">
                 <Button type="button" style="destructive" disabled={submitting} onClick={() => remove(idx)}>
                   <FaRegTrashAlt />
                 </Button>
               </div>
+              <div className="col-span-12">
+                {errors.items?.[idx]?.question && <p className="text-red-500 text-sm">{String(errors.items[idx]?.question?.message)}</p>}
+                {errors.items?.[idx]?.answer && <p className="text-red-500 text-sm">{String(errors.items[idx]?.answer?.message)}</p>}
+              </div>
             </div>
           ))}
           <Button type="button" style="secondary" disabled={submitting} onClick={() => append({ question: "", answer: "" })}>
-           {t("+addFAQ")}
+            {t("+addFAQ")}
           </Button>
         </div>
 

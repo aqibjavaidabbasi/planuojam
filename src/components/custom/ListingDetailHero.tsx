@@ -80,7 +80,14 @@ function ListingDetailHero({
           <div className="flex flex-wrap gap-4 text-sm">
             {contact?.email && <div className="flex items-center">
               <MdOutlineEmail className="mr-2" size={24} />
-              <a href={`mailto:${contact.email}`} target="_blank" rel="noopener noreferrer" className="hover:underline">{contact.email}</a>
+              <a
+                href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(contact.email)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                {contact.email}
+              </a>
             </div>}
             {(() => {
               const formatted = formatPhoneDisplay(contact?.phone)
@@ -89,7 +96,7 @@ function ListingDetailHero({
               return (
                 <div className="flex items-center">
                   <MdOutlineLocalPhone className="mr-2" size={24} />
-                  <a href={telHref} target="_blank" rel="noopener noreferrer" className="hover:underline">{formatted}</a>
+                  <a href={telHref} rel="noopener noreferrer" className="hover:underline">{formatted}</a>
                 </div>
               )
             })()}
@@ -134,7 +141,7 @@ function ListingDetailHero({
                       ? `${t('messageVendor', { default: `Message` })} ${username.split(' ')[0]}`
                       : t('sendMessage', { default: 'Send a message' })}
                   </span>
-                </div> 
+                </div>
               )}
             </div>
             {price && (

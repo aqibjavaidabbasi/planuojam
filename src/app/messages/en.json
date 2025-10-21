@@ -780,7 +780,19 @@
       "faq": {
         "title": "FAQs",
         "sectionTitle": "Section Title",
-        "add": "+ Add FAQ"
+        "add": "+ Add FAQ",
+        "saving": "Saving...",
+        "savechanges": "Save Changes",
+        "errors": {
+          "addAtLeastOne": "Add at least one FAQ",
+          "eachNeedsQnA": "Each FAQ needs a question and an answer",
+          "questionRequired": "The Question for FAQ {index} is required",
+          "answerRequired": "The Answer for FAQ {index} is required"
+        },
+        "toasts": {
+          "updated": "FAQs updated",
+          "updateFailed": "Failed to update FAQs"
+        }
       },
       "eventTypes": {
         "title": "Event Types"
@@ -1065,15 +1077,18 @@
     }
   },
   "FAQsSection": {
+    "title": "FAQs",
     "sectiontitle": "Section Title",
-    "saving": "Saving",
+    "saving": "Saving...",
     "savechanges": "Save Changes",
-    "+addFAQ": "+addFAQ",
+    "+addFAQ": "+ Add FAQ",
     "answer": "Answer",
     "question": "Question",
     "errors": {
       "addAtLeastOne": "Add at least one FAQ",
-      "eachNeedsQnA": "Each FAQ needs a question and an answer"
+      "eachNeedsQnA": "Each FAQ needs a question and an answer",
+      "questionRequired": "The Question for FAQ {index} is required",
+      "answerRequired": "The Answer for FAQ {index} is required"
     },
     "toasts": {
       "updated": "FAQs updated",
@@ -1240,22 +1255,6 @@
       "toasts": {
         "updated": "Pricing updated",
         "updateFailed": "Failed to update pricing"
-      }
-    },
-    "FAQsSection": {
-      "sectiontitle": "Section Title",
-      "saving": "Saving",
-      "savechanges": "Save Changes",
-      "+addFAQ": "+addFAQ",
-      "answer": "Answer",
-      "question": "Question",
-      "errors": {
-        "addAtLeastOne": "Add at least one FAQ",
-        "eachNeedsQnA": "Each FAQ needs a question and an answer"
-      },
-      "toasts": {
-        "updated": "FAQs updated",
-        "updateFailed": "Failed to update FAQs"
       }
     }
   },

@@ -804,9 +804,13 @@
         "title": "FAQ",
         "sectionTitle": "Tytuł sekcji",
         "add": "+ Dodaj pytanie i odpowiedź",
+        "saving": "Zapisywanie...",
+        "savechanges": "Zapisz zmiany",
         "errors": {
           "addAtLeastOne": "Dodaj co najmniej jedno pytanie",
-          "eachNeedsQnA": "Każde pytanie musi mieć pytanie i odpowiedź"
+          "eachNeedsQnA": "Każde pytanie musi mieć pytanie i odpowiedź",
+          "questionRequired": "Pytanie dla FAQ {index} jest wymagane",
+          "answerRequired": "Odpowiedź dla FAQ {index} jest wymagana"
         },
         "toasts": {
           "updated": "FAQ zaktualizowane",
@@ -1069,16 +1073,18 @@
     }
   },
   "FAQsSection": {
-    "sectiontitle": "tytuł sekcji",
-    "saving": "oszczędność",
-    "savingEllipsis": "Zapisywanie...",
-    "savechanges": "zapisuje zmiany",
-    "+addFAQ": "+добавитьFAQ",
-    "answer": "odpowiedź",
+    "title": "FAQ",
+    "sectiontitle": "Tytuł sekcji",
+    "saving": "Zapisywanie...",
+    "savechanges": "Zapisz zmiany",
+    "+addFAQ": "+ Dodaj FAQ",
+    "answer": "Odpowiedź",
     "question": "Pytanie",
     "errors": {
-      "addAtLeastOne": "Dodaj co najmniej jedno pytanie",
-      "eachNeedsQnA": "Każde pytanie musi mieć pytanie i odpowiedź"
+      "addAtLeastOne": "Dodaj co najmniej jedno FAQ",
+      "eachNeedsQnA": "Każde FAQ musi mieć pytanie i odpowiedź",
+      "questionRequired": "Pytanie dla FAQ {index} jest wymagane",
+      "answerRequired": "Odpowiedź dla FAQ {index} jest wymagana"
     },
     "toasts": {
       "updated": "FAQ zaktualizowane",
