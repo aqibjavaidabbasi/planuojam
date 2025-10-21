@@ -118,12 +118,12 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
             const imageUrl = getCompleteImageUrl(img.url);
             return (
               <SwiperSlide key={idx}>
-                <div className="relative w-full h-40 md:h-56 lg:h-64">
+                <div className="relative w-full h-40 md:h-56 lg:h-64 bg-black">
                   <Image
                     src={imageUrl}
                     alt={t('imageAlt', { index: idx + 1 })}
                     fill
-                    style={{ objectFit: 'cover' }}
+                    style={{ objectFit: 'contain', objectPosition: 'center' }}
                     sizes="(max-width: 768px) 100vw, 400px"
                     priority={idx === 0 && !!highPriority}
                     fetchPriority={idx === 0 && highPriority ? 'high' : undefined}
@@ -140,7 +140,7 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
                   src={"/placeholder.png"}
                   alt={t('placeholderAlt')}
                   fill
-                  style={{ objectFit: 'cover' }}
+                  style={{ objectFit: 'cover', objectPosition: 'center' }}
                   sizes="(max-width: 768px) 100vw, 400px"
                 />
               </div>
