@@ -43,7 +43,7 @@ function ProfileBtn({loading, user}: {loading: boolean, user: User | null}) {
       {loading ? (
         <Loader />
       ) : user ? (
-        <div className="flex items-center gap-1 p-1 md:p-2" onClick={() => router.push('/profile')}>
+        <div className="flex items-center gap-1 p-1 md:p-2" onClick={() => router.push('/profile?tab=profile')}>
           <FaRegUser className="text-primary group-hover:text-white text-sm md:text-base" />
           <span className="capitalize text-sm md:text-base whitespace-nowrap group-hover:text-white font-medium">
             {user.username.split(' ')[0]}

@@ -17,6 +17,7 @@ const ProviderCalendar: React.FC = () => {
   const user = useAppSelector((s) => s.auth.user);
   const locale = useLocale();
   const [listings, setListings] = useState<{ documentId: string; title?: string }[]>([]);
+  const [fetchingListings, setFetchingListings] = useState<boolean>(true);
   const [loading, setLoading] = useState(false);
   const [selectedListing, setSelectedListing] = useState<string>("");
   const [start, setStart] = useState<string>("");
@@ -30,12 +31,15 @@ const ProviderCalendar: React.FC = () => {
 
   useEffect(() => {
     (async () => {
+      setFetchingListings(true);
       try {
         if (!user?.documentId) return;
         const res = await fetchListingsByUser(user.documentId, undefined, locale);
         setListings((res || []).map((l) => ({ documentId: l.documentId, title: l.title })));
       } catch {
         // ignore
+      } finally {
+        setFetchingListings(false);
       }
     })();
   }, [user?.documentId, locale]);
@@ -104,6 +108,9 @@ const ProviderCalendar: React.FC = () => {
             options={options}
           />
         </div>
+        {fetchingListings && (
+          <div className="text-sm text-gray-500">{tCommon("loading", { default: "Loading..." })}</div>
+        )}
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
           <Input type="datetime-local" label={t("fields.start", { default: "Start" })} value={start} onChange={(e) => setStart(e.target.value)} />
           <Input type="datetime-local" label={t("fields.end", { default: "End" })} value={end} onChange={(e) => setEnd(e.target.value)} />

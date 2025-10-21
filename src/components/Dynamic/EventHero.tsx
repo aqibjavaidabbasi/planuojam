@@ -24,20 +24,17 @@ function EventHero({data}: {data: HeroBannerBlock}) {
       <div className="absolute inset-0 bg-black/20 pointer-events-none" />
       <div className="relative z-10 flex items-center h-full w-full">
         <div
-          className="max-w-lg w-full flex flex-col gap-4 items-start rounded-xl shadow-xl px-5 py-5 md:px-8 md:py-8 ml-0 md:ml-10 bg-white/30 backdrop-blur-3xl border border-white/30"
+          className="max-w-lg w-full flex flex-col gap-4 items-start rounded-xl shadow-xl px-5 py-5 md:px-8 md:py-8 ml-0 md:ml-10"
           style={{
-            // fallback for glass effect if needed
-            background:
-              'linear-gradient(135deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.15) 100%)',
             boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
           }}
         >
           <Heading
             headingPiece={data.heading.headingPiece}
             as="h1"
-            extraStyles='lg:!items-start lg:!justify-start'
+            extraStyles='lg:!items-start lg:!justify-start !text-white'
           />
-          <p className="text-gray-700 text-base font-normal text-left">{data.subTitle}</p>
+          <p className="text-gray-100 text-base font-normal text-left">{data.subTitle}</p>
           <Button
             style={data.callToAction.style}
             size='large'
