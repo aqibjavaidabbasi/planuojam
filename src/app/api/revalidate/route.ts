@@ -124,6 +124,10 @@ export async function POST(req: Request) {
                     targets.push(`/${locale}/hot-deal`)
                     //for event types page
                     targets.push(`/${locale}/event-types/${slugToValidate}`)
+                    //for about us page
+                    targets.push(`/${locale}/about-us`)
+                    //for contact us page
+                    targets.push(`/${locale}/contact-us`)
 
                 }
                 if (bodyModal.includes('event-type')) {
@@ -179,6 +183,9 @@ export async function POST(req: Request) {
                     targets.push('/')
                     //just refresh home page, it should revalidate all single types
                     targets.push(`/${locale}`)
+                    //about us and contact us
+                    targets.push(`/${locale}/about-us`)
+                    targets.push(`/${locale}/contact-us`)
                 }
             }
         }
