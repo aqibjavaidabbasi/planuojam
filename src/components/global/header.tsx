@@ -16,7 +16,6 @@ import { logout, setUser } from "@/store/slices/authSlice";
 import {
   DEFAULT_LOCALE,
   SUPPORTED_LOCALES,
-  LOCALE_OPTIONS,
 } from "@/config/i18n";
 import { useTranslations } from "next-intl";
 import { RootState } from "@/store";
@@ -36,6 +35,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
     setSelected(val);
   };
   const t = useTranslations("hotdealstatic")
+  const tLocales = useTranslations("Global.Locales")
   useEffect(() => {
     const validateUser = async () => {
       const token = localStorage.getItem("token");
@@ -187,9 +187,9 @@ function Header({ headerData }: { headerData: HeaderType }) {
                 className="text-sm md:text-base"
                 value={selectedLocale}
                 onChange={handleLocaleChange}
-                options={LOCALE_OPTIONS.map((opt: { code: string; label: string }) => ({
-                  value: opt.code,
-                  label: opt.label,
+                options={SUPPORTED_LOCALES.map((code: string) => ({
+                  value: code,
+                  label: tLocales.has(code) ? tLocales(code) : code.toUpperCase(),
                 }))}
               />
             </div>

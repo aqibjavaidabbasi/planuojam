@@ -61,8 +61,10 @@
       "passwordCriteriaUpper": "1 uppercase",
       "passwordCriteriaNumber": "1 number",
       "passwordTooWeak": "Password is too weak (need 8+ chars, 1 uppercase, 1 number)",
+      "passwordMismatch": "Passwords do not match",
       "tosRequired": "Please read and agree to our Terms of Service and Privacy Policy",
       "tosNotAccepted": "Please accept the Terms of Service and Privacy Policy",
+      "availabilityHint": "Hint: Check username availability. The Register button enables only when a username is available.",
       "registerCta": "Register",
       "alreadyHaveAccount": "Already have an account?",
       "signInHere": "Sign in here",
@@ -133,43 +135,48 @@
   },
   "Contact": {
     "chatWithUs": {
-      "title": "Chat with us",
-      "liveChat": "Start a live chat",
-      "email": "Shoot us an email",
-      "messageOn": "Message us on "
+      "title": "Get in touch",
+      "liveChat": "Start live chat",
+      "email": "Email us",
+      "messageOnX": "Message us"
     },
     "emailUs": {
       "title": "Email us"
     },
     "callUs": {
       "title": "Call us",
-      "hours": "Call our team Mon–Fri from 8am to 5pm.",
+      "hours": "Call our team Mon–Fri 8am–5pm",
       "phone": "+1 (555) 000–0000"
     },
     "visitUs": {
       "title": "Visit us",
-      "description": "Chat to us in person at our Melbourne HQ.",
+      "description": "Visit our headquarters in Melbourne.",
       "address": "100 Smith Street, Collingwood VIC 3066",
-      "mapTitle": "Location Map"
+      "mapTitle": "Location map"
     },
     "Form": {
       "title": "Contact our team",
-      "description": "Got any questions about the product or scaling on our platform? We’re here to help. Chat to our friendly team 24/7 and get onboard in less than 5 minutes.",
+      "description": "Questions about the product or growing on our platform? We’re ready to help. Reach out 24/7 and get started in under 5 minutes.",
       "firstName": "First name",
+      "firstNameLabel": "First name",
       "lastName": "Last name",
+      "lastNameLabel": "Last name",
       "emailPlaceholder": "you@company.com",
+      "emailLabel": "Email",
       "country": {
         "lt": "LT",
         "ru": "RU"
       },
       "phonePlaceholder": "+1 (555) 000-0000",
+      "phoneLabel": "Phone",
       "messagePlaceholder": "Leave us a message...",
+      "messageLabel": "Message",
       "send": "Send message",
       "sending": "Sending...",
       "success": "Message sent successfully.",
-      "failure": "Failed to send your message. Please try again.",
+      "failure": "Failed to send message. Please try again.",
       "validationRequired": "Please fill in required fields.",
-      "countryPlaceholder": "Select a country"
+      "countryPlaceholder": "Select country"
     }
   },
   "Common": {
@@ -227,6 +234,17 @@
       "noReviews": "No reviews yet",
       "faqs": "FAQs",
       "location": "Location",
+      "workingScheduleTitle": "Working Schedule",
+      "workingScheduleClosed": "Closed",
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      },
       "noLocation": "Location not available",
       "messageVendor": "Message vendor"
     },
@@ -488,6 +506,16 @@
       "subscribing": "Subscribing...",
       "success": "Subscribed successfully",
       "error": "Subscription failed. Please try again."
+    },
+    "CityList": {
+      "title": "Find venues and cities"
+    },
+    "Locales": {
+      "en": "English",
+      "lt": "Lithuanian",
+      "ru": "Russian",
+      "pl-PL": "Polish",
+      "et": "Estonian"
     }
   },
   "NotFound": {
@@ -949,8 +977,16 @@
     "titleDescription": "Title Description",
     "saving": "Saving",
     "savechanges": "Save  Changes",
+    "listingStatus": {
+      "draft": "Draft",
+      "published": "Published",
+      "pendingReview": "Pending review",
+      "archived": "Archived"
+    },
     "errors": {
       "titleRequired": "Title is required",
+      "listingStatusRequired": "Listing status is required",
+      "pricePositive": "Price must be positive",
       "priceRequired": "Price is required",
       "descriptionRequired": "Description is required",
       "invalidWebsiteLink": "Please add a valid website link"
@@ -972,6 +1008,12 @@
     "saveImages": "Save  Images",
     "uploadHint": "Maximum file size: {size}",
     "readyToSave": "{count} image(s) ready to save",
+    "alt": {
+      "portfolioImage": "Portfolio image"
+    },
+    "aria": {
+      "deleteImage": "Delete image"
+    },
     "errors": {
       "noImage": "Please upload at least one image"
     },
@@ -988,6 +1030,10 @@
       "delete": "Delete",
       "deleting": "Deleting..."
     }
+  },
+  "ListingGallery": {
+    "viewMore": "View more",
+    "viewMoreWithCount": "View more (+{count})"
   },
   "vendorvenueSection": {
     "details": "Details",
@@ -1036,6 +1082,7 @@
     }
   },
   "contactSections": {
+    "title": "Contact",
     "email": "Email",
     "phone": "Phone",
     "address": "Address",
@@ -1043,6 +1090,7 @@
     "savechanges": "Save  Changes",
     "errors": {
       "emailRequired": "Email is required",
+      "invalidEmail": "Invalid email format",
       "phoneRequired": "Phone is required",
       "addressRequired": "Address is required"
     },
@@ -1073,13 +1121,29 @@
     }
   },
   "pricingSection": {
-    "+addoptionaladdon": "+ Add Optional Addon",
-    "+addplan": "+ Add Plan",
-    "+addfeature": "+ Add Feature",
+    "+addoptionaladdon": "+add optional addon",
+    "+addplan": "+add plan",
+    "+addfeature": "+add feature",
     "saving": "Saving",
     "savechanges": "Save  Changes",
     "sectiontitle": "Section Title",
     "optionaladdons": "Optional Addons",
+    "labels": {
+      "title": "Pricing Packages",
+      "planName": "Plan Name",
+      "price": "Price",
+      "ctaBodyText": "CTA Body Text",
+      "ctaButtonUrl": "CTA Button URL",
+      "ctaStyle": "CTA Style",
+      "features": "Features",
+      "addonStatement": "Addon Statement",
+      "addonPrice": "Addon Price"
+    },
+    "styleOptions": {
+      "primary": "Primary",
+      "secondary": "Secondary",
+      "ghost": "Ghost"
+    },
     "errors": {
       "planRequired": "Please add at least one plan",
       "planNameRequired": "Each plan must have a name",
@@ -1129,11 +1193,21 @@
         "hours": "hour(s)",
         "days": "day(s)"
       },
+      "hints": {
+        "selectionHelpHourly": "Hint: Choose start and end on the same day. Maximum duration: {max} hour(s).",
+        "selectionHelpDaily": "Hint: You may span multiple days up to {max} day(s).",
+        "reviewSchedule": "Hint: Review the working schedule before creating a booking."
+      },
       "defaultPlan": "Default",
       "errors": {
         "requiredDateTime": "Please select a date and time.",
         "futureOnly": "Please choose a future date and time.",
         "invalidRange": "End time must be after start time.",
+        "exceedsMaxDuration": "Selected duration exceeds the maximum of {max} {unit} allowed.",
+        "sameDayOnly": "Start and end must be on the same day.",
+        "outsideWorkingHoursSameDay": "Selected time must be within working hours on the same day.",
+        "outsideWorkingHours": "Start and end must be within working hours.",
+        "dayWithoutWorkingHours": "Booking overlaps a day without working hours.",
         "slotUnavailable": "Selected time slot is not available."
       },
       "toasts": {
@@ -1229,7 +1303,8 @@
         "pending": "Pending",
         "confirmed": "Confirmed",
         "cancelled": "Cancelled",
-        "rejected": "Rejected"
+        "rejected": "Rejected",
+        "completed": "Completed"
       }
     },
     "socialLinkSection": {
@@ -1276,6 +1351,25 @@
     }
   },
   "hotDealSection": {
+    "labels": {
+      "title": "Hot Deal",
+      "startDate": "Start Date",
+      "lastDate": "Last Date",
+      "dealNote": "Deal Note",
+      "discountType": "Discount Type",
+      "flatRate": "Flat Rate",
+      "percentage": "Percentage",
+      "flatRatePrice": "Flat Rate Price",
+      "percentageValue": "Percentage"
+    },
+    "toggles": {
+      "yes": "YES",
+      "no": "NO"
+    },
+    "actions": {
+      "saveChanges": "Save Changes",
+      "saving": "Saving..."
+    },
     "errors": {
       "startRequired": "Start date is required",
       "lastRequired": "Last date is required",

@@ -57,7 +57,7 @@ function PricingPlans({
         {plan.isPopular ? (
           <Button
             style="primary"
-            extraStyles="!rounded-md bg-gradient-to-r from-amber-500 to-pink-500"
+            extraStyles="!rounded-md bg-gradient-to-r from-amber-500 to-pink-500 hover:from-pink-500 hover:to-amber-500 !hover:bg-transparent transition-colors duration-200"
             onClick={() => typeof planIndex === 'number' && onSelectPlan?.(planIndex)}
           >
             {plan?.cta?.bodyText}

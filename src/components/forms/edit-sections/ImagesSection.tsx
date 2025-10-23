@@ -71,12 +71,12 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
           const imagePath = getCompleteImageUrl(image.url);
           return (
             <div key={id} className="relative group">
-              <Image src={imagePath} alt="Portfolio image" width={150} height={150} className="rounded" />
+              <Image src={imagePath} alt={t("alt.portfolioImage")} width={150} height={150} className="rounded" />
               <Button
                 style="destructive"
                 extraStyles="absolute top-1 right-1 opacity-90 group-hover:opacity-100 !p-2 !rounded-full"
                 onClick={() => handleRequestDelete({ id: image.id, url: image.url })}
-                aria-label="Delete image"
+                aria-label={t("aria.deleteImage")}
               >
                 <FaTrash />
               </Button>

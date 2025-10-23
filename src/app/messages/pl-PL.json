@@ -61,7 +61,9 @@
       "passwordCriteriaUpper": "1 wielka litera",
       "passwordCriteriaNumber": "1 cyfra",
       "passwordTooWeak": "Hasło jest zbyt słabe (wymagane 8+ znaków, 1 wielka litera, 1 cyfra)",
+      "passwordMismatch": "Hasła nie są takie same",
       "tosRequired": "Przeczytaj i zaakceptuj Regulamin oraz Politykę prywatności",
+      "availabilityHint": "Wskazówka: Sprawdź dostępność nazwy użytkownika. Przycisk Rejestracja będzie aktywny tylko wtedy, gdy nazwa użytkownika jest dostępna.",
       "registerCta": "Zarejestruj się",
       "alreadyHaveAccount": "Masz już konto?",
       "signInHere": "Zaloguj się tutaj",
@@ -140,14 +142,19 @@
       "title": "Skontaktuj się z naszym zespołem",
       "description": "Masz pytania dotyczące produktu lub skalowania na naszej platformie? Jesteśmy tu, aby pomóc. Skontaktuj się z naszym przyjaznym zespołem 24/7 i rozpocznij w mniej niż 5 minut.",
       "firstName": "Imię",
+      "firstNameLabel": "Imię",
       "lastName": "Nazwisko",
+      "lastNameLabel": "Nazwisko",
       "emailPlaceholder": "you@company.com",
+      "emailLabel": "Email",
       "country": {
         "lt": "LT",
         "ru": "RU"
       },
       "phonePlaceholder": "+1 (555) 000-0000",
+      "phoneLabel": "Telefon",
       "messagePlaceholder": "Zostaw nam wiadomość...",
+      "messageLabel": "Wiadomość",
       "send": "Wyślij wiadomość",
       "sending": "Wysyłanie...",
       "success": "Wiadomość została wysłana.",
@@ -214,8 +221,19 @@
       "noReviews": "Brak opinii",
       "faqs": "FAQ",
       "location": "Lokalizacja",
-      "noLocation": "Brak lokalizacji",
-      "messageVendor": "Wiadomość dostawcy"
+      "workingScheduleTitle": "Godziny pracy",
+      "workingScheduleClosed": "Zamknięte",
+      "days": {
+        "monday": "Poniedziałek",
+        "tuesday": "Wtorek",
+        "wednesday": "Środa",
+        "thursday": "Czwartek",
+        "friday": "Piątek",
+        "saturday": "Sobota",
+        "sunday": "Niedziela"
+      },
+      "noLocation": "Lokalizacja niedostępna",
+      "messageVendor": "Napisz do dostawcy"
     },
     "Hero": {
       "by": "przez ",
@@ -223,7 +241,7 @@
       "percentageOffLimited": "{percent}% TANIEJ - Oferta ograniczona",
       "getTicketCta": "Zarezerwuj teraz",
       "visitWebsite": "Odwiedź stronę",
-      "messageVendor": "Wiadomość do",
+      "messageVendor": "Napisz do dostawcy",
       "sendMessage": "Wyślij wiadomość",
       "viewAvailableSlots": "Wyświetl dostępne sloty"
     },
@@ -498,6 +516,16 @@
       "subscribing": "Subskrybowanie...",
       "success": "Subskrypcja zakończona pomyślnie",
       "error": "Nie udało się subskrybować. Spróbuj ponownie."
+    },
+    "CityList": {
+      "title": "Znajdź miejsca i miasta"
+    },
+    "Locales": {
+      "en": "Angielski",
+      "lt": "Litewski",
+      "ru": "Rosyjski",
+      "pl-PL": "Polski",
+      "et": "Estoński"
     }
   },
   "NotFound": {
@@ -956,17 +984,24 @@
     "workinghours(perday)": "godziny pracy (dziennie)",
     "titleDescription": "tytułOpis",
     "saving": "экономия",
-    "savingEllipsis": "Zapisywanie...",
     "savechanges": "zapisuje zmiany",
-    "toasts": {
-      "updated": "Podstawowe dane zaktualizowane",
-      "updateFailed": "Nie udało się zaktualizować podstawowych danych"
+    "listingStatus": {
+      "draft": "Szkic",
+      "published": "Opublikowane",
+      "pendingReview": "Oczekuje na recenzję",
+      "archived": "Zarchiwizowane"
     },
     "errors": {
       "titleRequired": "Tytuł jest wymagany",
+      "listingStatusRequired": "Wymagany jest status ogłoszenia",
+      "pricePositive": "Cena musi być dodatnia",
       "priceRequired": "Cena jest wymagana",
       "descriptionRequired": "Opis jest wymagany",
       "invalidWebsiteLink": "Proszę dodać poprawny link do strony internetowej"
+    },
+    "toasts": {
+      "updated": "Podstawowe dane zaktualizowane",
+      "updateFailed": "Nie udało się zaktualizować podstawowych danych"
     }
   },
   "ImageSection": {
@@ -976,6 +1011,12 @@
     "saveImages": "zapisz obrazy",
     "uploadHint": "Przesyłaj obrazy o rozmiarze do {size}",
     "readyToSave": "{count} obraz(y) gotowe do zapisania",
+    "alt": {
+      "portfolioImage": "Obraz portfolio"
+    },
+    "aria": {
+      "deleteImage": "Usuń obraz"
+    },
     "errors": {
       "noImage": "Proszę przesłać co najmniej jedno zdjęcie"
     },
@@ -1033,13 +1074,24 @@
       "updateFailed": "Nie udało się zaktualizować danych sprzedawcy/miejsca"
     }
   },
+  "ListingGallery": {
+    "viewMore": "Zobacz więcej",
+    "viewMoreWithCount": "Zobacz więcej (+{count})"
+  },
   "contactSections": {
+    "title": "Kontakt",
     "email": "e-mail",
     "phone": "telefon",
     "address": "adres",
     "saving": "oszczędność",
     "savingEllipsis": "Zapisywanie...",
     "savechanges": "zapisuje zmiany",
+    "errors": {
+      "emailRequired": "Email jest wymagany",
+      "invalidEmail": "Nieprawidłowy format email",
+      "phoneRequired": "Telefon jest wymagany",
+      "addressRequired": "Adres jest wymagany"
+    },
     "toasts": {
       "updated": "Kontakt zaktualizowany",
       "updateFailed": "Nie udało się zaktualizować kontaktu"
@@ -1076,6 +1128,22 @@
     "savechanges": "zapisuje zmiany",
     "sectiontitle": "tytuł sekcji",
     "optionaladdons": "opcjonalne dodatki",
+    "labels": {
+      "title": "Pakiety cenowe",
+      "planName": "Nazwa planu",
+      "price": "Cena",
+      "ctaBodyText": "Treść CTA",
+      "ctaButtonUrl": "URL przycisku CTA",
+      "ctaStyle": "Styl CTA",
+      "features": "Funkcje",
+      "addonStatement": "Opis dodatku",
+      "addonPrice": "Cena dodatku"
+    },
+    "styleOptions": {
+      "primary": "Podstawowy",
+      "secondary": "Drugorzędny",
+      "ghost": "Przezroczysty"
+    },
     "errors": {
       "planRequired": "Dodaj co najmniej jeden plan",
       "planNameRequired": "Każdy plan musi mieć nazwę",
@@ -1125,11 +1193,21 @@
         "hours": "godz.",
         "days": "dni"
       },
+      "hints": {
+        "selectionHelpHourly": "Wskazówka: Wybierz początek i koniec tego samego dnia. Maksymalny czas trwania: {max} godz.",
+        "selectionHelpDaily": "Wskazówka: Rezerwacja może obejmować wiele dni, maksymalnie {max} dni.",
+        "reviewSchedule": "Wskazówka: Przejrzyj grafik pracy przed utworzeniem rezerwacji."
+      },
       "defaultPlan": "Domyślny",
       "errors": {
         "requiredDateTime": "Wybierz datę i godzinę.",
         "futureOnly": "Wybierz datę i godzinę w przyszłości.",
         "invalidRange": "Czas zakończenia musi być po czasie rozpoczęcia.",
+        "exceedsMaxDuration": "Wybrany czas trwania przekracza maksymalny limit {max} {unit}.",
+        "sameDayOnly": "Początek i koniec muszą przypadać tego samego dnia.",
+        "outsideWorkingHoursSameDay": "Wybrany czas musi mieścić się w godzinach pracy tego samego dnia.",
+        "outsideWorkingHours": "Początek i koniec muszą mieścić się w godzinach pracy.",
+        "dayWithoutWorkingHours": "Rezerwacja obejmuje dzień bez godzin pracy.",
         "slotUnavailable": "Wybrany przedział czasowy jest niedostępny."
       },
       "toasts": {
@@ -1233,11 +1311,30 @@
     }
   },
   "hotDealSection": {
+    "labels": {
+      "title": "Gorąca oferta",
+      "startDate": "Data rozpoczęcia",
+      "lastDate": "Data zakończenia",
+      "dealNote": "Notatka do oferty",
+      "discountType": "Typ rabatu",
+      "flatRate": "Kwota stała",
+      "percentage": "Procent",
+      "flatRatePrice": "Kwota rabatu",
+      "percentageValue": "Procent"
+    },
+    "toggles": {
+      "yes": "TAK",
+      "no": "NIE"
+    },
+    "actions": {
+      "saveChanges": "Zapisz zmiany",
+      "saving": "Zapisywanie..."
+    },
     "errors": {
       "startRequired": "Wymagana jest data rozpoczęcia",
       "lastRequired": "Wymagana jest data zakończenia",
-      "flatRateMin": "Stawka stała musi być większa lub równa 0",
-      "percentageRange": "Procent musi mieścić się w przedziale od 0 do 100"
+      "flatRateMin": "Kwota stała musi być większa lub równa 0",
+      "percentageRange": "Procent musi mieścić się w przedziale 0-100"
     },
     "toasts": {
       "updated": "Gorąca oferta zaktualizowana",

@@ -102,6 +102,10 @@ function RegisterPage() {
       toast.error(t("passwordTooWeak", { default: "Password is too weak (need 8+ chars, 1 uppercase, 1 number)" }));
       return;
     }
+    if (data.password !== data.confirmPassword) {
+      toast.error(t("passwordMismatch", { default: "Passwords do not match" }));
+      return;
+    }
     //filter role, terms, confirm
     const filteredData = {
       serviceType: data.serviceType,
@@ -381,10 +385,11 @@ function RegisterPage() {
               />
             </div>
 
+            <p className="text-xs text-gray-500 mt-4">{t("availabilityHint")}</p>
             <Button
-              style="primary"
               type="submit"
               form="registerForm"
+              style="primary"
               extraStyles="!rounded-md !w-full"
               disabled={!canRegister}
             >

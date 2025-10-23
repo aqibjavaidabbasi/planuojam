@@ -43,7 +43,8 @@ const ManageBookings: React.FC = () => {
     const confirmed = items.filter((b) => b.bookingStatus === "confirmed").length;
     const cancelled = items.filter((b) => b.bookingStatus === "cancelled").length;
     const rejected = items.filter((b) => b.bookingStatus === "rejected").length;
-    return { total, pending, confirmed, cancelled, rejected };
+    const completed = items.filter((b) => b.bookingStatus === "completed").length;
+    return { total, pending, confirmed, cancelled, rejected, completed };
   }, [items]);
 
   useEffect(() => {
@@ -146,7 +147,7 @@ const ManageBookings: React.FC = () => {
       </div>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-5">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-5">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
           <p className="text-xs text-gray-500">{t("stats.total", { default: "Total" })}</p>
           <p className="text-2xl font-semibold">{stats.total}</p>
@@ -166,6 +167,10 @@ const ManageBookings: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
           <p className="text-xs text-gray-500">{t("stats.rejected", { default: "Rejected" })}</p>
           <p className="text-2xl font-semibold">{stats.rejected}</p>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+          <p className="text-xs text-gray-500">{t("stats.completed", { default: "Rejected" })}</p>
+          <p className="text-2xl font-semibold">{stats.completed}</p>
         </div>
       </div>
 

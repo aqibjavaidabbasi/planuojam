@@ -126,31 +126,32 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
           <h3 className="text-lg font-semibold mb-2">{t("basicDetails")}</h3>
         </div>
         <div className="col-span-2">
-          <Input type="text" label={t("title")} disabled={submitting} required {...register("title", { required: "Title is required" })} />
-          {errors.title && (<p className="text-red-500 text-sm mt-1">{t("errors.title.message")}</p>)}
+          <Input type="text" label={t("title")} disabled={submitting} required {...register("title", { required: t("errors.titleRequired") })} />
+          {errors.title && (<p className="text-red-500 text-sm mt-1">{String(errors.title.message)}</p>)}
         </div>
         <div className="flex items-end">
           <Select
             disabled={submitting}
-            {...register("listingStatus", { required: "Listing status is required" })}
+            {...register("listingStatus", { required: t("errors.listingStatusRequired") })}
             options={[
-              { label: "Draft", value: "draft" },
-              { label: "Published", value: "published" },
-              { label: "Archived", value: "archived" },
+              { label: t("listingStatus.draft"), value: "draft" },
+              { label: t("listingStatus.published"), value: "published" },
+              { label: t("listingStatus.pendingReview"), value: "pending review" },
+              { label: t("listingStatus.archived"), value: "archived" },
             ]}
           />
-          {errors.listingStatus && <p className="text-red-500 text-sm mt-1">{t("errors.listingStatus.message")}</p>}
+          {errors.listingStatus && <p className="text-red-500 text-sm mt-1">{String(errors.listingStatus.message)}</p>}
         </div>
         <div>
-          <Input type="number" label={t("price")} disabled={submitting} {...register("price", { valueAsNumber: true, min: { value: 0, message: "Price must be positive" } })} />
+          <Input type="number" label={t("price")} disabled={submitting} {...register("price", { valueAsNumber: true, min: { value: 0, message: t("errors.pricePositive") } })} />
           {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>}
         </div>
         <div className="flex items-center mt-6">
           <Checkbox label={t("featured")} checked={!!watch("featured")} onChange={(e) => setValue("featured", e.target.checked)} disabled={submitting} />
         </div>
         <div className="col-span-2">
-          <TextArea label={t("description")} placeholder={t("titleDescription")} rows={4} disabled={submitting} {...register("description", { required: "Description is required" })} />
-          {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
+          <TextArea label={t("description")} placeholder={t("titleDescription")} rows={4} disabled={submitting} {...register("description", { required: t("errors.descriptionRequired") })} />
+          {errors.description && <p className="text-red-500 text-sm mt-1">{String(errors.description.message)}</p>}
         </div>
         <div className="col-span-2" >
           <Input

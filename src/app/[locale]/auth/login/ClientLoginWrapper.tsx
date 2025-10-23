@@ -15,7 +15,7 @@ function ClientLoginWrapper() {
   return (
     <div className="w-full max-w-md h-full">
         <div className="text-center mb-4">
-          <div className="inline-flex items-center justify-center w-20 h-20 mb-2 overflow-hidden relative">
+          <div className="inline-flex items-center justify-center mb-2 overflow-hidden relative">
             <Logo className="w-20 h-20" variant="sm" onClick={() => router.push("/")} />
           </div>
           <h1 className="text-2xl font-bold text-gray-800">{t("title")}</h1>

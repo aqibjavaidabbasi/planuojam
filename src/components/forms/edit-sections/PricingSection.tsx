@@ -99,7 +99,7 @@ export default function PricingSection({
   const t=useTranslations("pricingSection")
   return (
     <div className="py-4">
-      <h3 className="text-lg font-semibold mb-2">Pricing Packages</h3>
+      <h3 className="text-lg font-semibold mb-2">{t("labels.title")}</h3>
       <form onSubmit={form.handleSubmit(onSubmit)} id="pricingForm" className="flex flex-col gap-4">
         <Input type="text" label={t("sectiontitle")} disabled={isWorking} {...form.register("sectionTitle")} />
 
@@ -109,7 +109,7 @@ export default function PricingSection({
               <div className="col-span-2">
                 <Input
                   type="text"
-                  label="Plan Name"
+                  label={t("labels.planName")}
                   disabled={isWorking}
                   value={p.name || ""}
                   onChange={(e) => {
@@ -122,7 +122,7 @@ export default function PricingSection({
               <div className="col-span-1">
                 <Input
                   type="number"
-                  label="Price"
+                  label={t("labels.price")}
                   disabled={isWorking}
                   value={p.price ?? ""}
                   onChange={(e) => {
@@ -135,7 +135,7 @@ export default function PricingSection({
               <div className="col-span-4 grid grid-cols-1 md:grid-cols-3 gap-3">
                 <Input
                   type="text"
-                  label="CTA Body Text"
+                  label={t("labels.ctaBodyText")}
                   value={p.cta?.bodyText || ""}
                   onChange={(e) => {
                     const list = [...(form.getValues("plans") || [])]
@@ -145,7 +145,7 @@ export default function PricingSection({
                 />
                 <Input
                   type="text"
-                  label="CTA Button URL"
+                  label={t("labels.ctaButtonUrl")}
                   disabled={isWorking}
                   value={p.cta?.buttonUrl || ""}
                   onChange={(e) => {
@@ -155,7 +155,7 @@ export default function PricingSection({
                   }}
                 />
                 <Select
-                  label="CTA Style"
+                  label={t("labels.ctaStyle")}
                   disabled={isWorking}
                   value={p.cta?.style || "primary"}
                   onChange={(e) => {
@@ -164,21 +164,21 @@ export default function PricingSection({
                     form.setValue("plans", list, { shouldDirty: true })
                   }}
                   options={[
-                    { label: "Primary", value: "primary" },
-                    { label: "Secondary", value: "secondary" },
-                    { label: "Ghost", value: "ghost" },
+                    { label: t("styleOptions.primary"), value: "primary" },
+                    { label: t("styleOptions.secondary"), value: "secondary" },
+                    { label: t("styleOptions.ghost"), value: "ghost" },
                   ]}
                 />
               </div>
               <div className="col-span-4">
                 <div className="flex flex-col gap-2">
-                  <h4 className="text-gray-500 font-medium tracking-wide">Features</h4>
+                  <h4 className="text-gray-500 font-medium tracking-wide">{t("labels.features")}</h4>
                   {(p.featuresList || []).map((feature, fIdx) => (
                     <div key={fIdx} className="grid grid-cols-12 items-end gap-2">
                       <div className="col-span-10">
                         <Input
                           type="text"
-                          label={`Feature ${fIdx + 1}`}
+                          label={`${t("labels.features")} ${fIdx + 1}`}
                           value={feature.statement || ""}
                           onChange={(e) => {
                             const list = [...(form.getValues("plans") || [])]
@@ -253,7 +253,7 @@ export default function PricingSection({
             <div key={idx} className="flex gap-2 mb-2 items-end">
               <Input
                 type="text"
-                label={`Addon Statement ${idx + 1}`}
+                label={`${t("labels.addonStatement")} ${idx + 1}`}
                 disabled={isWorking}
                 value={addon.statement || ""}
                 onChange={(e) => {
@@ -264,7 +264,7 @@ export default function PricingSection({
               />
               <Input
                 type="number"
-                label={`Addon Price ${idx + 1}`}
+                label={`${t("labels.addonPrice")} ${idx + 1}`}
                 disabled={isWorking}
                 value={addon.price ?? ""}
                 onChange={(e) => {

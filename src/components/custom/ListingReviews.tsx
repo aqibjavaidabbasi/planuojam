@@ -14,7 +14,7 @@ function ListingReviews({ reviews }: { reviews: Review[] }) {
   );
 
   return (
-    <div className="w-full relative">
+    <div className="w-full relative py-4">
       <Swiper
         modules={[Navigation, Autoplay]}
         breakpoints={{

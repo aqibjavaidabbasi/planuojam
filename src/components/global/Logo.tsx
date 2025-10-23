@@ -37,7 +37,7 @@ export default function Logo({
   const imageUrl = getCompleteImageUrl(siteSettings.siteLogo.url);
 
   const dims = sizeDims[variant];
-  const classes = `${sizeClasses[variant]} object-contain cursor-pointer transition hover:scale-105 ${className}`;
+  const classes = `${sizeClasses[variant]} object-contain cursor-pointer transition-opacity hover:opacity-90 ${className}`;
 
   return (
     <Image

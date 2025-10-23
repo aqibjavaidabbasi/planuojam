@@ -60,12 +60,14 @@ const ContactForm: React.FC<Props> = ({ countries = [] }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
                         type="text"
+                        label={t('firstNameLabel')}
                         placeholder={t('firstName')}
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                     />
                     <Input
                         type="text"
+                        label={t('lastNameLabel')}
                         placeholder={t('lastName')}
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
@@ -73,17 +75,20 @@ const ContactForm: React.FC<Props> = ({ countries = [] }) => {
                 </div>
                 <Input
                     type="email"
+                    label={t('emailLabel')}
                     placeholder={t('emailPlaceholder')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
                 <PhoneInputField
+                    label={t('phoneLabel')}
                     placeholder={t('phonePlaceholder')}
                     value={phone}
                     onChange={(value: string | undefined) => setPhone(value || '')}
                     onCountryChange={(c?: string) => setCountry(c || '')}
                 />
                 <TextArea
+                    label={t('messageLabel')}
                     placeholder={t('messagePlaceholder')}
                     rows={4}
                     value={message}

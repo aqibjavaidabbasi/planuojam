@@ -4,6 +4,7 @@ import { getCompleteImageUrl } from "@/utils/helpers";
 import Image from "next/image";
 import React, { useState } from "react";
 import ImagePreviewModal from "../modals/ImagePreviewModal ";
+import { useTranslations } from "next-intl";
 
 function ListingGallery({
   portfolio,
@@ -13,6 +14,7 @@ function ListingGallery({
   title: string;
 }) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const t = useTranslations("ListingGallery");
 
   const allImages = [...(portfolio ?? [])];
   const firstImage = allImages[0];
@@ -81,7 +83,9 @@ function ListingGallery({
                             onClick={() => setSelectedIndex(globalIndex)}
                             className="absolute inset-0 bg-black/50 text-white font-medium flex items-center justify-center rounded-lg"
                           >
-                            View more{extraCount > 0 ? ` (+${extraCount})` : ""}
+                            {extraCount > 0
+                              ? t("viewMoreWithCount", { count: extraCount })
+                              : t("viewMore")}
                           </button>
                         )}
                       </div>

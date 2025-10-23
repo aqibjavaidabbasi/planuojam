@@ -99,7 +99,9 @@
       "passwordCriteriaUpper": "1 заглавная буква",
       "passwordCriteriaNumber": "1 цифра",
       "passwordTooWeak": "Слабый пароль (нужно 8+ символов, 1 заглавная буква, 1 цифра)",
+      "passwordMismatch": "Пароли не совпадают",
       "tosRequired": "Пожалуйста, прочитайте и согласитесь с Условиями использования и Политикой конфиденциальности",
+      "availabilityHint": "Подсказка: проверьте доступность имени пользователя. Кнопка «Зарегистрироваться» будет активна только когда имя пользователя свободно.",
       "registerCta": "Зарегистрироваться",
       "alreadyHaveAccount": "Уже есть аккаунт?",
       "signInHere": "Войдите здесь",
@@ -154,11 +156,30 @@
     }
   },
   "hotDealSection": {
+    "labels": {
+      "title": "Горячее предложение",
+      "startDate": "Дата начала",
+      "lastDate": "Дата окончания",
+      "dealNote": "Заметка к предложению",
+      "discountType": "Тип скидки",
+      "flatRate": "Фиксированная сумма",
+      "percentage": "Процент",
+      "flatRatePrice": "Сумма скидки",
+      "percentageValue": "Процент"
+    },
+    "toggles": {
+      "yes": "ДА",
+      "no": "НЕТ"
+    },
+    "actions": {
+      "saveChanges": "Сохранить изменения",
+      "saving": "Сохранение..."
+    },
     "errors": {
       "startRequired": "Требуется дата начала",
       "lastRequired": "Требуется дата окончания",
       "flatRateMin": "Фиксированная сумма должна быть больше или равна 0",
-      "percentageRange": "Процент должен быть в диапазоне от 0 до 100"
+      "percentageRange": "Процент должен быть от 0 до 100"
     },
     "toasts": {
       "updated": "Горячее предложение обновлено",
@@ -169,39 +190,44 @@
     "chatWithUs": {
       "title": "Свяжитесь с нами",
       "liveChat": "Начать чат",
-      "email": "Напишите нам по email",
-      "messageOnX": "Напишите нам "
+      "email": "Напишите нам на email",
+      "messageOnX": "Напишите нам"
     },
     "emailUs": {
-      "title": "Напишите нам по email"
+      "title": "Напишите нам на email"
     },
     "callUs": {
       "title": "Позвоните нам",
-      "hours": "Звоните нашей команде Пн–Пт с 8:00 до 17:00.",
+      "hours": "Звоните нашей команде с Пн по Пт с 8 до 17",
       "phone": "+1 (555) 000–0000"
     },
     "visitUs": {
       "title": "Посетите нас",
-      "description": "Приходите к нам в штаб-квартиру в Мельбурне.",
+      "description": "Посетите наш офис в Мельбурне.",
       "address": "100 Smith Street, Collingwood VIC 3066",
-      "mapTitle": "Карта расположения"
+      "mapTitle": "Карта местоположения"
     },
     "Form": {
       "title": "Свяжитесь с нашей командой",
-      "description": "Есть вопросы о продукте или масштабировании на нашей платформе? Мы рады помочь. Свяжитесь с нашей дружной командой 24/7 и приступите менее чем за 5 минут.",
+      "description": "Есть вопросы о продукте или развитии на нашей платформе? Мы готовы помочь. Свяжитесь с нами 24/7 и начните менее чем за 5 минут.",
       "firstName": "Имя",
+      "firstNameLabel": "Имя",
       "lastName": "Фамилия",
+      "lastNameLabel": "Фамилия",
       "emailPlaceholder": "you@company.com",
+      "emailLabel": "Email",
       "country": {
         "lt": "LT",
         "ru": "RU"
       },
       "phonePlaceholder": "+1 (555) 000-0000",
+      "phoneLabel": "Телефон",
       "messagePlaceholder": "Оставьте нам сообщение...",
+      "messageLabel": "Сообщение",
       "send": "Отправить сообщение",
       "sending": "Отправка...",
       "success": "Сообщение успешно отправлено.",
-      "failure": "Не удалось отправить сообщение. Пожалуйста, попробуйте ещё раз.",
+      "failure": "Не удалось отправить сообщение. Попробуйте ещё раз.",
       "validationRequired": "Пожалуйста, заполните обязательные поля.",
       "countryPlaceholder": "Выберите страну"
     }
@@ -226,6 +252,17 @@
       "noReviews": "Отзывов пока нет",
       "faqs": "Вопросы и ответы",
       "location": "Местоположение",
+      "workingScheduleTitle": "График работы",
+      "workingScheduleClosed": "Закрыто",
+      "days": {
+        "monday": "Понедельник",
+        "tuesday": "Вторник",
+        "wednesday": "Среда",
+        "thursday": "Четверг",
+        "friday": "Пятница",
+        "saturday": "Суббота",
+        "sunday": "Воскресенье"
+      },
       "noLocation": "Местоположение недоступно",
       "messageVendor": "Сообщение поставщику"
     },
@@ -320,6 +357,16 @@
       "subscribing": "Оформление подписки...",
       "success": "Подписка оформлена",
       "error": "Не удалось оформить подписку. Попробуйте ещё раз."
+    },
+    "CityList": {
+      "title": "Найдите площадки и города"
+    },
+    "Locales": {
+      "en": "Английский",
+      "lt": "Литовский",
+      "ru": "Русский",
+      "pl-PL": "Польский",
+      "et": "Эстонский"
     }
   },
   "Profile": {
@@ -881,6 +928,10 @@
     }
   },
   "Dynamic": {
+    "ListingGallery": {
+      "viewMore": "Показать больше",
+      "viewMoreWithCount": "Показать больше (+{count})"
+    },
     "ListingCard": {
       "toasts": {
         "adding": "Добавление в избранное...",
@@ -972,25 +1023,32 @@
   },
   "basicSelectionForm": {
     "basicDetails": "Основные детали",
-    "title": "заголовок",
-    "price": "цена",
-    "featured": "избранный",
-    "description": "описание",
-    "websitelink": "ссылка на веб-сайт",
-    "workinghours(perday)": "рабочие часы (в день)",
-    "saving": "экономия",
-    "savingEllipsis": "Сохранение...",
-    "savechanges": "сохранить изменения",
-    "titleDescription": "названиеОписание",
+    "title": "Заголовок",
+    "price": "Цена",
+    "featured": "Избранное",
+    "description": "Описание",
+    "websitelink": "Ссылка на сайт",
+    "workinghours(perday)": "Рабочие часы (в день)",
+    "titleDescription": "Описание заголовка",
+    "saving": "Сохранение",
+    "savechanges": "Сохранить изменения",
+    "listingStatus": {
+      "draft": "Черновик",
+      "published": "Опубликовано",
+      "pendingReview": "Ожидает проверки",
+      "archived": "В архиве"
+    },
+    "errors": {
+      "titleRequired": "Требуется заголовок",
+      "listingStatusRequired": "Требуется статус объявления",
+      "pricePositive": "Цена должна быть положительной",
+      "priceRequired": "Требуется цена",
+      "descriptionRequired": "Требуется описание",
+      "invalidWebsiteLink": "Пожалуйста, укажите действительную ссылку на сайт"
+    },
     "toasts": {
       "updated": "Основные данные обновлены",
       "updateFailed": "Не удалось обновить основные данные"
-    },
-    "errors": {
-      "titleRequired": "Заголовок обязателен",
-      "priceRequired": "Цена обязательна",
-      "descriptionRequired": "Описание обязательно",
-      "invalidWebsiteLink": "Пожалуйста, добавьте правильную ссылку на веб-сайт"
     }
   },
   "ImageSection": {
@@ -1000,6 +1058,12 @@
     "saveImages": "сохранить изображения",
     "uploadHint": "Загружайте изображения размером до {size}",
     "readyToSave": "{count} изображение(й) готово к сохранению",
+    "alt": {
+      "portfolioImage": "Изображение портфолио"
+    },
+    "aria": {
+      "deleteImage": "Удалить изображение"
+    },
     "errors": {
       "noImage": "Пожалуйста, загрузите хотя бы одно изображение"
     },
@@ -1047,13 +1111,24 @@
       "updateFailed": "Не удалось обновить данные поставщика/площадки"
     }
   },
+  "ListingGallery": {
+    "viewMore": "Показать больше",
+    "viewMoreWithCount": "Показать больше (+{count})"
+  },
   "contactSections": {
+    "title": "Контакты",
     "email": "электронная почта",
     "phone": "телефон",
     "address": "адрес",
     "saving": "экономия",
     "savingEllipsis": "Сохранение...",
     "savechanges": "сохранить изменения",
+    "errors": {
+      "emailRequired": "Требуется email",
+      "invalidEmail": "Неверный формат email",
+      "phoneRequired": "Требуется телефон",
+      "addressRequired": "Требуется адрес"
+    },
     "toasts": {
       "updated": "Контакты обновлены",
       "updateFailed": "Не удалось обновить контакты"
@@ -1089,6 +1164,22 @@
     "savechanges": "сохранить изменения",
     "sectiontitle": "название раздела ",
     "optionaladdons": "дополнительные надстройки ",
+    "labels": {
+      "title": "Пакеты цен",
+      "planName": "Название плана",
+      "price": "Цена",
+      "ctaBodyText": "Текст CTA",
+      "ctaButtonUrl": "URL кнопки CTA",
+      "ctaStyle": "Стиль CTA",
+      "features": "Особенности",
+      "addonStatement": "Описание дополнения",
+      "addonPrice": "Цена дополнения"
+    },
+    "styleOptions": {
+      "primary": "Основной",
+      "secondary": "Вторичный",
+      "ghost": "Прозрачный"
+    },
     "errors": {
       "planRequired": "Добавьте хотя бы один план",
       "planNameRequired": "У каждого плана должно быть имя",
@@ -1138,11 +1229,21 @@
         "hours": "час(ов)",
         "days": "дн."
       },
+      "hints": {
+        "selectionHelpHourly": "Подсказка: Выберите начало и конец в один день. Максимальная продолжительность: {max} ч.",
+        "selectionHelpDaily": "Подсказка: Можно на несколько дней, до {max} дн.",
+        "reviewSchedule": "Подсказка: Перед созданием бронирования ознакомьтесь с графиком работы."
+      },
       "defaultPlan": "По умолчанию",
       "errors": {
         "requiredDateTime": "Пожалуйста, выберите дату и время.",
         "futureOnly": "Пожалуйста, выберите дату и время в будущем.",
         "invalidRange": "Время окончания должно быть позже времени начала.",
+        "exceedsMaxDuration": "Выбранная продолжительность превышает максимум {max} {unit}.",
+        "sameDayOnly": "Начало и конец должны быть в один день.",
+        "outsideWorkingHoursSameDay": "Выбранное время должно быть в рамках рабочих часов одного дня.",
+        "outsideWorkingHours": "Начало и конец должны соответствовать рабочим часам.",
+        "dayWithoutWorkingHours": "Бронирование захватывает день без рабочих часов.",
         "slotUnavailable": "Выбранный временной интервал недоступен."
       },
       "toasts": {

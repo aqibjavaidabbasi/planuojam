@@ -48,21 +48,21 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
 
   return (
     <div className="py-4">
-      <h3 className="text-lg font-semibold mb-2">Contact</h3>
+      <h3 className="text-lg font-semibold mb-2">{t("title")}</h3>
       <form onSubmit={handleSubmit(onSubmit)} id="contactForm" className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="col-span-2">
           <Input
             type="email"
             label={t("email")}
             disabled={submitting}
-            {...register("email", { required: "Email is required", pattern: { value: /^\S+@\S+$/i, message: "Invalid email format" } })}
+            {...register("email", { required: t("errors.emailRequired"), pattern: { value: /^\S+@\S+$/i, message: t("errors.invalidEmail") } })}
           />
-          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+          {errors.email && <p className="text-red-500 text-sm mt-1">{String(errors.email.message)}</p>}
         </div>
         <div>
           <Controller
             name="phone"
-            rules={{ required: "Phone is required" }}
+            rules={{ required: t("errors.phoneRequired") }}
             control={control}
             render={({ field }) => (
               <PhoneInputField
@@ -73,11 +73,11 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
               />
             )}
           />
-          {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
+          {errors.phone && <p className="text-red-500 text-sm mt-1">{String(errors.phone.message)}</p>}
         </div>
         <div className="col-span-3">
-          <Input type="text" label={t("address")} disabled={submitting} {...register("address", { required: "Address is required" })} />
-          {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>}
+          <Input type="text" label={t("address")} disabled={submitting} {...register("address", { required: t("errors.addressRequired") })} />
+          {errors.address && <p className="text-red-500 text-sm mt-1">{String(errors.address.message)}</p>}
         </div>
         <div className="col-span-3 flex justify-end mt-2">
           <Button style="primary" type="submit" form="contactForm" disabled={submitting}>

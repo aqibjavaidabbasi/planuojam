@@ -61,8 +61,10 @@
       "passwordCriteriaUpper": "1 suur täht",
       "passwordCriteriaNumber": "1 number",
       "passwordTooWeak": "Parool on liiga nõrk (vajalik 8+ märki, 1 suur täht, 1 number)",
+      "passwordMismatch": "Paroolid ei ühti",
       "tosRequired": "Palun loe ja nõustu kasutustingimuste ning privaatsuspoliitikaga",
       "tosNotAccepted": "Palun nõustu kasutustingimuste ja privaatsuspoliitikaga",
+      "availabilityHint": "Vihje: kontrolli kasutajanime saadavust. Registreeru nupp on aktiivne ainult siis, kui kasutajanimi on saadaval.",
       "registerCta": "Registreeru",
       "alreadyHaveAccount": "Kas konto on juba olemas?",
       "signInHere": "Logi sisse siin",
@@ -141,14 +143,19 @@
       "title": "Võta meie tiimiga ühendust",
       "description": "Kas sul on küsimusi toote või platvormil kasvamise kohta? Oleme abiks. Vestle meie sõbraliku tiimiga 24/7 ja alusta vähem kui 5 minutiga.",
       "firstName": "Eesnimi",
+      "firstNameLabel": "Eesnimi",
       "lastName": "Perekonnanimi",
+      "lastNameLabel": "Perekonnanimi",
       "emailPlaceholder": "you@company.com",
+      "emailLabel": "E-post",
       "country": {
         "lt": "LT",
         "ru": "RU"
       },
       "phonePlaceholder": "+1 (555) 000-0000",
+      "phoneLabel": "Telefon",
       "messagePlaceholder": "Jäta meile sõnum...",
+      "messageLabel": "Sõnum",
       "send": "Saada sõnum",
       "sending": "Saatmine...",
       "success": "Sõnum on edukalt saadetud.",
@@ -215,8 +222,19 @@
       "noReviews": "Arvustusi veel pole",
       "faqs": "KKK",
       "location": "Asukoht",
-      "noLocation": "Asukoht puudub",
-      "messageVendor": "Sõnumi pakkuja"
+      "noLocation": "Asukoht pole saadaval",
+      "messageVendor": "Kirjuta pakkujale",
+      "workingScheduleTitle": "Tööaeg",
+      "workingScheduleClosed": "Suletud",
+      "days": {
+        "monday": "Esmaspäev",
+        "tuesday": "Teisipäev",
+        "wednesday": "Kolmapäev",
+        "thursday": "Neljapäev",
+        "friday": "Reede",
+        "saturday": "Laupäev",
+        "sunday": "Pühapäev"
+      }
     },
     "Hero": {
       "by": "autor",
@@ -498,6 +516,16 @@
       "subscribing": "Tellimine...",
       "success": "Tellimus loodud",
       "error": "Tellimine ebaõnnestus. Palun proovi uuesti."
+    },
+    "CityList": {
+      "title": "Leia kohad ja linnad"
+    },
+    "Locales": {
+      "en": "Inglise",
+      "lt": "Leedu",
+      "ru": "Vene",
+      "pl-PL": "Poola",
+      "et": "Eesti"
     }
   },
   "NotFound": {
@@ -949,25 +977,33 @@
     "clear": "selge"
   },
   "basicSelectionForm": {
-    "basicDetails": "põhilised üksikasjad",
-    "title": "pealkiri",
-    "price": "hind",
-    "featured": "esile tõstetud",
-    "description": "kirjeldus",
+    "basicDetails": "Põhiandmed",
+    "title": "Pealkiri",
+    "price": "Hind",
+    "featured": "Esiletõstetud",
+    "description": "Kirjeldus",
     "websitelink": "Veebilehe link",
-    "workinghours(perday)": "töötunnid (päevas)",
-    "saving": "säästmine",
-    "savechanges": "salvesta muudatused",
-    "titleDescription": "pealkiriKirjeldus",
-    "toasts": {
-      "updated": "Põhiandmed on uuendatud",
-      "updateFailed": "Põhiandmete uuendamine ebaõnnestus"
+    "workinghours(perday)": "Tööaeg (päevas)",
+    "titleDescription": "Pealkirja kirjeldus",
+    "saving": "Salvestamine",
+    "savechanges": "Salvesta muudatused",
+    "listingStatus": {
+      "draft": "Mustand",
+      "published": "Avaldatud",
+      "pendingReview": "Ootab ülevaatust",
+      "archived": "Arhiveeritud"
     },
     "errors": {
       "titleRequired": "Pealkiri on kohustuslik",
+      "listingStatusRequired": "Nimekirja olek on kohustuslik",
+      "pricePositive": "Hind peab olema positiivne",
       "priceRequired": "Hind on kohustuslik",
       "descriptionRequired": "Kirjeldus on kohustuslik",
-      "invalidWebsiteLink": "Palun lisa kehtiv veebilehe link"
+      "invalidWebsiteLink": "Palun lisage kehtiv veebilehe link"
+    },
+    "toasts": {
+      "updated": "Põhiandmed on uuendatud",
+      "updateFailed": "Põhiandmete uuendamine ebaõnnestus"
     }
   },
   "ImageSection": {
@@ -976,6 +1012,12 @@
     "saveImages": "salvesta pilte",
     "uploadHint": "Laadige üles pildid kuni {size}",
     "readyToSave": "{count} pilti valmis salvestamiseks",
+    "alt": {
+      "portfolioImage": "Portfoolio pilt"
+    },
+    "aria": {
+      "deleteImage": "Kustuta pilt"
+    },
     "errors": {
       "noImage": "Palun laadige üles vähemalt üks pilt"
     },
@@ -1032,12 +1074,23 @@
       "updateFailed": "Müüja/Koha andmete uuendamine ebaõnnestus"
     }
   },
+  "ListingGallery": {
+    "viewMore": "Vaata veel",
+    "viewMoreWithCount": "Vaata veel (+{count})"
+  },
   "contactSections": {
+    "title": "Kontakt",
     "email": "meili",
     "phone": "telefon",
     "address": "aadress",
     "saving": "säästmine",
-    "savechanges": "salvesta muudatused",
+    "savechanges": "salvestage muudatused",
+    "errors": {
+      "emailRequired": "E-post on kohustuslik",
+      "invalidEmail": "E-posti vorming on vigane",
+      "phoneRequired": "Telefon on kohustuslik",
+      "addressRequired": "Aadress on kohustuslik"
+    },
     "toasts": {
       "updated": "Kontakt on uuendatud",
       "updateFailed": "Kontakti uuendamine ebaõnnestus"
@@ -1065,24 +1118,39 @@
     }
   },
   "pricingSection": {
-    "+addoptionaladdon": "+ lisalisand",
-    "+addplan": "+ lisaplaan",
-    "+addfeature": "+ lisafunktsioon",
-    "saving": "säästmine",
-    "savingEllipsis": "Salvestamine...",
-    "savechanges": "salvesta muudatused",
-    "sectiontitle": "jaotise pealkiri",
-    "optionaladdons": "valikulised alad",
+    "+addoptionaladdon": "+lisavalikuline lisand",
+    "+addplan": "+lisa pakett",
+    "+addfeature": "+lisa funktsioon",
+    "saving": "Salvestamine",
+    "savechanges": "Salvesta muudatused",
+    "sectiontitle": "Sektsiooni pealkiri",
+    "optionaladdons": "Valikulised lisad",
+    "labels": {
+      "title": "Hinnapakettid",
+      "planName": "Paketi nimi",
+      "price": "Hind",
+      "ctaBodyText": "CTA sisu",
+      "ctaButtonUrl": "CTA nupu URL",
+      "ctaStyle": "CTA stiil",
+      "features": "Omadused",
+      "addonStatement": "Lisa kirjeldus",
+      "addonPrice": "Lisa hind"
+    },
+    "styleOptions": {
+      "primary": "Peamine",
+      "secondary": "Teisene",
+      "ghost": "Läbipaistev"
+    },
     "errors": {
-      "planRequired": "Palun lisage vähemalt üks plaan",
-      "planNameRequired": "Igal plaanil peab olema nimi",
-      "nonNegativePrice": "Iga plaani hind peab olema mitte-negatiivne",
-      "validCtaUrl": "CTA nupu URL peab algama http või https",
+      "planRequired": "Lisage vähemalt üks pakett",
+      "planNameRequired": "Igal paketil peab olema nimi",
+      "nonNegativePrice": "Iga paketi hind ei tohi olla negatiivne",
+      "validCtaUrl": "CTA nupu URL peab algama http või https-ga",
       "addonStatementRequired": "Igal lisal peab olema kirjeldus",
-      "addonNonNegativePrice": "Iga lisa hind peab olema mitte-negatiivne"
+      "addonNonNegativePrice": "Iga lisa hind ei tohi olla negatiivne"
     },
     "toasts": {
-      "updated": "Hinnakujundus on uuendatud",
+      "updated": "Hinnakujundus uuendatud",
       "updateFailed": "Hinnakujunduse uuendamine ebaõnnestus"
     }
   },
@@ -1122,11 +1190,21 @@
         "hours": "tundi",
         "days": "päeva"
       },
+      "hints": {
+        "selectionHelpHourly": "Vihje: Vali algus ja lõpp samal päeval. Maksimaalne kestus: {max} tundi.",
+        "selectionHelpDaily": "Vihje: Võib katta mitu päeva kuni {max} päeva.",
+        "reviewSchedule": "Vihje: Vaata enne broneerimist üle tööaegade graafik."
+      },
       "defaultPlan": "Vaikimisi",
       "errors": {
         "requiredDateTime": "Palun vali kuupäev ja kellaaeg.",
         "futureOnly": "Palun vali tulevikus olev kuupäev ja kellaaeg.",
         "invalidRange": "Lõppaeg peab olema hiljem kui algusaeg.",
+        "exceedsMaxDuration": "Valitud kestus ületab maksimaalse {max} {unit}.",
+        "sameDayOnly": "Algus ja lõpp peavad olema samal päeval.",
+        "outsideWorkingHoursSameDay": "Valitud aeg peab olema samal päeval ja tööaegade sees.",
+        "outsideWorkingHours": "Algus ja lõpp peavad olema tööaegade sees.",
+        "dayWithoutWorkingHours": "Broneering hõlmab päeva, millel puuduvad tööajad.",
         "slotUnavailable": "Valitud ajavahemik ei ole saadaval."
       },
       "toasts": {
@@ -1228,15 +1306,34 @@
     }
   },
   "hotDealSection": {
+    "labels": {
+      "title": "Sooduspakkumine",
+      "startDate": "Alguskuupäev",
+      "lastDate": "Lõppkuupäev",
+      "dealNote": "Pakkumise märkus",
+      "discountType": "Soodustuse tüüp",
+      "flatRate": "Fikseeritud summa",
+      "percentage": "Protsent",
+      "flatRatePrice": "Fikseeritud summa hind",
+      "percentageValue": "Protsent"
+    },
+    "toggles": {
+      "yes": "JAH",
+      "no": "EI"
+    },
+    "actions": {
+      "saveChanges": "Salvesta muudatused",
+      "saving": "Salvestamine..."
+    },
     "errors": {
       "startRequired": "Alguskuupäev on kohustuslik",
       "lastRequired": "Lõppkuupäev on kohustuslik",
-      "flatRateMin": "Fikseeritud hind peab olema suurem või võrdne 0-ga",
+      "flatRateMin": "Fikseeritud summa peab olema suurem või võrdne 0-ga",
       "percentageRange": "Protsent peab olema vahemikus 0 kuni 100"
     },
     "toasts": {
-      "updated": "Eripakkumine on uuendatud",
-      "updateFailed": "Eripakkumise uuendamine ebaõnnestus"
+      "updated": "Sooduspakkumine on uuendatud",
+      "updateFailed": "Sooduspakkumist ei õnnestunud uuendada"
     }
   }
 }

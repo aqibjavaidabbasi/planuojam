@@ -61,8 +61,10 @@
       "passwordCriteriaUpper": "1 didžioji raidė",
       "passwordCriteriaNumber": "1 skaičius",
       "passwordTooWeak": "Slaptažodis per silpnas (reikia 8+ simbolių, 1 didžiosios raidės, 1 skaičiaus)",
+      "passwordMismatch": "Slaptažodžiai nesutampa",
       "tosRequired": "Perskaitykite ir sutikite su Paslaugų teikimo sąlygomis ir Privatumo politika",
       "registerCta": "Registruotis",
+      "availabilityHint": "Patarimas: patikrinkite vartotojo vardo prieinamumą. Registracijos mygtukas įsijungs tik tada, kai vartotojo vardas bus prieinamas.",
       "alreadyHaveAccount": "Jau turite paskyrą?",
       "signInHere": "Prisijunkite čia",
       "tosNotAccepted": "Prašome sutikti su Paslaugų teikimo sąlygomis ir Privatumo politika",
@@ -140,14 +142,19 @@
       "title": "Susisiekite su mūsų komanda",
       "description": "Turite klausimų apie produktą ar plėtrą mūsų platformoje? Mes pasiruošę padėti. Susisiekite su mūsų draugiška komanda 24/7 ir pradėkite naudotis per mažiau nei 5 minutes.",
       "firstName": "Vardas",
+      "firstNameLabel": "Vardas",
       "lastName": "Pavardė",
+      "lastNameLabel": "Pavardė",
       "emailPlaceholder": "jūs@imone.com",
+      "emailLabel": "El. paštas",
       "country": {
         "lt": "LT",
         "ru": "RU"
       },
       "phonePlaceholder": "+1 (555) 000-0000",
+      "phoneLabel": "Telefonas",
       "messagePlaceholder": "Palikite mums žinutę...",
+      "messageLabel": "Žinutė",
       "send": "Siųsti žinutę",
       "sending": "Siunčiama...",
       "success": "Žinutė sėkmingai išsiųsta.",
@@ -186,15 +193,26 @@
       "overview": "Apžvalga",
       "rating": "Įvertinimas",
       "hotDeal": "Karštas pasiūlymas",
-      "flatRate": "Fiksuota kaina",
+      "flatRate": "Fiksuota suma",
       "percentOff": "nuolaida",
       "valid": "Galioja",
       "reviews": "Atsiliepimai",
-      "noReviews": "Kol kas nėra atsiliepimų",
+      "noReviews": "Dar nėra atsiliepimų",
       "faqs": "DUK",
       "location": "Vieta",
-      "noLocation": "Vieta nenurodyta",
-      "messageVendor": "Sėkmės suteikti sėkmės"
+      "workingScheduleTitle": "Darbo grafikas",
+      "workingScheduleClosed": "Nedirbame",
+      "days": {
+        "monday": "Pirmadienis",
+        "tuesday": "Antradienis",
+        "wednesday": "Trečiadienis",
+        "thursday": "Ketvirtadienis",
+        "friday": "Penktadienis",
+        "saturday": "Šeštadienis",
+        "sunday": "Sekmadienis"
+      },
+      "noLocation": "Vieta nepasiekiama",
+      "messageVendor": "Rašyti tiekėjui"
     },
     "Hero": {
       "by": "autorius ",
@@ -273,6 +291,16 @@
       "subscribing": "Prenumeruojama...",
       "success": "Prenumerata sėkmingai sukurta",
       "error": "Prenumerata nepavyko. Bandykite dar kartą."
+    },
+    "CityList": {
+      "title": "Raskite vietas ir miestus"
+    },
+    "Locales": {
+      "en": "Anglų",
+      "lt": "Lietuvių",
+      "ru": "Rusų",
+      "pl-PL": "Lenkų",
+      "et": "Estų"
     }
   },
   "Modals": {
@@ -949,17 +977,25 @@
     "websitelink": "Tinklalapio nuoroda",
     "workinghours(perday)": "darbo valandos (per dieną)",
     "titleDescription": "pavadinimas Aprašymas",
-    "saving": "taupymas",
-    "savechanges": "išsaugoti pakeitimus",
-    "toasts": {
-      "updated": "Pagrindinė informacija atnaujinta",
-      "updateFailed": "Nepavyko atnaujinti pagrindinės informacijos"
+    "saving": "Taupymas",
+    "savechanges": "Išsaugoti pakeitimus",
+    "listingStatus": {
+      "draft": "Juodraštis",
+      "published": "Paskelbtas",
+      "pendingReview": "Laukia peržiūros",
+      "archived": "Archyvuotas"
     },
     "errors": {
-      "titleRequired": "Pavadinimas yra privalomas",
-      "priceRequired": "Kaina yra privaloma",
-      "descriptionRequired": "Aprašymas yra privalomas",
-      "invalidWebsiteLink": "Prašome pridėti keletą tinklalapio nuorodų"
+      "titleRequired": "Reikalingas pavadinimas",
+      "listingStatusRequired": "Reikalinga sąrašo būsena",
+      "pricePositive": "Kaina turi būti teigiama",
+      "priceRequired": "Reikalinga kaina",
+      "descriptionRequired": "Reikalingas aprašymas",
+      "invalidWebsiteLink": "Pridėkite galiojančią svetainės nuorodą"
+    },
+    "toasts": {
+      "updated": "Pagrindinės detalės atnaujintos",
+      "updateFailed": "Nepavyko atnaujinti pagrindinių detalių"
     }
   },
   "ImageSection": {
@@ -968,6 +1004,12 @@
     "saveImages": "išsaugoti paveikslėlius",
     "uploadHint": "Įkelkite nuotraukas iki {size}",
     "readyToSave": "{count} nuotrauka(-os) paruošta(-os) išsaugoti",
+    "alt": {
+      "portfolioImage": "Portfelio vaizdas"
+    },
+    "aria": {
+      "deleteImage": "Ištrinti vaizdą"
+    },
     "errors": {
       "noImage": "Prašome įkelti bent vieną nuotrauką"
     },
@@ -1024,12 +1066,23 @@
       "updateFailed": "Nepavyko atnaujinti Tiekėjo/Vietos informacijos"
     }
   },
+  "ListingGallery": {
+    "viewMore": "Peržiūrėti daugiau",
+    "viewMoreWithCount": "Peržiūrėti daugiau (+{count})"
+  },
   "contactSections": {
-    "email": "paštu",
-    "phone": "telefonas",
-    "address": "adresu",
-    "saving": "taupymas",
-    "savechanges": " išsaugoti pakeitimus",
+    "title": "Kontaktai",
+    "email": "El. paštas",
+    "phone": "Telefonas",
+    "address": "Adresas",
+    "saving": "Taupymas",
+    "savechanges": "Išsaugoti pakeitimus",
+    "errors": {
+      "emailRequired": "El. paštas yra privalomas",
+      "invalidEmail": "Neteisingas el. pašto formatas",
+      "phoneRequired": "Telefonas yra privalomas",
+      "addressRequired": "Adresas yra privalomas"
+    },
     "toasts": {
       "updated": "Kontaktas atnaujintas",
       "updateFailed": "Nepavyko atnaujinti kontakto"
@@ -1057,20 +1110,36 @@
     }
   },
   "pricingSection": {
-    "+addoptionaladdon": "+ papildomas priedas",
-    "+addplan": "+ pridėti planą",
-    "+addfeature": "+ papildoma funkcija",
-    "saving": "taupymas",
-    "savechanges": "išsaugoti pakeitimus",
-    "sectiontitle": "skyriaus pavadinimas",
-    "optionaladdons": "pasirinktiniai papildymai",
+    "+addoptionaladdon": "+pridėti pasirenkamą priedą",
+    "+addplan": "+pridėti planą",
+    "+addfeature": "+pridėti funkciją",
+    "saving": "Taupymas",
+    "savechanges": "Išsaugoti pakeitimus",
+    "sectiontitle": "Skyriaus pavadinimas",
+    "optionaladdons": "Pasirenkami priedai",
+    "labels": {
+      "title": "Kainodaros paketai",
+      "planName": "Plano pavadinimas",
+      "price": "Kaina",
+      "ctaBodyText": "CTA teksto turinys",
+      "ctaButtonUrl": "CTA mygtuko URL",
+      "ctaStyle": "CTA stilius",
+      "features": "Funkcijos",
+      "addonStatement": "Priedo aprašymas",
+      "addonPrice": "Priedo kaina"
+    },
+    "styleOptions": {
+      "primary": "Pagrindinis",
+      "secondary": "Antrinis",
+      "ghost": "Permatomas"
+    },
     "errors": {
-      "planRequired": "Pridėkite bent vieną planą",
+      "planRequired": "Prašome pridėti bent vieną planą",
       "planNameRequired": "Kiekvienas planas turi turėti pavadinimą",
-      "nonNegativePrice": "Kiekvieno plano kaina turi būti neneigiama",
+      "nonNegativePrice": "Kiekvieno plano kaina turi būti neigiama arba lygi 0",
       "validCtaUrl": "CTA mygtuko URL turi prasidėti http arba https",
-      "addonStatementRequired": "Kiekvienas priedas turi turėti aprašą",
-      "addonNonNegativePrice": "Kiekvieno priedo kaina turi būti neneigiama"
+      "addonStatementRequired": "Kiekvienas priedas turi turėti aprašymą",
+      "addonNonNegativePrice": "Kiekvieno priedo kaina turi būti neigiama arba lygi 0"
     },
     "toasts": {
       "updated": "Kainodara atnaujinta",
@@ -1113,11 +1182,21 @@
         "hours": "val.",
         "days": "d."
       },
+      "hints": {
+        "selectionHelpHourly": "Patarimas: Pasirinkite pradžią ir pabaigą tą pačią dieną. Didžiausia trukmė: {max} val.",
+        "selectionHelpDaily": "Patarimas: Galima kelioms dienoms, iki {max} d.",
+        "reviewSchedule": "Patarimas: Prieš kuriant užsakymą peržiūrėkite darbo grafiką."
+      },
       "defaultPlan": "Numatytasis",
       "errors": {
         "requiredDateTime": "Prašome pasirinkti datą ir laiką.",
         "futureOnly": "Prašome pasirinkti ateities datą ir laiką.",
         "invalidRange": "Pabaigos laikas turi būti vėlesnis nei pradžios laikas.",
+        "exceedsMaxDuration": "Pasirinkta trukmė viršija leidžiamą didžiausią — {max} {unit}.",
+        "sameDayOnly": "Pradžia ir pabaiga turi būti tą pačią dieną.",
+        "outsideWorkingHoursSameDay": "Laikotarpis turi būti tą pačią dieną ir darbo valandomis.",
+        "outsideWorkingHours": "Pradžia ir pabaiga turi būti darbo valandomis.",
+        "dayWithoutWorkingHours": "Rezervacija apima dieną be darbo valandų.",
         "slotUnavailable": "Pasirinktas laiko intervalas nepasiekiamas."
       },
       "toasts": {
@@ -1220,6 +1299,25 @@
   }
   ,
   "hotDealSection": {
+    "labels": {
+      "title": "Karštas pasiūlymas",
+      "startDate": "Pradžios data",
+      "lastDate": "Pabaigos data",
+      "dealNote": "Pasiūlymo pastaba",
+      "discountType": "Nuolaidos tipas",
+      "flatRate": "Fiksuota suma",
+      "percentage": "Procentas",
+      "flatRatePrice": "Fiksuotos sumos kaina",
+      "percentageValue": "Procentas"
+    },
+    "toggles": {
+      "yes": "TAIP",
+      "no": "NE"
+    },
+    "actions": {
+      "saveChanges": "Išsaugoti pakeitimus",
+      "saving": "Saugojama..."
+    },
     "errors": {
       "startRequired": "Reikalinga pradžios data",
       "lastRequired": "Reikalinga pabaigos data",

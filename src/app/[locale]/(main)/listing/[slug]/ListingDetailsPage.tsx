@@ -38,6 +38,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
   const user = useAppSelector((s: RootState) => s.auth.user);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [preselectPlanIndex, setPreselectPlanIndex] = useState<number | null>(null);
+  const tSchedule = useTranslations("Listing.Details");
 
   const renderingContent = useMemo(() => {
     if (!initialListing) return null;
@@ -262,6 +263,50 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
                   <SocialIcon socialLink={renderingContent.socialLinks.socialLink} />
                 </section>
               )}
+
+            {/* Working Schedule Section */}
+            {renderingContent.workingSchedule && renderingContent.workingSchedule.length > 0 && (
+              <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
+                <h2 className="text-2xl font-semibold text-primary mb-4">
+                  {tSchedule("workingScheduleTitle", { default: "Working Schedule" })}
+                </h2>
+                {(() => {
+                  const daysOrder = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"] as const;
+                  const schedule = (renderingContent.workingSchedule || []);
+                  const byDay: Record<string, {start: string; end: string}[]> = {};
+                  for (const d of daysOrder) byDay[d] = [];
+                  schedule.forEach(w => {
+                    const key = (w?.day || "").toLowerCase();
+                    if (byDay[key]) byDay[key].push({ start: w.start, end: w.end });
+                  });
+                  return (
+                    <div className="divide-y">
+                      {daysOrder.map((d) => {
+                        const label = tSchedule(`days.${d}`, { default: d.charAt(0).toUpperCase() + d.slice(1) });
+                        const windows = byDay[d];
+                        const isClosed = !windows || windows.length === 0;
+                        return (
+                          <div className="py-2 flex items-start justify-between gap-3" key={d}>
+                            <div className="font-medium text-gray-800 min-w-28">{label}</div>
+                            <div className="text-gray-700 flex-1">
+                              {isClosed ? (
+                                <span className="text-gray-500">{tSchedule("workingScheduleClosed", { default: "Closed" })}</span>
+                              ) : (
+                                <div className="flex flex-col gap-1">
+                                  {windows.map((w, i) => (
+                                    <span key={i} className="inline-block rounded bg-gray-50 border border-gray-200 px-2 py-0.5 text-sm">{w.start} – {w.end}</span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
+              </section>
+            )}
           </div>
         </div>
 

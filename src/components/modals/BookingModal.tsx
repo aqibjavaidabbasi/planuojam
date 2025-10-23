@@ -100,7 +100,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
       bookingDuration > 0;
 
     if (!startDateTime || !endDateTime) {
-      const msg = t("errors.requiredDateTime", { default: "Please select a date and time." });
+      const msg = t("errors.requiredDateTime");
       setError(msg);
       toast.error(msg);
       return;
@@ -108,13 +108,13 @@ const BookingModal: React.FC<BookingModalProps> = ({
     const start = new Date(startDateTime);
     const end = new Date(endDateTime);
     if (start.getTime() < Date.now()) {
-      const msg = t("errors.futureOnly", { default: "Please choose a future date and time." });
+      const msg = t("errors.futureOnly");
       setError(msg);
       toast.error(msg);
       return;
     }
     if (!end || end <= start) {
-      const msg = t("errors.invalidRange", { default: "End time must be after start time." });
+      const msg = t("errors.invalidRange");
       setError(msg);
       toast.error(msg);
       return;
@@ -127,65 +127,23 @@ const BookingModal: React.FC<BookingModalProps> = ({
         ? (bookingDuration || 0) * 60 * 60 * 1000
         : (bookingDuration || 0) * 24 * 60 * 60 * 1000;
       if (diffMs > limitMs) {
-        const msg = t("errors.invalidRange", { default: `Selected duration exceeds the maximum of ${bookingDuration} ${bookingDurationType === 'Per Hour' ? 'hour(s)' : 'day(s)'} allowed.` });
+        const unit = bookingDurationType === 'Per Hour' ? t('units.hours', { default: 'hour(s)' }) : t('units.days', { default: 'day(s)' });
+        const msg = t("errors.exceedsMaxDuration", { max: (bookingDuration ?? 0), unit, default: `Selected duration exceeds the maximum of ${bookingDuration ?? 0} ${unit} allowed.` });
         setError(msg);
         toast.error(msg);
         return;
       }
     }
 
-    // Validate against working schedule
-    const dowToKey = (d: number): Day => {
-      return ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"][d] as Day;
-    }
-    const timeToMinutes = (dt: Date) => dt.getHours() * 60 + dt.getMinutes();
-    const withinSchedule = (dt: Date) => {
-      const key = dowToKey(dt.getDay());
-      const mins = timeToMinutes(dt);
-      const windows = (workingSchedule || []).filter(w => w.day === key);
-      if (windows.length === 0) return false;
-      return windows.some(w => {
-        const [sh, sm] = (w.start || "").split(":").map(Number);
-        const [eh, em] = (w.end || "").split(":").map(Number);
-        if ([sh, sm, eh, em].some(n => Number.isNaN(n))) return false;
-        const s = sh * 60 + sm; const e2 = eh * 60 + em;
-        return mins >= s && mins <= e2;
-      });
-    };
+    // Working schedule validations are intentionally not enforced
     const sameDay = start.getFullYear() === end.getFullYear() && start.getMonth() === end.getMonth() && start.getDate() === end.getDate();
     if (bookingDurationType === "Per Hour") {
-      // Must be within working windows and on same day
-      if (!sameDay || !withinSchedule(start) || !withinSchedule(end)) {
-        const msg = t("errors.invalidRange", { default: "Selected time must be within working hours on the same day." });
+      // Only require same-day for hourly bookings; ignore working schedule
+      if (!sameDay) {
+        const msg = t("errors.sameDayOnly", { default: "Start and end must be on the same day." });
         setError(msg);
         toast.error(msg);
         return;
-      }
-    } else if (bookingDurationType === "Per Day") {
-      // Basic rule: start and end should fall within working windows of their respective days
-      if (!withinSchedule(start) || !withinSchedule(end)) {
-        const msg = t("errors.invalidRange", { default: "Start and end must be within working hours." });
-        setError(msg);
-        toast.error(msg);
-        return;
-      }
-      // Optional: ensure every intermediate day has at least one window
-      const dayMs = 24 * 60 * 60 * 1000;
-      const daysBetween = Math.floor((end.setHours(0,0,0,0) - start.setHours(0,0,0,0)) / dayMs);
-      if (daysBetween > 0) {
-        const checkDate = new Date(start);
-        for (let i = 0; i <= daysBetween; i++) {
-          if (i > 0) checkDate.setDate(checkDate.getDate() + 1);
-          // Require at least one window that day
-          const key = dowToKey(checkDate.getDay());
-          const windows = (workingSchedule || []).filter(w => w.day === key);
-          if (windows.length === 0) {
-            const msg = t("errors.invalidRange", { default: "Booking overlaps a day without working hours." });
-            setError(msg);
-            toast.error(msg);
-            return;
-          }
-        }
       }
     }
 
@@ -301,6 +259,18 @@ const BookingModal: React.FC<BookingModalProps> = ({
     }
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 py-4" id="booking-form">
+        {(bookingDurationType === 'Per Hour' || bookingDurationType === 'Per Day') && (bookingDuration || 0) > 0 && (
+          <div className="text-sm text-gray-700 bg-blue-50 border border-blue-200 rounded p-3">
+            {bookingDurationType === 'Per Hour'
+              ? t('hints.selectionHelpHourly', { max: (bookingDuration ?? 0), default: `Hint: Choose start and end on the same day. Maximum duration: ${bookingDuration ?? 0} hour(s).` })
+              : t('hints.selectionHelpDaily', { max: (bookingDuration ?? 0), default: `Hint: You may span multiple days up to ${bookingDuration ?? 0} day(s).` })}
+            {Array.isArray(workingSchedule) && workingSchedule.length > 0 && (
+              <div className="mt-1 text-gray-600">
+                {t('hints.reviewSchedule', { default: 'Hint: Review the working schedule before creating a booking.' })}
+              </div>
+            )}
+          </div>
+        )}
         <Input
           type="datetime-local"
           required
