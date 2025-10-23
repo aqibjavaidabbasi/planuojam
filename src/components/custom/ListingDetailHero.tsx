@@ -105,13 +105,14 @@ function ListingDetailHero({
             <div className="flex gap-2 flex-wrap">
               {/* Website Link */}
               {websiteLink && (
-                <div
-                  className="rounded-xl w-full px-6 py-2 text-center cursor-pointer transition-all duration-200 flex items-center justify-center
-             bg-white/10 border border-white/30 hover:bg-white/30 backdrop-blur"
-                  onClick={() => window.open(websiteLink, "_blank")}
+                <a
+                  className="rounded-xl w-full px-6 py-2 text-center cursor-pointer transition-all duration-200 flex items-center justify-center bg-white/10 border border-white/30 hover:bg-white/30 backdrop-blur text-white"
+                  href={/^https?:\/\//i.test(websiteLink) ? websiteLink : `https://${websiteLink}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <span className="text-white">{t('visitWebsite')}</span>
-                </div>
+                  {t('visitWebsite')}
+                </a>
               )}
 
               {/* View Available Slots -> scroll to calendar */}
