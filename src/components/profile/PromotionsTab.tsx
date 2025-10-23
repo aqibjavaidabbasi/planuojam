@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useAppSelector } from "@/store/hooks";
-import { fetchListingsByUser } from "@/services/listing";
+import { fetchListingsByUserLeastPopulated } from "@/services/listing";
 import { useLocale, useTranslations } from "next-intl";
 import CreatePromotionForm from "../forms/CreatePromotionForm";
 import Button from "../custom/Button";
@@ -28,7 +28,7 @@ export default function PromotionsTab() {
   useEffect(() => {
     const loadListings = async () => {
       if (!user?.documentId) return;
-      const data = await fetchListingsByUser(String(user.documentId), "published", 'en');
+      const data = await fetchListingsByUserLeastPopulated(String(user.documentId), "published", 'en');
       if (locale === 'en') {
         const opts = data.map((l) => ({
           id: String(l.documentId),
@@ -68,7 +68,7 @@ export default function PromotionsTab() {
     if (!user?.documentId) return;
     setLoading(true);
     try {
-      const data = await fetchPromotionsByUser(String(user.documentId));
+      const data = await fetchPromotionsByUser(String(user.id));
       setPromotions(Array.isArray(data) ? data : []);
     } finally {
       setLoading(false);
@@ -90,7 +90,7 @@ export default function PromotionsTab() {
     for (const p of promotions) {
       const status = String(p?.promotionStatus || '').toLowerCase();
       const endDateStr = p?.endDate as string | undefined;
-      const listingDocId = String(p?.listing?.documentId || '');
+      const listingDocId = String(p?.listingDocumentId || p?.listing?.documentId || '');
       if (!listingDocId) continue;
 
       const hasEnded = (() => {
@@ -104,7 +104,7 @@ export default function PromotionsTab() {
       if (isActive) activeByListingDocId.add(listingDocId);
     }
 
-    return listings.filter(l => !activeByListingDocId.has(String(l.id)));
+    return listings.filter(l => !activeByListingDocId.has(String(l.documentId)) && !activeByListingDocId.has(String(l.id)));
   }, [listings, promotions]);
 
   return (
@@ -124,7 +124,7 @@ export default function PromotionsTab() {
         )}
         {/* Placeholder for promotions list when available */}
         {!loading && promotions.length > 0 && (
-          <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {promotions.map((p) => (
               <PromotionCard key={p.documentId || p.id} promotion={p} onUpdated={loadPromotions} />
             ))}
@@ -136,9 +136,6 @@ export default function PromotionsTab() {
         isOpen={openPromotionsModal}
         onClose={() => setOpenPromotionsModal(false)}
         listings={availableListings}
-        userId={user?.id}
-        userStars={user?.totalStars ?? 0}
-        userDocumentId={user?.documentId}
         onCreated={() => {
           setOpenPromotionsModal(false);
           // Refresh promotions after creation

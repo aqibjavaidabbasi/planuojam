@@ -1,4 +1,3 @@
-import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
 import { createQuery, deleteAPI, fetchAPIWithToken, postAPIWithToken } from "./api";
 
 
@@ -39,13 +38,111 @@ export async function getLikedListings(userId: string, locale: string) {
     }
     const populate = {
         listing: {
-            populate: LISTING_ITEM_POP_STRUCTURE
+            populate: {
+                category: {
+                    populate: '*',
+                },
+                listingItem: {
+                    on: {
+                        'dynamic-blocks.vendor': {
+                            populate: {
+                                'serviceArea': {
+                                    populate: {
+                                        'city': {
+                                            populate: true,
+                                        },
+                                        'state': {
+                                            populate: true,
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        'dynamic-blocks.venue': {
+                            populate: {
+                                location: {
+                                    populate: '*'
+                                },
+                                amneties: {
+                                    populate: '*'
+                                }
+                            }
+                        }
+                    }
+                },
+                portfolio: {
+                    populate: '*'
+                },
+                reviews: {
+                    populate: '*'
+                },
+                eventTypes: {
+                    populate: '*'
+                },
+                hotDeal: {
+                    populate: {
+                        discount: {
+                            populate: '*'
+                        }
+                    }
+                },
+                localizations: {
+                    populate: {
+                        category: {
+                            populate: '*'
+                        },
+                        listingItem: {
+                            on: {
+                                'dynamic-blocks.vendor': {
+                                    populate: {
+                                        'serviceArea': {
+                                            populate: {
+                                                'city': {
+                                                    populate: true,
+                                                },
+                                                'state': {
+                                                    populate: true,
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                'dynamic-blocks.venue': {
+                                    populate: {
+                                        location: {
+                                            populate: '*'
+                                        },
+                                        amneties: {
+                                            populate: '*'
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        portfolio: {
+                            populate: '*'
+                        },
+                        reviews: {
+                            populate: '*'
+                        },
+                        eventTypes: {
+                            populate: '*'
+                        },
+                        hotDeal: {
+                            populate: {
+                                discount: {
+                                    populate: '*'
+                                }
+                            }
+                        },
+                    }
+                }
+            },
         },
         user: {
             populate: '*'
         }
     }
-
     const filters = {
         filters: {
             user: {
@@ -54,9 +151,9 @@ export async function getLikedListings(userId: string, locale: string) {
         }
     }
     if (locale) {
-    const query = createQuery(populate, { locale });
-    const res = await fetchAPIWithToken('liked-listings', query, filters, jwt);
-    return res;
+        const query = createQuery(populate, { locale });
+        const res = await fetchAPIWithToken('liked-listings', query, filters, jwt);
+        return res;
     }
 
     const query = createQuery(populate);

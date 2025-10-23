@@ -662,6 +662,10 @@
       "calendar": "Kalendorius",
       "promotions": "Akcijos"
     },
+    "promoteHint": "Padidinkite savo įrašo matomumą reklamuodami jį.",
+    "promoteCta": "Reklamuoti įrašą",
+    "promoteLater": "Vėliau",
+    "promoteHintWithTitle": "Padidinkite matomumą reklamuodami \"{title}\".",
     "ReviewsTab": {
       "title": "Atsiliepimai",
       "subtitle": "Peržiūrėkite ir tvarkykite savo turto atsiliepimus.",
@@ -705,6 +709,14 @@
       "starsPerClick": "Žvaigždutės už paspaudimą",
       "creating": "Kuriama...",
       "create": "Sukurti akciją",
+      "selectPackage": "Pasirinkti paketą (pasirinktinai)",
+      "days": "Dienos",
+      "custom": "Pasirinktinis",
+      "customStarsAndDays": "Įveskite žvaigždes ir dienas",
+      "customStars": "Žvaigždės (pasirinktinai)",
+      "customDays": "Dienos (pasirinktinai)",
+      "total": "Iš viso",
+      "priceHint": "Individuali kaina skaičiuojama: pricePerStarPerDay × žvaigždės × dienos.",
       "created": "Akcija sėkmingai sukurta",
       "failed": "Nepavyko sukurti reklamos",
       "cancel": "Atšaukti",
@@ -729,7 +741,12 @@
         "starsPerClick": "Žvaigždės už paspaudimą",
         "starsLimit": "Žvaigždžių limitas",
         "progressEarned": "{earned} / {limit} uždirbtų žvaigždžių",
-        "progressPercentOfGoal": "{success}% tikslo"
+        "progressPercentOfGoal": "{success}% tikslo",
+        "status": {
+          "ongoing": "Vykdoma",
+          "ended": "Baigta",
+          "completed": "Užbaigta"
+        }
       }
     },
     "ProfileTab": {

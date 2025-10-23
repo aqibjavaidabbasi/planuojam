@@ -257,6 +257,10 @@
       "calendar": "Kalender",
       "promotions": "Kampaaniad"
     },
+    "promoteHint": "Suurenda nähtavust, edendades oma kuulutust.",
+    "promoteCta": "Reklaami kuulutust",
+    "promoteLater": "Hiljem",
+    "promoteHintWithTitle": "Suurenda nähtavust, edendades \"{title}\".",
     "ProfileTab": {
       "title": "Profiili seaded",
       "subtitle": "Halda oma isikuandmeid ja parooli.",
@@ -313,6 +317,14 @@
       "starsPerClick": "Tärni klõpsu kohta",
       "creating": "Loomine...",
       "create": "Loo reklaam",
+      "selectPackage": "Vali pakett (valikuline)",
+      "days": "Päevad",
+      "custom": "Kohandatud",
+      "customStarsAndDays": "Sisesta tärnid ja päevad",
+      "customStars": "Tärnid (kohandatud)",
+      "customDays": "Päevad (kohandatud)",
+      "total": "Kokku",
+      "priceHint": "Kohandatud hind arvutatakse: pricePerStarPerDay × tärnid × päevad.",
       "created": "Reklaam on edukalt loodud",
       "failed": "Pakkumise loomine ebaõnnestus",
       "cancel": "Anulować",
@@ -337,7 +349,12 @@
         "starsPerClick": "Tärni kliki kohta",
         "starsLimit": "Tähtede limiit",
         "progressEarned": "{earned} / {limit} teenitud tähte",
-        "progressPercentOfGoal": "{success}% eesmärgist"
+        "progressPercentOfGoal": "{success}% eesmärgist",
+        "status": {
+          "ongoing": "Aktiivne",
+          "ended": "Lõppenud",
+          "completed": "Lõpetatud"
+        }
       }
     },
     "FavouriteListings": {

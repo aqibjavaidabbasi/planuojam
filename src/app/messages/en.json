@@ -269,6 +269,10 @@
       "calendar": "Calendar",
       "promotions": "Promotions"
     },
+    "promoteHint": "Boost visibility by promoting your listing.",
+    "promoteCta": "Promote listing",
+    "promoteLater": "Later",
+    "promoteHintWithTitle": "Boost visibility by promoting \"{title}\".",
     "ProfileTab": {
       "title": "Profile Settings",
       "subtitle": "Manage your personal information and password.",
@@ -326,6 +330,14 @@
       "starsPerClick": "Stars Per Click",
       "creating": "Creating...",
       "create": "Create Promotion",
+      "selectPackage": "Select package (optional)",
+      "days": "Days",
+      "custom": "Custom",
+      "customStarsAndDays": "Enter stars & days",
+      "customStars": "Stars (custom)",
+      "customDays": "Days (custom)",
+      "total": "Total",
+      "priceHint": "Custom price is computed as pricePerStarPerDay × stars × days.",
       "created": "Promotion created successfully",
       "failed": "Failed to create promotion",
       "cancel": "Cancel",
@@ -350,7 +362,12 @@
         "starsPerClick": "Stars per Click",
         "starsLimit": "Stars Limit",
         "progressEarned": "{earned} / {limit} stars earned",
-        "progressPercentOfGoal": "{success}% of goal"
+        "progressPercentOfGoal": "{success}% of goal",
+        "status": {
+          "ongoing": "Ongoing",
+          "ended": "Ended",
+          "completed": "Completed"
+        }
       }
     },
     "FavouriteListings": {

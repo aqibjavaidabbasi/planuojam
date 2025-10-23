@@ -3,6 +3,7 @@ import { updateUserData } from "./auth";
 
 export interface CreatePromotionPayload {
   listingDocumentId: string; // use documentId for listing
+  listingTitle?: string; // persisted alongside listingDocumentId
   startDate?: string; // YYYY-MM-DD
   endDate?: string | null; // YYYY-MM-DD or null
   maxClickPerDay?: number;
@@ -18,62 +19,62 @@ export interface CreatePromotionPayload {
 // - Finds ongoing promotion for listing by listingDocumentId
 // - Increments clicksReceived and starsUsed by starsPerClick
 // - Creates a star-usage-log entry of type 'debit'
-export async function registerPromotionClick(listingDocumentId: string, userId?: number | string) {
-  try {
-    // 1) Find ongoing promotion for this listing
-    const populate = {
-      listing: true
-    };
-    const query = createQuery(populate);
-    const filters = {
-      filters: {
-        promotionStatus: { $eq: 'ongoing' },
-        listing: { documentId: { $eq: listingDocumentId } },
-      },
-    } as Record<string, unknown>;
+// export async function registerPromotionClick(listingDocumentId: string, userId?: number | string) {
+//   try {
+//     // 1) Find ongoing promotion for this listing
+//     const populate = {
+//       listing: true
+//     };
+//     const query = createQuery(populate);
+//     const filters = {
+//       filters: {
+//         promotionStatus: { $eq: 'ongoing' },
+//         listing: { documentId: { $eq: listingDocumentId } },
+//       },
+//     } as Record<string, unknown>;
 
-    const promos = await fetchAPI('promotions', query, filters);
-    const arr = Array.isArray(promos) ? promos : [];
-    if (!arr.length) return { updated: false, reason: 'no_active_promotion' };
-    const promo = arr[0];
+//     const promos = await fetchAPI('promotions', query, filters);
+//     const arr = Array.isArray(promos) ? promos : [];
+//     if (!arr.length) return { updated: false, reason: 'no_active_promotion' };
+//     const promo = arr[0];
 
-    // Enforce daily limit if configured
-    const maxPerDay = typeof promo.maxClickPerDay === 'number' ? promo.maxClickPerDay : Infinity;
-    const clicks = typeof promo.clicksReceived === 'number' ? promo.clicksReceived : 0;
-    if (Number.isFinite(maxPerDay) && clicks >= maxPerDay) {
-      return { updated: false, reason: 'daily_limit_reached' };
-    }
+//     // Enforce daily limit if configured
+//     const maxPerDay = typeof promo.maxClickPerDay === 'number' ? promo.maxClickPerDay : Infinity;
+//     const clicks = typeof promo.clicksReceived === 'number' ? promo.clicksReceived : 0;
+//     if (Number.isFinite(maxPerDay) && clicks >= maxPerDay) {
+//       return { updated: false, reason: 'daily_limit_reached' };
+//     }
 
-    const starsPerClick = typeof promo.starsPerClick === 'number' ? promo.starsPerClick : 0;
-    const prevStarsUsed = typeof promo.starsUsed === 'number' ? promo.starsUsed : 0;
+//     const starsPerClick = typeof promo.starsPerClick === 'number' ? promo.starsPerClick : 0;
+//     const prevStarsUsed = typeof promo.starsUsed === 'number' ? promo.starsUsed : 0;
 
-    // 2) Update promotion
-    await updatePromotion(promo.documentId, {
-      data: {
-        clicksReceived: clicks + 1,
-        starsUsed: prevStarsUsed + starsPerClick,
-      },
-    });
+//     // 2) Update promotion
+//     await updatePromotion(promo.documentId, {
+//       data: {
+//         clicksReceived: clicks + 1,
+//         starsUsed: prevStarsUsed + starsPerClick,
+//       },
+//     });
 
-    // 3) Create usage log (best-effort)
-    try {
-      await createStarUsageLog({
-        starsUsed: starsPerClick,
-        type: 'debit',
-        usedAt: new Date().toISOString(),
-        listingDocumentId,
-        promotionDocumentId: promo.documentId,
-        userId,
-      });
+//     // 3) Create usage log (best-effort)
+//     try {
+//       await createStarUsageLog({
+//         starsUsed: starsPerClick,
+//         type: 'debit',
+//         usedAt: new Date().toISOString(),
+//         listingDocumentId,
+//         promotionDocumentId: promo.documentId,
+//         userId,
+//       });
 
-    } catch { }
+//     } catch { }
 
-    return { updated: true };
-  } catch {
-    // Silent fail – do not block UI navigation on errors
-    return { updated: false, reason: 'error' };
-  }
-}
+//     return { updated: true };
+//   } catch {
+//     // Silent fail – do not block UI navigation on errors
+//     return { updated: false, reason: 'error' };
+//   }
+// }
 
 // --- Star Usage Log ---
 export type StarUsageType = "debit" | "credit" | "refund";
@@ -83,16 +84,18 @@ export async function createStarUsageLog(params: {
   type: StarUsageType;
   usedAt?: string;
   listingDocumentId?: string;
+  listingTitle?: string;
   promotionDocumentId?: string | number;
   userId?: number | string;
 }) {
-  const { starsUsed, type, usedAt, listingDocumentId, promotionDocumentId, userId } = params;
+  const { starsUsed, type, usedAt, listingDocumentId, listingTitle, promotionDocumentId, userId } = params;
   const data: Record<string, unknown> = {
     starsUsed,
     type,
     usedAt: usedAt ?? new Date().toISOString(),
   };
-  if (listingDocumentId) data.listing = listingDocumentId;
+  if (listingDocumentId) data.listingDocumentId = listingDocumentId;
+  if (listingTitle) data.listingTitle = listingTitle;
   if (promotionDocumentId) data.promotion = promotionDocumentId;
   if (userId) data.users_permissions_user = userId;
 
@@ -128,11 +131,7 @@ export async function createPromotion(data: Record<string, unknown>) {
 
 // Orchestrates: create promotion -> log star usage -> update user stars
 export async function createPromotionWithStars(payload: CreatePromotionPayload) {
-  const { listingDocumentId, startDate, endDate, maxClickPerDay, starsPerClick, maxStarsLimit, userDocumentId, currentUserStars } = payload;
-
-  if (currentUserStars < maxStarsLimit) {
-    throw new Error("errors.inSufficientStars");
-  }
+  const { listingDocumentId, listingTitle, startDate, endDate, maxClickPerDay, starsPerClick, maxStarsLimit, userDocumentId, currentUserStars } = payload;
 
   // 1) Create promotion
   const promotionRes = await createPromotion({
@@ -143,8 +142,9 @@ export async function createPromotionWithStars(payload: CreatePromotionPayload) 
       maxClickPerDay,
       starsPerClick,
       maxStarsLimit,
-      listing: listingDocumentId,
+      listingDocumentId: listingDocumentId,
       userDocId: userDocumentId,
+      listingTitle: listingTitle,
     }
   });
 
@@ -220,13 +220,7 @@ export async function fetchAllPromotions(
 export async function fetchPromotionsByUser(
   userDocumentId: string,
 ) {
-  const populate = {
-    listing: {
-      populate: {
-        localizations: true
-      }
-    }
-  };
+  const populate = {};
   const jwt = localStorage.getItem('token') ?? ''
 
   const query = createQuery(populate);
@@ -242,17 +236,32 @@ export async function fetchPromotionsByUser(
 
 // Get a single promotion by numeric Strapi id
 export async function fetchPromotionById(id: string | number, locale?: string) {
-  const populate = {
-    listing: {
-      populate: {
-        localizations: true
-      }
-    }
-  };
+  const populate = {};
   const additionalParams: Record<string, unknown> = {};
   if (locale) additionalParams.locale = locale;
   const query = createQuery(populate, additionalParams);
   const data = await fetchAPI(`promotions/${id}`, query);
   return data;
+}
+
+
+// Purchase a new promotion for a listing (per-listing stars + days)
+export async function purchasePromotion(params: { listingDocumentId: string; stars: number; days: number; }) {
+  const jwt = localStorage.getItem('token') ?? '';
+  const url = `${API_URL}/api/promotions/purchase`;
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (jwt) headers["Authorization"] = `Bearer ${jwt}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(params),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `Failed to purchase promotion (${res.status})`);
+  }
+  return res.json();
 }
 

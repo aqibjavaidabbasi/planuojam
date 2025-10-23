@@ -39,29 +39,35 @@ export async function POST(req: NextRequest) {
     switch (event.type) {
       case "payment_intent.succeeded": {
         // Payment succeeded
-        const stripeCustomerId = intent.customer;
         const userId = intent.metadata?.app_user_id;
-        const starsBought = intent.metadata?.stars_bought;
+        const purpose = intent.metadata?.purpose; // 'buy_stars' | 'promotion'
+        const listingDocumentId = intent.metadata?.listing_document_id;
+        const listingTitle = intent.metadata?.listing_title;
+        const promotionStars = intent.metadata?.promotion_stars;
+        const promotionDays = intent.metadata?.promotion_days;
         const amount = intent.amount_received / 100;
 
         // Idempotency: skip if transaction already exists
         try {
-          const checkRes = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/transactions?filters[transactionChargeId][$eq]=${encodeURIComponent(intent.id)}`,
-            {
-              headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
-            }
-          );
+          const url = `${process.env.NEXT_PUBLIC_API_URL}/api/transactions?filters[transactionChargeId][$eq]=${encodeURIComponent(intent.id)}`;
+          const checkRes = await fetch(url, {
+            headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+          });
           const checkJson = await checkRes.json().catch(() => ({}));
           if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
-            console.warn("Transaction already recorded, skipping create and user update.", intent.id);
+            console.warn("Transaction already recorded:", intent.id);
             return NextResponse.json({ received: true });
           }
         } catch (e) {
-          console.warn("Transaction idempotency check failed, proceeding:", e);
+          console.warn("Idempotency check errored, continuing:", e);
         }
 
-        // Save to Strapi
+        // Determine starsPurchased based on purpose/metadata
+        const starsPurchasedInt = (purpose === 'promotion' && promotionStars)
+          ? parseInt(String(promotionStars))
+          : 0;
+
+        // Save Transaction to Strapi (conform to schema)
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/transactions`, {
           method: "POST",
           headers: {
@@ -73,42 +79,65 @@ export async function POST(req: NextRequest) {
               users_permissions_user: userId,
               transactionChargeId: intent.id,
               amount,
-              starsPurchased: parseInt(starsBought || "0"),
+              starsPurchased: starsPurchasedInt,
               transactionStatus: "success",
               transactionDate: new Date().toISOString(),
             },
           }),
         });
-        await res.json().catch(() => ({}));
+        await res.json();
 
-        // Star accumulation: fetch current totalStars and add starsBought
-        if (userId) {
-          const userGet = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`, {
-            headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
-          });
-          const userData = await userGet.json().catch(() => ({}));
-          const currentStars = Number(userData?.totalStars ?? 0);
-          const addStars = parseInt(starsBought || "0");
-          const newTotal = currentStars + (isNaN(addStars) ? 0 : addStars);
+        // If this payment was for a promotion checkout, create the promotion now
+        if (
+          purpose === 'promotion' &&
+          userId &&
+          listingDocumentId &&
+          promotionStars &&
+          promotionDays
+        ) {
+          try {
+            // Compute inclusive end date: startDate + (days - 1)
+            const startDate = new Date();
+            const startDateStr = startDate.toISOString().slice(0, 10); // YYYY-MM-DD
+            const daysInt = parseInt(String(promotionDays));
+            const end = new Date(Date.UTC(startDate.getUTCFullYear(), startDate.getUTCMonth(), startDate.getUTCDate()));
+            end.setUTCDate(end.getUTCDate() + Math.max(0, daysInt - 1));
+            const endDateStr = end.toISOString().slice(0, 10); // YYYY-MM-DD
 
-          // Also update the user's stars or balance in Strapi
-          const user = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
-          },
-          body: JSON.stringify({
-            stripeCustomerId: typeof stripeCustomerId === "string" ? stripeCustomerId : undefined,
-            totalStars: newTotal,
-          }),
-          });
-          await user.json().catch(() => ({}));
+            // Create promotion in Strapi according to schema (use listingDocumentId)
+            const promoRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/promotions`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+              },
+              body: JSON.stringify({
+                data: {
+                  startDate: startDateStr,
+                  endDate: endDateStr,
+                  promotionStatus: "ongoing",
+                  maxStarsLimit: parseInt(String(promotionStars)),
+                  listingDocumentId: String(listingDocumentId),
+                  userDocId: String(userId),
+                  starsUsed: 0,
+                  clicksReceived: 0,
+                  listingTitle: listingTitle ? String(listingTitle) : undefined,
+                },
+              }),
+            });
+            // Ignore non-200 but log
+            let createdPromotionId: number | undefined;
+            if (!promoRes.ok) {
+              const err = await promoRes.json().catch(() => ({}));
+              console.warn("Failed to create promotion after payment:", err);
+            } else {
+              const promoJson = await promoRes.json().catch(() => ({}));
+              createdPromotionId = Number(promoJson?.data?.id ?? promoJson?.id);
+            }
 
-          // Create a star-usage-log entry for crediting stars into the account
-          if (!isNaN(addStars) && addStars > 0) {
+            // Create a star-usage-log entry to credit stars for this promotion purchase (use listingDocumentId)
             try {
-              await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/star-usage-logs`, {
+              const starRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/star-usage-logs`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -116,20 +145,23 @@ export async function POST(req: NextRequest) {
                 },
                 body: JSON.stringify({
                   data: {
-                    starsUsed: addStars,
+                    starsUsed: parseInt(String(promotionStars)),
                     type: "credit",
                     usedAt: new Date().toISOString(),
-                    users_permissions_user: userId,
-                    // Optional: listing / promotion left null for pure credit events
+                    users_permissions_user: String(userId),
+                    listingDocumentId: String(listingDocumentId),
+                    promotion: createdPromotionId,
+                    listingTitle: listingTitle ? String(listingTitle) : undefined,
                   },
                 }),
               });
+              await starRes.json();
             } catch (e) {
-              console.warn("Failed to create star-usage-log (credit)", e);
+              console.warn("Failed to create star-usage-log (promotion credit)", e);
             }
+          } catch (e) {
+            console.warn("Promotion creation request failed:", e);
           }
-        } else {
-          console.warn("No userId provided in PaymentIntent metadata; skipping star update.");
         }
 
         break;
@@ -156,7 +188,7 @@ export async function POST(req: NextRequest) {
           console.warn("Transaction idempotency check (failed) errored, proceeding:", e);
         }
 
-       const res= await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/transactions`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/transactions`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

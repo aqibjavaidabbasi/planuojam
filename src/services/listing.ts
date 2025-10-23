@@ -7,7 +7,7 @@ export async function createListing(data: Record<string, unknown>, locale?: stri
         'X-Strapi-Locale': locale,
         'Content-Language': locale,
         'Accept-Language': locale,
-      } : undefined;
+    } : undefined;
     const query = locale ? `locale=${encodeURIComponent(locale)}` : undefined;
 
     const res = await postAPIWithToken("listings", data, { headers }, query);
@@ -56,7 +56,7 @@ export async function updateListing(
             'X-Strapi-Locale': locale,
             'Content-Language': locale,
             'Accept-Language': locale,
-          }
+        }
         : undefined;
     const query = locale ? `locale=${encodeURIComponent(locale)}` : undefined;
 
@@ -72,7 +72,7 @@ export async function deleteListing(id: string) {
 export async function fetchListingBySlug(slug: string, locale?: string) {
     const populate = LISTING_ITEM_POP_STRUCTURE;
     const filters = {
-        filters : {
+        filters: {
             slug: { $eq: slug }
         }
     }
@@ -92,7 +92,143 @@ export async function fetchListingBySlug(slug: string, locale?: string) {
 
 // Fetch all listings created by a user, optionally filtered by listingStatus
 export async function fetchListingsByUser(documentId: string, status?: string, locale?: string): Promise<ListingItem[]> {
-    const populate = LISTING_ITEM_POP_STRUCTURE;
+    const populate = {
+        category: {
+            populate: '*',
+        },
+        listingItem: {
+            on: {
+                'dynamic-blocks.vendor': {
+                    populate: {
+                        'serviceArea': {
+                            populate: {
+                                'city': {
+                                    populate: true,
+                                },
+                                'state': {
+                                    populate: true,
+                                }
+                            }
+                        }
+                    }
+                },
+                'dynamic-blocks.venue': {
+                    populate: {
+                        location: {
+                            populate: '*'
+                        },
+                        amneties: {
+                            populate: '*'
+                        }
+                    }
+                }
+            }
+        },
+        portfolio: {
+            populate: '*'
+        },
+        reviews: {
+            populate: '*'
+        },
+        user: {
+            populate: '*'
+        },
+        eventTypes: {
+            populate: '*'
+        },
+        hotDeal: {
+            populate: {
+                discount: {
+                    populate: '*'
+                }
+            }
+        },
+        localizations: {
+            populate: {
+                category: {
+                    populate: '*'
+                },
+                listingItem: {
+                    on: {
+                        'dynamic-blocks.vendor': {
+                            populate: {
+                                'serviceArea': {
+                                    populate: {
+                                        'city': {
+                                            populate: true,
+                                        },
+                                        'state': {
+                                            populate: true,
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        'dynamic-blocks.venue': {
+                            populate: {
+                                location: {
+                                    populate: '*'
+                                },
+                                amneties: {
+                                    populate: '*'
+                                }
+                            }
+                        }
+                    }
+                },
+                portfolio: {
+                    populate: '*'
+                },
+                FAQs: {
+                    populate: '*'
+                },
+                reviews: {
+                    populate: '*'
+                },
+                user: {
+                    populate: '*'
+                },
+                eventTypes: {
+                    populate: '*'
+                },
+                hotDeal: {
+                    populate: {
+                        discount: {
+                            populate: '*'
+                        }
+                    }
+                },
+            }
+        }
+    };
+    const baseFilters: Record<string, unknown> = {
+        filters: {
+            user: { documentId: { $eq: documentId } },
+        },
+        sort: ['updatedAt:desc']
+    };
+    if (status && status !== 'all') {
+        (baseFilters as { filters: Record<string, unknown> }).filters.listingStatus = { $eq: status };
+    }
+
+    // Try requested locale first
+    if (locale) {
+        const queryWithLocale = createQuery(populate, { locale });
+        const dataLocale = await fetchAPI('listings', queryWithLocale, baseFilters);
+        if (Array.isArray(dataLocale) && dataLocale.length) return dataLocale as ListingItem[];
+    }
+
+    // Final fallback: no locale constraint
+    const queryBase = createQuery(populate);
+    const dataBase = await fetchAPI('listings', queryBase, baseFilters);
+    return Array.isArray(dataBase) ? (dataBase as ListingItem[]) : [];
+}
+export async function fetchListingsByUserLeastPopulated(documentId: string, status?: string, locale?: string): Promise<ListingItem[]> {
+    const populate = {
+        localizations: {
+            populate: '*'
+        }
+    };
     const baseFilters: Record<string, unknown> = {
         filters: {
             user: { documentId: { $eq: documentId } },
@@ -117,7 +253,7 @@ export async function fetchListingsByUser(documentId: string, status?: string, l
 }
 
 
-export async function fetchSortedListings(type: 'venue' | 'vendor', appliedFilters = {}, locale?: string){
+export async function fetchSortedListings(type: 'venue' | 'vendor', appliedFilters = {}, locale?: string) {
     const populate = LISTING_ITEM_POP_STRUCTURE;
     const baseFilters: Record<string, unknown> = {
         filters: {
@@ -127,7 +263,7 @@ export async function fetchSortedListings(type: 'venue' | 'vendor', appliedFilte
         },
     };
 
-    const queryBase = createQuery(populate, {locale});
+    const queryBase = createQuery(populate, { locale });
     const dataBase = await fetchAPI('listings/promoted', queryBase, baseFilters);
     return Array.isArray(dataBase) ? (dataBase as ListingItem[]) : [];
 }

@@ -10,19 +10,24 @@ const MyBookings = dynamic(() => import("@/components/profile/MyBookings"), { ss
 const FavouriteListings = dynamic(() => import("@/components/profile/FavouriteListings"), { ssr: false });
 const Messages = dynamic(() => import("@/components/profile/Messages"), { ssr: false, loading: () => <div /> });
 const ReviewsTab = dynamic(() => import("@/components/profile/ReviewsTab"), { ssr: false });
-const BuyStarsModal = dynamic(() => import("@/components/modals/BuyStarsModal"), { ssr: false });
 
 import Button from "@/components/custom/Button";
 import { useAppSelector } from "@/store/hooks";
 import React, { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
-import { FaArrowCircleDown, FaList, FaCalendarAlt, FaCalendarCheck, FaPlus, FaBullhorn } from "react-icons/fa";
+import { FaArrowCircleDown, FaList, FaCalendarAlt, FaCalendarCheck, FaBullhorn } from "react-icons/fa";
 import { LuMessageSquareText } from "react-icons/lu";
 import { MdEditCalendar, MdOutlineFavorite, MdStarBorderPurple500 } from "react-icons/md";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { fetchUnreadForReceiver } from "@/services/messages";
+import { RootState } from "@/store";
+import { fetchListingsByUserLeastPopulated } from "@/services/listing";
+import { fetchPromotionsByUser } from "@/services/promotion";
+import type { Promotion } from "@/types/promotion";
+import type { ListingItem } from "@/types/pagesTypes";
+import { useLocale } from "next-intl";
 
 function ProfilePage() {
   const t = useTranslations("Profile");
@@ -31,10 +36,75 @@ function ProfilePage() {
   const initialTab = searchParams?.get("tab") || "profile";
   const [activeTab, setActiveTab] = useState(initialTab);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [openStarModal, setOpenStarModal] = useState(false);
   const [unreadCount, setUnreadCount] = useState<number>(0);
-  const user = useAppSelector((state) => state.auth.user);
+  const user = useAppSelector((state: RootState) => state.auth.user);
   const router = useRouter()
+  const locale = useLocale();
+  const [promotionHintListingId, setPromotionHintListingId] = useState<string | null>(null);
+  const [promotionHintTitle, setPromotionHintTitle] = useState<string | null>(null);
+  const storageKeySeen = "promotionHint.seenListingIds";
+
+  const computeAndSetPromotionHint = async () => {
+    try {
+      if (!user?.documentId) {
+        setPromotionHintListingId(null);
+        return;
+      }
+      const listings: ListingItem[] = await fetchListingsByUserLeastPopulated(String(user.documentId), "published", locale as string);
+      type MinimalListingRef = { documentId?: string | number; id?: string | number; title?: string; slug?: string };
+      const listingsArr: MinimalListingRef[] = listings as unknown as MinimalListingRef[];
+      const seenRaw = typeof window !== 'undefined' ? localStorage.getItem(storageKeySeen) : null;
+      const seenIds = new Set<string>(seenRaw ? JSON.parse(seenRaw) : []);
+
+      // Load promotions to ensure we don't show the hint if the listing already has an active promotion
+      const promos: Promotion[] = await fetchPromotionsByUser(String(user.documentId));
+      const now = new Date();
+      const activeByListingDocId = new Set<string>();
+      for (const p of Array.isArray(promos) ? promos : []) {
+        const status = String(p?.promotionStatus || '').toLowerCase();
+        const endDateStr = p?.endDate as string | undefined;
+        const listingDocId = String(p?.listingDocumentId || p?.listing?.documentId || '');
+        if (!listingDocId) continue;
+        const hasEnded = (() => {
+          if (!endDateStr) return false;
+          const end = new Date(endDateStr);
+          return isFinite(end.getTime()) && end < now;
+        })();
+        const isCompleted = status === 'completed' || status === 'ended' || status === 'finished';
+        const isActive = !isCompleted && !hasEnded;
+        if (isActive) activeByListingDocId.add(listingDocId);
+      }
+
+      // Find a listing that is new (not seen) and not actively promoted
+      const candidate = listingsArr.find((l) => {
+        const docId = String(l?.documentId ?? l?.id ?? '');
+        if (!docId) return false;
+        return !seenIds.has(docId) && !activeByListingDocId.has(docId);
+      });
+
+      if (candidate) {
+        setPromotionHintListingId(String(candidate.documentId ?? candidate.id));
+        setPromotionHintTitle(String(candidate.title ?? candidate.slug ?? ''));
+      } else {
+        setPromotionHintListingId(null);
+        setPromotionHintTitle(null);
+      }
+    } catch {
+      // fail silently; do not block UI
+      setPromotionHintListingId(null);
+      setPromotionHintTitle(null);
+    }
+  };
+
+  const markListingHintSeen = (listingId: string | null) => {
+    if (!listingId || typeof window === 'undefined') return;
+    const seenRaw = localStorage.getItem(storageKeySeen);
+    const seen: string[] = seenRaw ? JSON.parse(seenRaw) : [];
+    if (!seen.includes(listingId)) {
+      seen.push(listingId);
+      localStorage.setItem(storageKeySeen, JSON.stringify(seen));
+    }
+  };
   const showTab = (tabName: string) => {
     setActiveTab(tabName);
     // reflect tab in URL without full reload
@@ -63,6 +133,12 @@ function ProfilePage() {
       setActiveTab(tab);
     }
   }, [searchParams, activeTab]);
+
+  // Re-compute hint visibility when user/locale/tab changes
+  useEffect(() => {
+    computeAndSetPromotionHint();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.documentId, locale, activeTab]);
 
   // Compute unread messages once on profile load (respect local reads)
   useEffect(() => {
@@ -142,15 +218,6 @@ function ProfilePage() {
                       </span>
                     )}
                   </div>
-                </div>
-                <div className="bg-gray-50 rounded-xl p-6 my-2 flex items-center justify-between gap-2.5 text-gray-600">
-                  <div>
-                    <p>{t("creditStars")}</p>
-                    <p>{user?.totalStars ? user?.totalStars : 0}</p>
-                  </div>
-                  <Button style="primary" extraStyles="!rounded-full !p-2" size="small" onClick={() => setOpenStarModal(true)}>
-                    <FaPlus size={20} />
-                  </Button>
                 </div>
               </div>
               <div className="lg:hidden" onClick={() => setSidebarOpen(!sidebarOpen)}>
@@ -289,7 +356,44 @@ function ProfilePage() {
           {/* Right Content Area */}
           <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100">
             {activeTab === "profile" && <ProfileTab user={user} />}
-            {activeTab === "my-listings" && <Mylistings />}
+            {activeTab === "my-listings" && (
+              <div className="w-full h-full">
+                {/* Promotion hint banner (only for newly created, not-promoted listings) */}
+                {promotionHintListingId && (
+                  <div className="mx-4 mt-4 mb-1 rounded-xl border border-amber-200 bg-amber-50 p-4 flex items-center justify-between">
+                    <div className="text-sm text-amber-900">
+                      {promotionHintTitle
+                        ? t("promoteHintWithTitle", { title: promotionHintTitle, default: "Boost visibility by promoting \"{title}\"." })
+                        : t("promoteHint", { default: "Boost visibility by promoting your listing." })}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        style="secondary"
+                        onClick={() => {
+                          markListingHintSeen(promotionHintListingId);
+                          setPromotionHintListingId(null);
+                          setPromotionHintTitle(null);
+                          showTab("promotions");
+                        }}
+                      >
+                        {t("promoteCta", { default: "Promote listing" })}
+                      </Button>
+                      <Button
+                        style="ghost"
+                        onClick={() => {
+                          markListingHintSeen(promotionHintListingId);
+                          setPromotionHintListingId(null);
+                          setPromotionHintTitle(null);
+                        }}
+                      >
+                        {t("promoteLater", { default: "Later" })}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                <Mylistings />
+              </div>
+            )}
             {activeTab === "promotions" && <PromotionsTab />}
             {activeTab === "manage-bookings" && <ManageBookings />}
             {activeTab === "calendar" && <ProviderCalendar />}
@@ -305,12 +409,6 @@ function ProfilePage() {
           </div>
         </div>
       </div>
-
-      <BuyStarsModal
-        isOpen={openStarModal}
-        onClose={() => setOpenStarModal(false)}
-        currentUserId={String(user?.id ?? '')}
-      />
     </div>
   );
 }

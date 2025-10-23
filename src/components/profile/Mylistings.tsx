@@ -8,6 +8,7 @@ import { fetchListingsByUser } from "@/services/listing";
 import type { ListingItem } from "@/types/pagesTypes";
 import ListingCard from "@/components/Dynamic/ListingCard";
 import { useLocale, useTranslations } from "next-intl";
+import { RootState } from "@/store";
 
 function Mylistings() {
   const [open, setOpen] = useState(false);
@@ -15,7 +16,7 @@ function Mylistings() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [listings, setListings] = useState<ListingItem[]>([]);
-  const user = useAppSelector((state) => state.auth.user);
+  const user = useAppSelector((state: RootState) => state.auth.user);
   const t = useTranslations('Profile.MyListings');
   const tCommon = useTranslations('Common');
   const locale = useLocale()

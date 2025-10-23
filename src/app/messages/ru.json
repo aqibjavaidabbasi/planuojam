@@ -336,6 +336,10 @@
       "calendar": "Календарь",
       "promotions": "Промо"
     },
+    "promoteHint": "Увеличьте видимость, продвинув своё объявление.",
+    "promoteCta": "Продвинуть объявление",
+    "promoteLater": "Позже",
+    "promoteHintWithTitle": "Увеличьте видимость, продвинув \"{title}\".",
     "ProfileTab": {
       "title": "Настройки профиля",
       "subtitle": "Управляйте личной информацией и паролем.",
@@ -393,6 +397,14 @@
       "starsPerClick": "Звёзд за клик",
       "creating": "Создание...",
       "create": "Создать промо",
+      "selectPackage": "Выберите пакет (необязательно)",
+      "days": "Дни",
+      "custom": "Вручную",
+      "customStarsAndDays": "Введите звёзды и дни",
+      "customStars": "Звезды (вручную)",
+      "customDays": "Дни (вручную)",
+      "total": "Итого",
+      "priceHint": "Индивидуальная цена рассчитывается как pricePerStarPerDay × звезды × дни.",
       "created": "Промо успешно создано",
       "failed": "Не удалось создать акцию",
       "cancel": "Отмена",
@@ -417,7 +429,12 @@
         "starsPerClick": "Звёзд за клик",
         "starsLimit": "Лимит звёзд",
         "progressEarned": "{earned} / {limit} заработанных звёзд",
-        "progressPercentOfGoal": "{success}% от цели"
+        "progressPercentOfGoal": "{success}% от цели",
+        "status": {
+          "ongoing": "Активна",
+          "ended": "Завершена",
+          "completed": "Выполнена"
+        }
       }
     },
     "FavouriteListings": {

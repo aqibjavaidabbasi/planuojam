@@ -256,6 +256,10 @@
       "calendar": "Kalendarz",
       "promotions": "Promocje"
     },
+    "promoteHint": "Zwiększ widoczność, promując swoje ogłoszenie.",
+    "promoteCta": "Promuj ogłoszenie",
+    "promoteLater": "Później",
+    "promoteHintWithTitle": "Zwiększ widoczność, promując \"{title}\".",
     "ProfileTab": {
       "title": "Ustawienia profilu",
       "subtitle": "Zarządzaj swoimi danymi osobowymi i hasłem.",
@@ -313,6 +317,14 @@
       "starsPerClick": "Gwiazdki za kliknięcie",
       "creating": "Tworzenie...",
       "create": "Utwórz promocję",
+      "selectPackage": "Wybierz pakiet (opcjonalnie)",
+      "days": "Dni",
+      "custom": "Własne",
+      "customStarsAndDays": "Wpisz gwiazdki i dni",
+      "customStars": "Gwiazdki (własne)",
+      "customDays": "Dni (własne)",
+      "total": "Razem",
+      "priceHint": "Cena niestandardowa liczona jako pricePerStarPerDay × gwiazdki × dni.",
       "created": "Promocja została utworzona",
       "failed": "Nie udało się utworzyć promocji",
       "cancel": "Anulować",
@@ -337,7 +349,12 @@
         "starsPerClick": "Gwiazdki za kliknięcie",
         "starsLimit": "Limit gwiazdek",
         "progressEarned": "{earned} / {limit} zdobytych gwiazdek",
-        "progressPercentOfGoal": "{success}% celu"
+        "progressPercentOfGoal": "{success}% celu",
+        "status": {
+          "ongoing": "Aktywna",
+          "ended": "Zakończona",
+          "completed": "Zrealizowana"
+        }
       }
     },
     "FavouriteListings": {

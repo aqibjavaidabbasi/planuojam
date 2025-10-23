@@ -19,7 +19,9 @@ export interface SiteSettings{
         package?: {
             id: number;
             stars: number;
+            days: number;
             amount: number;
         }[]
     }
+    pricePerStarPerDay?: number;
 }

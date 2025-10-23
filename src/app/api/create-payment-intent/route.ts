@@ -7,7 +7,17 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(req: Request) {
   try {
-    const { userId, amount, currency, packageId, starsBought } = await req.json();
+    const {
+      userId,
+      amount,
+      currency,
+      // Optional promotion checkout metadata
+      purpose, // 'buy_stars' | 'promotion'
+      listingDocumentId,
+      listingTitle,
+      promotionStars,
+      promotionDays,
+    } = await req.json();
 
     if (!userId || amount == null || !currency) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -20,8 +30,11 @@ export async function POST(req: Request) {
     const metadata: Record<string, string> = {
       app_user_id: String(userId),
     };
-    if (packageId != null) metadata.package_id = String(packageId);
-    if (starsBought != null) metadata.stars_bought = String(starsBought);
+    if (purpose) metadata.purpose = String(purpose);
+    if (listingDocumentId) metadata.listing_document_id = String(listingDocumentId);
+    if (listingTitle) metadata.listing_title = String(listingTitle);
+    if (promotionStars != null) metadata.promotion_stars = String(promotionStars);
+    if (promotionDays != null) metadata.promotion_days = String(promotionDays);
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: adjustedAmount,
