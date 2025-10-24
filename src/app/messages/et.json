@@ -8,6 +8,9 @@
       "loggingIn": "Sisselogimine...",
       "loggedIn": "Sisselogimine õnnestus!",
       "loginFailed": "Sisselogimine ebaõnnestus. Palun proovi uuesti.",
+      "socialEmailRequired": "E-post on sotsiaalseks sisselogimiseks vajalik.",
+      "socialUserNotFound": "Selle pakkuja kontot ei leitud. Palun registreeru või kasuta muud meetodit.",
+      "socialInternalError": "Midagi läks sotsiaalse sisselogimisega valesti. Palun proovi uuesti.",
       "emailLabel": "E-post",
       "emailPlaceholder": "Sisesta oma e-post",
       "emailRequired": "E-post on kohustuslik",
@@ -507,6 +510,11 @@
       "title": "Koha üksikasjad",
       "capacity": "Mahutavus: {count}",
       "location": "Asukoht"
+    },
+    "PricingPlans": {
+      "featuresHeading": "Funktsioonid",
+      "optionalAddonsHeading": "Valikulised lisad",
+      "noFeatures": "Selles plaanis funktsioone ei ole mainitud."
     }
   },
   "Global": {

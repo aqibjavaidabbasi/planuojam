@@ -21,6 +21,17 @@ function getTokenFromHashOrQuery(): string | null {
   return null;
 }
 
+function getErrorFromHashOrQuery(): string | null {
+  if (typeof window === "undefined") return null;
+  const hash = window.location.hash || "";
+  if (hash.startsWith("#")) {
+    const hashParams = new URLSearchParams(hash.slice(1));
+    const hashError = hashParams.get("error") || hashParams.get("errorMessage");
+    if (hashError) return hashError;
+  }
+  return null;
+}
+
 export default function AuthCallbackPage() {
   const params = useSearchParams();
   const router = useRouter();
@@ -36,9 +47,24 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     async function handleCallback() {
       try {
-        if (error) {
-          console.error("Social login error:", error);
-          toast.error(t("loginFailed"));
+        const errorFromHash = getErrorFromHashOrQuery();
+        const effectiveError = error || errorFromHash || undefined;
+        if (effectiveError) {
+          console.error("Social login error:", effectiveError);
+          const code = (effectiveError || "").toUpperCase();
+          switch (code) {
+            case "EMAIL_REQUIRED":
+              toast.error(t("socialEmailRequired"));
+              break;
+            case "USER_NOT_FOUND":
+              toast.error(t("socialUserNotFound"));
+              break;
+            case "INTERNAL_ERROR":
+              toast.error(t("socialInternalError"));
+              break;
+            default:
+              toast.error(t("loginFailed"));
+          }
           router.replace(`/auth/login`);
           return;
         }

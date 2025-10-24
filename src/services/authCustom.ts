@@ -76,3 +76,7 @@ export function customUpdateProfile(params: { username?: string; serviceType?: s
 export function customUpdatePassword(params: { currentPassword: string; newPassword: string }) {
   return authedJson<{ status: "password_updated" }>("PUT", "/api/auth/custom-update-password", params);
 }
+
+export function customSetPasswordFirstTime(params: { newPassword: string }) {
+  return authedJson<{ status: "password_set" }>("POST", "/api/social-auth/set-password", params);
+}

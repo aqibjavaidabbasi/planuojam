@@ -8,6 +8,9 @@
       "loggingIn": "Вход...",
       "loggedIn": "Вы успешно вошли!",
       "loginFailed": "Не удалось войти. Попробуйте ещё раз.",
+      "socialEmailRequired": "Для входа через соцсети необходим email.",
+      "socialUserNotFound": "Аккаунт для этого провайдера не найден. Зарегистрируйтесь или используйте другой способ.",
+      "socialInternalError": "Произошла ошибка при входе через соцсети. Попробуйте ещё раз.",
       "emailLabel": "Email",
       "emailRequired": "Требуется email",
       "emailInvalid": "Некорректный email",
@@ -922,9 +925,14 @@
       "notSpecified": "Не указано"
     },
     "VenueCard": {
-      "title": "Информация о площадке",
+      "title": "Детали площадки",
       "capacity": "Вместимость: {count}",
       "location": "Местоположение"
+    },
+    "PricingPlans": {
+      "featuresHeading": "Список функций",
+      "optionalAddonsHeading": "Дополнительные опции",
+      "noFeatures": "В этом плане функции не указаны."
     }
   },
   "Dynamic": {

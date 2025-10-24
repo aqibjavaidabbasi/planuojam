@@ -8,6 +8,9 @@
       "loggingIn": "Jungiama...",
       "loggedIn": "Sėkmingai prisijungėte!",
       "loginFailed": "Prisijungti nepavyko. Bandykite dar kartą.",
+      "socialEmailRequired": "El. paštas būtinas socialiniam prisijungimui.",
+      "socialUserNotFound": "Šiam tiekėjui paskyra nerasta. Užsiregistruokite arba naudokite kitą būdą.",
+      "socialInternalError": "Kažkas nepavyko prisijungiant per socialinius tinklus. Bandykite dar kartą.",
       "emailLabel": "El. paštas",
       "emailPlaceholder": "Įveskite el. paštą",
       "emailRequired": "El. paštas yra privalomas",
@@ -880,6 +883,11 @@
       "title": "Vietos informacija",
       "capacity": "Talpa: {count}",
       "location": "Vieta"
+    },
+    "PricingPlans": {
+      "featuresHeading": "Funkcijų sąrašas",
+      "optionalAddonsHeading": "Papildomos parinktys",
+      "noFeatures": "Šiame plane nenurodytos funkcijos."
     }
   },
   "Dynamic": {

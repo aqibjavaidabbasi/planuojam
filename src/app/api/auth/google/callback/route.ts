@@ -38,8 +38,10 @@ export async function GET(req: NextRequest) {
     });
 
     if (!tokenRes.ok) {
-      const text = await tokenRes.text();
-      return new Response(`Token exchange failed: ${text}`, { status: 400 });
+      const finalRedirect = `${base}/auth/callback`;
+      const url = new URL(finalRedirect);
+      url.searchParams.set("error", "INTERNAL_ERROR");
+      return Response.redirect(url.toString(), 302);
     }
 
     const tokenJson = await tokenRes.json();
@@ -49,8 +51,10 @@ export async function GET(req: NextRequest) {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     if (!userRes.ok) {
-      const text = await userRes.text();
-      return new Response(`Userinfo fetch failed: ${text}`, { status: 400 });
+      const finalRedirect = `${base}/auth/callback`;
+      const url = new URL(finalRedirect);
+      url.searchParams.set("error", "INTERNAL_ERROR");
+      return Response.redirect(url.toString(), 302);
     }
     
     const profile = await userRes.json();
@@ -74,11 +78,20 @@ export async function GET(req: NextRequest) {
         mode,
         serviceType: serviceType || null,
         providerUserId,
+        authProvider: 'google',
       }),
     });
     if (!exchangeRes.ok) {
       const text = await exchangeRes.text();
-      return new Response(`Social exchange failed: ${text}`, { status: 400 });
+      let code = 'INTERNAL_ERROR';
+      try {
+        const parsed = JSON.parse(text);
+        if (parsed?.error) code = String(parsed.error).toUpperCase();
+      } catch {}
+      const finalRedirect = `${base}/auth/callback`;
+      const url = new URL(finalRedirect);
+      url.searchParams.set("error", code);
+      return Response.redirect(url.toString(), 302);
     }
 
     const exchangeJson = await exchangeRes.json();
@@ -88,10 +101,11 @@ export async function GET(req: NextRequest) {
     const url = new URL(finalRedirect);
     if (jwt) url.searchParams.set("jwt", jwt);
     return Response.redirect(url.toString(), 302);
-  } catch (e: unknown) {
-    if (e instanceof Error) {
-      return new Response(`Unhandled error: ${e.message}`, { status: 500 });
-    }
-    return new Response(`Unhandled error: ${e}`, { status: 500 });
+  } catch {
+    const base = getAppBaseUrl(req as unknown as Request);
+    const finalRedirect = `${base}/auth/callback`;
+    const url = new URL(finalRedirect);
+    url.searchParams.set("error", "INTERNAL_ERROR");
+    return Response.redirect(url.toString(), 302);
   }
 }

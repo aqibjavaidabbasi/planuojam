@@ -57,9 +57,10 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
               id={inputId}
               disabled={disabled}
               international
+              defaultCountry="LT"
               inputComponent={StyledInput as React.ComponentType<React.InputHTMLAttributes<HTMLInputElement>>}
               className={`flex items-center gap-2 ${className}`}
-              countrySelectProps={{
+              countrySelectProps={{ 
                 className:
                   'py-1.5 md:py-2.5 px-2.5 md:px-3 border border-border rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-primary ' +
                   (disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60' : ''),

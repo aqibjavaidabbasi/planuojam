@@ -8,6 +8,9 @@
       "loggingIn": "Logging in...",
       "loggedIn": "Logged in successfully!",
       "loginFailed": "Login failed. Please try again.",
+      "socialEmailRequired": "Email is required for social login.",
+      "socialUserNotFound": "No account found for this provider. Please sign up or use a different method.",
+      "socialInternalError": "Something went wrong during social login. Please try again.",
       "emailLabel": "Email",
       "emailPlaceholder": "Enter your email",
       "emailRequired": "Email is required",
@@ -497,6 +500,11 @@
       "title": "Venue Details",
       "capacity": "Capacity: {count}",
       "location": "Location"
+    },
+    "PricingPlans": {
+      "featuresHeading": "Features",
+      "optionalAddonsHeading": "Optional Addons",
+      "noFeatures": "No features mentioned in this plan."
     }
   },
   "Global": {

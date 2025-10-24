@@ -8,6 +8,9 @@
       "loggingIn": "Logowanie...",
       "loggedIn": "Pomyślnie zalogowano!",
       "loginFailed": "Logowanie nie powiodło się. Spróbuj ponownie.",
+      "socialEmailRequired": "Email jest wymagany do logowania społecznościowego.",
+      "socialUserNotFound": "Nie znaleziono konta dla tego dostawcy. Zarejestruj się lub użyj innej metody.",
+      "socialInternalError": "Coś poszło nie tak podczas logowania społecznościowego. Spróbuj ponownie.",
       "emailLabel": "Email",
       "emailPlaceholder": "Wpisz swój email",
       "emailRequired": "Email jest wymagany",
@@ -507,6 +510,11 @@
       "title": "Szczegóły miejsca",
       "capacity": "Pojemność: {count}",
       "location": "Lokalizacja"
+    },
+    "PricingPlans": {
+      "featuresHeading": "Lista funkcji",
+      "optionalAddonsHeading": "Opcjonalne dodatki",
+      "noFeatures": "W tym planie nie wymieniono funkcji."
     }
   },
   "Global": {
