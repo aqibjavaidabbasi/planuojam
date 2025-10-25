@@ -595,6 +595,15 @@
       }
     },
     "ListingItem": {
+      "days": {
+        "monday": "Esmaspäev",
+        "tuesday": "Teisipäev",
+        "wednesday": "Kolmapäev",
+        "thursday": "Neljapäev",
+        "friday": "Reede",
+        "saturday": "Laupäev",
+        "sunday": "Pühapäev"
+      },
       "errors": {
         "noImage": "Palun laadige üles vähemalt üks pilt",
         "invalidServiceType": "Teil pole selle kuulutuse loomiseks õigusi"
@@ -955,28 +964,29 @@
       "generic": "Midagi läks valesti. Palun proovi uuesti."
     },
     "Auth": {
-      "emailInvalid": "Palun sisesta korrektne e-posti aadress.",
-      "emailTaken": "See e-post on juba kasutusel.",
-      "usernameTaken": "See kasutajanimi on juba kasutusel.",
+      "invalidPayload": "Palun täida kõik nõutud väljad",
+      "emailInvalid": "Palun sisesta korrektne e-posti aadress",
+      "emailTaken": "See e-post on juba kasutusel",
+      "usernameTaken": "See kasutajanimi on juba kasutusel",
+      "registerFailed": "Registreerimine ebaõnnestus. Palun proovi uuesti",
+      "otpInvalid": "Sisestatud kood on vale",
+      "otpExpired": "Kood on aegunud. Palun taotle uus",
+      "tooManyRequests": "Liiga palju päringuid. Palun oota hetk",
+      "emailNotRegistered": "Selle e-postiga kontot ei leitud",
+      "userNotFound": "Kasutajat ei leitud",
+      "userBlocked": "See konto on blokeeritud",
+      "emailNotConfirmed": "Palun kinnita oma e-posti aadress",
+      "invalidCredentials": "Vale e-post või parool",
+      "unauthorized": "Palun logi sisse jätkamiseks",
       "noToken": "Kontrolli oma internetiühendust ja proovi uuesti",
-      "invalidCredentials": "Kontrolli oma e-posti või parooli ja proovi uuesti!",
-      "registerFailed": "Registreerimine ebaõnnestus. Palun proovi hiljem uuesti!",
-      "emailConfirmFailed": "E-posti kinnitamine ebaõnnestus. Palun proovi uuesti.",
-      "emailNotConfirmed": "Palun kinnita oma e-post, et jätkata.",
-      "userBlocked": "Sinu konto on blokeeritud.",
-      "userNotFound": "Me ei leidnud selle e-postiga kontot.",
-      "forgotFailed": "Parooli lähtestamise e-kirja saatmine ebaõnnestus. Palun proovi hiljem uuesti!",
-      "resetFailed": "Parooli lähtestamine ebaõnnestus. Palun proovi hiljem uuesti!",
-      "emailNotRegistered": "See e-post ei ole registreeritud.",
-      "otpInvalid": "Sisestatud kood on vale.",
-      "otpExpired": "Kood on aegunud. Palun taotle uus.",
-      "tooManyRequests": "Liiga palju päringuid. Palun oota enne uuesti proovimist.",
-      "resetTokenInvalid": "Vale või aegunud lähtestamise token.",
-      "updateUserFailed": "Kasutaja uuendamine ebaõnnestus, palun proovi hiljem uuesti!",
-      "updatePasswordFailed": "Parooli uuendamine ebaõnnestus, palun proovi hiljem uuesti!",
-      "missingToken": "Kontrolli oma internetiühendust ja proovi uuesti",
-      "registerNoResponse": "Registreerimine ebaõnnestus — server ei vastanud",
-      "userIdRequired": "Kasutaja andmete uuendamiseks on vajalik kasutaja ID"
+      "emailConfirmFailed": "E-posti kinnitamine ebaõnnestus. Palun proovi uuesti",
+      "forgotFailed": "Parooli lähtestamise e-kirja saatmine ebaõnnestus. Palun proovi hiljem uuesti",
+      "resetFailed": "Parooli lähtestamine ebaõnnestus. Palun proovi hiljem uuesti",
+      "resetTokenInvalid": "Vigane või aegunud lähtestamise kood",
+      "updatePasswordFailed": "Parooli uuendamine ebaõnnestus, palun proovi hiljem uuesti",
+      "registerNoResponse": "Registreerimine ebaõnnestus — serverilt ei saadud vastust",
+      "userIdRequired": "Kasutaja andmete uuendamiseks on vajalik kasutaja ID",
+      "updateUserFailed": "Kasutaja uuendamine ebaõnnestus, palun proovi hiljem uuesti"
     }
   },
   "Search": {

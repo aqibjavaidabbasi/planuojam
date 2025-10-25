@@ -33,7 +33,13 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
     const { parentCategories } = useParentCategories();
 
     const eventTypeNames: string[] = []
-    eventTypes.map(event => eventTypeNames.push(event.eventName));
+    eventTypes.forEach(event=>{
+        if (locale === 'en') {
+            eventTypeNames.push(event.eventName);
+        } else {
+            eventTypeNames.push(event.localizations?.filter(loc => loc.locale === locale)?.map(loc => loc.eventName)[0] || event.eventName);
+        }
+    })
     
     const categoryOptions = locale === 'en' ? {
         name: 'category',

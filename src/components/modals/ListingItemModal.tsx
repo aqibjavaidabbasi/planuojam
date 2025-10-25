@@ -566,15 +566,16 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                         updated[idx] = { ...(updated[idx] || {}), day: e.target.value as "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday" }
                         setValue("workingSchedule", updated, { shouldDirty: true })
                       }}
-                      options={[
-                        { label: "Monday", value: "monday" },
-                        { label: "Tuesday", value: "tuesday" },
-                        { label: "Wednesday", value: "wednesday" },
-                        { label: "Thursday", value: "thursday" },
-                        { label: "Friday", value: "friday" },
-                        { label: "Saturday", value: "saturday" },
-                        { label: "Sunday", value: "sunday" },
-                      ]}
+                  options={[
+                    { label: t('workingSchedule.placeholder', { default: 'Select day' }) as string, value: '' },
+                    { label: t('days.monday', { default: 'Monday' }), value: 'monday' },
+                    { label: t('days.tuesday', { default: 'Tuesday' }), value: 'tuesday' },
+                    { label: t('days.wednesday', { default: 'Wednesday' }), value: 'wednesday' },
+                    { label: t('days.thursday', { default: 'Thursday' }), value: 'thursday' },
+                    { label: t('days.friday', { default: 'Friday' }), value: 'friday' },
+                    { label: t('days.saturday', { default: 'Saturday' }), value: 'saturday' },
+                    { label: t('days.sunday', { default: 'Sunday' }), value: 'sunday' },
+                  ]}
                     />
                   </div>
                   <div className="md:col-span-2">

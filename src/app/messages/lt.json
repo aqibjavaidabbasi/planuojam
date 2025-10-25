@@ -361,6 +361,15 @@
       }
     },
     "ListingItem": {
+      "days": {
+        "monday": "Pirmadienis",
+        "tuesday": "Antradienis",
+        "wednesday": "Trečiadienis",
+        "thursday": "Ketvirtadienis",
+        "friday": "Penktadienis",
+        "saturday": "Šeštadienis",
+        "sunday": "Sekmadienis"
+      },
       "errors": {
         "noImage": "Prašome įkelti bent vieną nuotrauką",
         "invalidServiceType": "Jūs neturite leidimų kurti šio įrašo"

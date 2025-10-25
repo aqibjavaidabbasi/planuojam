@@ -86,7 +86,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
   const onSubmitVendor = async (values: VendorForm) => {
     // minimal validation
     if (values.serviceArea?.some(sa => !sa.city || !sa.state)) {
-      toast.error(t("errors.cityStateRequired", { default: "Each service area needs a city and state" }))
+      toast.error(t("errors.cityStateRequired"))
       return
     }
     setSubmitting(true)
@@ -304,6 +304,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                   <Select
                     label={t("citylabel")}
                     disabled={submitting}
+                    required
                     value={vendorRHF.watch(`serviceArea.${idx}.city`) || ""}
                     onChange={(e) => vendorRHF.setValue(`serviceArea.${idx}.city`, e.target.value, { shouldDirty: true })}
                     options={[{ label: t("selectcity"), value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
@@ -311,6 +312,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                   <Select
                     label={t("statelabel")}
                     disabled={submitting}
+                    required
                     value={vendorRHF.watch(`serviceArea.${idx}.state`) || ""}
                     onChange={(e) => vendorRHF.setValue(`serviceArea.${idx}.state`, e.target.value, { shouldDirty: true })}
                     options={[{ label: t("selectstate"), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}

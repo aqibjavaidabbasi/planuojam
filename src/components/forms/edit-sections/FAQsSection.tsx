@@ -59,6 +59,7 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
               <div className="col-span-12 md:col-span-5">
                 <Input
                   type="text"
+                  required
                   label={`${t("question")} ${idx + 1}`}
                   disabled={submitting}
                   {...register(`items.${idx}.question` as const, {
@@ -69,6 +70,7 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
               <div className="col-span-12 md:col-span-6">
                 <Input
                   type="text"
+                  required
                   label={`${t("answer")} ${idx + 1}`}
                   disabled={submitting}
                   {...register(`items.${idx}.answer` as const, {

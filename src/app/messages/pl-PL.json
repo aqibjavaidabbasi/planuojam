@@ -595,6 +595,15 @@
       }
     },
     "ListingItem": {
+      "days": {
+        "monday": "Poniedziałek",
+        "tuesday": "Wtorek",
+        "wednesday": "Środa",
+        "thursday": "Czwartek",
+        "friday": "Piątek",
+        "saturday": "Sobota",
+        "sunday": "Niedziela"
+      },
       "errors": {
         "noImage": "Proszę przesłać co najmniej jedno zdjęcie",
         "invalidServiceType": "Nie masz uprawnień do utworzenia tej oferty"

@@ -148,7 +148,14 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
           <Checkbox label={t("featured")} checked={!!watch("featured")} onChange={(e) => setValue("featured", e.target.checked)} disabled={submitting} />
         </div>
         <div className="col-span-2">
-          <TextArea label={t("description")} placeholder={t("titleDescription")} rows={4} disabled={submitting} {...register("description", { required: t("errors.descriptionRequired") })} />
+          <TextArea 
+            label={t("description")} 
+            placeholder={t("titleDescription")} 
+            rows={4} 
+            disabled={submitting} 
+            required
+            {...register("description", { required: t("errors.descriptionRequired") })} 
+          />
           {errors.description && <p className="text-red-500 text-sm mt-1">{String(errors.description.message)}</p>}
         </div>
         <div className="col-span-2" >
@@ -179,7 +186,7 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
             <div key={idx} className="grid grid-cols-1 md:grid-cols-7 gap-3 items-end mb-2">
               <div className="md:col-span-3">
                 <Select
-                  label={tModal('workingSchedule.day', { default: 'Day' })}
+                  label={tModal('workingSchedule.day')}
                   disabled={submitting}
                   value={it?.day || ''}
                   onChange={(e) => {
@@ -190,13 +197,13 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
                   }}
                   options={[
                     { label: tModal('workingSchedule.placeholder', { default: 'Select day' }) as string, value: '' },
-                    { label: 'Monday', value: 'monday' },
-                    { label: 'Tuesday', value: 'tuesday' },
-                    { label: 'Wednesday', value: 'wednesday' },
-                    { label: 'Thursday', value: 'thursday' },
-                    { label: 'Friday', value: 'friday' },
-                    { label: 'Saturday', value: 'saturday' },
-                    { label: 'Sunday', value: 'sunday' },
+                    { label: tModal('days.monday', { default: 'Monday' }), value: 'monday' },
+                    { label: tModal('days.tuesday', { default: 'Tuesday' }), value: 'tuesday' },
+                    { label: tModal('days.wednesday', { default: 'Wednesday' }), value: 'wednesday' },
+                    { label: tModal('days.thursday', { default: 'Thursday' }), value: 'thursday' },
+                    { label: tModal('days.friday', { default: 'Friday' }), value: 'friday' },
+                    { label: tModal('days.saturday', { default: 'Saturday' }), value: 'saturday' },
+                    { label: tModal('days.sunday', { default: 'Sunday' }), value: 'sunday' },
                   ]}
                 />
               </div>

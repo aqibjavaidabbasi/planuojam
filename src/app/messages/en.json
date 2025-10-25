@@ -941,6 +941,7 @@
       "generic": "Something went wrong. Please try again."
     },
     "Auth": {
+      "invalidPayload": "Please provide all required information",
       "emailInvalid": "Please enter a valid email address.",
       "emailTaken": "This email is already in use.",
       "usernameTaken": "This username is already in use.",
