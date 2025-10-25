@@ -534,6 +534,11 @@
       "ru": "Rosyjski",
       "pl-PL": "Polski",
       "et": "Estoński"
+    },
+    "Header": {
+      "eventTypes": "Typy wydarzeń",
+      "openNav": "Otwórz menu nawigacji",
+      "closeNav": "Zamknij menu nawigacji"
     }
   },
   "NotFound": {
@@ -894,6 +899,12 @@
           "updateFailed": "Nie udało się zaktualizować cennika"
         }
       }
+    },
+    "MapPicker": {
+      "lat": "łac:",
+      "lng": "Dł:",
+      "cancel": "Anulować",
+      "useThisLocation": "Skorzystaj z tej lokalizacji"
     }
   },
   "Dynamic": {
@@ -1145,7 +1156,8 @@
       "ctaStyle": "Styl CTA",
       "features": "Funkcje",
       "addonStatement": "Opis dodatku",
-      "addonPrice": "Cena dodatku"
+      "addonPrice": "Cena dodatku",
+      "deletePlan": "Usuń plan"
     },
     "styleOptions": {
       "primary": "Podstawowy",

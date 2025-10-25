@@ -534,6 +534,11 @@
       "ru": "Vene",
       "pl-PL": "Poola",
       "et": "Eesti"
+    },
+    "Header": {
+      "eventTypes": "Ürituse tüübid",
+      "openNav": "Ava navigeerimismenüü",
+      "closeNav": "Sule navigeerimismenüü"
     }
   },
   "NotFound": {
@@ -896,6 +901,12 @@
           "updateFailed": "Hinnakujunduse uuendamine ebaõnnestus"
         }
       }
+    },
+    "MapPicker": {
+      "lat": "Lat:",
+      "lng": "Lng:",
+      "cancel": "Tühista",
+      "useThisLocation": "Kasutage seda asukohta"
     }
   },
   "Dynamic": {
@@ -1142,7 +1153,8 @@
       "ctaStyle": "CTA stiil",
       "features": "Omadused",
       "addonStatement": "Lisa kirjeldus",
-      "addonPrice": "Lisa hind"
+      "addonPrice": "Lisa hind",
+      "deletePlan": "Kustuta plaan"
     },
     "styleOptions": {
       "primary": "Peamine",

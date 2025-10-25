@@ -41,7 +41,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
   const { states } = useStates()
   const [vendorPickerIndex, setVendorPickerIndex] = useState<number | null>(null)
   const [venuePickerOpen, setVenuePickerOpen] = useState(false)
-  
+
   const vendorSource = listing.listingItem.find(item => item.__component === "dynamic-blocks.vendor")
 
   // Start with minimal defaults; we'll reset with mapped values once cities/states are available
@@ -53,7 +53,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
 
   const venueSource = listing.listingItem.find(item => item.__component === "dynamic-blocks.venue")
 
-  const venueLoc = (venueSource?.location ?? {}) as Partial<{ address: string; city: {documentId: string}; state: {documentId: string}; latitude: number; longitude: number }>
+  const venueLoc = (venueSource?.location ?? {}) as Partial<{ address: string; city: { documentId: string }; state: { documentId: string }; latitude: number; longitude: number }>
 
   const bookingTypeRaw = venueSource?.bookingDurationType
   const bookingType: VenueForm["bookingDurationType"] = bookingTypeRaw === "Per Day" || bookingTypeRaw === "Per Hour" ? bookingTypeRaw : ""
@@ -283,7 +283,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
     })
   }, [venueSource, venueLoc.address, venueLoc.city, venueLoc.state, venueLoc.latitude, venueLoc.longitude, bookingType, venueRHF])
 
-   const t=useTranslations("vendorvenueSection")
+  const t = useTranslations("vendorvenueSection")
   return (
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-4">{`${isVendor ? t("vendor") : t("venue")} ${t("details")}`}</h3>
@@ -300,8 +300,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
               </Button>
             </div>
             {serviceAreas.map((field, idx) => (
-              <div key={field.id} className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
-                <div className="col-span-2">
+              <div key={field.id} className="flex flex-col gap-3 mb-3">
                   <Select
                     label={t("citylabel")}
                     disabled={submitting}
@@ -309,8 +308,6 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                     onChange={(e) => vendorRHF.setValue(`serviceArea.${idx}.city`, e.target.value, { shouldDirty: true })}
                     options={[{ label: t("selectcity"), value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
                   />
-                </div>
-                <div className="col-span-2">
                   <Select
                     label={t("statelabel")}
                     disabled={submitting}
@@ -318,8 +315,6 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                     onChange={(e) => vendorRHF.setValue(`serviceArea.${idx}.state`, e.target.value, { shouldDirty: true })}
                     options={[{ label: t("selectstate"), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
                   />
-                </div>
-                <div className="col-span-1">
                   <Input
                     type="number"
                     step="any"
@@ -335,8 +330,6 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                       },
                     })}
                   />
-                </div>
-                <div className="col-span-1">
                   <Input
                     type="number"
                     step="any"
@@ -352,8 +345,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                       },
                     })}
                   />
-                </div>
-                <div className="col-span-6 flex gap-3">
+                <div className="flex flex-col md:flex-row gap-3">
                   <Button type="button" style="secondary" disabled={submitting} onClick={() => onFetchVendorCoords(idx)}>
                     {t("fetchcoordinates")}
                   </Button>
@@ -376,11 +368,8 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
         </form>
       ) : (
         <form onSubmit={submitVenue(onSubmitVenue)} id="venue-form" className="flex flex-col gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
-            <div className="col-span-2">
+          <div className="flex gap-3 flex-col">
               <Input type="text" label={t("address")} disabled={submitting} {...venueRegister("location.address")} />
-            </div>
-            <div className="col-span-2">
               <Select
                 label={t("city")}
                 disabled={submitting}
@@ -388,8 +377,6 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                 onChange={(e) => venueRHF.setValue("location.city", e.target.value, { shouldDirty: true })}
                 options={[{ label: t("selectcity"), value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
               />
-            </div>
-            <div className="col-span-2">
               <Select
                 label={t("state")}
                 disabled={submitting}
@@ -397,10 +384,8 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                 onChange={(e) => venueRHF.setValue("location.state", e.target.value, { shouldDirty: true })}
                 options={[{ label: t("selectstate"), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
               />
-            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
-            <div className="col-span-3">
+          <div className="flex gap-3 flex-col">
               <Input
                 type="number"
                 step="any"
@@ -416,8 +401,6 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                   },
                 })}
               />
-            </div>
-            <div className="col-span-3">
               <Input
                 type="number"
                 step="any"
@@ -433,8 +416,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                   },
                 })}
               />
-            </div>
-            <div className="col-span-6 flex gap-3">
+            <div className="flex flex-col md:flex-row gap-3">
               <Button type="button" style="secondary" disabled={submitting} onClick={onFetchVenueCoords}>
                 {t("fetchcoordinates")}
               </Button>
@@ -443,35 +425,27 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
               </Button>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
-            <div className="col-span-2">
-              <Input type="number" label={t("capacity")} disabled={submitting} {...venueRegister("capacity", { valueAsNumber: true })} />
-            </div>
-            <div className="col-span-2">
-              <Select
-                label={t("bookingdurationtype")}
-                disabled={submitting}
-                value={venueRHF.watch("bookingDurationType") || ""}
-                onChange={(e) => venueRHF.setValue("bookingDurationType", e.target.value as VenueForm["bookingDurationType"], { shouldDirty: true })}
-                options={[
-                  { label: t("selectdurationtype"), value: "" },
-                  { label: t("perday"), value: "Per Day" },
-                  { label: t("perhour"), value: "Per Hour" }
-                ]}
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
-            <div className="col-span-2">
-              <Input type="number" label={t("bookingduration")} disabled={submitting} {...venueRegister("bookingDuration", { valueAsNumber: true })} />
-            </div>
+          <div className="flex gap-3 flex-col">
+            <Input type="number" label={t("capacity")} disabled={submitting} {...venueRegister("capacity", { valueAsNumber: true })} />
+            <Select
+              label={t("bookingdurationtype")}
+              disabled={submitting}
+              value={venueRHF.watch("bookingDurationType") || ""}
+              onChange={(e) => venueRHF.setValue("bookingDurationType", e.target.value as VenueForm["bookingDurationType"], { shouldDirty: true })}
+              options={[
+                { label: t("selectdurationtype"), value: "" },
+                { label: t("perday"), value: "Per Day" },
+                { label: t("perhour"), value: "Per Hour" }
+              ]}
+            />
+            <Input type="number" label={t("bookingduration")} disabled={submitting} {...venueRegister("bookingDuration", { valueAsNumber: true })} />
           </div>
 
           <div>
             <div className="flex justify-between items-center mb-2">
               <h4 className="font-medium">{t("amenities")}</h4>
               <Button type="button" style="secondary" disabled={submitting} onClick={() => appendAmenity({ text: "" })}>
-              {t("adamenity")}
+                {t("adamenity")}
               </Button>
             </div>
             {amenities.map((field, idx) => (
@@ -498,7 +472,6 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
         <MapPickerModal
           isOpen={vendorPickerIndex !== null}
           onClose={() => setVendorPickerIndex(null)}
-          title={t("picklocation", { default: "Pick location" })}
           initial={(() => {
             const latStr = vendorRHF.getValues(`serviceArea.${vendorPickerIndex}.latitude`)
             const lngStr = vendorRHF.getValues(`serviceArea.${vendorPickerIndex}.longitude`)
@@ -520,7 +493,6 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
         <MapPickerModal
           isOpen={venuePickerOpen}
           onClose={() => setVenuePickerOpen(false)}
-          title={t("picklocation", { default: "Pick location" })}
           initial={(() => {
             const latStr = venueRHF.getValues("location.latitude")
             const lngStr = venueRHF.getValues("location.longitude")

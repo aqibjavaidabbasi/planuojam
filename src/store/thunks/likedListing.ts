@@ -7,10 +7,14 @@ import { createLikedListing, deleteLikedListing } from "@/services/likedListing"
 export const fetchLikedListing = createAsyncThunk(
     'wishlist/fetchLikedListing',
     async (
-      { userId, locale }: { userId: string; locale: string },
+      { userId, locale }: { userId: number; locale?: string },
       thunkApi
     ) => {
       try {
+        if (!userId) {
+          return thunkApi.rejectWithValue('User ID is required')
+        }
+        
         const res = await getLikedListings(userId, locale)
         return res.data
       } catch (err: unknown) {
@@ -21,26 +25,24 @@ export const fetchLikedListing = createAsyncThunk(
   
   export const addToLikedListing = createAsyncThunk(
     'wishlist/addToLikedListing',
-    async (listingId: string, thunkApi) => {
+    async (documentId: string, thunkApi) => {
       const state = thunkApi.getState() as RootState
-      const userId = state.auth.user?.documentId
-  
+      const userId = state.auth.user?.id
       
       try {
           if (!userId) {
             return thunkApi.rejectWithValue('User not logged in')
           }
-          if (!listingId) {
-            return thunkApi.rejectWithValue('Listing ID is required')
+          if (!documentId) {
+            return thunkApi.rejectWithValue('Listing document ID is required')
           }
-          const data = {
-            data : {
-                user: userId,
-                listing: listingId
-            }
-          }
-        const res = await createLikedListing(data)
-        return res.data
+
+          const res = await createLikedListing({
+            userId: Number(userId),
+            listing: documentId
+          })
+          
+          return res.data
       } catch (err: unknown) {
         return thunkApi.rejectWithValue(getStrapiErrorMessage(err as ExpectedError))
       }
@@ -49,17 +51,17 @@ export const fetchLikedListing = createAsyncThunk(
   
   export const removeFromLikedListing = createAsyncThunk(
     'wishlist/removeFromLikedListing',
-    async (listingId: string, thunkApi) => {
+    async (documentId: string, thunkApi) => {
       const state = thunkApi.getState() as RootState
-      const userId = state.auth.user?.documentId
-  
+      const userId = state.auth.user?.id
+
       if (!userId) {
         return thunkApi.rejectWithValue('User not logged in')
       }
-  
+
       try {
-        await deleteLikedListing(listingId)
-        return listingId
+        await deleteLikedListing(documentId)
+        return documentId
       } catch (err: unknown) {
         return thunkApi.rejectWithValue(getStrapiErrorMessage(err as ExpectedError))
       }

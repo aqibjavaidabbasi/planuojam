@@ -165,7 +165,7 @@ function RegisterPage() {
                     disabled={isSubmitting}
                   />
                   <div
-                    className={`border-2 border-gray-200 rounded-lg p-4 ${
+                    className={`border-2 border-gray-200 rounded-lg p-2 md:p-4 ${
                       isSubmitting
                         ? "cursor-not-allowed opacity-60"
                         : "cursor-pointer"
@@ -175,10 +175,10 @@ function RegisterPage() {
                     }`}
                   >
                     <div className="text-center">
-                      <div className="w-8 h-8 mx-auto mb-2 text-gray-600">
+                      <div className="w-8 h-8 mx-auto mb-1 md:mb-2 text-gray-600">
                         <BsCart3 size={20} />
                       </div>
-                      <div className="font-medium text-gray-800">
+                      <div className="font-medium text-sm md:text-base text-gray-800">
                         {t("roleBuyer")}
                       </div>
                       <div className="text-xs text-gray-500 mt-1">
@@ -196,7 +196,7 @@ function RegisterPage() {
                     disabled={isSubmitting}
                   />
                   <div
-                    className={`border-2 border-gray-200 rounded-lg p-4 ${
+                    className={`border-2 border-gray-200 rounded-lg p-2 md:p-4 ${
                       isSubmitting
                         ? "cursor-not-allowed opacity-60"
                         : "cursor-pointer"
@@ -206,10 +206,10 @@ function RegisterPage() {
                     }`}
                   >
                     <div className="text-center">
-                      <div className="w-8 h-8 mx-auto mb-2 text-gray-600">
+                      <div className="w-8 h-8 mx-auto mb-1 md:mb-2 text-gray-600">
                         <TbTools size={20} />
                       </div>
-                      <div className="font-medium text-gray-800">
+                      <div className="font-medium text-sm md:text-base text-gray-800">
                         {t("roleProvider")}
                       </div>
                       <div className="text-xs text-gray-500 mt-1">

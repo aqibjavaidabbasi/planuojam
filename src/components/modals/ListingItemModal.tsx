@@ -481,7 +481,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               />
               <ErrorMessage error={errors.title} />
             </div>
-            <div className="flex items-end" >
+            <div className="flex items-end col-span-2" >
               <Select
                 placeholder={t('fields.listingStatus.placeholder')}
                 disabled={isWorking}
@@ -495,7 +495,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               />
               <ErrorMessage error={errors.listingStatus} />
             </div>
-            <div>
+            <div className="col-span-2">
               <Input
                 type="number"
                 label={t('fields.price.label')}
@@ -511,7 +511,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               />
               <ErrorMessage error={errors.price} />
             </div>
-            <div className="flex items-center mt-6">
+            <div className="flex items-center mt-6 col-span-2">
               <Checkbox
                 label={t('fields.featured.label')}
                 checked={watch("featured")}
@@ -649,7 +649,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                     </Button>
                   </div>
                   {(form.listingItem?.[0]?.serviceArea || []).map((sa, idx) => (
-                    <div key={idx} className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
+                    <div key={idx} className="grid grid-cols-2 gap-3 items-end mb-3">
                       <div className="col-span-2">
                         <Select
                           label={t('fields.city.label')}
@@ -688,7 +688,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                           options={[{ label: t('fields.state.placeholder'), value: "" }, ...stateOptions.options]}
                         />
                       </div>
-                      <div className="col-span-1">
+                      <div className="col-span-2">
                         <Input
                           type="number"
                           step="any"
@@ -723,7 +723,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                           }}
                         />
                       </div>
-                      <div className="col-span-1">
+                      <div className="col-span-2">
                         <Input
                           type="number"
                           step="any"
@@ -758,8 +758,8 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                           }}
                         />
                       </div>
-                      <div className="col-span-6">
-                        <div className="flex gap-3">
+                      <div className="col-span-2">
+                        <div className="flex flex-col gap-3">
                           <Button
                             type="button"
                             style="secondary"
@@ -1008,8 +1008,8 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           {/* Contact */}
           <div className="border-b-2 border-primary/20 py-4">
             <h3 className="text-lg font-semibold mb-2">{t('contact.title')} </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="col-span-2">
+            <div className="flex flex-col gap-4">
+              <div>
                 <Input
                   type="email"
                   label={t('fields.email.label')}
@@ -1027,7 +1027,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 <Input type="text" label={t('fields.phone.label')} placeholder={t('fields.phone.placeholder')} disabled={isWorking} required {...register("contact.phone", { required: t('fields.phone.message') })} />
                 <ErrorMessage error={errors.contact?.phone} />
               </div>
-              <div className="col-span-3">
+              <div>
                 <Input
                   type="text"
                   disabled={isWorking}
@@ -1075,7 +1075,6 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
         <MapPickerModal
           isOpen={vendorPickerIndex !== null}
           onClose={() => setVendorPickerIndex(null)}
-          title={t('map.pickLocation')}
           initial={(() => {
             const sa = form.listingItem?.[0]?.serviceArea?.[vendorPickerIndex!]
             const lat = sa?.latitude && !isNaN(Number(sa.latitude)) ? Number(sa.latitude) : undefined
@@ -1104,7 +1103,6 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
         <MapPickerModal
           isOpen={venuePickerOpen}
           onClose={() => setVenuePickerOpen(false)}
-          title={t('map.pickLocation')}
           initial={(() => {
             const lat = form.listingItem?.[0]?.location?.latitude
             const lng = form.listingItem?.[0]?.location?.longitude

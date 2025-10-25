@@ -208,7 +208,7 @@ function ProfileTab({ user }: { user: User | null }) {
       </div>
 
       <div className="max-w-2xl">
-        <form className="flex gap-3 items-end w-full" id="usernameForm" onSubmit={updateUsername}>
+        <form className="flex flex-col md:flex-row gap-7 md:gap-3 items-end w-full" id="usernameForm" onSubmit={updateUsername}>
           <div className="w-full relative">
             <Input
               type="text"
@@ -242,15 +242,17 @@ function ProfileTab({ user }: { user: User | null }) {
               )}
             </div>
           </div>
+          <div className="w-full flex items-center">
           <Button
             style="primary"
             type='submit'
             form="usernameForm"
-            extraStyles="!rounded-md !whitespace-nowrap"
+            extraStyles="!rounded-md !whitespace-nowrap !w-full"
             disabled={loading || usernameStatus !== 'available'}
-          >
+            >
             {t('saveUsername')}
           </Button>
+            </div>
         </form>
         {usernameStatus === 'taken' && usernameSuggestions.length > 0 && (
           <div className="text-xs text-gray-600 flex flex-wrap gap-2 mt-10">

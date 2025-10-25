@@ -323,11 +323,11 @@
       "password": {
         "updateTitle": "Update Password",
         "currentLabel": "Current password",
-        "currentPlaceholder": "Enter your current password",
+        "currentPlaceholder": "Enter current password",
         "newLabel": "New password",
-        "newPlaceholder": "Enter your new password",
+        "newPlaceholder": "Enter new password",
         "confirmLabel": "Confirm password",
-        "confirmPlaceholder": "Confirm your new password",
+        "confirmPlaceholder": "Confirm your password",
         "updateCta": "Update password",
         "errors": {
           "currentRequired": "Current password is required",
@@ -524,6 +524,11 @@
       "ru": "Russian",
       "pl-PL": "Polish",
       "et": "Estonian"
+    },
+    "Header": {
+      "eventTypes": "Event Types",
+      "openNav": "Open navigation menu",
+      "closeNav": "Close navigation menu"
     }
   },
   "NotFound": {
@@ -859,6 +864,12 @@
         "optAddons": "Optional Addons:",
         "addOptAddon": "+ Add Optional Addon"
       }
+    },
+    "MapPicker": {
+      "lat": "Lat:",
+      "lng": "Lng:",
+      "cancel": "Cancel",
+      "useThisLocation": "Use This Location"
     }
   },
   "Reviews": {
@@ -1145,7 +1156,8 @@
       "ctaStyle": "CTA Style",
       "features": "Features",
       "addonStatement": "Addon Statement",
-      "addonPrice": "Addon Price"
+      "addonPrice": "Addon Price",
+      "deletePlan": "Delete Plan"
     },
     "styleOptions": {
       "primary": "Primary",

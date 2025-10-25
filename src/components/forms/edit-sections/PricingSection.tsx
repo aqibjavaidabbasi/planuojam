@@ -96,7 +96,7 @@ export default function PricingSection({
   // Subscribe to changes so UI re-renders when items are added/removed/edited
   const plans = form.watch("plans") || []
   const addons = form.watch("optionalAddons") || []
-  const t=useTranslations("pricingSection")
+  const t = useTranslations("pricingSection")
   return (
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-2">{t("labels.title")}</h3>
@@ -105,8 +105,8 @@ export default function PricingSection({
 
         <div className="flex flex-col gap-4 mt-2">
           {plans.map((p, idx) => (
-            <div key={idx} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
-              <div className="col-span-2">
+            <div key={idx} className="flex flex-col gap-3">
+              <div>
                 <Input
                   type="text"
                   label={t("labels.planName")}
@@ -119,7 +119,7 @@ export default function PricingSection({
                   }}
                 />
               </div>
-              <div className="col-span-1">
+              <div>
                 <Input
                   type="number"
                   label={t("labels.price")}
@@ -132,7 +132,7 @@ export default function PricingSection({
                   }}
                 />
               </div>
-              <div className="col-span-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <Input
                   type="text"
                   label={t("labels.ctaBodyText")}
@@ -170,7 +170,7 @@ export default function PricingSection({
                   ]}
                 />
               </div>
-              <div className="col-span-4">
+              <div>
                 <div className="flex flex-col gap-2">
                   <h4 className="text-gray-500 font-medium tracking-wide">{t("labels.features")}</h4>
                   {(p.featuresList || []).map((feature, fIdx) => (
@@ -209,15 +209,14 @@ export default function PricingSection({
                       list[idx] = { ...list[idx], featuresList: features }
                       form.setValue("plans", list, { shouldDirty: true })
                     }}>
-                     {t("+addfeature")}
+                      {t("+addfeature")}
                     </Button>
                   </div>
                 </div>
               </div>
-              <div className="col-span-4 flex justify-between">
-                <div />
+              <div>
                 <Button type="button" style="destructive" disabled={isWorking} size="large" onClick={() => removePlan(idx)}>
-                  <FaRegTrashAlt />
+                  {t("labels.deletePlan")} <FaRegTrashAlt />
                 </Button>
               </div>
             </div>
@@ -250,7 +249,7 @@ export default function PricingSection({
         <div className="mt-4">
           <h4 className="text-gray-500 font-medium tracking-wide">{t("optionaladdons")}:</h4>
           {addons.map((addon, idx) => (
-            <div key={idx} className="flex gap-2 mb-2 items-end">
+            <div key={idx} className="flex flex-col gap-2 mb-2">
               <Input
                 type="text"
                 label={`${t("labels.addonStatement")} ${idx + 1}`}
@@ -262,20 +261,22 @@ export default function PricingSection({
                   form.setValue("optionalAddons", list, { shouldDirty: true })
                 }}
               />
-              <Input
-                type="number"
-                label={`${t("labels.addonPrice")} ${idx + 1}`}
-                disabled={isWorking}
-                value={addon.price ?? ""}
-                onChange={(e) => {
-                  const list = [...(form.getValues("optionalAddons") || [])]
-                  list[idx] = { ...list[idx], price: Number(e.target.value) }
-                  form.setValue("optionalAddons", list, { shouldDirty: true })
-                }}
-              />
-              <Button type="button" style="destructive" size="large" disabled={isWorking} onClick={() => removeAddon(idx)}>
-                <FaRegTrashAlt />
-              </Button>
+              <div className="flex gap-2 items-end">
+                <Input
+                  type="number"
+                  label={`${t("labels.addonPrice")} ${idx + 1}`}
+                  disabled={isWorking}
+                  value={addon.price ?? ""}
+                  onChange={(e) => {
+                    const list = [...(form.getValues("optionalAddons") || [])]
+                    list[idx] = { ...list[idx], price: Number(e.target.value) }
+                    form.setValue("optionalAddons", list, { shouldDirty: true })
+                  }}
+                />
+                <Button type="button" style="destructive" size="large" disabled={isWorking} onClick={() => removeAddon(idx)}>
+                  <FaRegTrashAlt />
+                </Button>
+              </div>
             </div>
           ))}
           <Button

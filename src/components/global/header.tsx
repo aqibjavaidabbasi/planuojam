@@ -19,11 +19,13 @@ import {
 } from "@/config/i18n";
 import { useTranslations } from "next-intl";
 import { RootState } from "@/store";
+import { useSearchParams } from "next/navigation";
 
 function Header({ headerData }: { headerData: HeaderType }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const isHotDealActive = () => pathname.endsWith("/hot-deal");
   const isMapActive = () => pathname.endsWith("/map");
@@ -36,6 +38,9 @@ function Header({ headerData }: { headerData: HeaderType }) {
   };
   const t = useTranslations("hotdealstatic")
   const tLocales = useTranslations("Global.Locales")
+  const tHeader = useTranslations("Global.Header")
+  const eventTypeQuery = searchParams?.get("eventType") || "";
+
   useEffect(() => {
     const validateUser = async () => {
       const token = localStorage.getItem("token");
@@ -59,12 +64,12 @@ function Header({ headerData }: { headerData: HeaderType }) {
 
   //set liked listing state in header to set state globally on mount
   useEffect(() => {
-    if (!user?.documentId) return;
+    if (!user?.id) return;
     // Fetch liked listings when user id becomes available
-    dispatch(fetchLikedListing({ userId: user.documentId, locale: 'en' }))
+    dispatch(fetchLikedListing({ userId: user.id, locale: 'en' }))
       .unwrap()
       .catch(() => { });
-  }, [dispatch, user?.documentId]);
+  }, [dispatch, user?.id]);
 
   // Initialize selected locale
   useEffect(() => {
@@ -101,7 +106,36 @@ function Header({ headerData }: { headerData: HeaderType }) {
 
   //lock body scroll when mobile nav opens
   useEffect(function () {
-    document.body.style.overflow = mobileNavOpen ? "hidden" : "auto";
+    if (mobileNavOpen) {
+      // Prevent scrolling on body and html
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${window.scrollY}px`;
+      document.body.style.width = "100%";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      // Restore scrolling
+      const scrollY = document.body.style.top;
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.documentElement.style.overflow = "";
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || "0") * -1);
+      }
+    }
+
+    // Cleanup function to restore scroll on unmount
+    return () => {
+      if (mobileNavOpen) {
+        document.body.style.overflow = "";
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        document.documentElement.style.overflow = "";
+      }
+    };
   }, [mobileNavOpen])
 
   const handleLocaleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -137,13 +171,25 @@ function Header({ headerData }: { headerData: HeaderType }) {
   }
 
   const isEventTypeActive = (docId: string) => {
+    let active = false;
     const eventType = headerData?.eventTypes.find((et) => et.eventType.documentId === docId);
     if (!eventType) return false;
-    if (eventType.eventType.locale === 'en') return pathname.endsWith(`/event-types/${eventType.eventType.slug}`);
+    // Active when on the event type landing page
+    if (eventType.eventType.locale === 'en') active = pathname.endsWith(`/event-types/${eventType.eventType.slug}`);
     if (eventType.eventType.locale !== 'en') {
       const enEntry = eventType.eventType.localizations.find(loc => loc.locale === 'en');
-      return enEntry ? pathname.endsWith(`/event-types/${enEntry.slug}`) : pathname.endsWith(`/event-types/${eventType.eventType.slug}`);
+      if (enEntry ? pathname.endsWith(`/event-types/${enEntry.slug}`) : pathname.endsWith(`/event-types/${eventType.eventType.slug}`)) active = true;
     }
+
+    // Also consider service pages filtered by eventType query param
+    if (eventTypeQuery && pathname.includes('/service/')) {
+      const q = decodeURIComponent(eventTypeQuery);
+      const nameLocal = eventType.eventType.eventName;
+      const enLoc = eventType.eventType.locale === 'en' ? eventType.eventType : eventType.eventType.localizations.find(l => l.locale === 'en');
+      const nameEn = enLoc?.eventName || "";
+      if (q && (q === nameLocal || q === nameEn || nameLocal.includes(q) || nameEn.includes(q))) active = true;
+    }
+    return active;
   };
 
   return (
@@ -151,7 +197,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
       <div className="w-full bg-white shadow-sm px-2.5 md:px-4 py-2 ">
         <div className="max-w-screen lg:max-w-[1700px] mx-auto flex items-center justify-between">
           {/* Left: Logo and Nav */}
-          <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="flex items-center gap-3 md:w-auto">
             <Logo
               variant="md"
               onClick={() => router.push("/")}
@@ -181,20 +227,18 @@ function Header({ headerData }: { headerData: HeaderType }) {
           </div>
 
           {/* Right: Language, Search, User, Mobile Toggle */}
-          <div className="flex items-center gap-2 md:gap-3">
-            <div>
-              <Select
-                className="text-sm md:text-base"
-                value={selectedLocale}
-                onChange={handleLocaleChange}
-                options={SUPPORTED_LOCALES.map((code: string) => ({
-                  value: code,
-                  label: tLocales.has(code) ? tLocales(code) : code.toUpperCase(),
-                }))}
-              />
-            </div>
+          <div className="flex items-center gap-2 md:gap-4 lg:gap-5">
+            <Select
+              className="text-xs sm:text-sm md:text-base flex-1"
+              value={selectedLocale}
+              onChange={handleLocaleChange}
+              options={SUPPORTED_LOCALES.map((code: string) => ({
+                value: code,
+                label: tLocales.has(code) ? tLocales(code) : code.toUpperCase(),
+              }))}
+            />
             {/* Search: hidden on xs, visible from sm */}
-            <div className="hidden sm:block max-w-[160px] md:max-w-full">
+            <div className="hidden sm:block max-w-[140px] md:max-w-[200px] lg:max-w-full">
               <Search />
             </div>
 
@@ -204,7 +248,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
             {/* Mobile Nav Toggle */}
             <button
               className="md:hidden flex items-center justify-center p-2 rounded focus:outline-none"
-              aria-label="Open navigation menu"
+              aria-label={tHeader('openNav')}
               onClick={() => setMobileNavOpen(true)}
             >
               <FaBars className="text-xl text-primary" />
@@ -213,104 +257,108 @@ function Header({ headerData }: { headerData: HeaderType }) {
 
           {/* Mobile Nav Drawer */}
           {mobileNavOpen && (
-            <div className="fixed inset-0 z-40 bg-black/40 flex overflow-y-hidden">
-              <div className="bg-white w-[90%] max-w-xs h-full p-5 flex flex-col gap-4 animate-slide-in-left overflow-y-auto">
-                <div className="flex items-center justify-between">
-                  <Logo variant="sm" />
-                  <button
-                    className="p-2 rounded hover:bg-gray-100"
-                    aria-label="Close navigation menu"
-                    onClick={() => setMobileNavOpen(false)}
-                  >
-                    <IoMdClose className="text-2xl text-primary" />
-                  </button>
+            <div className="fixed inset-0 z-40 bg-black/40 flex overflow-hidden" style={{ height: '100dvh' }}>
+              <div className="bg-white w-[90%] max-w-xs flex flex-col animate-slide-in-left" style={{ height: '100dvh' }}>
+                <div className="p-4 md:p-5 flex-shrink-0">
+                  <div className="flex items-center justify-between">
+                    <Logo variant="sm" />
+                    <button
+                      className="p-2 rounded hover:bg-gray-100"
+                      aria-label={tHeader('closeNav')}
+                      onClick={() => setMobileNavOpen(false)}
+                    >
+                      <IoMdClose className="text-2xl text-primary" />
+                    </button>
+                  </div>
+                  <div className="flex flex-col gap-2 mt-3 md:mt-4">
+                    <Search />
+                  </div>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <Search />
-                </div>
-                <nav className="flex flex-col gap-1">
-                  {/* Main Navigation */}
-                  {headerData?.nav.categories.map((navItem) => {
-                    const href = getServiceUrl(navItem.documentId) as string;
-                    const isActive = pathname.endsWith(href);
-                    return (
-                      <Link
-                        href={href}
-                        onClick={() => {
-                          //close mobile menu
-                          setMobileNavOpen(false)
-                        }}
-                        className={`cursor-pointer px-2.5 py-1.5 rounded-sm transition-colors text-primary capitalize bg-white hover:bg-primary hover:text-white ${isActive
-                          ? "bg-primary"
-                          : ""
-                          }`}
-                        key={navItem.id}
-                      >
-                        {navItem.name}
-                      </Link>
-                    );
-                  })}
-
-                  {/* Event Types Section */}
-                  {Array.isArray(headerData?.eventTypes) &&
-                    headerData.eventTypes.length > 0 && (
-                      <>
-                        <hr className="my-3 border-gray-300" />
-                        <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide mb-1">
-                          Event Types
-                        </p>
-                        {headerData.eventTypes.map(({ id, eventType }) => {
-                          const isActive = isEventTypeActive(eventType.documentId);
-                          return (
-                            <Link
-                              onClick={() => {
-                                handleSelect("")
-                                //close mobile menu
-                                setMobileNavOpen(false)
-                              }}
-                              href={getEventTypeUrl(eventType.documentId) as string}
-                              className={`cursor-pointer p-2.5 my-1 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${isActive ? "bg-primary text-white" : ""}`}
-                              key={id}
-                            >
-                              {eventType.eventName}
-                            </Link>
-                          );
-                        })}
-
-                        <Link onClick={() => {
-                          handleSelect("Hot Deal")
-                          //close mobile menu
-                          setMobileNavOpen(false)
-                        }}
-                          className={`cursor-pointer p-2.5 my-1 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Hot Deal"
-                            ? "bg-primary text-white"
+                <div className="flex-1 overflow-y-auto p-4 md:p-5 pt-0">
+                  <nav className="flex flex-col gap-1">
+                    {/* Main Navigation */}
+                    {headerData?.nav.categories.map((navItem) => {
+                      const href = getServiceUrl(navItem.documentId) as string;
+                      const isActive = pathname.endsWith(href);
+                      return (
+                        <Link
+                          href={href}
+                          onClick={() => {
+                            //close mobile menu
+                            setMobileNavOpen(false)
+                          }}
+                          className={`cursor-pointer px-2.5 py-1.5 rounded-sm transition-colors text-primary capitalize bg-white hover:bg-primary hover:text-white ${isActive
+                            ? "bg-primary"
                             : ""
-                            }
+                            }`}
+                          key={navItem.id}
+                        >
+                          {navItem.name}
+                        </Link>
+                      );
+                    })}
+
+                    {/* Event Types Section */}
+                    {Array.isArray(headerData?.eventTypes) &&
+                      headerData.eventTypes.length > 0 && (
+                        <>
+                          <hr className="my-3 border-gray-300" />
+                          <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide mb-1">
+                            {tHeader('eventTypes')}
+                          </p>
+                          {headerData.eventTypes.map(({ id, eventType }) => {
+                            const isActive = isEventTypeActive(eventType.documentId);
+                            return (
+                              <Link
+                                onClick={() => {
+                                  handleSelect("")
+                                  //close mobile menu
+                                  setMobileNavOpen(false)
+                                }}
+                                href={getEventTypeUrl(eventType.documentId) as string}
+                                className={`cursor-pointer p-2.5 my-1 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${isActive ? "bg-primary text-white" : ""}`}
+                                key={id}
+                              >
+                                {eventType.eventName}
+                              </Link>
+                            );
+                          })}
+
+                          <Link onClick={() => {
+                            handleSelect("Hot Deal")
+                            //close mobile menu
+                            setMobileNavOpen(false)
+                          }}
+                            className={`cursor-pointer p-2.5 my-1 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Hot Deal"
+                              ? "bg-primary text-white"
+                              : ""
+                              }
                              
                           `}
-                          href="/hot-deal"
-                        >
-                          {t('HotDeal')}
-                        </Link>
+                            href="/hot-deal"
+                          >
+                            {t('HotDeal')}
+                          </Link>
 
 
-                        <Link onClick={() => {
-                          handleSelect("Map")
-                          //close mobile menu
-                          setMobileNavOpen(false)
-                        }}
-                          className={`cursor-pointer p-2.5 my-1 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Map" ? "bg-primary text-white" : ""
-                            }
+                          <Link onClick={() => {
+                            handleSelect("Map")
+                            //close mobile menu
+                            setMobileNavOpen(false)
+                          }}
+                            className={`cursor-pointer p-2.5 my-1 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Map" ? "bg-primary text-white" : ""
+                              }
                              `}
-                          href="/map"
-                        >
-                          {t('Map')}
-                        </Link>
+                            href="/map"
+                          >
+                            {t('Map')}
+                          </Link>
 
 
-                      </>
-                    )}
-                </nav>
+                        </>
+                      )}
+                  </nav>
+                </div>
               </div>
               {/* Click outside to close */}
               <div className="flex-1" onClick={() => setMobileNavOpen(false)} />
@@ -336,15 +384,15 @@ function Header({ headerData }: { headerData: HeaderType }) {
       {/* Subnav Bar: Desktop only */}
       {Array.isArray(headerData?.eventTypes) &&
         headerData.eventTypes.length > 0 && (
-          <div className="hidden md:flex w-full bg-gray-50 border-t border-b border-border px-4 py-2 gap-2 z-20">
-            <div className="max-w-screen lg:max-w-[1700px] mx-auto">
+          <div className="hidden md:block w-full bg-gray-50 border-t border-b border-border px-2.5 md:px-4 py-2 z-20 overflow-x-auto">
+            <div className="max-w-screen lg:max-w-[1700px] mx-auto flex flex-wrap items-center gap-1 md:gap-2">
               {headerData.eventTypes.map(({ id, eventType }) => {
                 const isActive = isEventTypeActive(eventType.documentId);
                 return (
                   <Link
                     key={id}
                     href={getEventTypeUrl(eventType.documentId) as string}
-                    className={`cursor-pointer text-sm px-3 mx-1 py-1 rounded-sm transition-colors
+                    className={`cursor-pointer text-xs md:text-sm px-2 md:px-3 py-1 rounded-sm transition-colors whitespace-nowrap flex-shrink-0
                                     ${isActive
                         ? "bg-primary text-white"
                         : "text-primary hover:bg-primary hover:text-white"
@@ -355,7 +403,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                 );
               })}
               <Link
-                className={`cursor-pointer text-sm px-3  mx-1 py-1 rounded-sm transition-colors ${isHotDealActive()
+                className={`cursor-pointer text-xs md:text-sm px-2 md:px-3 py-1 rounded-sm transition-colors whitespace-nowrap flex-shrink-0 ${isHotDealActive()
                   ? "bg-primary text-white"
                   : "text-primary hover:bg-primary hover:text-white"
                   }`}
@@ -364,7 +412,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                 {t('HotDeal')}
               </Link>
               <Link
-                className={`cursor-pointer text-sm px-3 py-1 rounded-sm transition-colors ${isMapActive()
+                className={`cursor-pointer text-xs md:text-sm px-2 md:px-3 py-1 rounded-sm transition-colors whitespace-nowrap flex-shrink-0 ${isMapActive()
                   ? "bg-primary text-white"
                   : "text-primary hover:bg-primary hover:text-white"
                   }`}

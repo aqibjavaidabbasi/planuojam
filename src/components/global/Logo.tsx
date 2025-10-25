@@ -20,10 +20,11 @@ const sizeClasses: Record<LogoVariant, string> = {
   lg: "w-[140px] h-[80px]",
 };
 
+// Use higher resolution dimensions for crisp display on all devices
 const sizeDims: Record<LogoVariant, { width: number; height: number }> = {
-  sm: { width: 40, height: 40 },
-  md: { width: 100, height: 100 },
-  lg: { width: 160, height: 100 },
+  sm: { width: 80, height: 80 }, // 2x for crisp display
+  md: { width: 190, height: 120 }, // Match largest responsive size (95px) * 2
+  lg: { width: 280, height: 160 }, // 2x for crisp display
 };
 
 export default function Logo({
@@ -48,6 +49,12 @@ export default function Logo({
       onClick={onClick}
       className={classes}
       priority={priority}
+      quality={90}
+      sizes={variant === "md" ? "(max-width: 768px) 40px, 95px" : undefined}
+      style={{
+        width: "auto",
+        height: "auto",
+      }}
     />
   );
 }

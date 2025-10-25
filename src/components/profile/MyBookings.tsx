@@ -8,12 +8,12 @@ import NoDataCard from "@/components/custom/NoDataCard";
 import { useLocale, useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import Modal from "@/components/custom/Modal";
-import { FiCalendar } from "react-icons/fi";
 import ReviewModal from "@/components/modals/ReviewModal";
 import BookingDetailsModal, { BookingDetails } from "@/components/modals/BookingDetailsModal";
 import { RootState } from "@/store";
 import { useRouter } from "@/i18n/navigation";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
+import BookingCard from "./BookingCard";
 
 function toLocalInputValue(iso: string) {
   const d = new Date(iso);
@@ -194,96 +194,34 @@ const MyBookings: React.FC = () => {
           {items.map((b) => {
             const isEditing = editingId === (b.documentId || String(b.id));
             const status = b.bookingStatus as string;
-            const statusChip = (
-              <span
-                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                  status === "confirmed"
-                    ? "bg-green-100 text-green-800"
-                    : status === "pending"
-                    ? "bg-yellow-100 text-yellow-800"
-                    : status === "cancelled"
-                    ? "bg-gray-100 text-gray-800"
-                    : status === "completed"
-                    ? "bg-blue-100 text-blue-800"
-                    : "bg-red-100 text-red-800"
-                }`}
-              >
-                {t("status." + status)}
-              </span>
-            );
-
             const listingTitle = b?.listing?.locale === 'en' ? b?.listing?.title : b?.listing?.localizations?.find(loc => loc.locale === locale)?.title;
+            const vendorUserId: number | undefined = b?.listing?.user?.id;
 
             return (
-              <li key={b.documentId || b.id} className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-3">
-                      {listingTitle || t("labels.listing", { default: "Listing" })}
-                    </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                          <FiCalendar className="w-5 h-5 text-green-600" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-500">{t("labels.start", { default: "Start" })}</p>
-                          <p className="font-medium text-gray-800">{new Date(b.startDateTime).toLocaleString()}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                          <FiCalendar className="w-5 h-5 text-red-600" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-500">{t("labels.end", { default: "End" })}</p>
-                          <p className="font-medium text-gray-800">{new Date(b.endDateTime).toLocaleString()}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="ml-4">{statusChip}</div>
-                </div>
-
-                <div className="flex items-center gap-2 mt-4">
-                  <Button
-                    style="ghost"
-                    onClick={() => {
-                      const details: BookingDetails = {
-                        bookingStatus: b.bookingStatus,
-                        startDateTime: b.startDateTime,
-                        endDateTime: b.endDateTime,
-                        selectedPlan: b.selectedPlan,
-                        selectedAddons: b.selectedAddons,
-                      };
-                      setDetailsModal({ open: true, booking: details });
-                    }}
-                  >
-                    {t("actions.viewDetails", { default: "View Details" })}
-                  </Button>
-                  {(() => {
-                    const vendorUserId: number | undefined = b?.listing?.user?.id;
-                    if (vendorUserId) {
-                      return (
-                        <Button
-                          style="primary"
-                          extraStyles="!rounded-md"
-                          onClick={() => router.push(`/profile?tab=messages&withUser=${vendorUserId}`)}
-                        >
-                          {t("actions.message", { default: "Message" })}
-                        </Button>
-                      );
-                    }
-                    return null;
-                  })()}
-                  {isEditing ? (
+              <BookingCard
+                key={b.documentId || b.id}
+                listingTitle={listingTitle || t("labels.listing", { default: "Listing" })}
+                startDateTime={new Date(b.startDateTime).toLocaleString()}
+                endDateTime={new Date(b.endDateTime).toLocaleString()}
+                status={status}
+                statusLabel={t("status." + status)}
+                onViewDetails={() => {
+                  const details: BookingDetails = {
+                    bookingStatus: b.bookingStatus,
+                    startDateTime: b.startDateTime,
+                    endDateTime: b.endDateTime,
+                    selectedPlan: b.selectedPlan,
+                    selectedAddons: b.selectedAddons,
+                  };
+                  setDetailsModal({ open: true, booking: details });
+                }}
+                onMessage={vendorUserId ? () => router.push(`/profile?tab=messages&withUser=${vendorUserId}`) : undefined}
+                actions={
+                  isEditing ? (
                     <>
                       <input
                         type="datetime-local"
-                        className="border border-border rounded-md p-2"
+                        className="border border-border rounded-md p-2 text-sm"
                         min={minDateTime}
                         value={editValue}
                         onChange={(e) => setEditValue(e.target.value)}
@@ -358,10 +296,9 @@ const MyBookings: React.FC = () => {
 
                       // cancelled or rejected: no actions
                       return null;
-                    })()
-                  )}
-                </div>
-              </li>
+                    })())
+                }
+              />
             );
           })}
         </ul>

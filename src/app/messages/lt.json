@@ -304,6 +304,11 @@
       "ru": "Rusų",
       "pl-PL": "Lenkų",
       "et": "Estų"
+    },
+    "Header": {
+      "eventTypes": "Renginių tipai",
+      "openNav": "Atidaryti navigacijos meniu",
+      "closeNav": "Uždaryti navigacijos meniu"
     }
   },
   "Modals": {
@@ -654,6 +659,12 @@
           "updateFailed": "Nepavyko atnaujinti kainodaros"
         }
       }
+    },
+    "MapPicker": {
+      "lat": "Lat:",
+      "lng": "Lng:",
+      "cancel": "Atšaukti",
+      "useThisLocation": "Naudokite šią vietą"
     }
   },
   "Reviews": {
@@ -1134,7 +1145,8 @@
       "ctaStyle": "CTA stilius",
       "features": "Funkcijos",
       "addonStatement": "Priedo aprašymas",
-      "addonPrice": "Priedo kaina"
+      "addonPrice": "Priedo kaina",
+      "deletePlan": "Ištrinti planą"
     },
     "styleOptions": {
       "primary": "Pagrindinis",

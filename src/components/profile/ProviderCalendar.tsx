@@ -111,7 +111,7 @@ const ProviderCalendar: React.FC = () => {
         {fetchingListings && (
           <div className="text-sm text-gray-500">{tCommon("loading", { default: "Loading..." })}</div>
         )}
-        <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
           <Input type="datetime-local" label={t("fields.start", { default: "Start" })} value={start} onChange={(e) => setStart(e.target.value)} />
           <Input type="datetime-local" label={t("fields.end", { default: "End" })} value={end} onChange={(e) => setEnd(e.target.value)} />
           <Button style="primary" onClick={onCreateManual} disabled={loading || !selectedListing} extraStyles="!rounded-md !whitespace-nowrap">

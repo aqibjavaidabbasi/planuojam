@@ -422,24 +422,25 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
   };
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 h-full flex flex-col">
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">{t("title")}</h1>
-          <p className="text-gray-600 mt-1">{t("subtitle")}</p>
+    <div className="p-3 md:p-6 lg:p-8 h-full flex flex-col">
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 truncate">{t("title")}</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-1 truncate">{t("subtitle")}</p>
         </div>
         <Button
           onClick={onRefresh}
           disabled={refreshing}
           style="secondary"
+          extraStyles="!whitespace-nowrap flex-shrink-0"
         >
           {refreshing ? t("loading", { default: "Loading..." }) : t("refresh", { default: "Refresh" })}
         </Button>
       </div>
 
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-4 min-h-[60vh]">
-        {/* Left: conversations list */}
-        <div className="md:col-span-1 rounded-md shadow overflow-hidden flex flex-col p-1 max-h-[80vh]">
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 min-h-[60vh]">
+        {/* Left: conversations list - hidden on mobile when thread selected */}
+        <div className={`${selectedUserId ? "hidden md:flex" : "flex"} md:col-span-1 rounded-md shadow overflow-hidden flex-col p-1 max-h-[80vh]`}>
           <div className="flex-1 overflow-auto">
             {!listLoading && listError && (
               <div className="p-4 text-sm text-red-600">{listError}</div>
@@ -456,13 +457,13 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                 return (
                   <li
                     key={id}
-                    className={`p-2 rounded-md cursor-pointer ${isActive ? "bg-gray-50 text-gray-800" : "bg-white hover:bg-gray-50"}`}
+                    className={`p-2 rounded-md cursor-pointer transition-colors ${isActive ? "bg-gray-50 text-gray-800" : "bg-white hover:bg-gray-50"}`}
                     onClick={() => setSelectedUserId(id)}
                   >
-                    <div className="flex items-center justify-between font-medium">
-                      <span>{counterpart.username}</span>
+                    <div className="flex items-center justify-between gap-2 min-w-0">
+                      <span className="font-medium truncate">{counterpart.username}</span>
                       {unread > 0 && (
-                        <span className="ml-2 inline-flex items-center justify-center min-w-5 h-5 px-1 text-xs rounded-full bg-red-600 text-white">
+                        <span className="inline-flex items-center justify-center min-w-5 h-5 px-1 text-xs rounded-full bg-red-600 text-white flex-shrink-0">
                           {unread}
                         </span>
                       )}
@@ -475,17 +476,24 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
         </div>
 
         {/* Right: thread */}
-        <div className="md:col-span-3 shadow rounded-lg flex flex-col max-h-[80vh]">
+        <div className={`${selectedUserId ? "flex" : "hidden md:flex"} md:col-span-3 shadow rounded-lg flex-col max-h-[80vh]`}>
           {!selectedUserId ? (
-            <div className="flex-1 flex items-center justify-center text-gray-500 p-6">
+            <div className="flex-1 flex items-center justify-center text-gray-500 p-4 sm:p-6">
               {t("selectConversation", { default: "Select a conversation" })}
             </div>
           ) : (
             <>
-              <div className="px-4 py-3 bg-gray-50 font-medium">
-                {t("conversationWith", { default: "Conversation with" })} {selectedCounterpartName || ""}
+              <div className="px-3 sm:px-4 py-3 bg-gray-50 font-medium text-sm sm:text-base flex items-center justify-between gap-2">
+                <span className="truncate">{t("conversationWith", { default: "Conversation with" })} {selectedCounterpartName || ""}</span>
+                <button
+                  onClick={() => setSelectedUserId(null)}
+                  className="md:hidden flex-shrink-0 text-gray-500 hover:text-gray-700 text-lg"
+                  aria-label="close"
+                >
+                  ×
+                </button>
               </div>
-              <div className="flex-1 overflow-auto p-4 space-y-3">
+              <div className="flex-1 overflow-auto p-3 sm:p-4 space-y-3">
                 {threadLoading && <div className="text-sm text-gray-500"></div>}
                 {threadError && (
                   <div className="text-sm text-red-600">{threadError}</div>
@@ -532,18 +540,18 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                   const legacyFileUrls = legacyUrls.filter((u) => !legacyImageUrls.includes(u));
                   return (
                     <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-                      <div className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${mine ? "bg-[#cc922f] text-white" : "bg-gray-100 text-gray-800"}`}>
+                      <div className={`max-w-[90%] sm:max-w-[75%] md:max-w-[70%] rounded-lg px-3 py-2 text-sm break-words ${mine ? "bg-[#cc922f] text-white" : "bg-gray-100 text-gray-800"}`}>
                         {caption && <div className="whitespace-pre-wrap">{caption}</div>}
                         {normalizedAtt.length > 0 && (
-                          <div className="mt-2 grid grid-cols-2 gap-2">
+                          <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {normalizedAtt.map((a) => (
                               <a key={`${a.id}-${a.url}`} href={a.url} target="_blank" rel="noreferrer">
                                 {a.mime?.startsWith("image/") ? (
-                                  <Image src={a.url} alt={a.name || "attachment"} width={320} height={240} className="rounded-md object-cover" />
+                                  <Image src={a.url} alt={a.name || "attachment"} width={320} height={240} className="rounded-md object-cover max-w-full h-auto" />
                                 ) : (
-                                  <div className={`px-3 py-2 bg-white/80 rounded text-xs flex items-center gap-2 ${mine ? "text-gray-800" : "text-gray-800"}`}>
-                                    <MdAttachFile size={16} />
-                                    <span className="underline break-all">{a.name || a.url}</span>
+                                  <div className={`px-3 py-2 bg-white/80 rounded text-xs flex items-center gap-2 min-w-0 ${mine ? "text-gray-800" : "text-gray-800"}`}>
+                                    <MdAttachFile size={16} className="flex-shrink-0" />
+                                    <span className="underline truncate" title={a.name || a.url}>{a.name || a.url}</span>
                                   </div>
                                 )}
                               </a>
@@ -551,10 +559,10 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                           </div>
                         )}
                         {normalizedAtt.length === 0 && legacyImageUrls.length > 0 && (
-                          <div className={`mt-2 grid grid-cols-2 gap-2 ${mine ? "" : ""}`}>
+                          <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {legacyImageUrls.map((u) => (
                               <a key={u} href={u} target="_blank" rel="noreferrer">
-                                <Image src={u} alt="attachment" width={320} height={240} className="rounded-md object-cover" />
+                                <Image src={u} alt="attachment" width={320} height={240} className="rounded-md object-cover max-w-full h-auto" />
                               </a>
                             ))}
                           </div>
@@ -562,7 +570,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                         {normalizedAtt.length === 0 && legacyFileUrls.length > 0 && (
                           <div className="mt-2 space-y-1">
                             {legacyFileUrls.map((u) => (
-                              <a key={u} href={u} target="_blank" rel="noreferrer" className={`${mine ? "text-orange-100" : "text-blue-600"} underline break-all`}>
+                              <a key={u} href={u} target="_blank" rel="noreferrer" className={`${mine ? "text-orange-100" : "text-blue-600"} underline break-words`}>
                                 {u}
                               </a>
                             ))}
@@ -577,7 +585,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                 })}
               </div>
 
-              <div className="border-t p-3 flex flex-col gap-3">
+              <div className="border-t p-2 sm:p-3 flex flex-col gap-2 sm:gap-3">
                 {attachmentPreviews.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {attachmentPreviews.map((src, idx) => {
@@ -588,8 +596,8 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                           {isImg ? (
                             <Image src={src} width={64} height={64} className="h-16 w-16 object-cover rounded" alt="preview" />
                           ) : (
-                            <a href={src} target="_blank" rel="noreferrer" className="h-16 w-40 px-3 py-2 bg-gray-100 rounded flex items-center gap-2 text-xs text-gray-800">
-                              <MdAttachFile size={16} />
+                            <a href={src} target="_blank" rel="noreferrer" className="h-16 px-2 sm:px-3 py-2 bg-gray-100 rounded flex items-center gap-1 sm:gap-2 text-xs text-gray-800 min-w-0">
+                              <MdAttachFile size={16} className="flex-shrink-0" />
                               <span className="truncate" title={f?.name || "file"}>{f?.name || "file"}</span>
                             </a>
                           )}
@@ -608,10 +616,10 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                     })}
                   </div>
                 )}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <input
                     type="text"
-                    className="flex-1 border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-orange-300"
+                    className="flex-1 border rounded-lg px-2 sm:px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-orange-300"
                     placeholder={t("typeMessage", { default: "Type a message..." })}
                     value={composerText}
                     onChange={(e) => setComposerText(e.target.value)}
@@ -622,8 +630,8 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                       }
                     }}
                   />
-                  <label className="p-1 rounded-md cursor-pointer bg-white hover:bg-gray-50">
-                  <MdAttachFile size={20} />
+                  <label className="p-1 sm:p-2 rounded-md cursor-pointer bg-white hover:bg-gray-50 flex-shrink-0">
+                  <MdAttachFile size={18} className="sm:w-5 sm:h-5" />
                     <input
                       type="file"
                       multiple
@@ -643,9 +651,10 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                   <Button
                     onClick={onSend}
                     style="ghost"
+                    extraStyles="flex-shrink-0"
                     disabled={(composerText.trim() === "" && attachments.length === 0) || sending || uploading}
                   >
-                    <IoSendSharp size={20} />
+                    <IoSendSharp size={18} className="sm:w-5 sm:h-5" />
                   </Button>
                 </div>
               </div>

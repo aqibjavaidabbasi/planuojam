@@ -6,6 +6,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import Modal from "../custom/Modal";
 import Button from "../custom/Button";
 import MapboxSearch from "../global/MapboxSearch";
+import { useTranslations } from "next-intl";
 
 const DEFAULT_LAT = 55.1694;
 const DEFAULT_LNG = 23.8813;
@@ -15,10 +16,9 @@ export type MapPickerModalProps = {
   onClose: () => void;
   onSelect: (lat: number, lng: number) => void;
   initial?: { lat?: number; lng?: number };
-  title?: string;
 };
 
-const MapPickerModal: React.FC<MapPickerModalProps> = ({ isOpen, onClose, onSelect, initial, title = "Pick location on map" }) => {
+const MapPickerModal: React.FC<MapPickerModalProps> = ({ isOpen, onClose, onSelect, initial}) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
@@ -116,22 +116,28 @@ const MapPickerModal: React.FC<MapPickerModalProps> = ({ isOpen, onClose, onSele
     }
   };
 
+  const t = useTranslations("Modals.MapPicker")
+
   const footer = (
-    <div className="flex items-center justify-between gap-3">
+    <div className="flex flex-col md:flex-row items-start md:items-center  justify-start md:justify-between gap-3">
       <div className="text-sm text-gray-600">
-        <span className="font-medium">Lat:</span> {coords.lat.toFixed(6)}
+        <span className="font-medium">
+          {t("lat")}  
+        </span> {coords.lat.toFixed(6)}
         <span className="mx-2">|</span>
-        <span className="font-medium">Lng:</span> {coords.lng.toFixed(6)}
+        <span className="font-medium">
+          {t("lng")}  
+        </span> {coords.lng.toFixed(6)}
       </div>
       <div className="ml-auto flex gap-2">
-        <Button style="ghost" onClick={onClose}>Cancel</Button>
-        <Button style="primary" onClick={() => onSelect(coords.lat, coords.lng)}>Use this location</Button>
+        <Button style="ghost" onClick={onClose}>{t("cancel")}</Button>
+        <Button style="primary" onClick={() => onSelect(coords.lat, coords.lng)}>{t("useThisLocation")}</Button>
       </div>
     </div>
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg" title={title} footer={footer}>
+    <Modal isOpen={isOpen} onClose={onClose} size="lg" footer={footer}>
       <div className="flex flex-col gap-3 p-5">
         <MapboxSearch onPlaceSelect={handlePlaceSelect} placeholder="Search address or place" />
         <div className="w-full h-[60vh] border rounded-lg overflow-hidden">

@@ -283,7 +283,7 @@ const CreatePromotionForm: React.FC<CreatePromotionFormProps> = ({
             <div className="mb-2 text-sm font-medium">
               {t("promotions.selectPackage", { defaultMessage: "Select package (optional)" })}
             </div>
-            <div className="flex flex-wrap gap-4 items-center">
+            <div className="flex flex-wrap gap-4 items-center justify-center">
               {packages.map((p, idx) => {
                 const isSelected = !isCustomSelected && selectedPkgIndex === idx;
                 return (

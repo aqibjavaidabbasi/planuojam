@@ -360,11 +360,11 @@ function ProfilePage() {
               <div className="w-full h-full">
                 {/* Promotion hint banner (only for newly created, not-promoted listings) */}
                 {promotionHintListingId && (
-                  <div className="mx-4 mt-4 mb-1 rounded-xl border border-amber-200 bg-amber-50 p-4 flex items-center justify-between">
+                  <div className="mx-4 mt-4 mb-1 rounded-xl border border-amber-200 bg-amber-50 p-4 flex flex-col gap-2">
                     <div className="text-sm text-amber-900">
                       {promotionHintTitle
-                        ? t("promoteHintWithTitle", { title: promotionHintTitle, default: "Boost visibility by promoting \"{title}\"." })
-                        : t("promoteHint", { default: "Boost visibility by promoting your listing." })}
+                        ? t("promoteHintWithTitle", { title: promotionHintTitle })
+                        : t("promoteHint")}
                     </div>
                     <div className="flex items-center gap-2">
                       <Button

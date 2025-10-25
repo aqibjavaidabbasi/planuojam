@@ -22,7 +22,7 @@ function EventHero({data}: {data: HeroBannerBlock}) {
       /> 
       {/* Overlay for better text readability */}
       <div className="absolute inset-0 bg-black/20 pointer-events-none" />
-      <div className="relative z-10 flex items-center h-full w-full">
+      <div className="relative z-10 flex items-center h-full w-full px-2">
         <div
           className="max-w-lg w-full flex flex-col gap-4 items-start rounded-xl shadow-xl px-5 py-5 md:px-8 md:py-8 ml-0 md:ml-10"
           style={{
@@ -34,14 +34,17 @@ function EventHero({data}: {data: HeroBannerBlock}) {
             as="h1"
             extraStyles='lg:!items-start lg:!justify-start !text-white'
           />
-          <p className="text-gray-100 text-base font-normal text-left">{data.subTitle}</p>
+          <p className="text-gray-100 text-base font-normal text-center md:text-left">{data.subTitle}</p>
+          <div className='flex items-center justify-center md:justify-start w-full'>
+
           <Button
             style={data.callToAction.style}
             size='large'
             onClick={()=>router.push(data.callToAction.buttonUrl)}
-          >
+            >
             {data.callToAction.bodyText}
           </Button>
+            </div>
         </div>
       </div>
     </section>

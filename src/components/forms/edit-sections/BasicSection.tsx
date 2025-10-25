@@ -121,15 +121,13 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
 
   return (
     <div className="py-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="col-span-2">
+      <div className="flex flex-col gap-4">
           <h3 className="text-lg font-semibold mb-2">{t("basicDetails")}</h3>
-        </div>
-        <div className="col-span-2">
+        <div>
           <Input type="text" label={t("title")} disabled={submitting} required {...register("title", { required: t("errors.titleRequired") })} />
           {errors.title && (<p className="text-red-500 text-sm mt-1">{String(errors.title.message)}</p>)}
         </div>
-        <div className="flex items-end">
+        <div>
           <Select
             disabled={submitting}
             {...register("listingStatus", { required: t("errors.listingStatusRequired") })}

@@ -4,11 +4,29 @@ import { useAppSelector } from "@/store/hooks";
 import ListingCard from "../Dynamic/ListingCard";
 import NoDataCard from "../custom/NoDataCard";
 import { useLocale, useTranslations } from "next-intl";
+import { RootState } from "@/store";
+import { FaSpinner } from "react-icons/fa";
 
 function FavouriteListings() {
-  const { items } = useAppSelector((state) => state.likedListings);
+  const { items, status, error } = useAppSelector((state: RootState) => state.likedListings);
   const t = useTranslations('Profile.FavouriteListings');
   const locale = useLocale();
+
+  if (status === 'loading') {
+    return (
+      <div className="p-8 flex justify-center">
+        <FaSpinner className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <NoDataCard>{error}</NoDataCard>
+      </div>
+    );
+  }
 
   return (
     <div className="p-8">
@@ -19,15 +37,21 @@ function FavouriteListings() {
 
       <div className="flex flex-wrap gap-6">
         {items.length > 0 ? items.map((item) => {
-          if (item.listing.locale === 'en' && locale === 'en') {
-            return <ListingCard key={item.documentId} item={item.listing} />
+          const listing = item.listing;
+          if (!listing) return null;
+
+          if (listing.locale === 'en' && locale === 'en') {
+            return <ListingCard key={item.documentId} item={listing} />
           }
-          const entry = item.listing.localizations.find(loc => loc.locale === locale);
+
+          const entry = listing.localizations?.find(loc => loc.locale === locale);
           if (entry) {
             return <ListingCard key={item.documentId} item={entry} />
           }
-          return null;})
-          : <div className="col-span-3">
+          // Fallback to original listing if no localization found
+          return <ListingCard key={item.documentId} item={listing} />
+        })
+        : <div className="col-span-3">
             <NoDataCard>{t('empty')}</NoDataCard>
           </div>
         }

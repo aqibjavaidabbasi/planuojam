@@ -134,8 +134,8 @@ export default function SocialLinksSection({
         />
         <div className="flex flex-col gap-3 mt-2">
           {(socialLinks || []).map((s, idx) => (
-            <div key={idx} className="grid grid-cols-1 md:grid-cols-8 gap-3 items-end">
-              <div className="col-span-3">
+            <div key={idx} className="flex flex-col gap-3">
+              <div>
                 <Select
                   label={t("platformLabel")}
                   disabled={isWorking}
@@ -160,7 +160,7 @@ export default function SocialLinksSection({
                 />
                 <ErrorMessage error={errors.socialLink?.[idx]?.platform} />
               </div>
-              <div className="col-span-3">
+              <div>
                 <Input
                   type="url"
                   label={t("link")}
@@ -174,7 +174,7 @@ export default function SocialLinksSection({
                 />
                 <ErrorMessage error={errors.socialLink?.[idx]?.link} />
               </div>
-              <div className="col-span-1">
+              <div>
                 <Select
                   label={t("visible")}
                   disabled={isWorking}
@@ -190,7 +190,7 @@ export default function SocialLinksSection({
                   ]}
                 />
               </div>
-              <div className="col-span-1 flex items-center justify-center">
+              <div className="flex items-center justify-center">
                 <Button
                   style="destructive"
                   size="large"

@@ -29,7 +29,7 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
   const [showLoginModal, setShowLoginModal] = useState(false);
   const t = useTranslations('Dynamic.ListingCard');
 
-  const isLiked = Array.isArray(likedListings) && likedListings.some(listing => listing.listing.documentId === item.documentId);
+  const isLiked = Array.isArray(likedListings) && likedListings.some(listing => listing.listing?.documentId === item.documentId);
 
   // Determine if hot deal is currently active
   const isHotDealActive = (() => {
@@ -50,9 +50,10 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
       setShowLoginModal(true);
       return;
     }
+
     const likedItem = isLiked
       ? (Array.isArray(likedListings)
-        ? likedListings.find(listing => listing.listing.documentId === item.documentId)
+        ? likedListings.find(listing => listing.listing?.documentId === item.documentId)
         : undefined)
       : undefined;
 
@@ -217,11 +218,21 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
             {/* Heart icon */}
             <div className="">
               {status === 'loading' ? (
-                <FaSpinner size={24} color="#c4a7a7" className="cursor-not-allowed" />
+                <FaSpinner size={24} color="#c4a7a7" className="animate-spin" />
               ) : isLiked ? (
-                <FaHeart onClick={handleHeartClick} size={24} color="#e53e3e" className="cursor-pointer" />
+                <FaHeart 
+                  onClick={handleHeartClick} 
+                  size={24} 
+                  color="#e53e3e" 
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
+                />
               ) : (
-                <FaHeart onClick={handleHeartClick} size={24} color="#9ea2a7" className="cursor-pointer" />
+                <FaHeart 
+                  onClick={handleHeartClick} 
+                  size={24} 
+                  color="#9ea2a7" 
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
+                />
               )}
             </div>
             <div>

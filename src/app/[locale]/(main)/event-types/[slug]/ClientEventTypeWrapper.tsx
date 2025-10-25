@@ -3,57 +3,18 @@ import NoDataCard from "@/components/custom/NoDataCard";
 import ListingCard from "@/components/Dynamic/ListingCard";
 import DynamicZoneRenderer from "@/components/global/DynamicZoneRenderer";
 import Heading from "@/components/custom/heading";
-import Loader from "@/components/custom/Loader";
-import { useEventTypes } from "@/context/EventTypesContext";
-import { fetchPromotedListingsPerEvents } from "@/services/listing";
-import { fetchPageById } from "@/services/pagesApi";
-import {
-  DynamicBlocks,
-  ListingItem,
-  TitleDescriptionBlock,
-} from "@/types/pagesTypes";
-import { notFound, useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { useLocale } from "next-intl";
-import { useParentCategories } from "@/context/ParentCategoriesContext";
+import React from "react";
+import { DynamicBlocks, ListingItem, TitleDescriptionBlock } from "@/types/pagesTypes";
 
-function ClientEventTypeWrapper() {
-  const { getEventTypeBySlug } = useEventTypes();
-  const params = useParams();
-  const  { slug } = params;
-  const eventType = getEventTypeBySlug(slug as string);
-  const [eventBlock, setEventBlocks] = useState<DynamicBlocks[]>([]);
-  // Type assertion for now since we know the API returns compatible data
-  const [listings, setListings] = useState<ListingItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const locale = useLocale();
-  const { VENDOR_DOC_ID, VENUE_DOC_ID } = useParentCategories();
+type Props = {
+  eventBlocks: DynamicBlocks[];
+  listings: ListingItem[];
+  vendorParentId: string;
+  venueParentId: string;
+};
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      try {
-        if (eventType && eventType.page) {
-          const pageRes = await fetchPageById(eventType.page.documentId, locale);
-          setEventBlocks(Array.isArray(pageRes?.blocks) ? pageRes.blocks : []);
-          const listingsRes = await fetchPromotedListingsPerEvents(
-            eventType.documentId,
-            locale
-          );
-          setListings(Array.isArray(listingsRes) ? listingsRes : []);
-        }
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, [eventType, locale]);
-
-  if (!eventType || loading) return <Loader />;
-
-  if (!eventType?.page) return notFound();
+function ClientEventTypeWrapper({ eventBlocks, listings, vendorParentId, venueParentId }: Props) {
+  const eventBlock = Array.isArray(eventBlocks) ? eventBlocks : [];
 
   // derived states for better data management
   const heroBlock = eventBlock.filter(
@@ -84,10 +45,10 @@ function ClientEventTypeWrapper() {
   const venueTitleBlock = titleDescriptionBlocks.find(isVenueBlock);
   const vendorTitleBlock = titleDescriptionBlocks.find(isVendorBlock);
   const vendorListings = listings.filter(
-    (listing) => listing.category?.parentCategory?.documentId === VENDOR_DOC_ID
+    (listing) => listing.category?.parentCategory?.documentId === vendorParentId
   );
   const venueListings = listings.filter(
-    (listing) => listing.category?.parentCategory?.documentId === VENUE_DOC_ID
+    (listing) => listing.category?.parentCategory?.documentId === venueParentId
   );
 
   return (

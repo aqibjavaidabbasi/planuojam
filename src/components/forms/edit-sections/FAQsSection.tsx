@@ -56,7 +56,7 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
         <div className="flex flex-col gap-3">
           {fields.map((field, idx) => (
             <div key={field.id} className={`grid grid-cols-12 gap-3 w-full items-end`}>
-              <div className="col-span-5">
+              <div className="col-span-12 md:col-span-5">
                 <Input
                   type="text"
                   label={`${t("question")} ${idx + 1}`}
@@ -66,7 +66,7 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
                   })}
                 />
               </div>
-              <div className="col-span-6">
+              <div className="col-span-12 md:col-span-6">
                 <Input
                   type="text"
                   label={`${t("answer")} ${idx + 1}`}
@@ -76,7 +76,7 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
                   })}
                 />
               </div>
-              <div className="col-span-1">
+              <div className="col-span-12 md:col-span-1">
                 <Button type="button" style="destructive" disabled={submitting} onClick={() => remove(idx)}>
                   <FaRegTrashAlt />
                 </Button>
