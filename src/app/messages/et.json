@@ -1367,5 +1367,8 @@
       "updated": "Sooduspakkumine on uuendatud",
       "updateFailed": "Sooduspakkumist ei õnnestunud uuendada"
     }
+  },
+  "Pagination": {
+    "loadMore": "Laadi rohkem"
   }
 }

@@ -1359,5 +1359,8 @@
       "updated": "Karštas pasiūlymas atnaujintas",
       "updateFailed": "Nepavyko atnaujinti karšto pasiūlymo"
     }
+  },
+  "Pagination": {
+    "loadMore": "Įkelti daugiau"
   }
 }

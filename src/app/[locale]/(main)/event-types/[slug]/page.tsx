@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation'
 import { fetchEventTypeAggregateByEnSlug, EventTypeAggregateResponse, HttpError } from '@/services/eventTypes'
 import type { DynamicBlocks, ListingItem } from '@/types/pagesTypes'
 import { fetchPageById } from '@/services/pagesApi'
-import { fetchPromotedListingsPerEvents } from '@/services/listing'
+import { fetchPromotedListingsPerEventsWithMeta } from '@/services/listing'
 
 export default async function EventTypesPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
@@ -29,22 +29,39 @@ export default async function EventTypesPage({ params }: { params: Promise<{ loc
     eventBlocks = Array.isArray(pageRes?.blocks) ? (pageRes.blocks as DynamicBlocks[]) : [];
   }
 
-  let listings: ListingItem[] = [];
-  if (eventTypeId) {
-    const listingRes = await fetchPromotedListingsPerEvents(eventTypeId, locale);
-    listings = Array.isArray(listingRes) ? (listingRes as ListingItem[]) : [];
-  }
-
-  // Constants currently defined in ParentCategoriesContext; mirrored here for SSR
+  // Initial paginated fetches per section (venue/vendor)
   const VENUE_DOC_ID = 'cvf586kao1521ew8lb1vl540';
   const VENDOR_DOC_ID = 'no20d9ryuyfvtu6dhsqxfej7';
+  let venueResp: { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } } | undefined;
+  let vendorResp: { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } } | undefined;
+  if (eventTypeId) {
+    [venueResp, vendorResp] = await Promise.all([
+      fetchPromotedListingsPerEventsWithMeta(
+        eventTypeId,
+        locale,
+        { page: 1, pageSize: 5 },
+        { category: { parentCategory: { documentId: VENUE_DOC_ID } } }
+      ),
+      fetchPromotedListingsPerEventsWithMeta(
+        eventTypeId,
+        locale,
+        { page: 1, pageSize: 5 },
+        { category: { parentCategory: { documentId: VENDOR_DOC_ID } } }
+      ),
+    ]);
+  }
 
   return (
     <ClientEventTypeWrapper
       eventBlocks={eventBlocks}
-      listings={listings}
+      listingsVenueInitial={Array.isArray(venueResp?.data) ? (venueResp!.data as ListingItem[]) : []}
+      listingsVendorInitial={Array.isArray(vendorResp?.data) ? (vendorResp!.data as ListingItem[]) : []}
       vendorParentId={VENDOR_DOC_ID}
       venueParentId={VENUE_DOC_ID}
+      venuePagination={venueResp?.meta?.pagination}
+      vendorPagination={vendorResp?.meta?.pagination}
+      eventTypeId={eventTypeId}
+      locale={locale}
     />
   );
 }

@@ -10,16 +10,18 @@ import { useSearchParams } from "next/navigation";
 import { Location } from "@/components/global/MapboxMap";
 import { useLocale, useTranslations } from "next-intl";
 import geocodeLocations from "@/utils/mapboxLocation";
-import { fetchSortedListings } from "@/services/listing";
+import { fetchSortedListingsWithMeta } from "@/services/listing";
+import LoadMoreButton from "@/components/custom/LoadMoreButton";
 
 export type ListingWrapperProps = {
   service: string;
   initialList?: ListingItem[];
   initialFilters?: Record<string, string>;
   initialCategoryNames?: string[];
+  initialPagination?: { page: number; pageSize: number; pageCount: number; total: number };
 };
 
-function ClientListingWrapper({ service, initialList, initialFilters: initialFiltersFromServer, initialCategoryNames }: ListingWrapperProps) {
+function ClientListingWrapper({ service, initialList, initialFilters: initialFiltersFromServer, initialCategoryNames, initialPagination }: ListingWrapperProps) {
   const [list, setList] = useState<ListingItem[]>(initialList || []);
   const { localizedEventTypes } = useEventTypes();
   const searchParams = useSearchParams();
@@ -33,6 +35,19 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
 
   const categoryFromUrl = searchParams.get("cat");
   const eventTypeFromUrl = searchParams.get("eventType");
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(5);
+  const [total, setTotal] = useState<number>(initialPagination?.total ?? (Array.isArray(initialList) ? initialList.length : 0));
+  const [currentFilters, setCurrentFilters] = useState<Record<string, unknown>>({});
+  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+  const [newIds, setNewIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    setPage(1);
+    if (initialPagination?.pageSize) setPageSize(initialPagination.pageSize);
+    if (initialPagination?.page) setPage(initialPagination.page);
+    if (initialPagination?.total !== undefined) setTotal(initialPagination.total);
+  }, [initialPagination]);
 
   const initialFilters = useMemo(() => {
     if (initialFiltersFromServer && Object.keys(initialFiltersFromServer).length) return initialFiltersFromServer;
@@ -54,16 +69,44 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
     emptyList: service === "vendor" ? "noVendorsFound" : "noVenuesFound",
   }), [service]);
 
+  // Small wrapper to animate items when they are newly appended
+  const AnimatedListItem: React.FC<{ isNew: boolean; children: React.ReactNode }> = ({ isNew, children }) => {
+    const [entered, setEntered] = useState(!isNew);
+    useEffect(() => {
+      if (isNew) {
+        const id = requestAnimationFrame(() => setEntered(true));
+        return () => cancelAnimationFrame(id);
+      }
+    }, [isNew]);
+    return (
+      <div className={`transition-all duration-300 ease-out will-change-transform ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+        {children}
+      </div>
+    );
+  };
+
+  type PaginatedResp = { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } };
   const fetcher = useCallback(
     async (appliedFilters: Record<string, unknown>) => {
-      // Use new promoted-first endpoint
-      return await fetchSortedListings(
+      const filtersChanged = JSON.stringify(appliedFilters || {}) !== JSON.stringify(currentFilters || {});
+      const usedPage = filtersChanged ? 1 : page;
+      const usedPageSize = pageSize;
+      const resp: PaginatedResp = await fetchSortedListingsWithMeta(
         service as 'vendor' | 'venue',
         appliedFilters,
-        locale
+        locale,
+        { page: usedPage, pageSize: usedPageSize }
       );
+      const meta = resp.meta?.pagination;
+      if (meta) {
+        if (typeof meta.total === 'number') setTotal(meta.total);
+        if (typeof meta.pageSize === 'number') setPageSize(meta.pageSize);
+        if (filtersChanged && typeof meta.page === 'number') setPage(meta.page);
+      }
+      setCurrentFilters(appliedFilters || {});
+      return Array.isArray(resp.data) ? resp.data : [];
     },
-    [service, locale]
+    [service, locale, page, pageSize, currentFilters]
   );
 
   const translatedPricingFilters = useMemo(
@@ -122,6 +165,7 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
             },
           };
         }
+        setCurrentFilters(filters);
         try {
           const res = await fetcher(filters);
           setList(res);
@@ -131,7 +175,7 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
       }
       fetchItems();
     },
-    [service, categoryFromUrl, eventTypeFromUrl, fetcher, locale, initialList, initialFiltersFromServer]
+    [service, categoryFromUrl, eventTypeFromUrl, fetcher, locale, initialList, initialFiltersFromServer, initialPagination]
   );
 
   // Derive locations from current list based on type/__component
@@ -180,10 +224,59 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
           <NoDataCard>{getTranslation(placeholders.emptyList)}</NoDataCard>
         ) : (
           list.map((item) => (
-            <ListingCard key={item.documentId} item={item} />
+            <AnimatedListItem key={String(item.documentId)} isNew={newIds.has(String(item.documentId))}>
+              <ListingCard item={item} />
+            </AnimatedListItem>
           ))
         )}
       </div>
+      {list.length < (total || 0) && (
+        <div className="flex items-center justify-center my-6">
+          <LoadMoreButton
+            onClick={async () => {
+              if (isLoadingMore) return;
+              setIsLoadingMore(true);
+              try {
+                const nextPage = (Number.isFinite(page as number) ? page : 1) + 1;
+                const resp = await fetchSortedListingsWithMeta(
+                  service as 'vendor' | 'venue',
+                  currentFilters,
+                  locale,
+                  { page: nextPage, pageSize }
+                );
+                const newItems = Array.isArray(resp?.data) ? (resp.data as ListingItem[]) : [];
+                const meta = resp?.meta?.pagination;
+                if (meta && typeof meta.total === 'number') setTotal(meta.total);
+                if (newItems.length) {
+                  // Determine which items are actually new compared to current list
+                  const existingIds = new Set(list.map((it) => String(it.documentId)));
+                  const actuallyNew = newItems.filter((it) => !existingIds.has(String(it.documentId)));
+                  const addedIds = new Set(actuallyNew.map((it) => String(it.documentId)));
+                  if (addedIds.size) {
+                    setNewIds(addedIds);
+                    setTimeout(() => setNewIds(new Set()), 600);
+                  }
+                  setList((prev) => {
+                    const combined = [...prev, ...newItems];
+                    const seen = new Set<string>();
+                    return combined.filter((it) => {
+                      const key = String(it.documentId);
+                      if (seen.has(key)) return false;
+                      seen.add(key);
+                      return true;
+                    });
+                  });
+                  setPage(nextPage);
+                }
+              } finally {
+                setIsLoadingMore(false);
+              }
+            }}
+            disabled={list.length >= (total || 0)}
+            loading={isLoadingMore}
+          />
+        </div>
+      )}
     </div>
   );
 }

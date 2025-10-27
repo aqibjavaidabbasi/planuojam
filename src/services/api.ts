@@ -65,6 +65,35 @@ export async function fetchAPI(
   return data.data || data;
 }
 
+export async function fetchAPIWithMeta(
+  endpoint: string,
+  query: string,
+  filters?: Record<string, unknown>
+) {
+  const url = filters
+    ? `${API_URL}/api/${endpoint}?${query}&${QueryString.stringify(filters, {
+        encodeValuesOnly: true,
+      })}`
+    : `${API_URL}/api/${endpoint}?${query}`;
+
+  const response = await fetch(url, FETCH_OPTIONS);
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.warn("DEBUG LOGGG:::", errorData);
+    throw new Error(
+      errorData.error?.message || `Strapi API error! status: ${response.status}`
+    );
+  }
+
+  if (response.status !== 200) {
+    throw new Error('Errors.Api.generic');
+  }
+
+  const data = await response.json();
+  return data;
+}
+
 /**
  * Fetch from Strapi API with Authorization token
  * Usage: fetchAPIWithToken(endpoint, query, filters, token)

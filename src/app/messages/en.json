@@ -1403,5 +1403,8 @@
       "updated": "Hot Deal updated",
       "updateFailed": "Failed to update Hot Deal"
     }
+  },
+  "Pagination": {
+    "loadMore": "Load More"
   }
 }

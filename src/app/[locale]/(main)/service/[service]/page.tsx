@@ -4,7 +4,7 @@ const ClientListingWrapper = dynamic(()=>import("@/components/global/ClientListi
 import type { Metadata } from 'next'
 import { getSeoMetadata } from '@/lib/getSeoMetadata'
 import { fetchFallbackSeo, fetchPageSeoBySlug, resolveSeoByUrl } from '@/services/seoApi'
-import { fetchSortedListings } from '@/services/listing'
+import { fetchSortedListingsWithMeta } from '@/services/listing'
 import { fetchChildCategories, fetchParentCategories } from '@/services/common'
 import type { category } from '@/types/pagesTypes'
 
@@ -29,8 +29,13 @@ export default async function ServicePage({ params, searchParams }: { params: Pr
     appliedFilters.eventTypes = { eventName: { $eq: eventTypeFromUrl } };
   }
 
-  const [initialList, initialCategoryNames] = await Promise.all([
-    fetchSortedListings(service as 'vendor' | 'venue', appliedFilters, locale),
+  const [initialResp, initialCategoryNames] = await Promise.all([
+    fetchSortedListingsWithMeta(
+      service as 'vendor' | 'venue',
+      appliedFilters,
+      locale,
+      { page: 1, pageSize: 5 }
+    ),
     (async () => {
       try {
         const parents = await fetchParentCategories('en');
@@ -47,9 +52,10 @@ export default async function ServicePage({ params, searchParams }: { params: Pr
   return (
     <ClientListingWrapper
       service={service}
-      initialList={initialList}
+      initialList={initialResp?.data || []}
       initialFilters={initialFilters}
       initialCategoryNames={initialCategoryNames}
+      initialPagination={initialResp?.meta?.pagination}
     />
   );
 }

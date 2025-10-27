@@ -1371,5 +1371,8 @@
       "updated": "Gorąca oferta zaktualizowana",
       "updateFailed": "Nie udało się zaktualizować gorącej oferty"
     }
+  },
+  "Pagination": {
+    "loadMore": "Załaduj więcej"
   }
 }
