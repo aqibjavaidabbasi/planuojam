@@ -7,26 +7,27 @@ import type { Metadata } from 'next'
 import { getSeoMetadata } from '@/lib/getSeoMetadata'
 import { fetchFallbackSeo, fetchPageSeoBySlug, resolveSeoByUrl } from '@/services/seoApi'
 
-export default async function ContactUs() {
-    // Fetch site-setting fields as per final schema
-    const query = createQuery({
-        contactInfo: { populate: '*' },
-        socialLink: { populate: '*' },
-        contactCountries: { populate: '*' },
-    });
-    const siteSetting = await fetchAPI('site-setting', query);
-    const contactInfo = siteSetting?.contactInfo || {};
-    const description = siteSetting?.contactDescription;
-    const socialLinks = siteSetting?.socialLink || [];
-    const countries: string[] = (siteSetting?.contactCountries || [])
-        .map((c: { country: string; }) => c?.country)
-        .filter((c: string) => c.trim().length > 0);
+export default async function ContactUs({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
+    const contactPop = {
+        info: {
+          populate: '*',
+        },
+        links: {
+          populate: '*',
+        }
+    }
+    const contactQuery = createQuery(contactPop, { locale: locale})
+    const contactSettings = await fetchAPI('contact-setting', contactQuery);
+    const contactInfo = contactSettings?.info || {};
+    const description = contactSettings?.contactDescription;
+    const socialLinks = contactSettings?.links || [];
 
     return (
         <section className="w-full px-4 py-12 md:py-20 lg:px-16 bg-white">
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
                 {/* Contact Form */}
-                <ContactForm countries={countries} />
+                <ContactForm />
                 {/* Contact Info */}
                 <ContactStatic
                   address={contactInfo.address}

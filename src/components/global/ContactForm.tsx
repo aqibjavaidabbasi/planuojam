@@ -7,16 +7,12 @@ import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
 import PhoneInputField from '@/components/custom/PhoneInputField';
 
-type Props = {
-    countries?: string[];
-}
-
-const ContactForm: React.FC<Props> = ({ countries = [] }) => {
+const ContactForm = () => {
     const t = useTranslations('Contact.Form');
     const [firstName, setFirstName] = React.useState('');
     const [lastName, setLastName] = React.useState('');
     const [email, setEmail] = React.useState('');
-    const [country, setCountry] = React.useState(countries[0] || '');
+    const [country, setCountry] = React.useState('');
     const [phone, setPhone] = React.useState('');
     const [message, setMessage] = React.useState('');
     const [loading, setLoading] = React.useState(false);
@@ -29,11 +25,19 @@ const ContactForm: React.FC<Props> = ({ countries = [] }) => {
             return;
         }
         setLoading(true);
+        const data = {
+            firstName,
+            lastName,
+            email,
+            country,
+            phone,
+            message
+        }
         try {
             const res = await fetch('/api/contact/send', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ firstName, lastName, email, country, phone, message })
+                body: JSON.stringify(data)
             });
             if (!res.ok) {
                 const data = await res.json().catch(() => ({}));
@@ -43,7 +47,7 @@ const ContactForm: React.FC<Props> = ({ countries = [] }) => {
             setFirstName('');
             setLastName('');
             setEmail('');
-            setCountry(countries[0] || '');
+            setCountry('');
             setPhone('');
             setMessage('');
         } catch {

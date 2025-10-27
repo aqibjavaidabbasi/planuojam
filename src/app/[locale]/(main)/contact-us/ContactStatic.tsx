@@ -29,9 +29,10 @@ export default function ContactStatic({ address, email, phone, description, soci
       )}
       <div>
         <h3 className="text-xl font-semibold mb-2">{t('chatWithUs.title')}</h3>
-        <ul className="space-y-1 flex gap-1.5">
+        <ul className="space-y-1 flex gap-1.5 items-center">
           {visibleSocials.map((s, idx) => (
-            <li key={`${s.platform}-${idx}`}>
+            <li key={`${s.platform}-${idx}`} className='flex gap-1.5 items-center'>
+              <span className="w-2 h-2 rounded-full bg-black/80"></span>
               <a
                 href={normalizeLink(s.link)}
                 className="text-black hover:underline capitalize"
