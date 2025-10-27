@@ -102,19 +102,18 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
         </div>
       )}
 
-      {/* Swiper */}
-      <Swiper
-        modules={[Navigation, Pagination, Autoplay]}
-        className="custom-swiper"
-        spaceBetween={30}
-        slidesPerView={1}
-        navigation
-        pagination={{ clickable: true }}
-        loop={true}
-        autoplay={{ delay: 3000, disableOnInteraction: false }}
-      >
-        {item.portfolio?.length > 0
-          ? item.portfolio?.map((img, idx) => {
+      {item.portfolio?.length > 0 && (
+        <Swiper
+          modules={[Navigation, Pagination, Autoplay]}
+          className="custom-swiper"
+          spaceBetween={30}
+          slidesPerView={1}
+          navigation
+          pagination={{ clickable: true }}
+          loop={true}
+          autoplay={{ delay: 3000, disableOnInteraction: false }}
+        >
+          {item.portfolio?.map((img, idx) => {
             const imageUrl = getCompleteImageUrl(img.url);
             return (
               <SwiperSlide key={idx}>
@@ -132,21 +131,19 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
                 </div>
               </SwiperSlide>
             );
-          })
-          : [1, 2, 3].map((_, idx) => (
-            <SwiperSlide key={idx}>
-              <div className="relative w-full h-40 md:h-56 lg:h-64">
-                <Image
-                  src={"/placeholder.png"}
-                  alt={t('placeholderAlt')}
-                  fill
-                  style={{ objectFit: 'cover', objectPosition: 'center' }}
-                  sizes="(max-width: 768px) 100vw, 400px"
-                />
-              </div>
-            </SwiperSlide>
-          ))}
-      </Swiper>
+          })}
+        </Swiper>
+      )}
+      {item.portfolio?.length === 0 && (
+        <div className="relative w-full h-40 md:h-56 lg:h-64">
+          <Image
+            src={"/noImage.jpg"}
+            alt={t('placeholderAlt')}
+            fill
+            style={{ objectFit: 'cover', objectPosition: 'center' }}
+            sizes="(max-width: 768px) 100vw, 400px"
+          />
+        </div>)}
 
       {/* Content */}
       <div className="p-3 space-y-2">
@@ -220,17 +217,17 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
               {status === 'loading' ? (
                 <FaSpinner size={24} color="#c4a7a7" className="animate-spin" />
               ) : isLiked ? (
-                <FaHeart 
-                  onClick={handleHeartClick} 
-                  size={24} 
-                  color="#e53e3e" 
+                <FaHeart
+                  onClick={handleHeartClick}
+                  size={24}
+                  color="#e53e3e"
                   className="cursor-pointer hover:opacity-80 transition-opacity"
                 />
               ) : (
-                <FaHeart 
-                  onClick={handleHeartClick} 
-                  size={24} 
-                  color="#9ea2a7" 
+                <FaHeart
+                  onClick={handleHeartClick}
+                  size={24}
+                  color="#9ea2a7"
                   className="cursor-pointer hover:opacity-80 transition-opacity"
                 />
               )}

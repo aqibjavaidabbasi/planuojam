@@ -23,7 +23,8 @@
       "missingToken":"Check your Internet and try again",
       "invalidCredentials":"Check your email or password and try again!",
       "goToConfirm": "Go to email confirmation",
-      "dismiss": "Dismiss"
+      "dismiss": "Dismiss",
+      "passwordTooShort": "Password must be at least 8 characters"
     },
     "Register": {
       "title": "Create Account",
@@ -71,7 +72,8 @@
       "registerCta": "Register",
       "alreadyHaveAccount": "Already have an account?",
       "signInHere": "Sign in here",
-      "registerNoResponse":"Registration failed — no response from server"
+      "registerNoResponse":"Registration failed — no response from server",
+      "passwordTooShort": "Password must be at least 8 characters"
     },
     "Social": {
       "orContinue": "Or continue with",

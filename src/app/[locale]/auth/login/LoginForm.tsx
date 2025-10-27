@@ -92,7 +92,7 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
           placeholder={t("passwordPlaceholder")}
           {...register("password", {
             required: t("passwordRequired"),
-            minLength: 8,
+            minLength: { value: 8, message: t("passwordTooShort", { default: "Password must be at least 8 characters" }) },
           })}
         />
 

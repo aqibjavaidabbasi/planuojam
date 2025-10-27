@@ -311,7 +311,7 @@ function RegisterPage() {
                 disabled={isSubmitting}
                 {...register("password", {
                   required: t("passwordRequired"),
-                  minLength: 8,
+                  minLength: { value: 8, message: t("passwordTooShort", { default: "Password must be at least 8 characters" }) },
                 })}
               />
               {/* Password strength meter */}
@@ -354,8 +354,8 @@ function RegisterPage() {
                 disabled={isSubmitting}
                 {...register("confirmPassword", {
                   required: t("confirmPasswordRequired"),
-                  minLength: 8,
-                  validate: (value) => value === watch("password"),
+                  minLength: { value: 8, message: t("passwordTooShort", { default: "Password must be at least 8 characters" }) },
+                  validate: (value) => value === watch("password") || t("passwordMismatch", { default: "Passwords do not match" }),
                 })}
               />
               {errors.confirmPassword && (

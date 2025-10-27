@@ -23,7 +23,8 @@
       "missingToken":"Patikrinkite interneto ryšį ir bandykite dar kartą",
       "loginNoResponse":"Prisijungimas nepavyko — serveris neatsakė",
       "goToConfirm": "Eiti į el. pašto patvirtinimą",
-      "dismiss": "Uždaryti"
+      "dismiss": "Uždaryti",
+      "passwordTooShort": "Slaptažodis turi būti bent 8 simbolių"
     },
     "Register": {
       "title": "Sukurti paskyrą",
@@ -71,7 +72,8 @@
       "alreadyHaveAccount": "Jau turite paskyrą?",
       "signInHere": "Prisijunkite čia",
       "tosNotAccepted": "Prašome sutikti su Paslaugų teikimo sąlygomis ir Privatumo politika",
-      "registerNoResponse":"Registracija nepavyko — serveris neatsakė"
+      "registerNoResponse":"Registracija nepavyko — serveris neatsakė",
+      "passwordTooShort": "Slaptažodis turi būti bent 8 simbolių"
     },
     "Social": {
       "orContinue": "Arba tęskite su",

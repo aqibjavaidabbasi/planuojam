@@ -23,7 +23,8 @@
       "missingToken": "Sprawdź połączenie z Internetem i spróbuj ponownie",
       "invalidCredentials": "Sprawdź swój email lub hasło i spróbuj ponownie!",
       "goToConfirm": "Przejdź do potwierdzenia email",
-      "dismiss": "Zamknij"
+      "dismiss": "Zamknij",
+      "passwordTooShort": "Hasło musi mieć co najmniej 8 znaków"
     },
     "Register": {
       "title": "Utwórz konto",
@@ -71,7 +72,8 @@
       "alreadyHaveAccount": "Masz już konto?",
       "signInHere": "Zaloguj się tutaj",
       "tosNotAccepted": "Proszę zaakceptować Regulamin i Politykę prywatności",
-      "registerNoResponse":"Rejestracja nie powiodła się — brak odpowiedzi z serwera"
+      "registerNoResponse":"Rejestracja nie powiodła się — brak odpowiedzi z serwera",
+      "passwordTooShort": "Hasło musi mieć co najmniej 8 znaków"
     },
     "Social": {
       "orContinue": "Lub kontynuuj z",

@@ -23,7 +23,8 @@
       "missingToken":"Kontrolli oma internetiühendust ja proovi uuesti",
       "invalidCredentials":"Kontrolli oma e-posti või parooli ja proovi uuesti!",
       "goToConfirm": "Mine e-posti kinnitamisele",
-      "dismiss": "Sulge"
+      "dismiss": "Sulge",
+      "passwordTooShort": "Parool peab olema vähemalt 8 tähemärki"
     },
     "Register": {
       "title": "Loo konto",
@@ -71,7 +72,8 @@
       "registerCta": "Registreeru",
       "alreadyHaveAccount": "Kas konto on juba olemas?",
       "signInHere": "Logi sisse siin",
-      "registerNoResponse":"Registreerimine ebaõnnestus — server ei vastanud"
+      "registerNoResponse":"Registreerimine ebaõnnestus — server ei vastanud",
+      "passwordTooShort": "Parool peab olema vähemalt 8 tähemärki"
     },
     "Social": {
       "orContinue": "Või jätka",

@@ -22,7 +22,8 @@
       "missingToken":"Проверьте свой Интернет и попробуйте еще раз.",
       "invalidCredentials":"Проверьте email или пароль и попробуйте снова!",
       "goToConfirm": "Перейти к подтверждению email",
-      "dismiss": "Закрыть"
+      "dismiss": "Закрыть",
+      "passwordTooShort": "Пароль должен быть не менее 8 символов"
     },
     "vendorvenueSection": {
       "details": "Детали",
@@ -109,7 +110,8 @@
       "alreadyHaveAccount": "Уже есть аккаунт?",
       "signInHere": "Войдите здесь",
       "tosNotAccepted": "Пожалуйста, примите Условия использования и Политику конфиденциальности",
-      "registerNoResponse":"Регистрация не удалась — сервер не ответил"
+      "registerNoResponse":"Регистрация не удалась — сервер не ответил",
+      "passwordTooShort": "Пароль должен быть не менее 8 символов"
     },
     "Social": {
       "orContinue": "Или продолжить с",
