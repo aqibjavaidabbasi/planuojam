@@ -34,7 +34,7 @@ export default async function ServicePage({ params, searchParams }: { params: Pr
       service as 'vendor' | 'venue',
       appliedFilters,
       locale,
-      { page: 1, pageSize: 5 }
+      { page: 1, pageSize: 12 }
     ),
     (async () => {
       try {

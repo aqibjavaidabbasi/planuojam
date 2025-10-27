@@ -36,7 +36,7 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
   const categoryFromUrl = searchParams.get("cat");
   const eventTypeFromUrl = searchParams.get("eventType");
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(5);
+  const [pageSize, setPageSize] = useState<number>(12);
   const [total, setTotal] = useState<number>(initialPagination?.total ?? (Array.isArray(initialList) ? initialList.length : 0));
   const [currentFilters, setCurrentFilters] = useState<Record<string, unknown>>({});
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
