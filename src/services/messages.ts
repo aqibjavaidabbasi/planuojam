@@ -65,50 +65,6 @@ function getTokenOrThrow() {
   return token;
 }
 
-export async function fetchInbox(currentUserId: number, page = 1, pageSize = 20) {
-  const query = QueryString.stringify(
-    {
-      pagination: { page, pageSize },
-      sort: ["createdAt:desc"],
-      filters: {
-        receiver: { id: { $eq: currentUserId } },
-      },
-      populate: {
-        sender: { fields: ["username", "email"] },
-        receiver: { fields: ["username", "email"] },
-        attachments: true,
-      },
-    },
-    { encodeValuesOnly: true }
-  );
-  const token = getTokenOrThrow();
-  const res = await fetchAPIWithToken("messages", query, {}, token);
-  const data = Array.isArray(res?.data) ? res.data : [];
-  return { data, meta: res?.meta } as PaginatedResponse<Message>;
-}
-
-export async function fetchOutbox(currentUserId: number, page = 1, pageSize = 20) {
-  const query = QueryString.stringify(
-    {
-      pagination: { page, pageSize },
-      sort: ["createdAt:desc"],
-      filters: {
-        sender: { id: { $eq: currentUserId } },
-      },
-      populate: {
-        sender: { fields: ["username", "email"] },
-        receiver: { fields: ["username", "email"] },
-        attachments: true,
-      },
-    },
-    { encodeValuesOnly: true }
-  );
-  const token = getTokenOrThrow();
-  const res = await fetchAPIWithToken("messages", query, {}, token);
-  const data = Array.isArray(res?.data) ? res.data : [];
-  return { data, meta: res?.meta } as PaginatedResponse<Message>;
-}
-
 export async function fetchThread(currentUserId: number, otherUserId: number, page = 1, pageSize = 50) {
   const query = QueryString.stringify(
     {

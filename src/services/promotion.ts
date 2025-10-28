@@ -1,5 +1,4 @@
-import { postAPIWithToken, fetchAPI, createQuery, fetchAPIWithToken, API_URL } from "./api";
-import { updateUserData } from "./auth";
+import { postAPIWithToken, createQuery, API_URL, fetchAPIWithToken } from "./api";
 
 export interface CreatePromotionPayload {
   listingDocumentId: string; // use documentId for listing
@@ -129,41 +128,6 @@ export async function createPromotion(data: Record<string, unknown>) {
   return postAPIWithToken("promotions", data);
 }
 
-// Orchestrates: create promotion -> log star usage -> update user stars
-export async function createPromotionWithStars(payload: CreatePromotionPayload) {
-  const { listingDocumentId, listingTitle, startDate, endDate, maxClickPerDay, starsPerClick, maxStarsLimit, userDocumentId, currentUserStars } = payload;
-
-  // 1) Create promotion
-  const promotionRes = await createPromotion({
-    data: {
-      promotionStatus: "ongoing",
-      startDate: startDate,
-      endDate: endDate ?? null,
-      maxClickPerDay,
-      starsPerClick,
-      maxStarsLimit,
-      listingDocumentId: listingDocumentId,
-      userDocId: userDocumentId,
-      listingTitle: listingTitle,
-    }
-  });
-
-  const promotion = promotionRes?.data ?? promotionRes;
-
-  // 2) Deduct stars from user on backend
-  try {
-    const newStars = Math.max(0, Number(currentUserStars) - Number(maxStarsLimit));
-    if (Number.isFinite(newStars)) {
-      await updateUserData(payload.currentUserId, { totalStars: newStars });
-    }
-  } catch (err) {
-    // Do not block promotion creation on star update failure; let caller handle any UI sync if needed
-    console.warn("Failed to update user stars after promotion creation", err);
-  }
-
-  return promotion;
-}
-
 // Update a promotion by numeric Strapi id
 export async function updatePromotion(
   id: string | number,
@@ -195,27 +159,6 @@ export async function updatePromotion(
   return json;
 }
 
-// Get all promotions (optionally with locale, filters, sort, pagination)
-export async function fetchAllPromotions(
-  locale?: string,
-  options?: {
-    filters?: Record<string, unknown>;
-    sort?: string[];
-    pagination?: { page?: number; pageSize?: number };
-    populate?: object;
-  }
-) {
-  const { filters = {}, sort, pagination, populate = {} } = options || {};
-  const additionalParams: Record<string, unknown> = {};
-  if (locale) additionalParams.locale = locale;
-  if (sort) additionalParams.sort = sort;
-  if (pagination) additionalParams.pagination = pagination;
-
-  const query = createQuery(populate, additionalParams);
-  const data = await fetchAPI("promotions", query, Object.keys(filters).length ? { filters } : undefined);
-  return Array.isArray(data) ? data : [];
-}
-
 // Get promotions for a user (filters by the listing's owner's documentId)
 export async function fetchPromotionsByUser(
   userDocumentId: string,
@@ -232,36 +175,5 @@ export async function fetchPromotionsByUser(
 
   const data = await fetchAPIWithToken("promotions", query, filters, jwt);
   return Array.isArray(data.data) ? data.data : [];
-}
-
-// Get a single promotion by numeric Strapi id
-export async function fetchPromotionById(id: string | number, locale?: string) {
-  const populate = {};
-  const additionalParams: Record<string, unknown> = {};
-  if (locale) additionalParams.locale = locale;
-  const query = createQuery(populate, additionalParams);
-  const data = await fetchAPI(`promotions/${id}`, query);
-  return data;
-}
-
-
-// Purchase a new promotion for a listing (per-listing stars + days)
-export async function purchasePromotion(params: { listingDocumentId: string; stars: number; days: number; }) {
-  const jwt = localStorage.getItem('token') ?? '';
-  const url = `${API_URL}/api/promotions/purchase`;
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-  if (jwt) headers["Authorization"] = `Bearer ${jwt}`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(params),
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `Failed to purchase promotion (${res.status})`);
-  }
-  return res.json();
 }
 

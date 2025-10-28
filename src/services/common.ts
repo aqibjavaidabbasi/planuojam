@@ -1,7 +1,6 @@
 import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
 import { createQuery, fetchAPI } from "./api";
 import { DEFAULT_LOCALE } from "@/config/i18n";
-import { ListingItem } from "@/types/pagesTypes";
 
 // Generic fetch with locale fallback: try requested locale -> DEFAULT_LOCALE -> base (no locale)
 async function fetchWithLocaleFallback(
@@ -29,29 +28,6 @@ async function fetchWithLocaleFallback(
     const resBase = await fetchAPI(resource, queryBase, filters);
     return resBase;
 }
-
-// Fetch listings by parent category slug (localized). Uses populate like other listings.
-export async function fetchListingsByParentSlug(
-    parentSlug: string,
-    appliedFilters: Record<string, unknown> = {},
-    locale?: string
-) {
-    const populate = LISTING_ITEM_POP_STRUCTURE;
-    const filters = {
-        filters: {
-            category: {
-                parentCategory: {
-                    slug: { $eq: parentSlug },
-                },
-            },
-            ...appliedFilters,
-        },
-    };
-    const query = createQuery(populate, locale ? { locale } : undefined);
-    const res = await fetchAPI('listings', query, filters);
-    return res;
-}
-
 
 export async function fetchChildCategories(docId: string, locale?: string) {
     const filter = {
@@ -130,30 +106,6 @@ export async function fetchStates(locale?: string) {
         }
      };
     return await fetchWithLocaleFallback('states', populate, undefined, locale);
-}
-// Fetch listing by Events with necessary relations populated
-export async function fetchListingsPerEvents(docId: string, locale?: string) {
-    const populate = LISTING_ITEM_POP_STRUCTURE;
-    const filters = {
-        filters: {
-            eventTypes: {
-                documentId: docId
-            }
-        }
-    }
-    if (locale) {
-        const queryWithLocal = createQuery(populate, { locale });
-        const dataLocal = await fetchAPI('listings', queryWithLocal, filters);
-
-
-        if (Array.isArray(dataLocal) && dataLocal.length > 0) {
-            return dataLocal as ListingItem[];
-        }
-    }
-
-    const query = createQuery(populate)
-    const res = await fetchAPI('listings', query, filters);
-    return res;
 }
 
 // Lightweight suggestions for header search dropdown
