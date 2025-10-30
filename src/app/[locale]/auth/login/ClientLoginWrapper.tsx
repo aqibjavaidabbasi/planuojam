@@ -6,11 +6,26 @@ import Modal from "@/components/custom/Modal";
 import ForgotPasswordModal from "@/components/modals/ForgotPasswordModal";
 import { useTranslations } from "next-intl";
 import Logo from "@/components/global/Logo";
+import { useSearchParams } from "next/navigation";
+import { SUPPORTED_LOCALES } from "@/config/i18n";
+
+function normalizeRedirect(p: string | null): string | null {
+  if (!p || typeof p !== 'string') return null;
+  if (!p.startsWith('/')) return null;
+  for (const loc of SUPPORTED_LOCALES) {
+    if (p === `/${loc}`) return '/';
+    if (p.startsWith(`/${loc}/`)) return p.slice(loc.length + 1);
+  }
+  return p;
+}
 
 function ClientLoginWrapper() {
   const [isOpen, setIsOpen] = useState(false);
   const t = useTranslations("Auth.Login");
   const router = useRouter();
+  const params = useSearchParams();
+  const redirectParam = params.get("redirect");
+  const rp = normalizeRedirect(redirectParam);
 
   return (
     <div className="w-full max-w-md h-full">
@@ -28,7 +43,7 @@ function ClientLoginWrapper() {
           <p className="text-sm text-gray-600">
             {t("noAccount")} {" "}
             <Link
-              href={`/auth/register`}
+              href={`/auth/register${rp ? `?redirect=${encodeURIComponent(rp)}` : ''}`}
               className={`text-primary font-medium transition-colors ml-2 hover:underline`}
             >
               {t("signUpHere")}

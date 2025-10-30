@@ -9,6 +9,7 @@ export async function GET(req: NextRequest) {
   const locale = req.nextUrl.searchParams.get("locale") || "en";
   const mode = req.nextUrl.searchParams.get("mode") || "login";
   const serviceType = req.nextUrl.searchParams.get("serviceType") || "";
+  const redirect = req.nextUrl.searchParams.get("redirect") || "";
 
   if (!clientId) {
     return new Response("Missing GOOGLE_CLIENT_ID", { status: 500 });
@@ -16,7 +17,7 @@ export async function GET(req: NextRequest) {
 
   const redirectUri = `${base}/api/auth/google/callback`;
   
-  const state = encodeURIComponent(JSON.stringify({ locale, mode, serviceType }));
+  const state = encodeURIComponent(JSON.stringify({ locale, mode, serviceType, redirect }));
   const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
   authUrl.searchParams.set("client_id", clientId);
   authUrl.searchParams.set("redirect_uri", redirectUri);

@@ -10,6 +10,18 @@ import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
 import SocialAuthButtons from "@/components/auth/SocialAuthButtons";
 import { useLocale } from "next-intl";
+import { useSearchParams } from "next/navigation";
+import { SUPPORTED_LOCALES } from "@/config/i18n";
+
+function normalizeRedirect(p: string | null): string | null {
+  if (!p || typeof p !== 'string') return null;
+  if (!p.startsWith('/')) return null;
+  for (const loc of SUPPORTED_LOCALES) {
+    if (p === `/${loc}`) return '/';
+    if (p.startsWith(`/${loc}/`)) return p.slice(loc.length + 1);
+  }
+  return p;
+}
 
 type FormValues = {
   identifier: string;
@@ -33,13 +45,18 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
   const locale = useLocale();
   const [showUnconfirmed, setShowUnconfirmed] = useState(false);
   const [pendingEmail, setPendingEmail] = useState<string>("");
+  const params = useSearchParams();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await toast.promise(
       dispatch(loginUser({ email: data.identifier, password: data.password }))
         .unwrap()
         .then((user) => {
-          // Redirect based on role
+          const rp = normalizeRedirect(params.get("redirect"));
+          if (rp) {
+            router.push(rp);
+            return;
+          }
           const u = user as { serviceType: string | null } | undefined;
           if (u?.serviceType === null) {
             router.push('/profile?tab=bookings');
@@ -149,11 +166,13 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
         className="mt-4"
         onGoogleClick={() => {
           try {
-            const qs = new URLSearchParams({
-              locale,
-              mode: "login",
-            }).toString();
-            window.location.href = `/api/auth/google?${qs}`;
+            const rp = normalizeRedirect(params.get("redirect"));
+            if (rp) {
+              try { sessionStorage.setItem('postAuthRedirect', rp); } catch {}
+            }
+            const sp = new URLSearchParams({ locale, mode: "login" });
+            if (rp) sp.set('redirect', rp);
+            window.location.href = `/api/auth/google?${sp.toString()}`;
           } catch (e) {
             console.log(e)
             toast.error(t("loginFailed"));
@@ -161,11 +180,13 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
         }}
         onFacebookClick={() => {
           try {
-            const qs = new URLSearchParams({
-              locale,
-              mode: "login",
-            }).toString();
-            window.location.href = `/api/auth/facebook?${qs}`;
+            const rp = normalizeRedirect(params.get("redirect"));
+            if (rp) {
+              try { sessionStorage.setItem('postAuthRedirect', rp); } catch {}
+            }
+            const sp = new URLSearchParams({ locale, mode: "login" });
+            if (rp) sp.set('redirect', rp);
+            window.location.href = `/api/auth/facebook?${sp.toString()}`;
           } catch (e) {
             console.log(e)
             toast.error(t("loginFailed"));

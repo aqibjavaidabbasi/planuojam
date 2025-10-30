@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
     const locale: string = state.locale || "en";
     const mode: 'login' | 'register' = state.mode || 'login';
     const serviceType: string | undefined = state.serviceType || undefined;
+    const redirect: string | undefined = state.redirect || undefined;
 
     if (!code) return new Response("Missing code", { status: 400 });
 
@@ -38,9 +39,10 @@ export async function GET(req: NextRequest) {
     });
 
     if (!tokenRes.ok) {
-      const finalRedirect = `${base}/auth/callback`;
+      const finalRedirect = `${base}/${locale}/auth/callback`;
       const url = new URL(finalRedirect);
       url.searchParams.set("error", "INTERNAL_ERROR");
+      if (redirect) url.searchParams.set("redirect", redirect);
       return Response.redirect(url.toString(), 302);
     }
 
@@ -51,9 +53,10 @@ export async function GET(req: NextRequest) {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
     if (!userRes.ok) {
-      const finalRedirect = `${base}/auth/callback`;
+      const finalRedirect = `${base}/${locale}/auth/callback`;
       const url = new URL(finalRedirect);
       url.searchParams.set("error", "INTERNAL_ERROR");
+      if (redirect) url.searchParams.set("redirect", redirect);
       return Response.redirect(url.toString(), 302);
     }
     
@@ -88,18 +91,20 @@ export async function GET(req: NextRequest) {
         const parsed = JSON.parse(text);
         if (parsed?.error) code = String(parsed.error).toUpperCase();
       } catch {}
-      const finalRedirect = `${base}/auth/callback`;
+      const finalRedirect = `${base}/${locale}/auth/callback`;
       const url = new URL(finalRedirect);
       url.searchParams.set("error", code);
+      if (redirect) url.searchParams.set("redirect", redirect);
       return Response.redirect(url.toString(), 302);
     }
 
     const exchangeJson = await exchangeRes.json();
     const { jwt } = exchangeJson;
 
-    const finalRedirect = `${base}/auth/callback`;
+    const finalRedirect = `${base}/${locale}/auth/callback`;
     const url = new URL(finalRedirect);
     if (jwt) url.searchParams.set("jwt", jwt);
+    if (redirect) url.searchParams.set("redirect", redirect);
     return Response.redirect(url.toString(), 302);
   } catch {
     const base = getAppBaseUrl(req as unknown as Request);

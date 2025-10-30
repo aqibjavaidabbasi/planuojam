@@ -18,6 +18,18 @@ import { useLocale } from "next-intl";
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
 import { checkUsernameAvailability } from "@/services/auth";
 import Logo from "@/components/global/Logo";
+import { useSearchParams } from "next/navigation";
+import { SUPPORTED_LOCALES } from "@/config/i18n";
+
+function normalizeRedirect(p: string | null): string | null {
+  if (!p || typeof p !== 'string') return null;
+  if (!p.startsWith('/')) return null;
+  for (const loc of SUPPORTED_LOCALES) {
+    if (p === `/${loc}`) return '/';
+    if (p.startsWith(`/${loc}/`)) return p.slice(loc.length + 1);
+  }
+  return p;
+}
 
 type FormValues = {
   role: string;
@@ -45,6 +57,9 @@ function RegisterPage() {
   const locale = useLocale();
   const [usernameStatus, setUsernameStatus] = useState<"unchecked" | "checking" | "available" | "taken">("unchecked");
   const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
+  const params = useSearchParams();
+  const redirectParam = params.get("redirect");
+  const rp = normalizeRedirect(redirectParam);
 
   const currentUsername = watch("username");
   const passwordValue = watch("password") || "";
@@ -415,12 +430,16 @@ function RegisterPage() {
                 toast.error(t("tosRequired"));
                 return;
               }
-              const qs = new URLSearchParams({
+              const sp = new URLSearchParams({
                 locale,
                 mode: "register",
                 serviceType: svc || "",
-              }).toString();
-              window.location.href = `/api/auth/google?${qs}`;
+              });
+              if (rp) {
+                try { sessionStorage.setItem('postAuthRedirect', rp); } catch {}
+                sp.set('redirect', rp);
+              }
+              window.location.href = `/api/auth/google?${sp.toString()}`;
             }}
             onFacebookClick={() => {
               const svc = watch("serviceType");
@@ -437,12 +456,16 @@ function RegisterPage() {
                 toast.error(t("tosRequired"));
                 return;
               }
-              const qs = new URLSearchParams({
+              const sp = new URLSearchParams({
                 locale,
                 mode: "register",
                 serviceType: svc || "",
-              }).toString();
-              window.location.href = `/api/auth/facebook?${qs}`;
+              });
+              if (rp) {
+                try { sessionStorage.setItem('postAuthRedirect', rp); } catch {}
+                sp.set('redirect', rp);
+              }
+              window.location.href = `/api/auth/facebook?${sp.toString()}`;
             }}
           />
 
@@ -450,7 +473,7 @@ function RegisterPage() {
             <p className="text-sm text-gray-600">
               {t("alreadyHaveAccount")}
               <Link
-                href={`/auth/login`}
+                href={`/auth/login${rp ? `?redirect=${encodeURIComponent(rp)}` : ''}`}
                 className="text-primary hover:underline font-medium transition-all ml-2"
               >
                 {t("signInHere")}

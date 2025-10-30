@@ -8,6 +8,17 @@ import { useTranslations } from "next-intl";
 import { fetchUser } from "@/services/auth";
 import { useAppDispatch } from "@/store/hooks";
 import { setUser } from "@/store/slices/authSlice";
+import { SUPPORTED_LOCALES } from "@/config/i18n";
+
+function normalizeRedirect(p: string | null): string | null {
+  if (!p || typeof p !== 'string') return null;
+  if (!p.startsWith('/')) return null;
+  for (const loc of SUPPORTED_LOCALES) {
+    if (p === `/${loc}`) return '/';
+    if (p.startsWith(`/${loc}/`)) return p.slice(loc.length + 1);
+  }
+  return p;
+}
 
 function getTokenFromHashOrQuery(): string | null {
   if (typeof window === "undefined") return null;
@@ -87,11 +98,17 @@ export default function AuthCallbackPage() {
         const user = await fetchUser(token);
         dispatch(setUser(user));
 
-        // Navigate similarly to email/password flow
-        if (user?.serviceType === null) {
-          router.replace(`/profile?tab=bookings`);
+        const rawRedirect = params.get("redirect") || (typeof window !== "undefined" ? (sessionStorage.getItem('postAuthRedirect') || null) : null);
+        const rp = normalizeRedirect(rawRedirect);
+        if (rp) {
+          try { if (typeof window !== 'undefined') sessionStorage.removeItem('postAuthRedirect'); } catch {}
+          router.replace(rp);
         } else {
-          router.replace(`/profile?tab=my-listings`);
+          if (user?.serviceType === null) {
+            router.replace(`/profile?tab=bookings`);
+          } else {
+            router.replace(`/profile?tab=my-listings`);
+          }
         }
       } catch (e) {
         console.error(e);
