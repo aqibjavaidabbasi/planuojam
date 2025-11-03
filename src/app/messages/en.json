@@ -445,7 +445,7 @@
         "end": "End"
       },
       "actions": {
-        "addBlock": "Add Blocked Slot"
+        "addBlock": "Add Slot"
       },
       "errors": {
         "noListing": "Please select a listing",

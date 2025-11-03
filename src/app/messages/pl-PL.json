@@ -432,7 +432,7 @@
         "end": "Koniec"
       },
       "actions": {
-        "addBlock": "Dodaj zablokowany termin"
+        "addBlock": "Dodaj termin"
       },
       "errors": {
         "noListing": "Wybierz ogłoszenie",

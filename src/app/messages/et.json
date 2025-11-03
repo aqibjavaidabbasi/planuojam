@@ -432,7 +432,7 @@
         "end": "Lõpp"
       },
       "actions": {
-        "addBlock": "Lisa blokeeritud aeg"
+        "addBlock": "Lisa pesa"
       },
       "errors": {
         "noListing": "Palun vali kuulutus",

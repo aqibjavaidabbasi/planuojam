@@ -115,7 +115,7 @@ const ProviderCalendar: React.FC = () => {
           <Input type="datetime-local" label={t("fields.start", { default: "Start" })} value={start} onChange={(e) => setStart(e.target.value)} />
           <Input type="datetime-local" label={t("fields.end", { default: "End" })} value={end} onChange={(e) => setEnd(e.target.value)} />
           <Button style="primary" onClick={onCreateManual} disabled={loading || !selectedListing} extraStyles="!rounded-md !whitespace-nowrap">
-            {loading ? tCommon("saving", { default: "Saving..." }) : t("actions.addBlock", { default: "Add Blocked Slot" })}
+            {loading ? tCommon("saving", { default: "Saving..." }) : t("actions.addBlock")}
           </Button>
         </div>
       </div>

@@ -735,7 +735,7 @@
         "end": "Pabaiga"
       },
       "actions": {
-        "addBlock": "Pridėti užblokuotą laiką"
+        "addBlock": "Pridėti laiką"
       },
       "errors": {
         "noListing": "Pasirinkite įrašą",

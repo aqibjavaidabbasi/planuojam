@@ -122,7 +122,7 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
                     src={imageUrl}
                     alt={t('imageAlt', { index: idx + 1 })}
                     fill
-                    style={{ objectFit: 'contain', objectPosition: 'center' }}
+                    className='object-cover obejct-center'
                     sizes="(max-width: 768px) 100vw, 400px"
                     priority={idx === 0 && !!highPriority}
                     fetchPriority={idx === 0 && highPriority ? 'high' : undefined}
