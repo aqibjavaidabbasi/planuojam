@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import NoDataCard from "../custom/NoDataCard";
 import Button from "../custom/Button";
 import ListingItemModal from "../modals/ListingItemModal";
@@ -9,6 +9,8 @@ import type { ListingItem } from "@/types/pagesTypes";
 import ListingCard from "@/components/Dynamic/ListingCard";
 import { useLocale, useTranslations } from "next-intl";
 import { RootState } from "@/store";
+import { StripeProductAttributes } from "@/app/api/stripe-products/route";
+import ListingSubscriptionModal from "../modals/ListingSubscriptionModal";
 
 function Mylistings() {
   const [open, setOpen] = useState(false);
@@ -19,7 +21,10 @@ function Mylistings() {
   const user = useAppSelector((state: RootState) => state.auth.user);
   const t = useTranslations('Profile.MyListings');
   const tCommon = useTranslations('Common');
-  const locale = useLocale()
+  const locale = useLocale();
+  const [stripeProducts, setStripeProducts] = useState<StripeProductAttributes[]>([]);
+  const [openSubscriptionModal, setOpenSubscriptionModal] = useState(false);
+  const [selectedListingForSubscription, setSelectedListingForSubscription] = useState<ListingItem | null>(null);
 
   const statusOptions = useMemo(
     () => [
@@ -31,7 +36,7 @@ function Mylistings() {
     [t]
   );
 
-  const loadListings = async () => {
+  const loadListings = useCallback(async () => {
     if (!user?.documentId) return;
     setLoading(true);
     setError(null);
@@ -45,12 +50,28 @@ function Mylistings() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.documentId, statusFilter, locale]);
+
+  const loadStripeProducts = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await fetch("/api/stripe-products");
+      const json = await data.json();
+      setStripeProducts(json.data);
+    } catch (e: unknown) {
+      const message =
+        e && typeof e === "object" && "message" in e ? String((e as { message: unknown }).message) : '';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     loadListings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.documentId, statusFilter]);
+    loadStripeProducts();
+  }, [user?.documentId, statusFilter, loadListings, loadStripeProducts]);
 
   return (
     <div className="p-4 md:p-6 lg:p-8">
@@ -90,7 +111,7 @@ function Mylistings() {
       {!loading && !error && listings.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 lg:gap-6">
           {listings.map((l) => (
-            <ListingCard key={l.documentId} item={l} />
+            <ListingCard key={l.documentId} item={l} stripeProducts={stripeProducts} />
           ))}
         </div>
       )}
@@ -98,11 +119,33 @@ function Mylistings() {
       <ListingItemModal
         isOpen={open}
         onClose={() => setOpen(false)}
-        onSaved={() => {
+        onSaved={(newListing?: ListingItem) => {
           loadListings();
           setOpen(false);
+          // If a new listing was created, set it for subscription
+          if (newListing) {
+            setSelectedListingForSubscription(newListing);
+          }
+        }}
+        setShowSubscriptionModal={(show: boolean) => {
+          setOpenSubscriptionModal(show);
         }}
       />
+
+      {selectedListingForSubscription && selectedListingForSubscription.listingStatus !== 'pending review' && (
+        <ListingSubscriptionModal 
+          isOpen={openSubscriptionModal}
+          onClose={() => {
+            setOpenSubscriptionModal(false);
+            setSelectedListingForSubscription(null);
+          }}
+          stripeProducts={stripeProducts}
+          listingDocId={selectedListingForSubscription.documentId}
+          listingTitle={selectedListingForSubscription.title}
+          listingPrice={selectedListingForSubscription.price}
+          userId={user?.documentId || ''}
+        />
+      )}
     </div>
   );
 }

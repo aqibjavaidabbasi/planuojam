@@ -916,6 +916,52 @@
       "lng": "Dł:",
       "cancel": "Anulować",
       "useThisLocation": "Skorzystaj z tej lokalizacji"
+    },
+    "ListingSubscription": {
+      "title": "Zaprezentuj swoją ofertę",
+      "subtitle": "Wybierz plan subskrypcji, aby dotrzeć do większej liczby klientów",
+      "perMonth": "miesięcznie",
+      "perYear": "rocznie",
+      "oneTime": "jednorazowa płatność",
+      "featured": "Wyróżnione",
+      "subscribe": "Subskrybuj teraz",
+      "processing": "Przetwarzanie...",
+      "noProducts": "Obecnie brak dostępnych planów subskrypcji",
+      "footerNote": "Wszystkie plany obejmują bezpieczne przetwarzanie płatności przez Stripe. Anuluj w dowolnym momencie.",
+      "invalidProduct": "Nieprawidłowa konfiguracja produktu",
+      "subscriptionError": "Nie udało się rozpocząć subskrypcji"
+    },
+    "SubscriptionManagement": {
+      "title": "Zarządzanie subskrypcją",
+      "subtitle": "Zarządzaj subskrypcją swojego ogłoszenia",
+      "currentStatus": "Aktualny status",
+      "renewalDate": "Data następnego odnowienia",
+      "autoRenew": "Automatyczne odnowienie",
+      "enabled": "Włączone",
+      "disabled": "Wyłączone",
+      "managePortal": "Zarządzaj w portalu Stripe",
+      "cancel": "Anuluj subskrypcję",
+      "reactivate": "Reaktywuj subskrypcję",
+      "loading": "Ładowanie...",
+      "retry": "Spróbuj ponownie",
+      "close": "Zamknij",
+      "noSubscription": "Nie znaleziono aktywnej subskrypcji dla tego ogłoszenia",
+      "purchasePrompt": "Aby opublikować swoje ogłoszenie, musisz zakupić plan subskrypcji.",
+      "purchaseSubscription": "Kup subskrypcję",
+      "confirmCancel": "Czy na pewno chcesz anulować subskrypcję? Twoje ogłoszenie pozostanie opublikowane do końca bieżącego okresu rozliczeniowego.",
+      "cancelSuccess": "Subskrypcja została pomyślnie anulowana. Twoje ogłoszenie pozostanie opublikowane do końca okresu rozliczeniowego.",
+      "cancelError": "Nie udało się anulować subskrypcji",
+      "reactivateSuccess": "Subskrypcja została pomyślnie reaktywowana!",
+      "reactivateError": "Nie udało się reaktywować subskrypcji",
+      "portalError": "Nie udało się otworzyć portalu klienta",
+      "cancelNote": "Jeśli anulujesz, Twoje ogłoszenie pozostanie opublikowane do końca bieżącego okresu rozliczeniowego.",
+      "reactivateNote": "Twoja subskrypcja jest ustawiona do anulowania na koniec okresu rozliczeniowego. Kliknij 'Reaktywuj', aby kontynuować subskrypcję.",
+      "status": {
+        "active": "Aktywna",
+        "pastDue": "Zaległa",
+        "canceled": "Anulowana",
+        "unpaid": "Nieopłacona"
+      }
     }
   },
   "Dynamic": {
@@ -936,9 +982,12 @@
       "noLocation": "Brak lokalizacji",
       "noVenueLocation": "Brak lokalizacji miejsca",
       "price": "Cena",
-      "contactForPricing": "Skontaktuj się w sprawie ceny",
+      "contactForPricing": "Skontaktuj się w sprawie wyceny",
       "edit": "Edytuj",
-      "view": "Podgląd"
+      "view": "Zobacz",
+      "draft": "Wersja robocza",
+      "pending": "Oczekuje na przegląd",
+      "subscriptionInfo": "Informacje o subskrypcji"
     },
     "SelectedCategories": {
       "noCategoriesFound": "Nie znaleziono kategorii"

@@ -676,6 +676,52 @@
       "lng": "Lng:",
       "cancel": "Atšaukti",
       "useThisLocation": "Naudokite šią vietą"
+    },
+    "ListingSubscription": {
+      "title": "Pristatykite savo skelbimą",
+      "subtitle": "Pasirinkite prenumeratos planą, kad pasiektumėte daugiau klientų",
+      "perMonth": "per mėnesį",
+      "perYear": "per metus",
+      "oneTime": "vienkartinis mokėjimas",
+      "featured": "Išskirtas",
+      "subscribe": "Prenumeruoti dabar",
+      "processing": "Apdorojama...",
+      "noProducts": "Šiuo metu nėra prenumeratos planų",
+      "footerNote": "Visi planai apima saugų mokėjimo tvarkymą per Stripe. Atšaukite bet kada.",
+      "invalidProduct": "Netinkama produkto konfigūracija",
+      "subscriptionError": "Nepavyko pradėti prenumeratos"
+    },
+    "SubscriptionManagement": {
+      "title": "Prenumeratos valdymas",
+      "subtitle": "Valdykite savo skelbimo prenumeratą",
+      "currentStatus": "Dabartinė būsena",
+      "renewalDate": "Kita atnaujinimo data",
+      "autoRenew": "Automatinis atnaujinimas",
+      "enabled": "Įjungta",
+      "disabled": "Išjungta",
+      "managePortal": "Valdyti Stripe portale",
+      "cancel": "Atšaukti prenumeratą",
+      "reactivate": "Atnaujinti prenumeratą",
+      "loading": "Kraunama...",
+      "retry": "Bandyti dar kartą",
+      "close": "Uždaryti",
+      "noSubscription": "Šiam skelbimui nerasta aktyvi prenumerata",
+      "purchasePrompt": "Norėdami paskelbti savo skelbimą, turite įsigyti prenumeratos planą.",
+      "purchaseSubscription": "Įsigyti prenumeratą",
+      "confirmCancel": "Ar tikrai norite atšaukti prenumeratą? Jūsų skelbimas išliks paskelbtas iki dabartinio atsiskaitymo laikotarpio pabaigos.",
+      "cancelSuccess": "Prenumerata sėkmingai atšaukta. Jūsų skelbimas išliks paskelbtas iki atsiskaitymo laikotarpio pabaigos.",
+      "cancelError": "Nepavyko atšaukti prenumeratos",
+      "reactivateSuccess": "Prenumerata sėkmingai atnaujinta!",
+      "reactivateError": "Nepavyko atnaujinti prenumeratos",
+      "portalError": "Nepavyko atidaryti kliento portalo",
+      "cancelNote": "Jei atšauksite, jūsų skelbimas išliks paskelbtas iki dabartinio atsiskaitymo laikotarpio pabaigos.",
+      "reactivateNote": "Jūsų prenumerata nustatyta atšaukti atsiskaitymo laikotarpio pabaigoje. Spustelėkite 'Atnaujinti', kad tęstumėte prenumeratą.",
+      "status": {
+        "active": "Aktyvi",
+        "pastDue": "Vėluoja",
+        "canceled": "Atšaukta",
+        "unpaid": "Neapmokėta"
+      }
     }
   },
   "Reviews": {
@@ -930,9 +976,12 @@
       "noLocation": "Vieta nenurodyta",
       "noVenueLocation": "Vietos lokacija nenurodyta",
       "price": "Kaina",
-      "contactForPricing": "Dėl kainos susisiekite",
+      "contactForPricing": "Susisiekite dėl kainos",
       "edit": "Redaguoti",
-      "view": "Peržiūrėti"
+      "view": "Peržiūrėti",
+      "draft": "Juodraštis",
+      "pending": "Laukiama peržiūros",
+      "subscriptionInfo": "Prenumeratos informacija"
     },
     "SelectedCategories": {
       "noCategoriesFound": "Kategorijų nerasta"

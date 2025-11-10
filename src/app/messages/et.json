@@ -918,6 +918,52 @@
       "lng": "Lng:",
       "cancel": "Tühista",
       "useThisLocation": "Kasutage seda asukohta"
+    },
+    "ListingSubscription": {
+      "title": "Esitle oma kuulutust",
+      "subtitle": "Valige tellimuspakett, et jõuda rohkemate klientideni",
+      "perMonth": "kuus",
+      "perYear": "aastas",
+      "oneTime": "ühekordne makse",
+      "featured": "Esiletõstetud",
+      "subscribe": "Telli kohe",
+      "processing": "Töötlemine...",
+      "noProducts": "Hetkel pole tellimisplaane saadaval",
+      "footerNote": "Kõik plaanid sisaldavad turvalist maksete töötlemist Stripe'i kaudu. Tühistage igal ajal.",
+      "invalidProduct": "Kehtetu toote konfiguratsioon",
+      "subscriptionError": "Tellimuse alustamine ebaõnnestus"
+    },
+    "SubscriptionManagement": {
+      "title": "Tellimuse haldamine",
+      "subtitle": "Hallake oma kuulutuse tellimust",
+      "currentStatus": "Praegune olek",
+      "renewalDate": "Järgmine uuendamise kuupäev",
+      "autoRenew": "Automaatne uuendamine",
+      "enabled": "Lubatud",
+      "disabled": "Keelatud",
+      "managePortal": "Halda Stripe'i portaalis",
+      "cancel": "Tühista tellimus",
+      "reactivate": "Aktiveeri tellimus uuesti",
+      "loading": "Laadimine...",
+      "retry": "Proovi uuesti",
+      "close": "Sulge",
+      "noSubscription": "Selle kuulutuse jaoks ei leitud aktiivset tellimust",
+      "purchasePrompt": "Oma kuulutuse avaldamiseks peate ostma tellimuse plaani.",
+      "purchaseSubscription": "Osta tellimus",
+      "confirmCancel": "Kas olete kindel, et soovite tellimuse tühistada? Teie kuulutus jääb avaldatuks kuni praeguse arveldusperioodi lõpuni.",
+      "cancelSuccess": "Tellimus tühistati edukalt. Teie kuulutus jääb avaldatuks kuni arveldusperioodi lõpuni.",
+      "cancelError": "Tellimuse tühistamine ebaõnnestus",
+      "reactivateSuccess": "Tellimus aktiveeriti edukalt uuesti!",
+      "reactivateError": "Tellimuse uuesti aktiveerimine ebaõnnestus",
+      "portalError": "Kliendi portaali avamine ebaõnnestus",
+      "cancelNote": "Kui tühistate, jääb teie kuulutus avaldatuks kuni praeguse arveldusperioodi lõpuni.",
+      "reactivateNote": "Teie tellimus on seatud tühistamisele arveldusperioodi lõpus. Klõpsake 'Aktiveeri uuesti', et jätkata tellimust.",
+      "status": {
+        "active": "Aktiivne",
+        "pastDue": "Tähtaja ületanud",
+        "canceled": "Tühistatud",
+        "unpaid": "Maksmata"
+      }
     }
   },
   "Dynamic": {
@@ -938,9 +984,12 @@
       "noLocation": "Asukoht puudub",
       "noVenueLocation": "Koha asukoht puudub",
       "price": "Hind",
-      "contactForPricing": "Küsi hinda",
+      "contactForPricing": "Võtke ühendust hinnapakkumise saamiseks",
       "edit": "Muuda",
-      "view": "Vaata"
+      "view": "Vaata",
+      "draft": "Mustand",
+      "pending": "Ootel ülevaatus",
+      "subscriptionInfo": "Tellimuse info"
     },
     "SelectedCategories": {
       "noCategoriesFound": "Kategooriaid ei leitud"

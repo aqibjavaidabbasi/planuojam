@@ -8,25 +8,30 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
-import { FaHeart, FaSpinner } from 'react-icons/fa'
+import { FaHeart, FaSpinner, FaInfoCircle } from 'react-icons/fa'
 import Button from '../custom/Button'
 import { IoNavigateOutline } from 'react-icons/io5'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import LoginNavigateModal from '../modals/LoginNavigateModal'
+import SubscriptionManagementModal from '../modals/SubscriptionManagementModal'
+import ListingSubscriptionModal from '../modals/ListingSubscriptionModal'
 import { addToLikedListing, removeFromLikedListing } from '@/store/thunks/likedListing'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
 import { RootState } from '@/store'
+import { StripeProductAttributes } from '@/app/api/stripe-products/route'
 
-function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?: boolean }) {
+function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem; highPriority?: boolean; stripeProducts?: StripeProductAttributes[] }) {
   const router = useRouter();
   const { siteSettings } = useSiteSettings();
   const { user } = useAppSelector((state: RootState) => state.auth);
   const { status, items: likedListings } = useAppSelector((state: RootState) => state.likedListings);
   const dispatch = useAppDispatch();
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  const [showListingSubscriptionModal, setShowListingSubscriptionModal] = useState(false);
   const t = useTranslations('Dynamic.ListingCard');
 
   const isLiked = Array.isArray(likedListings) && likedListings.some(listing => listing.listing?.documentId === item.documentId);
@@ -86,6 +91,36 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
           '2px 0px 4px rgba(0,0,0,0.1), 0px 2px 4px rgba(0,0,0,0.1), 0px -2px 4px rgba(0,0,0,0.1), -2px 0px 4px rgba(0,0,0,0.1)'
       }}
     >
+
+      {/* Subscription Info Icon - Only visible to owner */}
+      {user?.documentId === item.user?.documentId && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowSubscriptionModal(true);
+          }}
+          className="absolute top-2 right-2 z-10 bg-white hover:bg-gray-100 text-primary p-2 rounded-full shadow-md transition-all duration-200 hover:scale-110 cursor-pointer"
+          title={t('subscriptionInfo')}
+        >
+          <FaInfoCircle size={16} />
+        </button>
+      )}
+
+      {/* Status Badge - Only visible to owner */}
+      {user?.documentId === item.user?.documentId && item.listingStatus === 'draft' && (
+        <div className="absolute top-2 left-2 z-10">
+          <span className="bg-gray-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+            {t('draft')}
+          </span>
+        </div>
+      )}
+      {user?.documentId === item.user?.documentId && item.listingStatus === 'pending review' && (
+        <div className="absolute top-2 left-2 z-10">
+          <span className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+            {t('pending')}
+          </span>
+        </div>
+      )}
 
       {/* Hot Deal Badge (only when currently active) */}
       {isHotDealActive && (
@@ -254,6 +289,26 @@ function ListingCard({ item, highPriority }: { item: ListingItem; highPriority?:
       </div>
 
       <LoginNavigateModal showModal={showLoginModal} setShowModal={setShowLoginModal} />
+      
+      <SubscriptionManagementModal
+        isOpen={showSubscriptionModal}
+        onClose={() => setShowSubscriptionModal(false)}
+        listingDocId={item.documentId}
+        userId={user?.documentId || ''}
+        onOpenSubscriptionModal={() => setShowListingSubscriptionModal(true)}
+      />
+      
+      {stripeProducts && user?.serviceType && item.listingStatus !== 'pending review' && 
+      <ListingSubscriptionModal
+        isOpen={showListingSubscriptionModal}
+        onClose={() => setShowListingSubscriptionModal(false)}
+        listingDocId={item.documentId}
+        listingTitle={item.title}
+        listingPrice={item.price}
+        userId={user?.documentId || ''}
+        stripeProducts={stripeProducts}
+      />
+      }
     </div>
   );
 }

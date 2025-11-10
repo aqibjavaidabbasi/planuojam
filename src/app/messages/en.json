@@ -587,6 +587,9 @@
       }
     },
     "ListingItem": {
+      "subscriptionHint": "Your Listing has been saved as draft, subscribe to publish it",
+      "later": "Later",
+      "pay": "Pay",
       "errors": {
         "noImage": "Please upload at least one image",
         "invalidServiceType": "You do not have permissions to create this listing"
@@ -872,6 +875,52 @@
       "lng": "Lng:",
       "cancel": "Cancel",
       "useThisLocation": "Use This Location"
+    },
+    "ListingSubscription": {
+      "title": "Showcase Your Listing",
+      "subtitle": "Choose a subscription plan to reach more customers",
+      "perMonth": "per month",
+      "perYear": "per year",
+      "oneTime": "one-time payment",
+      "featured": "Featured",
+      "subscribe": "Subscribe Now",
+      "processing": "Processing...",
+      "noProducts": "No subscription plans available at the moment",
+      "footerNote": "All plans include secure payment processing via Stripe. Cancel anytime.",
+      "invalidProduct": "Invalid product configuration",
+      "subscriptionError": "Failed to start subscription"
+    },
+    "SubscriptionManagement": {
+      "title": "Subscription Management",
+      "subtitle": "Manage your listing subscription",
+      "currentStatus": "Current Status",
+      "renewalDate": "Next Renewal Date",
+      "autoRenew": "Auto Renew",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "managePortal": "Manage in Stripe Portal",
+      "cancel": "Cancel Subscription",
+      "reactivate": "Reactivate Subscription",
+      "loading": "Loading...",
+      "retry": "Retry",
+      "close": "Close",
+      "noSubscription": "No active subscription found for this listing",
+      "purchasePrompt": "To publish your listing, you need to purchase a subscription plan.",
+      "purchaseSubscription": "Purchase Subscription",
+      "confirmCancel": "Are you sure you want to cancel your subscription? Your listing will remain published until the end of the current billing period.",
+      "cancelSuccess": "Subscription canceled successfully. Your listing will remain published until the end of the billing period.",
+      "cancelError": "Failed to cancel subscription",
+      "reactivateSuccess": "Subscription reactivated successfully!",
+      "reactivateError": "Failed to reactivate subscription",
+      "portalError": "Failed to open customer portal",
+      "cancelNote": "If you cancel, your listing will remain published until the end of the current billing period.",
+      "reactivateNote": "Your subscription is set to cancel at the end of the billing period. Click 'Reactivate' to continue your subscription.",
+      "status": {
+        "active": "Active",
+        "pastDue": "Past Due",
+        "canceled": "Canceled",
+        "unpaid": "Unpaid"
+      }
     }
   },
   "Reviews": {
@@ -917,7 +966,10 @@
       "price": "Price",
       "contactForPricing": "Contact for pricing",
       "edit": "Edit",
-      "view": "View"
+      "view": "View",
+      "draft": "Draft",
+      "pending": "Pending Review",
+      "subscriptionInfo": "Subscription Info"
     },
     "SelectedCategories": {
       "noCategoriesFound": "No Categories Found"

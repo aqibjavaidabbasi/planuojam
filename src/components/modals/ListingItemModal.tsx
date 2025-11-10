@@ -8,7 +8,7 @@ import TextArea from "../custom/TextArea"
 import Select from "../custom/Select"
 import Checkbox from "../custom/Checkbox"
 import Button from "../custom/Button"
-import type { category } from "@/types/pagesTypes"
+import type { category, ListingItem } from "@/types/pagesTypes"
 import { useForm } from "react-hook-form"
 import type { FieldError, PathValue } from "react-hook-form"
 import ImageUploader from "../custom/ImageUploader"
@@ -30,7 +30,8 @@ import MapPickerModal from "./MapPickerModal"
 interface ListingItemModalProps {
   isOpen: boolean
   onClose: () => void
-  onSaved?: () => void
+  onSaved?: (newListing?: ListingItem) => void
+  setShowSubscriptionModal: (show: boolean) => void
 }
 
 const ErrorMessage = ({ error }: { error?: FieldError | { message?: string } }) => {
@@ -38,12 +39,13 @@ const ErrorMessage = ({ error }: { error?: FieldError | { message?: string } }) 
   return <p className="text-red-500 text-sm mt-1">{(error as { message?: string }).message}</p>
 }
 
-const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, onSaved }) => {
+const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, onSaved, setShowSubscriptionModal }) => {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const t = useTranslations('Modals.ListingItem')
   const tImage = useTranslations('ImageSection')
-  const locale = useLocale()
+  const locale = useLocale();
+  const [showSubscriptionHint, setShowSubscriptionHint] = useState(true)
 
   const {
     handleSubmit: rhfHandleSubmit,
@@ -93,13 +95,13 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
       return { label: localized ?? '', value: c.documentId }
     })
   }
-  
+
   const { states } = useStates()
   const stateOptions = {
-    options: states.map( s => {
+    options: states.map(s => {
       const localized = locale === 'en'
-      ? s.name
-      : s.localizations.find(s => s.locale === locale)?.name
+        ? s.name
+        : s.localizations.find(s => s.locale === locale)?.name
       return { label: localized ?? '', value: s.documentId }
     })
   }
@@ -296,7 +298,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           if (parts[2]) {
             const sub = parts[2].split('.')
             ss = sub[0] || '00'
-            ms = (sub[1] || '000').slice(0,3).padEnd(3,'0')
+            ms = (sub[1] || '000').slice(0, 3).padEnd(3, '0')
           }
           return `${pad2(Number(hh))}:${pad2(Number(mm))}:${pad2(Number(ss))}.${ms}`
         }
@@ -363,12 +365,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 const transformed = { ...(sa || {}) }
                 if (transformed.city) {
                   // backend expects relation connect
-                  ;(transformed as unknown as { city: { connect: string[] } }).city = { connect: [transformed.city] as string[] }
+                  ; (transformed as unknown as { city: { connect: string[] } }).city = { connect: [transformed.city] as string[] }
                 } else {
                   delete (transformed as Record<string, unknown>).city
                 }
                 if (transformed.state) {
-                  ;(transformed as unknown as { state: { connect: string[] } }).state = { connect: [transformed.state] as string[] }
+                  ; (transformed as unknown as { state: { connect: string[] } }).state = { connect: [transformed.state] as string[] }
                 } else {
                   delete (transformed as Record<string, unknown>).state
                 }
@@ -381,12 +383,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           if (next.location && typeof next.location === 'object') {
             const loc = { ...next.location }
             if (loc.city) {
-              ;(loc as unknown as { city: { connect: string[] } }).city = { connect: [loc.city] as string[] }
+              ; (loc as unknown as { city: { connect: string[] } }).city = { connect: [loc.city] as string[] }
             } else {
               delete (loc as Record<string, unknown>).city
             }
             if (loc.state) {
-              ;(loc as unknown as { state: { connect: string[] } }).state = { connect: [loc.state] as string[] }
+              ; (loc as unknown as { state: { connect: string[] } }).state = { connect: [loc.state] as string[] }
             } else {
               delete (loc as Record<string, unknown>).state
             }
@@ -416,14 +418,17 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
       // set locale from current app locale
       payload.locale = locale
 
+      //make sure listing status is draft at creation time
+      payload.listingStatus = "draft"
+
       const data = {
         data: payload,
       }
 
-      await createListing(data, locale)
+      const createdListing = await createListing(data, locale)
       toast.success(t('toasts.created'))
-      onSaved?.()
-      onClose()
+      onSaved?.(createdListing as ListingItem)
+      setShowSubscriptionHint(true);
       reset()
       setSelectedCategory("")
       setEventTypesIds([])
@@ -445,24 +450,29 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="lg"
+      size={showSubscriptionHint ? "md" : "lg"}
       title={t('title')}
       footer={
-        <div className="flex gap-3 justify-between flex-wrap">
-          <div className="ml-auto flex gap-2">
-            <Button style="ghost" onClick={onClose} disabled={isWorking}>
-              {t('buttons.cancel')}
-            </Button>
-            <Button style="primary" type="submit" form="listingForm" disabled={isWorking}>
-              {submitting ? t('buttons.saving') : t('buttons.create')}
-            </Button>
-          </div>
-        </div>
+        <>
+          {
+            !showSubscriptionHint &&
+            <div className="flex gap-3 justify-between flex-wrap">
+              <div className="ml-auto flex gap-2">
+                <Button style="ghost" onClick={onClose} disabled={isWorking}>
+                  {t('buttons.cancel')}
+                </Button>
+                <Button style="primary" type="submit" form="listingForm" disabled={isWorking}>
+                  {submitting ? t('buttons.saving') : t('buttons.create')}
+                </Button>
+              </div>
+            </div>
+          }
+        </>
       }
     >
       {error && <div className="mb-4 p-3 rounded bg-red-50 text-red-700 border border-red-200">{error}</div>}
 
-      <form id="listingForm" onSubmit={rhfHandleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-2 gap-6  mt-14 ">
+      {!showSubscriptionHint && <form id="listingForm" onSubmit={rhfHandleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-2 gap-6  mt-14 ">
         {/* left side */}
         <div>
           {/* Basic Details */}
@@ -480,20 +490,6 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 {...register("title", { required: t('fields.title.required') })}
               />
               <ErrorMessage error={errors.title} />
-            </div>
-            <div className="flex items-end col-span-2" >
-              <Select
-                placeholder={t('fields.listingStatus.placeholder')}
-                disabled={isWorking}
-                required
-                {...register("listingStatus", { required: t('fields.listingStatus.required') })}
-                options={[
-                  { label: t('fields.listingStatus.options.draft'), value: "draft" },
-                  { label: t('fields.listingStatus.options.published'), value: "published" },
-                  { label: t('fields.listingStatus.options.archived'), value: "archived" },
-                ]}
-              />
-              <ErrorMessage error={errors.listingStatus} />
             </div>
             <div className="col-span-2">
               <Input
@@ -539,8 +535,10 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 disabled={isWorking}
                 required
                 {...register("websiteLink", {
-                  pattern: { value: /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})(\/[^\s]*)?$/
-                  , message: t('fields.websiteLink.errors.invalid') },
+                  pattern: {
+                    value: /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})(\/[^\s]*)?$/
+                    , message: t('fields.websiteLink.errors.invalid')
+                  },
                 })}
               />
               <ErrorMessage error={errors.websiteLink} />
@@ -566,16 +564,16 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                         updated[idx] = { ...(updated[idx] || {}), day: e.target.value as "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday" }
                         setValue("workingSchedule", updated, { shouldDirty: true })
                       }}
-                  options={[
-                    { label: t('workingSchedule.placeholder', { default: 'Select day' }) as string, value: '' },
-                    { label: t('days.monday', { default: 'Monday' }), value: 'monday' },
-                    { label: t('days.tuesday', { default: 'Tuesday' }), value: 'tuesday' },
-                    { label: t('days.wednesday', { default: 'Wednesday' }), value: 'wednesday' },
-                    { label: t('days.thursday', { default: 'Thursday' }), value: 'thursday' },
-                    { label: t('days.friday', { default: 'Friday' }), value: 'friday' },
-                    { label: t('days.saturday', { default: 'Saturday' }), value: 'saturday' },
-                    { label: t('days.sunday', { default: 'Sunday' }), value: 'sunday' },
-                  ]}
+                      options={[
+                        { label: t('workingSchedule.placeholder', { default: 'Select day' }) as string, value: '' },
+                        { label: t('days.monday', { default: 'Monday' }), value: 'monday' },
+                        { label: t('days.tuesday', { default: 'Tuesday' }), value: 'tuesday' },
+                        { label: t('days.wednesday', { default: 'Wednesday' }), value: 'wednesday' },
+                        { label: t('days.thursday', { default: 'Thursday' }), value: 'thursday' },
+                        { label: t('days.friday', { default: 'Friday' }), value: 'friday' },
+                        { label: t('days.saturday', { default: 'Saturday' }), value: 'saturday' },
+                        { label: t('days.sunday', { default: 'Sunday' }), value: 'sunday' },
+                      ]}
                     />
                   </div>
                   <div className="md:col-span-2">
@@ -841,7 +839,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       value={form.listingItem?.[0]?.location?.state || ""}
                       onChange={(e) => updateListingItem("location.state", e.target.value)}
                       options={[{ label: t('fields.state.placeholder'), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
-                    /> 
+                    />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
@@ -1035,7 +1033,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   label={t('fields.address.label')}
                   placeholder={t('fields.address.placeholder')}
                   required
-                  {...register("contact.address", { required: t('fields.address.message')})}
+                  {...register("contact.address", { required: t('fields.address.message') })}
                 />
                 <ErrorMessage error={errors.contact?.address} />
               </div>
@@ -1070,7 +1068,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
             <ErrorMessage error={errors.category} />
           </div>
         </div>
-      </form>
+      </form>}
       {/* Vendor map picker (serviceArea by index) */}
       {vendorPickerIndex !== null && (
         <MapPickerModal
@@ -1119,6 +1117,33 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           }}
         />
       )}
+      {
+        showSubscriptionHint &&
+        <div className="w-full flex items-center justify-center flex-col gap-2 py-4">
+          <p className="text-center tracking-wide">{t('subscriptionHint')}</p>
+          <div className="flex gap-2 items-center justify-center">
+            <Button
+              style="ghost"
+              onClick={() => {
+                setShowSubscriptionHint(false)
+                onClose()
+              }}
+            >
+              {t('later')}
+            </Button>
+            <Button
+              style="secondary"
+              onClick={() => {
+                setShowSubscriptionHint(false)
+                onClose()
+                setShowSubscriptionModal(true)
+              }}
+            >
+              {t('pay')}
+            </Button>
+          </div>
+        </div>
+      }
     </Modal>
   )
 }
