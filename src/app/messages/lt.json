@@ -1070,8 +1070,12 @@
       "pricePositive": "Kaina turi būti teigiama",
       "priceRequired": "Reikalinga kaina",
       "descriptionRequired": "Reikalingas aprašymas",
-      "invalidWebsiteLink": "Pridėkite galiojančią svetainės nuorodą"
+      "invalidWebsiteLink": "Pridėkite galiojančią svetainės nuorodą",
+      "priceBelowMin": "Kaina turi būti bent {min}",
+      "priceAboveMax": "Kaina negali viršyti {max}"
     },
+    "priceRangeHint": "Leidžiamas diapazonas: {min} - {max}",
+    "loadingPriceRange": "Įkeliami kainos apribojimai...",
     "toasts": {
       "updated": "Pagrindinės detalės atnaujintos",
       "updateFailed": "Nepavyko atnaujinti pagrindinių detalių"

@@ -45,7 +45,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
   const t = useTranslations('Modals.ListingItem')
   const tImage = useTranslations('ImageSection')
   const locale = useLocale();
-  const [showSubscriptionHint, setShowSubscriptionHint] = useState(true)
+  const [showSubscriptionHint, setShowSubscriptionHint] = useState(false)
 
   const {
     handleSubmit: rhfHandleSubmit,

@@ -1063,8 +1063,12 @@
       "pricePositive": "Price must be positive",
       "priceRequired": "Price is required",
       "descriptionRequired": "Description is required",
-      "invalidWebsiteLink": "Please add a valid website link"
+      "invalidWebsiteLink": "Please add a valid website link",
+      "priceBelowMin": "Price must be at least {min}",
+      "priceAboveMax": "Price must not exceed {max}"
     },
+    "priceRangeHint": "Allowed range: {min} - {max}",
+    "loadingPriceRange": "Loading price constraints...",
     "toasts": {
       "updated": "Basic details updated",
       "updateFailed": "Failed to update basic details"

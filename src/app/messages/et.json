@@ -1079,8 +1079,12 @@
       "pricePositive": "Hind peab olema positiivne",
       "priceRequired": "Hind on kohustuslik",
       "descriptionRequired": "Kirjeldus on kohustuslik",
-      "invalidWebsiteLink": "Palun lisage kehtiv veebilehe link"
+      "invalidWebsiteLink": "Palun lisage kehtiv veebilehe link",
+      "priceBelowMin": "Hind peab olema vähemalt {min}",
+      "priceAboveMax": "Hind ei tohi ületada {max}"
     },
+    "priceRangeHint": "Lubatud vahemik: {min} - {max}",
+    "loadingPriceRange": "Hinna piirangute laadimine...",
     "toasts": {
       "updated": "Põhiandmed on uuendatud",
       "updateFailed": "Põhiandmete uuendamine ebaõnnestus"

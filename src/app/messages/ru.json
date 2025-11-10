@@ -1123,8 +1123,12 @@
       "pricePositive": "Цена должна быть положительной",
       "priceRequired": "Требуется цена",
       "descriptionRequired": "Требуется описание",
-      "invalidWebsiteLink": "Пожалуйста, укажите действительную ссылку на сайт"
+      "invalidWebsiteLink": "Пожалуйста, укажите действительную ссылку на сайт",
+      "priceBelowMin": "Цена должна быть не менее {min}",
+      "priceAboveMax": "Цена не должна превышать {max}"
     },
+    "priceRangeHint": "Допустимый диапазон: {min} - {max}",
+    "loadingPriceRange": "Загрузка ценовых ограничений...",
     "toasts": {
       "updated": "Основные данные обновлены",
       "updateFailed": "Не удалось обновить основные данные"

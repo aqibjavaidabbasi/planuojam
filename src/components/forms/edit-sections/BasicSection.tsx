@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import Input from "../../custom/Input"
 import TextArea from "../../custom/TextArea"
@@ -11,10 +11,10 @@ import { toast } from "react-hot-toast"
 import { updateListing } from "@/services/listing"
 import type { ListingItem } from "@/types/pagesTypes"
 import { useTranslations } from "use-intl"
+import type { StripeProductAttributes } from "@/app/api/stripe-products/route"
 
 export type BasicForm = {
   title: string
-  listingStatus: "draft" | "published" | "pending review" | "archived"
   price?: number
   featured?: boolean
   description: string
@@ -24,13 +24,14 @@ export type BasicForm = {
 
 export default function BasicSection({ listing, onSaved }: { listing: ListingItem; onSaved?: () => void }) {
   const [submitting, setSubmitting] = useState(false)
+  const [priceRange, setPriceRange] = useState<{ min: number; max: number } | null>(null)
+  const [loadingSubscription, setLoadingSubscription] = useState(true)
   const t = useTranslations("basicSelectionForm")
   const tModal = useTranslations("Modals.ListingItem")
 
   const { register, handleSubmit, watch, setValue, getValues, formState: { errors } } = useForm<BasicForm>({
     defaultValues: {
       title: listing.title || "",
-      listingStatus: (listing.listingStatus as "draft" | "published" | "pending review" | "archived") || "draft",
       price: (listing.price as number) ?? undefined,
       featured: listing.featured || false,
       description: listing.description || "",
@@ -38,6 +39,43 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
       workingSchedule: listing.workingSchedule || [],
     },
   })
+
+  // Fetch active subscription and price range
+  useEffect(() => {
+    const fetchSubscriptionPriceRange = async () => {
+      try {
+        setLoadingSubscription(true)
+        // Fetch active subscription for this listing
+        const subResponse = await fetch(`/api/subscription-status?listingDocId=${listing.documentId}`)
+        const subData = await subResponse.json()
+
+        if (subData.hasActiveSubscription && subData.subscriptions?.length > 0) {
+          const subscription = subData.subscriptions[0]
+          const stripePriceId = subscription.stripePriceId
+
+          // Fetch all stripe products to find matching price range
+          const productsResponse = await fetch('/api/stripe-products')
+          const productsData = await productsResponse.json()
+          const products: StripeProductAttributes[] = Array.isArray(productsData) ? productsData : productsData.data || []
+
+          // Find the product that matches the subscription's price ID
+          const matchingProduct = products.find(p => p.stripePriceId === stripePriceId)
+
+          if (matchingProduct) {
+            const min = matchingProduct.minListingPrice ?? 0
+            const max = matchingProduct.maxListingPrice ?? Infinity
+            setPriceRange({ min, max })
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching subscription price range:', error)
+      } finally {
+        setLoadingSubscription(false)
+      }
+    }
+
+    fetchSubscriptionPriceRange()
+  }, [listing.documentId])
 
   function timeToMinutes(t: string) {
     const [h, m] = (t || "").split(":").map(Number)
@@ -51,6 +89,18 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
       const payload = { ...values }
       if (values.websiteLink === "") delete payload.websiteLink
       if (values.price == null || isNaN(values.price)) delete payload.price
+      
+      // Validate price against subscription range
+      if (priceRange && values.price != null && !isNaN(values.price)) {
+        if (values.price < priceRange.min) {
+          setSubmitting(false)
+          return toast.error(t("errors.priceBelowMin", { min: priceRange.min, default: `Price must be at least ${priceRange.min}` }))
+        }
+        if (values.price > priceRange.max) {
+          setSubmitting(false)
+          return toast.error(t("errors.priceAboveMax", { max: priceRange.max, default: `Price must not exceed ${priceRange.max}` }))
+        }
+      }
       // validate workingSchedule
       if (Array.isArray(values.workingSchedule)) {
         for (const item of values.workingSchedule) {
@@ -128,21 +178,29 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
           {errors.title && (<p className="text-red-500 text-sm mt-1">{String(errors.title.message)}</p>)}
         </div>
         <div>
-          <Select
-            disabled={submitting}
-            {...register("listingStatus", { required: t("errors.listingStatusRequired") })}
-            options={[
-              { label: t("listingStatus.draft"), value: "draft" },
-              { label: t("listingStatus.published"), value: "published" },
-              { label: t("listingStatus.pendingReview"), value: "pending review" },
-              { label: t("listingStatus.archived"), value: "archived" },
-            ]}
+          <Input 
+            type="number" 
+            label={t("price")} 
+            disabled={submitting || loadingSubscription} 
+            {...register("price", { 
+              valueAsNumber: true, 
+              min: { value: priceRange?.min ?? 0, message: t("errors.pricePositive") },
+              max: priceRange && priceRange.max !== Infinity ? { value: priceRange.max, message: t("errors.priceAboveMax", { max: priceRange.max }) } : undefined
+            })} 
           />
-          {errors.listingStatus && <p className="text-red-500 text-sm mt-1">{String(errors.listingStatus.message)}</p>}
-        </div>
-        <div>
-          <Input type="number" label={t("price")} disabled={submitting} {...register("price", { valueAsNumber: true, min: { value: 0, message: t("errors.pricePositive") } })} />
           {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>}
+          {priceRange && !loadingSubscription && (
+            <p className="text-blue-600 text-xs mt-1">
+              {t("priceRangeHint", { 
+                min: priceRange.min, 
+                max: priceRange.max === Infinity ? "∞" : priceRange.max,
+                default: `Allowed range: ${priceRange.min} - ${priceRange.max === Infinity ? "∞" : priceRange.max}` 
+              })}
+            </p>
+          )}
+          {loadingSubscription && (
+            <p className="text-gray-500 text-xs mt-1">{t("loadingPriceRange", { default: "Loading price constraints..." })}</p>
+          )}
         </div>
         <div className="flex items-center mt-6">
           <Checkbox label={t("featured")} checked={!!watch("featured")} onChange={(e) => setValue("featured", e.target.checked)} disabled={submitting} />

@@ -1076,8 +1076,12 @@
       "pricePositive": "Cena musi być dodatnia",
       "priceRequired": "Cena jest wymagana",
       "descriptionRequired": "Opis jest wymagany",
-      "invalidWebsiteLink": "Proszę dodać poprawny link do strony internetowej"
+      "invalidWebsiteLink": "Proszę dodać poprawny link do strony internetowej",
+      "priceBelowMin": "Cena musi wynosić co najmniej {min}",
+      "priceAboveMax": "Cena nie może przekraczać {max}"
     },
+    "priceRangeHint": "Dozwolony zakres: {min} - {max}",
+    "loadingPriceRange": "Ładowanie ograniczeń cenowych...",
     "toasts": {
       "updated": "Podstawowe dane zaktualizowane",
       "updateFailed": "Nie udało się zaktualizować podstawowych danych"
