@@ -14,7 +14,6 @@ import { isValidPhoneNumber } from "react-phone-number-input"
 export type ContactForm = {
   email: string
   phone: string
-  address: string
 }
 
 export default function ContactSection({ listing, onSaved }: { listing: ListingItem; onSaved?: () => void }) {
@@ -29,7 +28,6 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
     defaultValues: {
       email: (listing.contact)?.email || "",
       phone: (listing.contact)?.phone && isValidPhoneNumber((listing.contact)?.phone) ? (listing.contact)?.phone : "",
-      address: (listing.contact)?.address || "",
     },
   })
 
@@ -69,15 +67,11 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
                 label={t("phone")}
                 disabled={submitting}
                 value={field.value}
-                onChange={(val?: string) => field.onChange(val || "")}
+                onChange={(val?: string) => field.onChange(val ?? "")}
               />
             )}
           />
           {errors.phone && <p className="text-red-500 text-sm mt-1">{String(errors.phone.message)}</p>}
-        </div>
-        <div>
-          <Input type="text" label={t("address")} disabled={submitting} {...register("address", { required: t("errors.addressRequired") })} />
-          {errors.address && <p className="text-red-500 text-sm mt-1">{String(errors.address.message)}</p>}
         </div>
         <div className="flex justify-end mt-2">
           <Button style="primary" type="submit" form="contactForm" disabled={submitting}>

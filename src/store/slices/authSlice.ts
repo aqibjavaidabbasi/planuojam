@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { User } from "@/types/common";
+import { User } from "@/types/userTypes";
 import { loginExtraReducers } from "../extraReducers/auth/loginReducer";
 import { registerExtraReducers } from "../extraReducers/auth/registerReducer";
 import { updateUserDataExtraReducers } from "../extraReducers/auth/updateUserDataReducer";

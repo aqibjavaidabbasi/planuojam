@@ -98,12 +98,12 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
           experienceYears: values.experienceYears,
           serviceArea: (values.serviceArea || []).map((sa) => {
             type Relation = { connect: string[] }
-            type ServiceAreaPayload = { city?: Relation; state?: Relation; latitude?: string; longitude?: string }
+            type ServiceAreaPayload = { city?: Relation; state?: Relation; latitude?: number; longitude?: number }
             const transformed: ServiceAreaPayload = {}
             if (sa.city) transformed.city = { connect: [sa.city] }
             if (sa.state) transformed.state = { connect: [sa.state] }
-            if (sa.latitude) transformed.latitude = sa.latitude
-            if (sa.longitude) transformed.longitude = sa.longitude
+            if (sa.latitude) transformed.latitude = Number(sa.latitude)
+            if (sa.longitude) transformed.longitude = Number(sa.longitude)
             return transformed
           }),
         },
@@ -127,8 +127,8 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
         __component: "dynamic-blocks.venue"
         location?: {
           address?: string
-          latitude?: string
-          longitude?: string
+          latitude?: number
+          longitude?: number
           city?: RelationUpdate
           state?: RelationUpdate
         }
@@ -144,8 +144,8 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
       if (values.location) {
         const loc: VenuePayload["location"] = {}
         if (values.location.address != null) loc.address = values.location.address
-        if (values.location.latitude != null) loc.latitude = values.location.latitude
-        if (values.location.longitude != null) loc.longitude = values.location.longitude
+        if (values.location.latitude != null) loc.latitude = Number(values.location.latitude)
+        if (values.location.longitude != null) loc.longitude = Number(values.location.longitude)
 
         // Determine if city/state were modified by the user
         const dirty = venueRHF.formState.dirtyFields
@@ -299,54 +299,55 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                 {t("addservicearea")}
               </Button>
             </div>
+            <p className="text-sm text-gray-500 mb-2">{t("serviceAreaHint")}</p>
             {serviceAreas.map((field, idx) => (
               <div key={field.id} className="flex flex-col gap-3 mb-3">
-                  <Select
-                    label={t("citylabel")}
-                    disabled={submitting}
-                    required
-                    value={vendorRHF.watch(`serviceArea.${idx}.city`) || ""}
-                    onChange={(e) => vendorRHF.setValue(`serviceArea.${idx}.city`, e.target.value, { shouldDirty: true })}
-                    options={[{ label: t("selectcity"), value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
-                  />
-                  <Select
-                    label={t("statelabel")}
-                    disabled={submitting}
-                    required
-                    value={vendorRHF.watch(`serviceArea.${idx}.state`) || ""}
-                    onChange={(e) => vendorRHF.setValue(`serviceArea.${idx}.state`, e.target.value, { shouldDirty: true })}
-                    options={[{ label: t("selectstate"), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
-                  />
-                  <Input
-                    type="number"
-                    step="any"
-                    min={-90}
-                    max={90}
-                    label={t("latitude")}
-                    disabled={submitting}
-                    {...vendorRegister(`serviceArea.${idx}.latitude` as const, {
-                      validate: (v) => {
-                        if (v == null || v === "") return true
-                        const n = Number(v)
-                        return (Number.isFinite(n) && n >= -90 && n <= 90) || t("errors.invalidLatitude", { default: "Latitude must be between -90 and 90" })
-                      },
-                    })}
-                  />
-                  <Input
-                    type="number"
-                    step="any"
-                    min={-180}
-                    max={180}
-                    label={t("longitude")}
-                    disabled={submitting}
-                    {...vendorRegister(`serviceArea.${idx}.longitude` as const, {
-                      validate: (v) => {
-                        if (v == null || v === "") return true
-                        const n = Number(v)
-                        return (Number.isFinite(n) && n >= -180 && n <= 180) || t("errors.invalidLongitude", { default: "Longitude must be between -180 and 180" })
-                      },
-                    })}
-                  />
+                <Select
+                  label={t("citylabel")}
+                  disabled={submitting}
+                  required
+                  value={vendorRHF.watch(`serviceArea.${idx}.city`) || ""}
+                  onChange={(e) => vendorRHF.setValue(`serviceArea.${idx}.city`, e.target.value, { shouldDirty: true })}
+                  options={[{ label: t("selectcity"), value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
+                />
+                <Select
+                  label={t("statelabel")}
+                  disabled={submitting}
+                  required
+                  value={vendorRHF.watch(`serviceArea.${idx}.state`) || ""}
+                  onChange={(e) => vendorRHF.setValue(`serviceArea.${idx}.state`, e.target.value, { shouldDirty: true })}
+                  options={[{ label: t("selectstate"), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
+                />
+                <Input
+                  type="number"
+                  step="any"
+                  min={-90}
+                  max={90}
+                  label={t("latitude")}
+                  disabled={submitting}
+                  {...vendorRegister(`serviceArea.${idx}.latitude` as const, {
+                    validate: (v) => {
+                      if (v == null || v === "") return true
+                      const n = Number(v)
+                      return (Number.isFinite(n) && n >= -90 && n <= 90) || t("errors.invalidLatitude", { default: "Latitude must be between -90 and 90" })
+                    },
+                  })}
+                />
+                <Input
+                  type="number"
+                  step="any"
+                  min={-180}
+                  max={180}
+                  label={t("longitude")}
+                  disabled={submitting}
+                  {...vendorRegister(`serviceArea.${idx}.longitude` as const, {
+                    validate: (v) => {
+                      if (v == null || v === "") return true
+                      const n = Number(v)
+                      return (Number.isFinite(n) && n >= -180 && n <= 180) || t("errors.invalidLongitude", { default: "Longitude must be between -180 and 180" })
+                    },
+                  })}
+                />
                 <div className="flex flex-col md:flex-row gap-3">
                   <Button type="button" style="secondary" disabled={submitting} onClick={() => onFetchVendorCoords(idx)}>
                     {t("fetchcoordinates")}
@@ -371,53 +372,54 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
       ) : (
         <form onSubmit={submitVenue(onSubmitVenue)} id="venue-form" className="flex flex-col gap-4">
           <div className="flex gap-3 flex-col">
-              <Input type="text" label={t("address")} disabled={submitting} {...venueRegister("location.address")} />
-              <Select
-                label={t("city")}
-                disabled={submitting}
-                value={venueRHF.watch("location.city") || ""}
-                onChange={(e) => venueRHF.setValue("location.city", e.target.value, { shouldDirty: true })}
-                options={[{ label: t("selectcity"), value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
-              />
-              <Select
-                label={t("state")}
-                disabled={submitting}
-                value={venueRHF.watch("location.state") || ""}
-                onChange={(e) => venueRHF.setValue("location.state", e.target.value, { shouldDirty: true })}
-                options={[{ label: t("selectstate"), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
-              />
+            <p className="text-sm text-gray-500 mt-2">{t("locationHint")}</p>
+            <Input type="text" label={t("address")} disabled={submitting} {...venueRegister("location.address")} />
+            <Select
+              label={t("city")}
+              disabled={submitting}
+              value={venueRHF.watch("location.city") || ""}
+              onChange={(e) => venueRHF.setValue("location.city", e.target.value, { shouldDirty: true })}
+              options={[{ label: t("selectcity"), value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
+            />
+            <Select
+              label={t("state")}
+              disabled={submitting}
+              value={venueRHF.watch("location.state") || ""}
+              onChange={(e) => venueRHF.setValue("location.state", e.target.value, { shouldDirty: true })}
+              options={[{ label: t("selectstate"), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
+            />
           </div>
           <div className="flex gap-3 flex-col">
-              <Input
-                type="number"
-                step="any"
-                min={-90}
-                max={90}
-                label={t("latitude")}
-                disabled={submitting}
-                {...venueRegister("location.latitude", {
-                  validate: (v) => {
-                    if (v == null || v === "") return true
-                    const n = Number(v)
-                    return (Number.isFinite(n) && n >= -90 && n <= 90) || t("errors.invalidLatitude", { default: "Latitude must be between -90 and 90" })
-                  },
-                })}
-              />
-              <Input
-                type="number"
-                step="any"
-                min={-180}
-                max={180}
-                label={t("longitude")}
-                disabled={submitting}
-                {...venueRegister("location.longitude", {
-                  validate: (v) => {
-                    if (v == null || v === "") return true
-                    const n = Number(v)
-                    return (Number.isFinite(n) && n >= -180 && n <= 180) || t("errors.invalidLongitude", { default: "Longitude must be between -180 and 180" })
-                  },
-                })}
-              />
+            <Input
+              type="number"
+              step="any"
+              min={-90}
+              max={90}
+              label={t("latitude")}
+              disabled={submitting}
+              {...venueRegister("location.latitude", {
+                validate: (v) => {
+                  if (v == null || v === "") return true
+                  const n = Number(v)
+                  return (Number.isFinite(n) && n >= -90 && n <= 90) || t("errors.invalidLatitude", { default: "Latitude must be between -90 and 90" })
+                },
+              })}
+            />
+            <Input
+              type="number"
+              step="any"
+              min={-180}
+              max={180}
+              label={t("longitude")}
+              disabled={submitting}
+              {...venueRegister("location.longitude", {
+                validate: (v) => {
+                  if (v == null || v === "") return true
+                  const n = Number(v)
+                  return (Number.isFinite(n) && n >= -180 && n <= 180) || t("errors.invalidLongitude", { default: "Longitude must be between -180 and 180" })
+                },
+              })}
+            />
             <div className="flex flex-col md:flex-row gap-3">
               <Button type="button" style="secondary" disabled={submitting} onClick={onFetchVenueCoords}>
                 {t("fetchcoordinates")}
@@ -470,45 +472,41 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
         </form>
       )}
       {/* Vendor Map Picker */}
-      {vendorPickerIndex !== null && (
-        <MapPickerModal
-          isOpen={vendorPickerIndex !== null}
-          onClose={() => setVendorPickerIndex(null)}
-          initial={(() => {
-            const latStr = vendorRHF.getValues(`serviceArea.${vendorPickerIndex}.latitude`)
-            const lngStr = vendorRHF.getValues(`serviceArea.${vendorPickerIndex}.longitude`)
-            const lat = latStr && !isNaN(Number(latStr)) ? Number(latStr) : undefined
-            const lng = lngStr && !isNaN(Number(lngStr)) ? Number(lngStr) : undefined
-            return { lat, lng }
-          })()}
-          onSelect={(lat, lng) => {
-            if (vendorPickerIndex !== null) {
-              vendorRHF.setValue(`serviceArea.${vendorPickerIndex}.latitude`, String(lat), { shouldDirty: true })
-              vendorRHF.setValue(`serviceArea.${vendorPickerIndex}.longitude`, String(lng), { shouldDirty: true })
-            }
-            setVendorPickerIndex(null)
-          }}
-        />
-      )}
+      <MapPickerModal
+        isOpen={vendorPickerIndex !== null}
+        onClose={() => setVendorPickerIndex(null)}
+        initial={(() => {
+          const latStr = vendorRHF.getValues(`serviceArea.${vendorPickerIndex!}.latitude`)
+          const lngStr = vendorRHF.getValues(`serviceArea.${vendorPickerIndex!}.longitude`)
+          const lat = latStr && !isNaN(Number(latStr)) ? Number(latStr) : undefined
+          const lng = lngStr && !isNaN(Number(lngStr)) ? Number(lngStr) : undefined
+          return { lat, lng }
+        })()}
+        onSelect={(lat, lng) => {
+          if (vendorPickerIndex !== null) {
+            vendorRHF.setValue(`serviceArea.${vendorPickerIndex}.latitude`, String(lat), { shouldDirty: true })
+            vendorRHF.setValue(`serviceArea.${vendorPickerIndex}.longitude`, String(lng), { shouldDirty: true })
+          }
+          setVendorPickerIndex(null)
+        }}
+      />
       {/* Venue Map Picker */}
-      {venuePickerOpen && (
-        <MapPickerModal
-          isOpen={venuePickerOpen}
-          onClose={() => setVenuePickerOpen(false)}
-          initial={(() => {
-            const latStr = venueRHF.getValues("location.latitude")
-            const lngStr = venueRHF.getValues("location.longitude")
-            const lat = latStr && !isNaN(Number(latStr)) ? Number(latStr) : undefined
-            const lng = lngStr && !isNaN(Number(lngStr)) ? Number(lngStr) : undefined
-            return { lat, lng }
-          })()}
-          onSelect={(lat, lng) => {
-            venueRHF.setValue("location.latitude", String(lat), { shouldDirty: true })
-            venueRHF.setValue("location.longitude", String(lng), { shouldDirty: true })
-            setVenuePickerOpen(false)
-          }}
-        />
-      )}
+      <MapPickerModal
+        isOpen={venuePickerOpen}
+        onClose={() => setVenuePickerOpen(false)}
+        initial={(() => {
+          const latStr = venueRHF.getValues("location.latitude")
+          const lngStr = venueRHF.getValues("location.longitude")
+          const lat = latStr && !isNaN(Number(latStr)) ? Number(latStr) : undefined
+          const lng = lngStr && !isNaN(Number(lngStr)) ? Number(lngStr) : undefined
+          return { lat, lng }
+        })()}
+        onSelect={(lat, lng) => {
+          venueRHF.setValue("location.latitude", String(lat), { shouldDirty: true })
+          venueRHF.setValue("location.longitude", String(lng), { shouldDirty: true })
+          setVenuePickerOpen(false)
+        }}
+      />
     </div>
   )
 }

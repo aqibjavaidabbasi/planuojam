@@ -1,4 +1,4 @@
-import { strapiImage, StrapiSeo } from "./common";
+import { strapiImage, StrapiSeo } from "./mediaTypes";
 
 export interface SiteSettings{
     id: number;

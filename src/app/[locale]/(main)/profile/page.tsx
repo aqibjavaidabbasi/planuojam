@@ -214,7 +214,7 @@ function ProfilePage() {
                     <p className="text-gray-600 hidden sm:block">{user?.email}</p>
                     {user?.serviceType !== null && (
                       <span className="inline-block bg-primary text-white px-3 py-1 rounded-full text-sm mt-2 w-fit">
-                        {user?.serviceType}
+                        {t(String(user?.serviceType || ""))}
                       </span>
                     )}
                   </div>

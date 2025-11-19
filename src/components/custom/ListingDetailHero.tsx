@@ -19,7 +19,6 @@ interface ListingDetailHeroProps {
   contact: {
     email: string;
     phone: string;
-    address: string;
   };
   websiteLink: string;
   price: number | undefined;
@@ -72,9 +71,6 @@ function ListingDetailHero({
           <div className="flex-1">
             <p className="text-base sm:text-lg text-white text-opacity-80 mb-3">
               {username}
-            </p>
-            <p className="text-base sm:text-xl text-white text-opacity-90 mb-3">
-              {contact?.address}
             </p>
           </div>
           <div className="flex flex-wrap gap-4 text-sm">

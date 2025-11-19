@@ -9,7 +9,7 @@
       "loggedIn": "Sėkmingai prisijungėte!",
       "loginFailed": "Prisijungti nepavyko. Bandykite dar kartą.",
       "socialEmailRequired": "El. paštas būtinas socialiniam prisijungimui.",
-      "socialUserNotFound": "Šiam tiekėjui paskyra nerasta. Užsiregistruokite arba naudokite kitą būdą.",
+      "socialUserNotFound": "Nerasta paskyros. Prašome užsiregistruoti arba naudoti kitą būdą.",
       "socialInternalError": "Kažkas nepavyko prisijungiant per socialinius tinklus. Bandykite dar kartą.",
       "emailLabel": "El. paštas",
       "emailPlaceholder": "Įveskite el. paštą",
@@ -156,7 +156,7 @@
         "lt": "LT",
         "ru": "RU"
       },
-      "phonePlaceholder": "+1 (555) 000-0000",
+      "phonePlaceholder": "+370 600 00000",
       "phoneLabel": "Telefonas",
       "messagePlaceholder": "Palikite mums žinutę...",
       "messageLabel": "Žinutė",
@@ -750,6 +750,8 @@
   "Profile": {
     "loginPrompt": "Norėdami peržiūrėti savo profilį, prisijunkite. Peradresuojama...",
     "creditStars": "Kredito žvaigždės",
+    "vendor": "Tiekėjas",
+    "venue": "Vieta",
     "tabs": {
       "profile": "Profilis",
       "myListings": "Mano sąrašai",
@@ -936,7 +938,16 @@
       "toasts": {
         "uploadSuccess": "Nuotraukos sėkmingai įkeltos",
         "uploadFailed": "Nepavyko įkelti nuotraukų"
-      }
+      },
+      "setAsMain": "Nustatyti kaip pagrindinį",
+      "cropTitle": "Apkarpyti pagrindinį paveikslėlį",
+      "zoom": "Priartinti",
+      "crop": "Apkarpyti",
+      "cancel": "Atšaukti",
+      "cropping": "Apkarpoma...",
+      "setAsMainLabel": "Nustatyti kaip pagrindinį vaizdą",
+      "deselectMain": "Atžymėti kaip pagrindinę nuotrauką",
+      "selectMain": "Pasirinkti kaip pagrindinę nuotrauką"
     },
     "NoDataCard": {
       "expandSearchHint": "Pabandykite išplėsti paieškos spindulį arba rinkitės kitą vietą."
@@ -1086,6 +1097,7 @@
     "saving": "taupymas",
     "saveImages": "išsaugoti paveikslėlius",
     "uploadHint": "Įkelkite nuotraukas iki {size}",
+    "instructionHint": "Pasirinkite nuotraukas, tada jas įkelkite ir tada spustelėkite išsaugoti, kad išsaugotumėte visas nuotraukas. Spustelėkite žvaigždės piktogramą, kad pasirinktumėte pagrindinę nuotrauką",
     "readyToSave": "{count} nuotrauka(-os) paruošta(-os) išsaugoti",
     "alt": {
       "portfolioImage": "Portfelio vaizdas"
@@ -1093,8 +1105,11 @@
     "aria": {
       "deleteImage": "Ištrinti vaizdą"
     },
+    "deselectMainImage": "Atžymėti kaip pagrindinę nuotrauką",
+    "selectMainImage": "Pasirinkti kaip pagrindinę nuotrauką",
     "errors": {
-      "noImage": "Prašome įkelti bent vieną nuotrauką"
+      "noImage": "Prašome įkelti bent vieną nuotrauką",
+      "mainImageError": "Pasirinkite pagrindinį vaizdą"
     },
     "toasts": {
       "saved": "Nuotraukos išsaugotos",
@@ -1125,10 +1140,11 @@
     "selectdurationtype": "Pasirinkite trukmės tipą",
     "perday": "Per dieną",
     "perhour": "Per valandą",
-    "bookingduration": "užsakymo trukmė",
+    "bookingduration": "Maksimali užsakymo trukmė",
     "amenities": "patogumai",
     "amenityLabel": "Patogumas {index}",
     "serviceareas": "Paslaugų zonos",
+    "serviceAreaHint": "Nurodykite miestus ir regionus, kuriuose teikiate savo paslaugas.",
     "addservicearea": "Pridėti paslaugų zoną",
     "saving": "taupymas",
     "savechanges": "išsaugoti pakeitimus",
@@ -1136,13 +1152,23 @@
     "picklocation": "Pasirinkite vietą žemėlapyje",
     "adamenity": "Pridėti patogumą",
     "address": "adresu",
+    "locationHint": "Ši informacija nurodo jūsų vietos vietą.",
     "remove": "pašalinti",
     "citylabel": "miesto ženklas",
     "statelabel": "valstybės etiketė",
     "selectstate": "pasirinkite būseną",
     "selectcity": "Pasirinkite miestą",
     "errors": {
-      "cityStateRequired": "Kiekvienai aptarnavimo sričiai reikia miesto ir valstijos"
+      "cityStateRequired": "Kiekvienai aptarnavimo sričiai reikia miesto ir valstijos",
+      "invalidLatitude": "Platuma turi būti tarp -90 ir 90",
+      "invalidLongitude": "Ilguma turi būti tarp -180 ir 180",
+      "cityRequired": "Privalomas miestas",
+      "stateRequired": "Privalomas valstybė",
+      "latitudeRequired": "Privalomas platuma",
+      "longitudeRequired": "Privalomas ilguma",
+      "capacityRequired": "Privalomas talpa",
+      "bookingDurationTypeRequired": "Privalomas užsakymo trukmės tipas",
+      "bookingDurationRequired": "Privalomas maksimali užsakymo trukmė"
     },
     "toasts": {
       "updated": "Tiekėjo/Vietos informacija atnaujinta",
@@ -1412,6 +1438,10 @@
       "updated": "Karštas pasiūlymas atnaujintas",
       "updateFailed": "Nepavyko atnaujinti karšto pasiūlymo"
     }
+  },
+  "MapboxSearch": {
+    "placeholder": "Ieškoti vietos",
+    "noResults": "Rezultatų nerasta"
   },
   "Pagination": {
     "loadMore": "Įkelti daugiau"

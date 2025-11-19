@@ -7,7 +7,7 @@ import { ListingItem, Venue } from '@/types/pagesTypes'
 import geocodeLocations from '@/utils/mapboxLocation'
 import React, { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { strapiImage } from '@/types/common'
+import { strapiImage } from '@/types/mediaTypes'
 
 function ClientMapWrapper() {
   const t = useTranslations('Map')

@@ -1,6 +1,5 @@
 "use client";
 import dynamic from "next/dynamic";
-// Move Swiper CSS import inside the Gallery component file if possible
 const ListingGallery = dynamic(() => import("@/components/custom/ListingGallery"));
 const MapboxMap = dynamic(() => import("@/components/global/MapboxMap"), { ssr: false });
 const ListingCalendar = dynamic(() => import("@/components/custom/ListingCalendar"), { ssr: false });
@@ -16,7 +15,6 @@ const NoDataCard = dynamic(() => import("@/components/custom/NoDataCard"), { ssr
 const PricingPlans = dynamic(() => import("@/components/custom/PricingPlans"), { ssr: false });
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "@/i18n/navigation";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -24,14 +22,11 @@ import { ListingItem, Venue } from "@/types/pagesTypes";
 import { useAppSelector } from "@/store/hooks";
 import { useTranslations } from "next-intl";
 import geocodeLocations from "@/utils/mapboxLocation";
-import Button from "@/components/custom/Button";
-import { TbArrowBackUp } from "react-icons/tb";
 import { Location as MapLocation } from "@/components/global/MapboxMap";
 import { notFound } from "next/navigation";
 import { RootState } from "@/store";
 
 export default function ListingDetailsPage({ initialListing, locale }: { initialListing: ListingItem; locale: string }) {
-  const router = useRouter();
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
   const t = useTranslations("Listing.Details");
   const [detailLocation, setDetailLocation] = useState<MapLocation | null>(null);
@@ -133,15 +128,16 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
 
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6">
-      <Button style="ghost" extraStyles="" onClick={() => router.back()}>
-        <TbArrowBackUp size={20} />
-      </Button>
       <div className="max-w-[1400px] mx-auto">
 
         {/* gallery */}
         {
           renderingContent?.portfolio && renderingContent.portfolio?.length > 0 && (
-            <ListingGallery portfolio={renderingContent.portfolio} title={renderingContent.title} />
+            <ListingGallery 
+              portfolio={renderingContent.portfolio} 
+              title={renderingContent.title || "Listing Gallery"} 
+              mainImageId={renderingContent.mainImageId || ""}
+            />
           )
         }
 

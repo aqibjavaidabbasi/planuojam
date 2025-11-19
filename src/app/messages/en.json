@@ -9,7 +9,7 @@
       "loggedIn": "Logged in successfully!",
       "loginFailed": "Login failed. Please try again.",
       "socialEmailRequired": "Email is required for social login.",
-      "socialUserNotFound": "No account found for this provider. Please sign up or use a different method.",
+      "socialUserNotFound": "No account found. Please sign up or use a different method.",
       "socialInternalError": "Something went wrong during social login. Please try again.",
       "emailLabel": "Email",
       "emailPlaceholder": "Enter your email",
@@ -172,7 +172,7 @@
         "lt": "LT",
         "ru": "RU"
       },
-      "phonePlaceholder": "+1 (555) 000-0000",
+      "phonePlaceholder": "+370 600 00000",
       "phoneLabel": "Phone",
       "messagePlaceholder": "Leave us a message...",
       "messageLabel": "Message",
@@ -281,6 +281,8 @@
   "Profile": {
     "loginPrompt": "Please login to view your profile. Redirecting...",
     "creditStars": "Credit Stars",
+    "vendor": "Vendor",
+    "venue": "Venue",
     "tabs": {
       "profile": "Profile",
       "myListings": "My Listings",
@@ -483,11 +485,20 @@
   "Custom": {
     "ImageUploader": {
       "selectImages": "Select Images",
-      "uploadImages": "Upload {count} Images",
+      "uploadImages": "Upload {count} image(s)",
       "toasts": {
         "uploadSuccess": "Images uploaded successfully",
         "uploadFailed": "Failed to upload images"
-      }
+      },
+      "setAsMain": "Set as Main",
+      "cropTitle": "Crop Main Image",
+      "zoom": "Zoom",
+      "crop": "Crop",
+      "cancel": "Cancel",
+      "cropping": "Cropping...",
+      "setAsMainLabel": "Set as main image",
+      "deselectMain": "Deselect as main image",
+      "selectMain": "Select as main image"
     },
     "NoDataCard": {
       "expandSearchHint": "Try expanding your search radius or check different locations."
@@ -868,6 +879,15 @@
         "add": "+ Add Plan",
         "optAddons": "Optional Addons:",
         "addOptAddon": "+ Add Optional Addon"
+      },
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
       }
     },
     "MapPicker": {
@@ -1085,6 +1105,7 @@
     "saving": "Saving",
     "saveImages": "Save  Images",
     "uploadHint": "Maximum file size: {size}",
+    "instructionHint": "Select images, then upload them and then click save to save all of the images. Click on star icon to choose a main image",
     "readyToSave": "{count} image(s) ready to save",
     "alt": {
       "portfolioImage": "Portfolio image"
@@ -1092,8 +1113,11 @@
     "aria": {
       "deleteImage": "Delete image"
     },
+    "deselectMainImage": "Deselect as main image",
+    "selectMainImage": "Select as main image",
     "errors": {
-      "noImage": "Please upload at least one image"
+      "noImage": "Please upload at least one image",
+      "mainImageError": "Please select a main image"
     },
     "toasts": {
       "saved": "Images saved",
@@ -1128,10 +1152,11 @@
     "selectdurationtype": "Select Duration Type",
     "perday": "Per Day",
     "perhour": "Per Hour",
-    "bookingduration": "Booking Duration",
+    "bookingduration": "Maximum Booking Duration",
     "amenities": "Amenities",
     "amenityLabel": "Amenity {index}",
     "serviceareas": "Service Areas",
+    "serviceAreaHint": "Specify the cities and states where you offer your services.",
     "addservicearea": "Add Service Area",
     "saving": "Saving",
     "savechanges": "Save  Changes",
@@ -1139,6 +1164,7 @@
     "fetchcoordinates": "Fetch Coordinates",
     "picklocation": "Pick location on map",
     "address": "Address",
+    "locationHint": "This information specifies the location of your venue.",
     "remove": "Remove",
     "citylabel": "City ",
     "statelabel": "State",
@@ -1151,7 +1177,7 @@
       "longitudeRequired": "Longitude is required",
       "capacityRequired": "Capacity is required",
       "bookingDurationTypeRequired": "Booking duration type is required",
-      "bookingDurationRequired": "Booking duration is required",
+      "bookingDurationRequired": "Maximum Booking duration is required",
       "cityStateRequired": "Each service area needs a city and state"
     },
     "toasts": {
@@ -1459,6 +1485,10 @@
       "updated": "Hot Deal updated",
       "updateFailed": "Failed to update Hot Deal"
     }
+  },
+  "MapboxSearch": {
+    "placeholder": "Search for a place",
+    "noResults": "No results found"
   },
   "Pagination": {
     "loadMore": "Load More"

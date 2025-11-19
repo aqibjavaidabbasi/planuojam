@@ -1,7 +1,7 @@
 import { AuthState } from "@/store/slices/authSlice";
 import { loginUser } from "@/store/thunks/authThunks";
 import { ActionReducerMapBuilder } from "@reduxjs/toolkit";
-import { User } from "@/types/common";
+import { User } from "@/types/userTypes";
 
 export const loginExtraReducers = (
   builder: ActionReducerMapBuilder<AuthState>

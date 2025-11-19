@@ -1,5 +1,5 @@
 import { createQuery, fetchAPI } from "./api";
-import { StrapiSeo } from "@/types/common";
+import { StrapiSeo } from "@/types/mediaTypes";
 import { fetchSiteSettings } from "./siteSettings";
 
 // Fetch SEO from the Pages collection by slug

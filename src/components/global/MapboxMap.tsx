@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom/client";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import MapInfoWindow from "./MapInfoWindow";
 import { useLocale, useTranslations } from "next-intl";
-import { strapiImage } from "@/types/common";
+import { strapiImage } from "@/types/mediaTypes";
 
 const LATITUDE = 55.1694;
 const LONGITUDE = 23.8813;
@@ -46,6 +46,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
   const map = useRef<mapboxgl.Map | null>(null);
   const t = useTranslations('Map.infoWindow');
   const locale = useLocale();
+  const [mapError, setMapError] = useState(false);
 
   useEffect(() => {
     if (!mapContainer.current) {
@@ -73,15 +74,21 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
 
     mapboxgl.accessToken = mapboxToken;
 
-    // Initialize map immediately
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: "mapbox://styles/mapbox/streets-v12",
-      center: [LONGITUDE, LATITUDE],
-      zoom: 6,
-      attributionControl: false,
-      cooperativeGestures: true, //uses ctrl/command for zooming
-    });
+    try {
+      // Initialize map immediately
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: "mapbox://styles/mapbox/streets-v12",
+        center: [LONGITUDE, LATITUDE],
+        zoom: 6,
+        attributionControl: false,
+        cooperativeGestures: true, //uses ctrl/command for zooming
+      });
+    } catch (error) {
+      console.error("Failed to initialize Mapbox map:", error);
+      setMapError(true);
+      return;
+    }
 
     // Ensure browser does not try to treat touch as scroll on the map surface
     try {
@@ -217,21 +224,37 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
 
   // Move map when selected place changes
   useEffect(() => {
+    console.log(selectedPlace)
     if (map.current && selectedPlace?.geometry?.location) {
       map.current.flyTo({
         center: [selectedPlace.geometry.location.lng, selectedPlace.geometry.location.lat],
         zoom: 15,
       });
     }
-  }, [selectedPlace]);
+    if(map.current && locations.length === 1){
+      map.current.flyTo({
+        center: [locations[0].position.lng, locations[0].position.lat],
+        zoom: 15,
+      });
+    }
+  }, [selectedPlace, locations]);
 
   return (
     <div className="w-full h-full relative border border-gray-200 rounded-lg overflow-hidden" style={{ overscrollBehavior: 'contain' }}>
-      <div
-        ref={mapContainer}
-        className="w-full h-full"
-        style={{ touchAction: 'none' }}
-      />
+      {mapError ? (
+        <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-600">
+          <div className="text-center">
+            <p className="text-lg font-semibold mb-2">Map Unavailable</p>
+            <p className="text-sm">WebGL is not supported or disabled in this browser.</p>
+          </div>
+        </div>
+      ) : (
+        <div
+          ref={mapContainer}
+          className="w-full h-full"
+          style={{ touchAction: 'none' }}
+        />
+      )}
     </div>
   );
 };

@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form"
 import Input from "../../custom/Input"
 import TextArea from "../../custom/TextArea"
 import Select from "../../custom/Select"
-import Checkbox from "../../custom/Checkbox"
 import Button from "../../custom/Button"
 import { toast } from "react-hot-toast"
 import { updateListing } from "@/services/listing"
@@ -16,7 +15,6 @@ import type { StripeProductAttributes } from "@/app/api/stripe-products/route"
 export type BasicForm = {
   title: string
   price?: number
-  featured?: boolean
   description: string
   websiteLink?: string
   workingSchedule?: { day: "" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday"; start: string; end: string }[]
@@ -33,7 +31,6 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
     defaultValues: {
       title: listing.title || "",
       price: (listing.price as number) ?? undefined,
-      featured: listing.featured || false,
       description: listing.description || "",
       websiteLink: listing.websiteLink || "",
       workingSchedule: listing.workingSchedule || [],
@@ -201,9 +198,6 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
           {loadingSubscription && (
             <p className="text-gray-500 text-xs mt-1">{t("loadingPriceRange", { default: "Loading price constraints..." })}</p>
           )}
-        </div>
-        <div className="flex items-center mt-6">
-          <Checkbox label={t("featured")} checked={!!watch("featured")} onChange={(e) => setValue("featured", e.target.checked)} disabled={submitting} />
         </div>
         <div className="col-span-2">
           <TextArea 

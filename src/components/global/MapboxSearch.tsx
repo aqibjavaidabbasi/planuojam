@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Input from '../custom/Input';
+import { useTranslations } from 'next-intl';
 
 interface MapboxSearchProps {
   onPlaceSelect: (place: {
@@ -13,10 +14,9 @@ interface MapboxSearchProps {
     };
     place_name: string;
   } | null) => void;
-  placeholder?: string;
 }
 
-const MapboxSearch = ({ onPlaceSelect, placeholder = "Search for a place" }: MapboxSearchProps) => {
+const MapboxSearch = ({ onPlaceSelect }: MapboxSearchProps) => {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Array<{
     center: [number, number];
@@ -27,6 +27,7 @@ const MapboxSearch = ({ onPlaceSelect, placeholder = "Search for a place" }: Map
   const [isLoading, setIsLoading] = useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY;
+  const t = useTranslations('MapboxSearch');
 
   useEffect(() => {
     if (!mapboxToken) {
@@ -114,7 +115,7 @@ const MapboxSearch = ({ onPlaceSelect, placeholder = "Search for a place" }: Map
   return (
     <div className="relative">
       <Input
-        placeholder={placeholder}
+        placeholder={t('placeholder')}
         type="text"
         value={query}
         onChange={handleInputChange}
@@ -149,7 +150,7 @@ const MapboxSearch = ({ onPlaceSelect, placeholder = "Search for a place" }: Map
 
       {showSuggestions && !isLoading && suggestions.length === 0 && query.length >= 3 && (
         <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
-          <div className="px-4 py-2 text-sm text-gray-500">No results found</div>
+          <div className="px-4 py-2 text-sm text-gray-500">{t('noResults')}</div>
         </div>
       )}
     </div>

@@ -9,7 +9,7 @@
       "loggedIn": "Pomyślnie zalogowano!",
       "loginFailed": "Logowanie nie powiodło się. Spróbuj ponownie.",
       "socialEmailRequired": "Email jest wymagany do logowania społecznościowego.",
-      "socialUserNotFound": "Nie znaleziono konta dla tego dostawcy. Zarejestruj się lub użyj innej metody.",
+      "socialUserNotFound": "Nie znaleziono konta. Zarejestruj się lub skorzystaj z innej metody.",
       "socialInternalError": "Coś poszło nie tak podczas logowania społecznościowego. Spróbuj ponownie.",
       "emailLabel": "Email",
       "emailPlaceholder": "Wpisz swój email",
@@ -156,7 +156,7 @@
         "lt": "LT",
         "ru": "RU"
       },
-      "phonePlaceholder": "+1 (555) 000-0000",
+      "phonePlaceholder": "+370 600 00000",
       "phoneLabel": "Telefon",
       "messagePlaceholder": "Zostaw nam wiadomość...",
       "messageLabel": "Wiadomość",
@@ -268,6 +268,8 @@
   "Profile": {
     "loginPrompt": "Zaloguj się, aby zobaczyć swój profil. Przekierowywanie...",
     "creditStars": "Gwiazdy kredytowe",
+    "vendor": "Dostawca",
+    "venue": "Miejsce",
     "tabs": {
       "profile": "Profil",
       "myListings": "Moje ogłoszenia",
@@ -497,7 +499,16 @@
       "toasts": {
         "uploadSuccess": "Obrazy przesłane pomyślnie",
         "uploadFailed": "Nie udało się przesłać obrazów"
-      }
+      },
+      "setAsMain": "Ustaw jako główny",
+      "cropTitle": "Przytnij główny obraz",
+      "zoom": "Powiększ",
+      "crop": "Przytnij",
+      "cancel": "Anuluj",
+      "cropping": "Przycinanie...",
+      "setAsMainLabel": "Ustaw jako główne zdjęcie",
+      "deselectMain": "Odznacz jako główny obraz",
+      "selectMain": "Wybierz jako główny obraz"
     },
     "NoDataCard": {
       "expandSearchHint": "Spróbuj zwiększyć promień wyszukiwania lub wybierz inną lokalizację."
@@ -1093,6 +1104,7 @@
     "savingEllipsis": "Zapisywanie...",
     "saveImages": "zapisz obrazy",
     "uploadHint": "Przesyłaj obrazy o rozmiarze do {size}",
+    "instructionHint": "Wybierz zdjęcia, a następnie prześlij je i kliknij zapisz, aby zapisać wszystkie zdjęcia. Kliknij ikonę gwiazdki, aby wybrać główne zdjęcie",
     "readyToSave": "{count} obraz(y) gotowe do zapisania",
     "alt": {
       "portfolioImage": "Obraz portfolio"
@@ -1100,8 +1112,11 @@
     "aria": {
       "deleteImage": "Usuń obraz"
     },
+    "deselectMainImage": "Odznacz jako główny obraz",
+    "selectMainImage": "Wybierz jako główny obraz",
     "errors": {
-      "noImage": "Proszę przesłać co najmniej jedno zdjęcie"
+      "noImage": "Proszę przesłać co najmniej jedno zdjęcie",
+      "mainImageError": "Proszę wybrać główne zdjęcie"
     },
     "toasts": {
       "saved": "Obrazy zapisane",
@@ -1132,10 +1147,11 @@
     "selectdurationtype": "Wybierz rodzaj rezerwacji",
     "perday": "Za dzień",
     "perhour": "Za godzinę",
-    "bookingduration": "czas rezerwacji",
+    "bookingduration": "Maksymalny czas trwania rezerwacji",
     "amenities": "udogodnienia",
     "amenityLabel": "Udogodnienie {index}",
     "serviceareas": "Obszary usług",
+    "serviceAreaHint": "Określ miasta i województwa, w których świadczysz swoje usługi.",
     "addservicearea": "Dodaj obszar usług",
     "saving": "экономия",
     "savingEllipsis": "Zapisywanie...",
@@ -1144,13 +1160,23 @@
     "fetchcoordinates": "pobierz współrzędne",
     "picklocation": "Wybierz lokalizację na mapie",
     "address": "adres",
+    "locationHint": "Ta informacja określa lokalizację Twojej sali.",
     "remove": "usunąć",
     "citylabel": "etykieta miasta",
     "statelabel": "etykieta stanu",
     "selectstate": "wybierz stan",
     "selectcity": "Wybierz miasto",
     "errors": {
-      "cityStateRequired": "Każdy obszar usług wymaga miasta i województwa"
+      "cityStateRequired": "Każdy obszar usług wymaga miasta i województwa",
+      "invalidLatitude": "Szerokość geograficzna musi wynosić między -90 a 90",
+      "invalidLongitude": "Długość geograficzna musi wynosić między -180 a 180",
+      "cityRequired": "Potrzebne jest miasto",
+      "stateRequired": "Potrzebny jest stan",
+      "latitudeRequired": "Potrzebna jest szerokość geograficzna",
+      "longitudeRequired": "Potrzebna jest długość geograficzna",
+      "capacityRequired": "Potrzebna jest pojemność",
+      "bookingDurationTypeRequired": "Potrzebny jest typ trwania rezerwacji",
+      "bookingDurationRequired": "Potrzebny jest maksymalny czas trwania rezerwacji"
     },
     "toasts": {
       "updated": "Dane sprzedawcy/miejsca zaktualizowane",
@@ -1424,6 +1450,10 @@
       "updated": "Gorąca oferta zaktualizowana",
       "updateFailed": "Nie udało się zaktualizować gorącej oferty"
     }
+  },
+  "MapboxSearch": {
+    "placeholder": "Szukaj miejsca",
+    "noResults": "Nie znaleziono wyników"
   },
   "Pagination": {
     "loadMore": "Załaduj więcej"

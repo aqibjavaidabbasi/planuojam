@@ -22,6 +22,7 @@ import { useTranslations } from 'next-intl'
 import { useRouter } from '@/i18n/navigation'
 import { RootState } from '@/store'
 import { StripeProductAttributes } from '@/app/api/stripe-products/route'
+import { IoMdSettings } from 'react-icons/io'
 
 function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem; highPriority?: boolean; stripeProducts?: StripeProductAttributes[] }) {
   const router = useRouter();
@@ -91,21 +92,6 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           '2px 0px 4px rgba(0,0,0,0.1), 0px 2px 4px rgba(0,0,0,0.1), 0px -2px 4px rgba(0,0,0,0.1), -2px 0px 4px rgba(0,0,0,0.1)'
       }}
     >
-
-      {/* Subscription Info Icon - Only visible to owner */}
-      {user?.documentId === item.user?.documentId && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowSubscriptionModal(true);
-          }}
-          className="absolute top-2 right-2 z-10 bg-white hover:bg-gray-100 text-primary p-2 rounded-full shadow-md transition-all duration-200 hover:scale-110 cursor-pointer"
-          title={t('subscriptionInfo')}
-        >
-          <FaInfoCircle size={16} />
-        </button>
-      )}
-
       {/* Status Badge - Only visible to owner */}
       {user?.documentId === item.user?.documentId && item.listingStatus === 'draft' && (
         <div className="absolute top-2 left-2 z-10">
@@ -152,7 +138,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
             const imageUrl = getCompleteImageUrl(img.url);
             return (
               <SwiperSlide key={idx}>
-                <div className="relative w-full h-40 md:h-56 lg:h-64 bg-black">
+                <div className="relative w-full aspect-[4/3] bg-black">
                   <Image
                     src={imageUrl}
                     alt={t('imageAlt', { index: idx + 1 })}
@@ -170,7 +156,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
         </Swiper>
       )}
       {item.portfolio?.length === 0 && (
-        <div className="relative w-full h-40 md:h-56 lg:h-64">
+        <div className="relative w-full aspect-[4/3]">
           <Image
             src={"/noImage.jpg"}
             alt={t('placeholderAlt')}
@@ -269,9 +255,22 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
             </div>
             <div>
               {user?.serviceType && user?.documentId && item?.user?.documentId === user.documentId ? (
-                <Button style="secondary" size="small" onClick={() => router.push(`${getListingItemUrl() as string}/edit`)}>
-                  {t('edit')} <IoNavigateOutline />
-                </Button>
+                <div className='flex items-center justify-center gap-2.5'>
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowSubscriptionModal(true);
+                    }}
+                    style="primary"
+                    size="small"
+                    extraStyles='!rounded-md'
+                  >
+                    <FaInfoCircle size={16} />
+                  </Button>
+                  <Button style="secondary" size="small" onClick={() => router.push(`${getListingItemUrl() as string}/edit`)} >
+                    <IoMdSettings size={16} />
+                  </Button>
+                </div>
               ) : (
                 <Button
                   style="secondary"
@@ -289,7 +288,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
       </div>
 
       <LoginNavigateModal showModal={showLoginModal} setShowModal={setShowLoginModal} />
-      
+
       <SubscriptionManagementModal
         isOpen={showSubscriptionModal}
         onClose={() => setShowSubscriptionModal(false)}
@@ -297,17 +296,17 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
         userId={user?.documentId || ''}
         onOpenSubscriptionModal={() => setShowListingSubscriptionModal(true)}
       />
-      
-      {stripeProducts && user?.serviceType && item.listingStatus !== 'pending review' && 
-      <ListingSubscriptionModal
-        isOpen={showListingSubscriptionModal}
-        onClose={() => setShowListingSubscriptionModal(false)}
-        listingDocId={item.documentId}
-        listingTitle={item.title}
-        listingPrice={item.price}
-        userId={user?.documentId || ''}
-        stripeProducts={stripeProducts}
-      />
+
+      {stripeProducts && user?.serviceType && item.listingStatus !== 'pending review' &&
+        <ListingSubscriptionModal
+          isOpen={showListingSubscriptionModal}
+          onClose={() => setShowListingSubscriptionModal(false)}
+          listingDocId={item.documentId}
+          listingTitle={item.title}
+          listingPrice={item.price}
+          userId={user?.documentId || ''}
+          stripeProducts={stripeProducts}
+        />
       }
     </div>
   );

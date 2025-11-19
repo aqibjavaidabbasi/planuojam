@@ -1,7 +1,7 @@
 import { updateUser } from "@/store/thunks/authThunks";
 import { AuthState } from "@/store/slices/authSlice";
 import { ActionReducerMapBuilder, AnyAction, PayloadAction } from "@reduxjs/toolkit";
-import { User } from "@/types/common";
+import { User } from "@/types/userTypes";
 
 export function updateUserDataExtraReducers(builder: ActionReducerMapBuilder<AuthState>) {
   builder

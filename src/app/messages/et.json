@@ -9,7 +9,7 @@
       "loggedIn": "Sisselogimine õnnestus!",
       "loginFailed": "Sisselogimine ebaõnnestus. Palun proovi uuesti.",
       "socialEmailRequired": "E-post on sotsiaalseks sisselogimiseks vajalik.",
-      "socialUserNotFound": "Selle pakkuja kontot ei leitud. Palun registreeru või kasuta muud meetodit.",
+      "socialUserNotFound": "Kontot ei leitud. Palun registreeru või kasuta mõnda muud meetodit.",
       "socialInternalError": "Midagi läks sotsiaalse sisselogimisega valesti. Palun proovi uuesti.",
       "emailLabel": "E-post",
       "emailPlaceholder": "Sisesta oma e-post",
@@ -157,7 +157,7 @@
         "lt": "LT",
         "ru": "RU"
       },
-      "phonePlaceholder": "+1 (555) 000-0000",
+      "phonePlaceholder": "+370 600 00000",
       "phoneLabel": "Telefon",
       "messagePlaceholder": "Jäta meile sõnum...",
       "messageLabel": "Sõnum",
@@ -269,6 +269,8 @@
   "Profile": {
     "loginPrompt": "Palun logi sisse, et vaadata oma profiili. Suunamine...",
     "creditStars": "Krediiditähed",
+    "vendor": "Teenusepakkuja",
+    "venue": "Koht",
     "tabs": {
       "profile": "Profiil",
       "myListings": "Minu kuulutused",
@@ -497,7 +499,16 @@
       "toasts": {
         "uploadSuccess": "Pildid laaditi üles edukalt",
         "uploadFailed": "Piltide üleslaadimine ebaõnnestus"
-      }
+      },
+      "setAsMain": "Määra peamiseks",
+      "cropTitle": "Kärbi peamist pilti",
+      "zoom": "Suumi",
+      "crop": "Lõika",
+      "cancel": "Tühista",
+      "cropping": "Lõikamine...",
+      "setAsMainLabel": "Määra peamiseks pildiks",
+      "deselectMain": "Eemalda peamise pildina",
+      "selectMain": "Vali peamiseks pildiks"
     },
     "NoDataCard": {
       "expandSearchHint": "Proovi laiendada otsinguraadiust või vali teine asukoht."
@@ -1095,6 +1106,7 @@
     "saving": "säästmine",
     "saveImages": "salvesta pilte",
     "uploadHint": "Laadige üles pildid kuni {size}",
+    "instructionHint": "Valige pildid, seejärel laadige need üles ja seejärel klõpsake salvestamiseks, et salvestada kõik pildid. Klõpsake täheikoonil, et valida peamine pilt",
     "readyToSave": "{count} pilti valmis salvestamiseks",
     "alt": {
       "portfolioImage": "Portfoolio pilt"
@@ -1102,8 +1114,11 @@
     "aria": {
       "deleteImage": "Kustuta pilt"
     },
+    "deselectMainImage": "Eemalda peamise pildina",
+    "selectMainImage": "Vali peamiseks pildiks",
     "errors": {
-      "noImage": "Palun laadige üles vähemalt üks pilt"
+      "noImage": "Palun laadige üles vähemalt üks pilt",
+      "mainImageError": "Palun vali peamine pilt"
     },
     "toasts": {
       "saved": "Pildid salvestatud",
@@ -1134,10 +1149,11 @@
     "selectdurationtype": "Vali kestuse tüüp",
     "perday": "Päeva kohta",
     "perhour": "Tunni kohta",
-    "bookingduration": " broneerimise kestus",
+    "bookingduration": "Maksimaalne broneeringu kestus",
     "amenities": "mugavused",
     "amenityLabel": "Mugavus {index}",
     "serviceareas": "Teeninduspiirkonnad",
+    "serviceAreaHint": "Määrake linnad ja osariigid, kus te oma teenuseid pakute.",
     "addservicearea": "Lisa teeninduspiirkond",
     "saving": "säästmine",
     "savechanges": " salvesta muudatused",
@@ -1145,13 +1161,23 @@
     "picklocation": "Vali asukoht kaardilt",
     "adamenity": "Lisage mugavus",
     "address": "aadress",
+    "locationHint": "See teave määrab teie koha asukoha.",
     "remove": "eemaldada",
     "citylabel": "linnamärk",
     "statelabel": "riigimärgis",
     "selectstate": "vali olek",
     "selectcity": "Vali linn",
     "errors": {
-      "cityStateRequired": "Igas teeninduspiirkonnas peab olema linn ja osariik"
+      "cityStateRequired": "Igas teeninduspiirkonnas peab olema linn ja osariik",
+      "invalidLatitude": "Laiuskraad peab olema vahemikus -90 kuni 90",
+      "invalidLongitude": "Pikkuskraad peab olema vahemikus -180 kuni 180",
+      "cityRequired": "Linn on nõutav",
+      "stateRequired": "Maakond on nõutav",
+      "latitudeRequired": "Laiuskraad on nõutav",
+      "longitudeRequired": "Pikkuskraad on nõutav",
+      "capacityRequired": "Mahutavus on nõutav",
+      "bookingDurationTypeRequired": "Broneerimise kestuse tüüp on nõutav",
+      "bookingDurationRequired": "Maksimaalne broneeringu kestus on nõutav"
     },
     "toasts": {
       "updated": "Müüja/Koha andmed on uuendatud",
@@ -1420,6 +1446,10 @@
       "updated": "Sooduspakkumine on uuendatud",
       "updateFailed": "Sooduspakkumist ei õnnestunud uuendada"
     }
+  },
+  "MapboxSearch": {
+    "placeholder": "Otsi kohta",
+    "noResults": "Tulemusi ei leitud"
   },
   "Pagination": {
     "loadMore": "Laadi rohkem"

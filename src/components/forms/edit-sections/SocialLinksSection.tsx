@@ -51,16 +51,18 @@ export default function SocialLinksSection({
     ? ((listing.socialLinks as unknown as { socialLink?: SocialLink[] }).socialLink ?? [])
     : []
 
+  const socialLinkFixedTitle = 'Social Links';
+
   const {
-    register,
     setValue,
+    register,
     getValues,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm<SocialLinksForm>({
     defaultValues: {
-      optionalSectionTitle: (listing.socialLinks)?.optionalSectionTitle || "",
+      optionalSectionTitle: socialLinkFixedTitle,
       socialLink: initialSocialLinks,
     },
   })
@@ -84,7 +86,7 @@ export default function SocialLinksSection({
       // Frontend validation: every social link must have platform and link
       for (const s of values.socialLink || []) {
         if (!s.platform) throw new Error(t("errors.platformRequired"))
-        if (!s.link || !/^https?:\/\//.test(s.link)) throw new Error(t("errors.validUrlRequired"))
+        if (!s.link) throw new Error(t("errors.validUrlRequired"))
       }
 
       // Build a clean payload for Strapi: only include allowed fields
@@ -129,7 +131,7 @@ export default function SocialLinksSection({
         <Input
           type="text"
           label={t("sectiontitle")}
-          disabled={isWorking}
+          disabled
           {...register("optionalSectionTitle")}
         />
         <div className="flex flex-col gap-3 mt-2">
@@ -162,15 +164,16 @@ export default function SocialLinksSection({
               </div>
               <div>
                 <Input
-                  type="url"
+                  type="text"
                   label={t("link")}
                   disabled={isWorking}
-                  value={s.link}
-                  onChange={(e) => {
-                    const list = [...(socialLinks || [])]
-                    list[idx] = { ...list[idx], link: e.target.value }
-                    setValue("socialLink", list, { shouldDirty: true })
-                  }}
+                  {...register(`socialLink.${idx}.link`, {
+                    required: t("errors.validUrlRequired"),
+                    pattern: {
+                      value: /^(https?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})(\/[^\s]*)?$/,
+                      message: t("errors.validUrlRequired"),
+                    },
+                  })}
                 />
                 <ErrorMessage error={errors.socialLink?.[idx]?.link} />
               </div>

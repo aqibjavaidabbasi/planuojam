@@ -4,8 +4,8 @@ export type CreateListingFormTypes = {
     price: number;
     type: string;
     listingStatus: "draft" | "pending review" | "published" | "archived";
-    featured: boolean;
     category: string;
+    mainImageId: string;
     description: string;
     tags: string[] //use set in creation, set replaces the existing ones
     listingItem: {

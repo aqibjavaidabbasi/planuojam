@@ -50,7 +50,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
       <div className={`relative ${disabled ? 'pointer-events-none' : ''}`}>
         {/** Only pass a valid E.164 value to the underlying input to prevent runtime errors */}
         {(() => {
-          const { value: rawValue, onChange, ...rest } = props as { value?: string; onChange?: (v?: string) => void }
+          const { value: rawValue, onChange, ...rest } = props as { value?: string; onChange?: (v?: string | null) => void }
           const safeValue = typeof rawValue === 'string' && isValidPhoneNumber(rawValue) ? rawValue : undefined
           return (
             <BasePhoneInput
@@ -66,7 +66,7 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
                   (disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60' : ''),
               }}
               value={safeValue}
-              onChange={onChange as (value?: string) => void}
+              onChange={onChange as (value?: string | null) => void}
               {...rest}
             />
           )

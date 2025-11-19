@@ -1,6 +1,6 @@
 import { updateUserData } from "@/services/auth";
 import { customLogin, customRegister, JwtUserResponse, RegisterRequest, OtpSentResponse } from "@/services/authCustom";
-import { User } from "@/types/common";
+import { User } from "@/types/userTypes";
 import { ExpectedError, getStrapiErrorMessage } from "@/utils/helpers";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 

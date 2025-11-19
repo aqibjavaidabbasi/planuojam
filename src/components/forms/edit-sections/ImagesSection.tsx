@@ -10,18 +10,46 @@ import Image from "next/image"
 import { getCompleteImageUrl } from "@/utils/helpers"
 import { useTranslations } from "next-intl"
 import Modal from "@/components/custom/Modal"
-import { FaTrash } from "react-icons/fa6"
+import { FaTrash, FaStar, FaRegStar } from "react-icons/fa6"
 import { translateError } from "@/utils/translateError"
 
 export default function ImagesSection({ listing, onSaved }: { listing: ListingItem; onSaved?: () => void }) {
   const [imageIds, setImageIds] = useState<number[]>([])
+  const [mainImageId, setMainImageId] = useState<number | null>(listing.mainImageId ? parseInt(listing.mainImageId) : null)
   const [submitting, setSubmitting] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [imageToDelete, setImageToDelete] = useState<{ id: number; url?: string } | null>(null)
   const t=useTranslations("ImageSection")
   const tErrors = useTranslations('Errors')
+
+  //submit function, either save the new images or update the main image id field
   const onSubmit = async () => {
+
+    if (mainImageId === null){
+      toast.error(t("errors.mainImageError"))
+      return;
+    }
+
+    //update main image if that is the only change
+    if(imageIds.length === 0 && mainImageId !== null && listing.mainImageId !== String(mainImageId)){
+      setSubmitting(true)
+      try{
+        const updateDate = {
+          mainImageId: mainImageId.toString()
+        }
+        await updateListing(listing.documentId, { data: updateDate }, listing.locale)
+        toast.success(t("toasts.saved"))
+        onSaved?.()
+        setImageIds([])
+        return;
+      } catch (e: unknown) {
+        toast.error(translateError(t, tErrors, e, 'toasts.saveFailed'))
+      } finally {
+        setSubmitting(false)
+      }
+    }
+
     if (imageIds.length === 0) {
       toast.error(t("errors.noImage"))
       return
@@ -30,7 +58,11 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
     try {
       //persist existing images
       const finalImageArray = [...listing.portfolio?.map(img => img.id) ?? [], ...imageIds]
-      await updateListing(listing.documentId, { data: { portfolio: finalImageArray } }, listing.locale)
+      const updateData: { portfolio: number[]; mainImageId: string | null } = { 
+        portfolio: finalImageArray,
+        mainImageId: mainImageId !== null ? mainImageId.toString() : null
+      }
+      await updateListing(listing.documentId, { data: updateData }, listing.locale)
       toast.success(t("toasts.saved"))
       onSaved?.()
       setImageIds([])
@@ -66,12 +98,14 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
   return (
     <div className="py-4">
       <p className="text-sm text-gray-600 mb-2">{t("uploadHint", { size: "20MB" })}</p>
+      <p className="text-sm text-gray-600 mb-4">{t("instructionHint")}</p>
       <div className="flex gap-2 items-center flex-wrap">
         {listing.portfolio?.map((image, id) => {
           const imagePath = getCompleteImageUrl(image.url);
+          const isMain = image.id === mainImageId;
           return (
             <div key={id} className="relative group">
-              <Image src={imagePath} alt={t("alt.portfolioImage")} width={150} height={150} className="rounded" />
+              <Image src={imagePath} alt={t("alt.portfolioImage")} width={150} height={112} className="aspect-[4/3] rounded object-cover" />
               <Button
                 style="destructive"
                 extraStyles="absolute top-1 right-1 opacity-90 group-hover:opacity-100 !p-2 !rounded-full"
@@ -79,6 +113,14 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
                 aria-label={t("aria.deleteImage")}
               >
                 <FaTrash />
+              </Button>
+              <Button
+                style="primary"
+                extraStyles="absolute bottom-1 left-1 !p-2 !rounded-full"
+                onClick={() => setMainImageId(isMain ? null : image.id)}
+                aria-label={isMain ? t("deselectMainImage") : t("selectMainImage")}
+              >
+                {isMain ? <FaStar /> : <FaRegStar />}
               </Button>
             </div>
           )

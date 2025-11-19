@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Input from "../custom/Input";
 import Button from "../custom/Button";
-import { User } from "@/types/common";
+import { User } from "@/types/userTypes";
 import { TbLogout } from "react-icons/tb";
 import LogoutModal from "../modals/LogoutModal";
 // removed redux dispatch import (no longer used)

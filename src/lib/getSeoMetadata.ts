@@ -1,5 +1,5 @@
 // lib/getSeoMetadata.ts
-import { StrapiSeo } from "@/types/common";
+import { StrapiSeo } from "@/types/mediaTypes";
 import { getCompleteImageUrl } from "@/utils/helpers";
 import type { Metadata } from "next";
 

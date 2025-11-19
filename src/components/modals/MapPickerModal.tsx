@@ -139,7 +139,7 @@ const MapPickerModal: React.FC<MapPickerModalProps> = ({ isOpen, onClose, onSele
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg" footer={footer}>
       <div className="flex flex-col gap-3 p-5">
-        <MapboxSearch onPlaceSelect={handlePlaceSelect} placeholder="Search address or place" />
+        <MapboxSearch onPlaceSelect={handlePlaceSelect} />
         <div className="w-full h-[60vh] border rounded-lg overflow-hidden">
           <div ref={mapContainer} className="w-full h-full" />
         </div>

@@ -1,4 +1,5 @@
-import { strapiImage, User } from "./common";
+import { strapiImage } from "./mediaTypes";
+import { User } from "./userTypes";
 
 export interface page {
   id: number;
@@ -247,14 +248,12 @@ export interface topListingItemsBlock {
 export interface Contact {
   email: string;
   phone: string;
-  address: string;
 }
 
 export interface ListingItem {
   description: string;
   documentId: string;
   id: number;
-  featured: boolean;
   listingStatus: string;
   locale: string;
   price?: number;
@@ -277,6 +276,7 @@ export interface ListingItem {
     end: string;
   }[];
   portfolio: strapiImage[];
+  mainImageId?: string;
   FAQs: {
     sectionTitle: string;
     numberOfColumns: number;

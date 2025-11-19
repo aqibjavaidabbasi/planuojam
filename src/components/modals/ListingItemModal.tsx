@@ -6,7 +6,6 @@ import Modal from "../custom/Modal"
 import Input from "../custom/Input"
 import TextArea from "../custom/TextArea"
 import Select from "../custom/Select"
-import Checkbox from "../custom/Checkbox"
 import Button from "../custom/Button"
 import type { category, ListingItem } from "@/types/pagesTypes"
 import { useForm } from "react-hook-form"
@@ -59,7 +58,6 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
     defaultValues: {
       listingStatus: "draft",
       type: "vendor",
-      featured: false,
       price: 0,
       description: "",
       workingSchedule: [],
@@ -75,6 +73,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
   })
   const form = watch()
   const [imageIds, setImageIds] = useState<number[]>([])
+  const [mainImageId, setMainImageId] = useState<number | null>(null)
 
   const { eventTypes } = useEventTypes()
   const eventTypeOptions = {
@@ -328,6 +327,9 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
         // Connect media by numeric id
         payload.portfolio = imageIds
       }
+      if (mainImageId) {
+        payload.mainImageId = mainImageId.toString()
+      }
       //   add event types ids to payload if there are any
       if (eventTypesIds.length > 0) {
         payload.eventTypes = {
@@ -434,6 +436,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
       setEventTypesIds([])
       setError(null);
       setImageIds([]);
+      setMainImageId(null);
     } catch (e: unknown) {
       const message = e && typeof e === 'object' && 'message' in e ? String((e as { message?: unknown }).message) : t('toasts.failed')
       setError(message)
@@ -507,14 +510,6 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               />
               <ErrorMessage error={errors.price} />
             </div>
-            <div className="flex items-center mt-6 col-span-2">
-              <Checkbox
-                label={t('fields.featured.label')}
-                checked={watch("featured")}
-                onChange={(e) => setValue("featured", e.target.checked)}
-                disabled={isWorking}
-              />
-            </div>
             {/* Description */}
             <div className="col-span-2">
               <TextArea
@@ -555,7 +550,6 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   <div className="md:col-span-2">
                     <Select
                       label={t('workingSchedule.day')}
-                      placeholder={t('workingSchedule.placeholder')}
                       disabled={isWorking}
                       value={it.day || ""}
                       onChange={(e) => {
@@ -1002,7 +996,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           <div className="flex flex-col gap-2 border-b-2 border-t-2 border-primary/20 py-4">
             <h3 className="text-lg font-semibold mb-2">{t('portfolio.title')} </h3>
             <p className="text-sm text-gray-600">{tImage('uploadHint', { size: '20MB' })}</p>
-            <ImageUploader setImageIds={setImageIds} disabled={isWorking} />
+            <ImageUploader 
+              setImageIds={setImageIds} 
+              disabled={isWorking} 
+              setMainImageId={setMainImageId}
+              mainImageId={mainImageId}
+              />
           </div>
           {/* Contact */}
           <div className="border-b-2 border-primary/20 py-4">
@@ -1025,17 +1024,6 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               <div>
                 <Input type="text" label={t('fields.phone.label')} placeholder={t('fields.phone.placeholder')} disabled={isWorking} required {...register("contact.phone", { required: t('fields.phone.message') })} />
                 <ErrorMessage error={errors.contact?.phone} />
-              </div>
-              <div>
-                <Input
-                  type="text"
-                  disabled={isWorking}
-                  label={t('fields.address.label')}
-                  placeholder={t('fields.address.placeholder')}
-                  required
-                  {...register("contact.address", { required: t('fields.address.message') })}
-                />
-                <ErrorMessage error={errors.contact?.address} />
               </div>
             </div>
           </div>

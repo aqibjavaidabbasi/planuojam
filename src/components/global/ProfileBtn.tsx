@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { FaRegUser } from 'react-icons/fa';
 import { RiLoginCircleLine } from 'react-icons/ri';
 import Loader from '../custom/Loader';
-import { User } from '@/types/common';
+import { User } from '@/types/userTypes';
 import { useTranslations } from 'use-intl';
 import { useRouter } from '@/i18n/navigation';
 import { countUnread } from '@/services/messages';

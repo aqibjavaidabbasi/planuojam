@@ -1,5 +1,5 @@
 "use client";
-import { strapiImage } from "@/types/common";
+import { strapiImage } from "@/types/mediaTypes";
 import { getCompleteImageUrl } from "@/utils/helpers";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -9,15 +9,17 @@ import { useTranslations } from "next-intl";
 function ListingGallery({
   portfolio,
   title,
+  mainImageId,
 }: {
   portfolio: strapiImage[];
   title: string;
+  mainImageId: string;
 }) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const t = useTranslations("ListingGallery");
 
   const allImages = [...(portfolio ?? [])];
-  const firstImage = allImages[0];
+  const firstImage = allImages.find((img) => img.id === Number(mainImageId));
   const restImages = allImages.slice(1);
   const imageUrls = allImages.map((img) => getCompleteImageUrl(img.url));
   const rightImages = restImages.slice(0, 4);

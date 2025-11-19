@@ -60,7 +60,7 @@ const Modal: React.FC<ModalProps> = ({
             style={{ animation: "fadeIn 0.2s ease" }}
         >
             <div
-                className={`bg-white rounded shadow-lg p-6 w-full mx-4 ${sizes[size]} max-h-[80vh] overflow-auto relative`}
+                className={`bg-white rounded shadow-lg p-6 w-full mx-4 ${sizes[size]} max-h-[95vh] overflow-auto relative`}
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Cross close button */}
