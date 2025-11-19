@@ -204,6 +204,7 @@
       "editing": "Redigeerimine",
       "listingFallback": "Kuulutus",
       "documentId": "Dokumendi ID",
+      "back": "Tagasi kuulutustele",
       "status": "Olek",
       "tabs": {
         "basic": "Põhiandmed",

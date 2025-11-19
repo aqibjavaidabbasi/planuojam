@@ -106,68 +106,68 @@ export default function EditListingPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col lg:flex-row gap-8 min-h-[calc(100vh-200px)]">
-        <div className="w-full lg:w-80 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <div className="flex items-center mb-4 w-full border-b-2 border-primary/80 py-2">
-            <div className="flex items-center gap-2">
-              <Button
-                onClick={() => router.back()}
-                style="ghost"
-                size="small"
-              >
-               <IoMdArrowRoundBack />
-              </Button>
-              <Button
-                onClick={() => router.push(`/listing/${listing?.slug}`)}
-                style="secondary"
-                size="small"
-              >
-                {t("preview")}
-              </Button>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div>
-              <p className="text-sm text-gray-500">{t("editing")}</p>
-              <p className="font-semibold">{listing?.title || t("listingFallback")}</p>
-            </div>
-          </div>
-          <div className="mt-6 space-y-2 text-sm text-gray-600">
-            <p className="flex items-center gap-2">
-              <span>{t("status")}:</span>
-              <span
-                className={`inline-flex items-center px-2 py-1 rounded-full text-xs capitalize font-medium ${getStatusBadgeClass(listing?.listingStatus)}`}
-              >
-                {listing?.listingStatus}
-              </span>
-            </p>
-          </div>
-          <div className="mt-6">
-            <div className="flex flex-col gap-2">
-              {tabs.map(t => (
-                <button
-                  key={t.key}
-                  type="button"
-                  onClick={() => setActiveTab(t.key)}
-                  className={`text-left px-3 py-2 rounded-md border text-sm cursor-pointer transition-colors ${activeTab === t.key
-                    ? "bg-primary text-white border-primary"
-                    : "bg-white text-gray-700 hover:bg-gray-50 border-gray-200"
-                    }`}
+      {loading && <p className="min-h-[calc(100vh-200px)]">{tCommon("loading")}</p>}
+      {!loading && error && <p className="text-red-600">{error}</p>}
+      {!loading && !error && listing && user?.serviceType && ownsListing && (
+        <div className="flex flex-col lg:flex-row gap-8 min-h-[calc(100vh-200px)]">
+          <div className="w-full lg:w-80 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="flex items-center mb-4 w-full border-b-2 border-primary/80 py-2">
+              <div className="flex items-center flex-col gap-2">
+                <Button
+                  onClick={() => router.push(`/profile?tab=listings`)}
+                  style="ghost"
+                  size="small"
                 >
-                  {t.label}
-                </button>
-              ))}
+                  <IoMdArrowRoundBack /> {t("back")}
+                </Button>
+                <Button
+                  onClick={() => router.push(`/listing/${listing?.slug}`)}
+                  style="secondary"
+                  size="small"
+                >
+                  {t("preview")}
+                </Button>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div>
+                <p className="text-sm text-gray-500">{t("editing")}</p>
+                <p className="font-semibold">{listing?.title || t("listingFallback")}</p>
+              </div>
+            </div>
+            <div className="mt-6 space-y-2 text-sm text-gray-600">
+              <p className="flex items-center gap-2">
+                <span>{t("status")}:</span>
+                <span
+                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs capitalize font-medium ${getStatusBadgeClass(listing?.listingStatus)}`}
+                >
+                  {listing?.listingStatus}
+                </span>
+              </p>
+            </div>
+            <div className="mt-6">
+              <div className="flex flex-col gap-2">
+                {tabs.map(t => (
+                  <button
+                    key={t.key}
+                    type="button"
+                    onClick={() => setActiveTab(t.key)}
+                    className={`text-left px-3 py-2 rounded-md border text-sm cursor-pointer transition-colors ${activeTab === t.key
+                      ? "bg-primary text-white border-primary"
+                      : "bg-white text-gray-700 hover:bg-gray-50 border-gray-200"
+                      }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-        <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          {loading && <p>{tCommon("loading")}</p>}
-          {!loading && error && <p className="text-red-600">{error}</p>}
-          {!loading && !error && listing && user?.serviceType && ownsListing && (
+          <div className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <EditListingForm listing={listing} onSaved={handleSaved} activeTab={activeTab} />
-          )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

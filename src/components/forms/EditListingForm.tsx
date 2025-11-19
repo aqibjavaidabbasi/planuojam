@@ -12,6 +12,7 @@ const HotDealSection = dynamic(() => import("./edit-sections/HotDealSection"));
 const BasicSection = dynamic(() => import("./edit-sections/BasicSection"));
 const VendorVenueSection = dynamic(() => import("./edit-sections/VendorVenueSection"));
 import { ListingItem } from "@/types/pagesTypes"
+import { useLocale } from "next-intl";
 
 type EditTabKey = "basic" | "vv" | "deal" | "images" | "contact" | "social" | "pricing" | "faqs"
 
@@ -22,46 +23,54 @@ interface EditListingFormProps {
 }
 
 const EditListingForm: React.FC<EditListingFormProps> = ({ listing, onSaved, activeTab }) => {
+  const locale = useLocale()
+
+  let renderingListing: ListingItem;
+  if (locale === 'en') {
+    renderingListing = listing
+  } else {
+    renderingListing = listing.localizations.find(l => l.locale === locale) || listing
+  }
 
   return (
     <div>
       
         {/* Basic Details */}
         {(!activeTab || activeTab === "basic") && (
-          <BasicSection listing={listing} onSaved={onSaved} />
+          <BasicSection listing={renderingListing} onSaved={onSaved} />
         )}
 
         {/* Vendor/Venue specific */}
         {activeTab === "vv" && (
-          <VendorVenueSection listing={listing} onSaved={onSaved} />
+          <VendorVenueSection listing={renderingListing} onSaved={onSaved} />
         )}
 
         {/* Hot Deal  */}
         {activeTab === "deal" && (
-          <HotDealSection listing={listing} onSaved={onSaved} />
+          <HotDealSection listing={renderingListing} onSaved={onSaved} />
         )}
         {/* images */}
         {activeTab === "images" && (
-          <ImagesSection listing={listing} onSaved={onSaved} />
+          <ImagesSection listing={renderingListing} onSaved={onSaved} />
         )}
         {/* Contact */}
         {activeTab === "contact" && (
-          <ContactSection listing={listing} onSaved={onSaved} />
+          <ContactSection listing={renderingListing} onSaved={onSaved} />
         )}
 
         {/* Social Links */}
         {activeTab === "social" && (
-          <SocialLinksSection listing={listing} onSaved={onSaved} />
+          <SocialLinksSection listing={renderingListing} onSaved={onSaved} />
         )}
 
         {/* Pricing */}
         {activeTab === "pricing" && (
-          <PricingSection listing={listing} onSaved={onSaved} />
+          <PricingSection listing={renderingListing} onSaved={onSaved} />
         )}
 
         {/* FAQs */}
         {activeTab === "faqs" && (
-          <FAQsSection listing={listing} onSaved={onSaved} />
+          <FAQsSection listing={renderingListing} onSaved={onSaved} />
         )}
     </div>
   )

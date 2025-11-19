@@ -38,7 +38,6 @@ function Mylistings() {
 
   const loadListings = useCallback(async () => {
     if (!user?.documentId) return;
-    setLoading(true);
     setError(null);
     try {
       const data = await fetchListingsByUser(user.documentId, statusFilter, locale);
@@ -47,13 +46,10 @@ function Mylistings() {
       const message =
         e && typeof e === "object" && "message" in e ? String((e as { message: unknown }).message) : '';
       setError(message);
-    } finally {
-      setLoading(false);
     }
   }, [user?.documentId, statusFilter, locale]);
 
   const loadStripeProducts = useCallback(async () => {
-    setLoading(true);
     setError(null);
     try {
       const data = await fetch("/api/stripe-products");
@@ -63,14 +59,17 @@ function Mylistings() {
       const message =
         e && typeof e === "object" && "message" in e ? String((e as { message: unknown }).message) : '';
       setError(message);
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    loadListings();
-    loadStripeProducts();
+    async function load(){
+      setLoading(true);
+      await loadListings();
+      await loadStripeProducts();
+      setLoading(false);
+    }
+    load();
   }, [user?.documentId, statusFilter, loadListings, loadStripeProducts]);
 
   return (

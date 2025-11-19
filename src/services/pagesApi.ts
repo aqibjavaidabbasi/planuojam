@@ -34,7 +34,7 @@ export async function fetchHeader(locale?: string) {
                 'eventType': {
                     populate: {
                         'page': {
-                                populate: '*'
+                            populate: '*'
                         },
                         'localizations': {
                             populate: '*'
@@ -58,8 +58,26 @@ export async function fetchHeader(locale?: string) {
 
 export async function fetchFooter(locale?: string) {
     const populate = {
-        footerlinkSection: { populate: "*" },
-        extraLinks: { populate: "*" }
+        footerlinkSection: {
+            populate: {
+                categories: {
+                    populate: '*'
+                },
+                event_types: {
+                    populate: '*'
+                },
+                pages: {
+                    populate: '*'
+                }
+            }
+        },
+        extraLinks: {
+            populate: {
+                pages: {
+                    populate: '*'
+                }
+            }
+        },
     };
     if (locale) {
         const queryWithLocale = createQuery(populate, { locale });

@@ -182,6 +182,7 @@
       "editing": "Redaguojama",
       "listingFallback": "Įrašas",
       "documentId": "Dokumento ID",
+      "back": "Grįžti į įrašus",
       "status": "Būsena",
       "tabs": {
         "basic": "Pagrindinė informacija",

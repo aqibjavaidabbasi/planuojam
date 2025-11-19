@@ -11,6 +11,7 @@ const IMP_IDS = {
 
 function Footer({ footerData }: { footerData: footer }) {
     const t=useTranslations("ContactUs")
+    console.log(footerData)
 
     // Build locale-aware URLs similar to header logic, preferring English slugs
     const getServiceUrl = (category: category) => {
@@ -36,7 +37,8 @@ function Footer({ footerData }: { footerData: footer }) {
                         {/* categories */}
                         {section.linksType.toLowerCase() === 'categories' && <div className='flex flex-col gap-1'>
                             {section.categories.map(item => (
-                                <Link className='hover:underline capitalize'
+                                <Link 
+                                    className='hover:underline capitalize'
                                     href={getServiceUrl(item)} key={item.id}>
                                     {item.name}
                                 </Link>
@@ -46,7 +48,9 @@ function Footer({ footerData }: { footerData: footer }) {
                         {/* event types */}
                         {section.linksType.toLowerCase() === 'events' && <div className='flex flex-col gap-1'>
                             {section.event_types.map(item => (
-                                <Link className='hover:underline capitalize' href={getEventTypeUrl(item)} key={item.id}>
+                                <Link 
+                                    className='hover:underline capitalize'
+                                    href={getEventTypeUrl(item)} key={item.id}>
                                     {item.eventName}
                                 </Link>
                             ))}

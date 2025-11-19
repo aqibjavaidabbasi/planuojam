@@ -203,6 +203,7 @@
       "editing": "Edycja",
       "listingFallback": "Ogłoszenie",
       "documentId": "ID dokumentu",
+      "back": "Powrót do ogłoszeń",
       "status": "Status",
       "tabs": {
         "basic": "Podstawowe informacje",

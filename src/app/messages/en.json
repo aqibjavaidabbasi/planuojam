@@ -217,6 +217,7 @@
       "listingFallback": "Listing",
       "documentId": "Document ID",
       "status": "Status",
+      "back": "Back to Listings",
       "tabs": {
         "basic": "Basic Details",
         "vv": "Vendor/Venue Details",
