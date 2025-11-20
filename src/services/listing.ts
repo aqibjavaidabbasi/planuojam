@@ -1,6 +1,7 @@
 import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
-import { createQuery, deleteAPI, fetchAPI, fetchAPIWithMeta, postAPIWithToken, putAPI } from "./api";
+import { createQuery, deleteAPI, fetchAPI, fetchAPIWithMeta, postAPIWithToken, putAPI, API_URL } from "./api";
 import type { ListingItem } from "@/types/pagesTypes";
+import QueryString from "qs";
 
 export async function createListing(data: Record<string, unknown>, locale?: string) {
     const headers = locale ? {
@@ -284,92 +285,90 @@ export async function fetchListingsByUserLeastPopulated(documentId: string, stat
     return Array.isArray(dataBase) ? (dataBase as ListingItem[]) : [];
 }
 
-export async function fetchSortedListingsWithMeta(
-    type: 'venue' | 'vendor',
-    appliedFilters: Record<string, unknown> = {},
-    locale?: string,
-    pagination?: { page?: number; pageSize?: number; start?: number; limit?: number }
-) {
-    const populate = {
-        category: {
-            populate: '*'
-        },
-        listingItem: {
-            on: {
-                'dynamic-blocks.vendor': {
-                    populate: '*'
-                },
-                'dynamic-blocks.venue': {
-                    populate: '*'
-                }
+export async function fetchListingsByDocumentIds(documentIds: string[], locale?: string): Promise<ListingItem[]> {
+    if (!documentIds.length) return [];
+
+    const populate = LISTING_ITEM_POP_STRUCTURE;
+    const filters = {
+        filters: {
+            documentId: { $in: documentIds }
+        }
+    };
+
+    // Helper function to add timeout to fetch operations
+    const fetchWithTimeout = async (query: string, signal?: AbortSignal) => {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+        // Use provided signal or create new one
+        const activeSignal = signal || controller.signal;
+
+        try {
+            const url = `${API_URL}/api/listings?${query}&${QueryString.stringify(filters, { encodeValuesOnly: true })}`;
+            const response = await fetch(url, {
+                signal: activeSignal,
+                next: { revalidate: 3600 }
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error?.message || `API error! status: ${response.status}`);
             }
-        },
-        portfolio: {
-            populate: '*'
-        },
-        reviews: {
-            populate: '*'
-        },
-        user: {
-            populate: '*'
-        },
-        eventTypes: {
-            populate: '*'
-        },
-        hotDeal: {
-            populate: {
-                discount: {
-                    populate: '*'
-                }
+
+            const data = await response.json();
+            return data.data || data;
+        } catch (error) {
+            clearTimeout(timeoutId);
+            if (error instanceof Error && error.name === 'AbortError') {
+                throw new Error('Request timed out');
             }
-        },
-        localizations: {
-            populate: {
-                category: {
-                    populate: '*'
-                },
-                listingItem: {
-                    on: {
-                        'dynamic-blocks.vendor': {
-                            populate: '*'
-                        },
-                        'dynamic-blocks.venue': {
-                            populate: '*'
-                        }
-                    }
-                },
-                portfolio: {
-                    populate: '*'
-                },
-                reviews: {
-                    populate: '*'
-                },
-                user: {
-                    populate: '*'
-                },
-                eventTypes: {
-                    populate: '*'
-                },
-                hotDeal: {
-                    populate: {
-                        discount: {
-                            populate: '*'
-                        }
-                    }
-                },
-            }
+            throw error;
+        }
+    };
+
+    // Try requested locale first
+    if (locale) {
+        try {
+            const queryWithLocale = createQuery(populate, { locale });
+            const dataLocale = await fetchWithTimeout(queryWithLocale, undefined);
+            if (Array.isArray(dataLocale) && dataLocale.length) return dataLocale as ListingItem[];
+        } catch (error) {
+            console.warn('Locale-specific fetch failed, falling back to default:', error);
         }
     }
+
+    // Final fallback: no locale constraint
+    const queryBase = createQuery(populate);
+    const dataBase = await fetchWithTimeout(queryBase, undefined);
+    return Array.isArray(dataBase) ? (dataBase as ListingItem[]) : [];
+}
+
+// Fetch sorted listings by service type with meta information
+export async function fetchSortedListingsWithMeta(
+    serviceType: 'vendor' | 'venue',
+    appliedFilters: Record<string, unknown> = {},
+    locale?: string,
+    pagination?: { page: number; pageSize: number }
+) {
+    const populate = LISTING_ITEM_POP_STRUCTURE;
     const baseFilters: Record<string, unknown> = {
         filters: {
-            listingStatus: { $eq: "published" },
-            type: type,
-            ...appliedFilters
+            type: { $eq: serviceType },
+            listingStatus: { $eq: 'published' },
+            ...appliedFilters,
         },
     };
-    const additional: Record<string, unknown> = { locale };
+
+    const additional: Record<string, unknown> = {
+        sort: ['createdAt:desc']
+    };
+
+    if (locale) additional.locale = locale;
     if (pagination) additional.pagination = pagination;
+
     const query = createQuery(populate, additional);
-    const res = await fetchAPIWithMeta('listings/promoted', query, baseFilters);
+    const res = await fetchAPIWithMeta('listings', query, baseFilters);
     return res as { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } };
 }

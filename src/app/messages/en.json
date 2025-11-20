@@ -892,8 +892,8 @@
       }
     },
     "MapPicker": {
-      "lat": "Lat:",
-      "lng": "Lng:",
+      "lat": "Latitude:",
+      "lng": "Longitude:",
       "cancel": "Cancel",
       "useThisLocation": "Use This Location"
     },
@@ -1214,6 +1214,17 @@
     "title": "Social Links",
     "platformLabel": "Platform",
     "selectPlatform": "Select Platform",
+    "platforms": {
+      "facebook": "Facebook",
+      "linkedin": "LinkedIn",
+      "youtube": "YouTube",
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "pinterest": "Pinterest",
+      "twitter": "Twitter",
+      "thread": "Thread",
+      "reddit": "Reddit"
+    },
     "yes": "Yes",
     "no": "No",
     "errors": {

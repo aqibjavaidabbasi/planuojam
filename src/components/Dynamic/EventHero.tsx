@@ -21,7 +21,7 @@ function EventHero({data}: {data: HeroBannerBlock}) {
         sizes="100vw"
       /> 
       {/* Overlay for better text readability */}
-      <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+      <div className="absolute inset-0 bg-black/40 pointer-events-none" />
       <div className="relative z-10 flex items-center h-full w-full px-2">
         <div
           className="max-w-lg w-full flex flex-col gap-4 items-start rounded-xl shadow-xl px-5 py-5 md:px-8 md:py-8 ml-0 md:ml-10"

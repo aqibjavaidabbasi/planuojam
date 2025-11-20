@@ -54,7 +54,7 @@ const Select: React.FC<SelectProps> = ({
           )}
           {options.map((option) => (
             <option value={option.value} key={option.value}>
-              {option.label}
+              {option.label.charAt(0).toUpperCase() + option.label.slice(1)}
             </option>
           ))}
         </select>

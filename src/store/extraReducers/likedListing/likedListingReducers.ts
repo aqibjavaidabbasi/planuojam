@@ -1,6 +1,17 @@
 import { LikedListingState } from "@/store/slices/likedListingSlice";
+import { LikedListing } from "@/types/common";
 import { addToLikedListing, fetchLikedListing, removeFromLikedListing } from "@/store/thunks/likedListing";
 import { ActionReducerMapBuilder } from "@reduxjs/toolkit";
+
+// Helper function to save to localStorage
+const saveToStorage = (items: LikedListing[]) => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem('likedListings', JSON.stringify(items));
+  } catch {
+    // Ignore localStorage errors
+  }
+};
 
 export const fetchLikedListingReducer = (
     builder: ActionReducerMapBuilder<LikedListingState>
@@ -9,6 +20,8 @@ export const fetchLikedListingReducer = (
         .addCase(fetchLikedListing.fulfilled, (state, action) => {
             state.items = action.payload;
             state.status = "succeeded";
+            state.lastFetched = Date.now();
+            saveToStorage(action.payload);
         })
         .addCase(fetchLikedListing.pending, (state) => {
             state.status = "loading";
@@ -30,12 +43,14 @@ export const addToLikedListingReducer = (
         .addCase(addToLikedListing.fulfilled, (state, action) => {
             state.status = 'succeeded'
             state.items.push(action.payload as never);
+            saveToStorage(state.items);
         })
         .addCase(addToLikedListing.rejected, (state, action) => {
             state.status = 'failed'
             state.error = typeof action.payload === "string" ? action.payload : "Failed to add to wishlist";
         })
 }
+
 export const removeFromLikedListingReducer = (
     builder: ActionReducerMapBuilder<LikedListingState>
 ) => {
@@ -46,6 +61,7 @@ export const removeFromLikedListingReducer = (
         .addCase(removeFromLikedListing.fulfilled, (state, action) => {
             state.status = 'succeeded'
             state.items = state.items.filter((item) => item.documentId !== action.payload)
+            saveToStorage(state.items);
         })
         .addCase(removeFromLikedListing.rejected, (state, action) => {
             state.status = 'failed'

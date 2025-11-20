@@ -30,6 +30,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
   const isHotDealActive = () => pathname.endsWith("/hot-deal");
   const isMapActive = () => pathname.endsWith("/map");
   const user = useAppSelector((state: RootState) => state.auth.user);
+  const likedListings = useAppSelector((state: RootState) => state.likedListings);
   const [loading, setLoading] = useState(false);
   const [selectedLocale, setSelectedLocale] = useState<string>(DEFAULT_LOCALE);
   const [selected, setSelected] = useState("");
@@ -65,11 +66,19 @@ function Header({ headerData }: { headerData: HeaderType }) {
   //set liked listing state in header to set state globally on mount
   useEffect(() => {
     if (!user?.id) return;
-    // Fetch liked listings when user id becomes available
-    dispatch(fetchLikedListing({ userId: user.id, locale: 'en' }))
-      .unwrap()
-      .catch(() => { });
-  }, [dispatch, user?.id]);
+
+    // Check if we already have liked listings and they were fetched recently (within 5 minutes)
+    const hasRecentData = likedListings.items.length > 0 &&
+                         likedListings.lastFetched &&
+                         (Date.now() - likedListings.lastFetched) < 300000; // 5 minutes
+
+    // Only fetch if we don't have recent data
+    if (!hasRecentData) {
+      dispatch(fetchLikedListing({ userId: user.id, locale: 'en' }))
+        .unwrap()
+        .catch(() => { });
+    }
+  }, [dispatch, user?.id, likedListings.items.length, likedListings.lastFetched]);
 
   // Initialize selected locale
   useEffect(() => {

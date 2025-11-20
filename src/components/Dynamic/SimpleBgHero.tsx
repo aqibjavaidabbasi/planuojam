@@ -21,14 +21,14 @@ function SimpleBgHero({ data }: { data: HeroBannerBlock }) {
       />
 
       {/* Dark overlay for readability */}
-      <div className="absolute inset-0 bg-black/70" />
+      <div className="absolute inset-0 bg-black/75" />
 
       {/* Centered text content */}
       <div className="relative z-10 text-center px-4">
         <Heading
           headingPiece={data.heading.headingPiece}
           as="h1"
-          extraStyles="justify-center text-white"
+          extraStyles="justify-center text-white !text-center"
         />
         {data.subTitle && (
           <p className="mt-2 text-base md:text-lg text-gray-200 font-light">

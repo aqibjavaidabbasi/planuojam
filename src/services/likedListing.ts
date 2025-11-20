@@ -2,46 +2,8 @@ import { createQuery, deleteAPI, fetchAPIWithToken, postAPIWithToken } from "./a
 
 
 export async function createLikedListing(data: { userId: number; listing: string }) {
-    const populate = {
-        listing: {
-            populate: {
-                listingItem: {
-                    on: {
-                        'dynamic-blocks.vendor': {
-                            populate: {
-                                'serviceArea': {
-                                    populate: '*'
-                                }
-                            }
-                        },
-                        'dynamic-blocks.venue': {
-                            populate: {
-                                location: {
-                                    populate: '*'
-                                }
-                            }
-                        }
-                    }
-                },
-                portfolio: {
-                    populate: '*'
-                },
-                reviews: {
-                    populate: '*'
-                },
-                eventTypes: {
-                    populate: '*'
-                },
-                category: {
-                    populate: '*'
-                }
-            }
-        }
-    };
-
     try {
-        const query = createQuery(populate);
-        const res = await postAPIWithToken('liked-listings', { data }, {}, query);
+        const res = await postAPIWithToken('liked-listings', { data });
         return res;
     } catch (err) {
         console.error("Error creating liked listing:", err);
@@ -65,52 +27,7 @@ export async function getLikedListings(userId: number, locale?: string) {
         throw new Error('No authentication token found. Please log in.');
     }
 
-    const populate = {
-        listing: {
-            populate: {
-                category: {
-                    populate: '*'
-                },
-                listingItem: {
-                    on: {
-                        'dynamic-blocks.vendor': {
-                            populate: {
-                                'serviceArea': {
-                                    populate: '*'
-                                }
-                            }
-                        },
-                        'dynamic-blocks.venue': {
-                            populate: {
-                                location: {
-                                    populate: '*'
-                                },
-                                amneties: {
-                                    populate: '*'
-                                }
-                            }
-                        }
-                    }
-                },
-                portfolio: {
-                    populate: '*'
-                },
-                reviews: {
-                    populate: '*'
-                },
-                eventTypes: {
-                    populate: '*'
-                },
-                hotDeal: {
-                    populate: {
-                        discount: {
-                            populate: '*'
-                        }
-                    }
-                }
-            }
-        }
-    };
+    const populate = {};
 
     const filters = {
         filters: {

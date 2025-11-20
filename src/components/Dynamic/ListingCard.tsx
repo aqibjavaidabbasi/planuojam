@@ -19,23 +19,22 @@ import ListingSubscriptionModal from '../modals/ListingSubscriptionModal'
 import { addToLikedListing, removeFromLikedListing } from '@/store/thunks/likedListing'
 import toast from 'react-hot-toast'
 import { useTranslations } from 'next-intl'
-import { useRouter } from '@/i18n/navigation'
 import { RootState } from '@/store'
 import { StripeProductAttributes } from '@/app/api/stripe-products/route'
 import { IoMdSettings } from 'react-icons/io'
 
 function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem; highPriority?: boolean; stripeProducts?: StripeProductAttributes[] }) {
-  const router = useRouter();
   const { siteSettings } = useSiteSettings();
   const { user } = useAppSelector((state: RootState) => state.auth);
-  const { status, items: likedListings } = useAppSelector((state: RootState) => state.likedListings);
+  const { items: likedListings } = useAppSelector((state: RootState) => state.likedListings);
   const dispatch = useAppDispatch();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [showListingSubscriptionModal, setShowListingSubscriptionModal] = useState(false);
+  const [heartLoading, setHeartLoading] = useState(false);
   const t = useTranslations('Dynamic.ListingCard');
 
-  const isLiked = Array.isArray(likedListings) && likedListings.some(listing => listing.listing?.documentId === item.documentId);
+  const isLiked = Array.isArray(likedListings) && likedListings.some(listing => listing.listing === item.documentId);
 
   // Determine if hot deal is currently active
   const isHotDealActive = (() => {
@@ -59,14 +58,16 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
 
     const likedItem = isLiked
       ? (Array.isArray(likedListings)
-        ? likedListings.find(listing => listing.listing?.documentId === item.documentId)
+        ? likedListings.find(listing => listing.listing === item.documentId)
         : undefined)
       : undefined;
 
+    setHeartLoading(true);
     toast.promise(
-      isLiked
-        ? dispatch(removeFromLikedListing(likedItem!.documentId)).unwrap()
-        : dispatch(addToLikedListing(item.documentId)).unwrap(),
+      (isLiked
+        ? dispatch(removeFromLikedListing(likedItem!.documentId))
+        : dispatch(addToLikedListing(item.documentId))
+      ).unwrap().finally(() => setHeartLoading(false)),
       {
         loading: isLiked ? t('toasts.removing') : t('toasts.adding'),
         success: isLiked ? t('toasts.removed') : t('toasts.added'),
@@ -235,7 +236,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           <div className="flex gap-2.5 items-center justify-center">
             {/* Heart icon */}
             <div className="">
-              {status === 'loading' ? (
+              {heartLoading ? (
                 <FaSpinner size={24} color="#c4a7a7" className="animate-spin" />
               ) : isLiked ? (
                 <FaHeart
@@ -267,20 +268,24 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                   >
                     <FaInfoCircle size={16} />
                   </Button>
-                  <Button style="secondary" size="small" onClick={() => router.push(`${getListingItemUrl() as string}/edit`)} >
+                  <a
+                    href={`${getListingItemUrl() as string}/edit`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center capitalize justify-center gap-1.5 font-medium rounded-md bg-black text-white hover:bg-primary py-1 px-3 text-sm cursor-pointer"
+                  >
                     <IoMdSettings size={16} />
-                  </Button>
+                  </a>
                 </div>
               ) : (
-                <Button
-                  style="secondary"
-                  size="small"
-                  onClick={async () => {
-                    router.push(getListingItemUrl() as string);
-                  }}
+                <a
+                  href={getListingItemUrl() as string}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center capitalize justify-center gap-1.5 font-medium rounded-md bg-black text-white hover:bg-primary py-1 px-3 text-sm cursor-pointer"
                 >
                   {t('view')} <IoNavigateOutline />
-                </Button>
+                </a>
               )}
             </div>
           </div>

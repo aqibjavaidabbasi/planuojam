@@ -149,15 +149,15 @@ export default function SocialLinksSection({
                   }}
                   options={[
                     { label: t("selectPlatform"), value: "" },
-                    { label: "Facebook", value: "facebook" },
-                    { label: "LinkedIn", value: "linkedin" },
-                    { label: "YouTube", value: "youtube" },
-                    { label: "Instagram", value: "instagram" },
-                    { label: "TikTok", value: "tiktok" },
-                    { label: "Pinterest", value: "pinterest" },
-                    { label: "Twitter", value: "twitter" },
-                    { label: "Thread", value: "thread" },
-                    { label: "Reddit", value: "reddit" },
+                    { label: t("platforms.facebook"), value: "facebook" },
+                    { label: t("platforms.linkedin"), value: "linkedin" },
+                    { label: t("platforms.youtube"), value: "youtube" },
+                    { label: t("platforms.instagram"), value: "instagram" },
+                    { label: t("platforms.tiktok"), value: "tiktok" },
+                    { label: t("platforms.pinterest"), value: "pinterest" },
+                    { label: t("platforms.twitter"), value: "twitter" },
+                    { label: t("platforms.thread"), value: "thread" },
+                    { label: t("platforms.reddit"), value: "reddit" },
                   ]}
                 />
                 <ErrorMessage error={errors.socialLink?.[idx]?.platform} />

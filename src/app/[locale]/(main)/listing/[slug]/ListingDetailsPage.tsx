@@ -127,7 +127,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
   if(!renderingContent) notFound();
 
   return (
-    <div className="min-h-screen bg-background px-4 sm:px-6">
+    <div className="min-h-screen bg-background px-4 sm:px-6 pt-10">
       <div className="max-w-[1400px] mx-auto">
 
         {/* gallery */}

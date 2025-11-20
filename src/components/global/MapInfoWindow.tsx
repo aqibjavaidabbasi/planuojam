@@ -26,7 +26,6 @@ const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href }) => {
       {/* Image container */}
       <div className="m-4 h-40 rounded-xl overflow-hidden relative bg-gradient-to-tr from-teal-100 to-rose-100 flex items-center justify-center">
         {Boolean((selectedLocation)?.image?.url) ? (
-          // Use a standard img to avoid Next.js image domain constraints inside the map popup
           <Image
             src={getCompleteImageUrl(selectedLocation?.image?.url)}
             alt={selectedLocation.name}

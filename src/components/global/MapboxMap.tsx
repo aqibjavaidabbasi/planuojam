@@ -224,7 +224,6 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
 
   // Move map when selected place changes
   useEffect(() => {
-    console.log(selectedPlace)
     if (map.current && selectedPlace?.geometry?.location) {
       map.current.flyTo({
         center: [selectedPlace.geometry.location.lng, selectedPlace.geometry.location.lat],

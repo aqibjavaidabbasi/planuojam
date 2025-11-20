@@ -11,7 +11,6 @@ const IMP_IDS = {
 
 function Footer({ footerData }: { footerData: footer }) {
     const t=useTranslations("ContactUs")
-    console.log(footerData)
 
     // Build locale-aware URLs similar to header logic, preferring English slugs
     const getServiceUrl = (category: category) => {

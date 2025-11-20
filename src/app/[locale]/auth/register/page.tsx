@@ -53,6 +53,7 @@ function RegisterPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const t = useTranslations("Auth.Register");
+  const tGlobal = useTranslations();
   const [isChecked, setIsChecked] = useState(false);
   const locale = useLocale();
   const [usernameStatus, setUsernameStatus] = useState<"unchecked" | "checking" | "available" | "taken">("unchecked");
@@ -138,13 +139,14 @@ function RegisterPage() {
       {
         loading: t("registering"),
         success: t("registered"),
-        error: (err) => {
-          // err is exactly what rejectWithValue() returned in the thunk
-          if (typeof err === "string") return err;
-          if (err && typeof err === "object" && "message" in err)
-            return t(String(err.message));
-          return t("registerFailed");
-        },
+      error: (err) => {
+        const key = (err as { error?: { key?: string } })?.error?.key || (typeof err === 'string' ? err : undefined);
+        if (key) return tGlobal(key);
+        if (typeof err === "string") return t(err);
+        if (err && typeof err === "object" && "message" in err)
+          return t(String(err.message));
+        return t("registerFailed");
+      },
       }
     );
   };
