@@ -9,6 +9,7 @@ export async function GET(req: NextRequest) {
   const locale = req.nextUrl.searchParams.get("locale") || "en";
   const mode = req.nextUrl.searchParams.get("mode") || "login";
   const serviceType = req.nextUrl.searchParams.get("serviceType") || "";
+  const phone = req.nextUrl.searchParams.get("phone") || "";
   const redirect = req.nextUrl.searchParams.get("redirect") || "";
 
   if (!clientId) {
@@ -17,7 +18,7 @@ export async function GET(req: NextRequest) {
 
   const redirectUri = `${base}/api/auth/google/callback`;
   
-  const state = encodeURIComponent(JSON.stringify({ locale, mode, serviceType, redirect }));
+  const state = encodeURIComponent(JSON.stringify({ locale, mode, serviceType, phone, redirect }));
   const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
   authUrl.searchParams.set("client_id", clientId);
   authUrl.searchParams.set("redirect_uri", redirectUri);

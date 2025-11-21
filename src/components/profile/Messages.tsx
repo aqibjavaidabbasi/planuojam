@@ -48,6 +48,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
   const refreshingRef = useRef<number>(0);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedCounterpartName, setSelectedCounterpartName] = useState<string>("");
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   // Keep refs in sync to avoid unstable useCallback deps
   const locallyReadIdsRef = useRef<Set<string>>(new Set());
   const clearedUserIdsRef = useRef<Set<number>>(new Set());
@@ -65,12 +66,35 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
 
   const counterpartFromMessage = useCallback(
     (m: Message) => {
-      const s = m.sender?.id ?? m.sender;
-      const r = m.receiver?.id ?? m.receiver;
       const myId = user?.id;
-      const otherId = s === myId ? r : s;
-      const otherObj = s === myId ? (m.receiver) : (m.sender);
-      return { id: Number(otherId), username: otherObj?.username ?? `User ${otherId}` };
+      const senderVal = (typeof m.sender === 'object' && m.sender) ? (m.sender as UserLite).id : (typeof m.sender === 'number' ? m.sender : undefined);
+      const receiverVal = (typeof m.receiver === 'object' && m.receiver) ? (m.receiver as UserLite).id : (typeof m.receiver === 'number' ? m.receiver : undefined);
+
+      let otherIdNum: number = NaN;
+      let username = '';
+
+      if (typeof myId === 'number') {
+        if (senderVal === myId) {
+          // I am the sender; counterpart is receiver
+          if (typeof receiverVal === 'number') otherIdNum = receiverVal;
+          username = (typeof m.receiver === 'object' && m.receiver && (m.receiver as UserLite).username) ? (m.receiver as UserLite).username : '';
+        } else if (receiverVal === myId) {
+          // I am the receiver; counterpart is sender
+          if (typeof senderVal === 'number') otherIdNum = senderVal;
+          username = (typeof m.sender === 'object' && m.sender && (m.sender as UserLite).username) ? (m.sender as UserLite).username : '';
+        } else {
+          // Neither side matches me (fallback: pick the first valid side)
+          if (typeof senderVal === 'number') {
+            otherIdNum = senderVal;
+            username = (typeof m.sender === 'object' && m.sender && (m.sender as UserLite).username) ? (m.sender as UserLite).username : '';
+          } else if (typeof receiverVal === 'number') {
+            otherIdNum = receiverVal;
+            username = (typeof m.receiver === 'object' && m.receiver && (m.receiver as UserLite).username) ? (m.receiver as UserLite).username : '';
+          }
+        }
+      }
+
+      return { id: otherIdNum, username };
     },
     [user?.id]
   );
@@ -80,6 +104,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
     const map = new Map<number, Message>();
     for (const m of list) {
       const { id } = counterpartFromMessage(m);
+      if (!Number.isFinite(id)) continue;
       const existing = map.get(id);
       const mTime = new Date(m.createdAt || 0).getTime();
       if (!existing) {
@@ -96,7 +121,14 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
         id,
         message: m,
         counterpart: counterpartFromMessage(m),
-      }));
+      }))
+      .filter((c) => {
+        if (!(Number.isFinite(c.id) && c.id > 0)) return false;
+        const name = (c.counterpart.username || '').trim().toLowerCase();
+        if (!name) return false;
+        if (name === 'user null' || name === 'user undefined' || name === 'user nan') return false;
+        return true;
+      });
   }, [list, counterpartFromMessage]);
 
   const loadList = useCallback(async (opts?: { silent?: boolean }) => {
@@ -185,7 +217,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
           try {
             const unreadRes = await fetchUnreadForReceiver(myId, 1, 200);
             let map = unreadRes.data.reduce((acc, m) => {
-              const mid = String(m.id);
+              const mid = (typeof m.documentId === 'string' ? m.documentId : String(m.id));
               if (locallyReadIdsRef.current.has(mid)) return acc; // skip locally marked read
               const senderId = (m.sender as UserLite | undefined)?.id ?? (m.sender as unknown as number);
               const sid = Number(senderId);
@@ -266,6 +298,13 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
     setSelectedCounterpartName(found?.counterpart?.username || "");
   }, [selectedUserId, conversationItems]);
 
+  // If current selection disappears due to filtering (e.g., deleted user), clear selection
+  useEffect(() => {
+    if (selectedUserId && !conversationItems.some((c) => c.id === selectedUserId)) {
+      setSelectedUserId(null);
+    }
+  }, [selectedUserId, conversationItems]);
+
   // Load thread and set up polling when selected user changes
   useEffect(() => {
     if (selectedUserId) {
@@ -279,6 +318,13 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
       if (pollRef.current) clearInterval(pollRef.current);
     }
   }, [selectedUserId, loadThread]);
+
+  // Auto-scroll to bottom when thread messages change
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  }, [thread]);
 
   // When a thread is loaded/selected, optimistically clear unread for that user
   useEffect(() => {
@@ -434,7 +480,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
           style="secondary"
           extraStyles="!whitespace-nowrap flex-shrink-0"
         >
-          {refreshing ? t("loading", { default: "Loading..." }) : t("refresh", { default: "Refresh" })}
+          {refreshing ? t("loading") : t("refresh")}
         </Button>
       </div>
 
@@ -446,7 +492,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
               <div className="p-4 text-sm text-red-600">{listError}</div>
             )}
             {!listLoading && !listError && conversationItems.length === 0 && (
-              <div className="p-6 text-sm text-gray-500">{t("noMessages", { default: "No messages yet" })}</div>
+              <div className="p-6 text-sm text-gray-500">{t("noMessages")}</div>
             )}
 
             {!listLoading && !listError && conversationItems.length > 0 && (
@@ -461,7 +507,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                     onClick={() => setSelectedUserId(id)}
                   >
                     <div className="flex items-center justify-between gap-2 min-w-0">
-                      <span className="font-medium truncate">{counterpart.username}</span>
+                      <span className="font-medium truncate">{ counterpart.username ? counterpart.username : "Deleted User"}</span>
                       {unread > 0 && (
                         <span className="inline-flex items-center justify-center min-w-5 h-5 px-1 text-xs rounded-full bg-red-600 text-white flex-shrink-0">
                           {unread}
@@ -493,7 +539,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                   ×
                 </button>
               </div>
-              <div className="flex-1 overflow-auto p-3 sm:p-4 space-y-3">
+              <div ref={messagesContainerRef} className="flex-1 overflow-auto p-3 sm:p-4 space-y-3">
                 {threadLoading && <div className="text-sm text-gray-500"></div>}
                 {threadError && (
                   <div className="text-sm text-red-600">{threadError}</div>

@@ -308,12 +308,9 @@ const MyBookings: React.FC = () => {
         onClose={() => setConfirmModal({ open: false })}
         title={<span className="pr-8">{t("confirm.cancelTitle", { default: "Cancel this booking?" })}</span>}
         footer={
-          <div className="flex items-center justify-end gap-3">
-            <Button style="ghost" onClick={() => setConfirmModal({ open: false })} type="button">
-              {t("actions.cancel", { default: "Cancel" })}
-            </Button>
+          <div className="flex items-center justify-end">
             <Button style="destructive" onClick={confirmCancel} type="button">
-              {t("actions.cancel", { default: "Cancel" })}
+              {t("actions.cancel")}
             </Button>
           </div>
         }

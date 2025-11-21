@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
     const locale: string = state.locale || "en";
     const mode: 'login' | 'register' = state.mode || 'login';
     const serviceType: string | undefined = state.serviceType || undefined;
+    const phone: string | undefined = state.phone || undefined;
     const redirect: string | undefined = state.redirect || undefined;
 
     if (!code) return new Response("Missing code", { status: 400 });
@@ -77,6 +78,7 @@ export async function GET(req: NextRequest) {
         name,
         mode,
         serviceType: serviceType || null,
+        phone: phone || null,
         providerUserId,
         authProvider: 'facebook',
       }),

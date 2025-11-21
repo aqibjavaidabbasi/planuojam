@@ -31,7 +31,7 @@ async function authedJson<TResp>(method: "PUT" | "POST", path: string, body: unk
   return data as TResp;
 }
 
-export interface RegisterRequest { username: string; email: string; password: string; serviceType?: string }
+export interface RegisterRequest { username: string; email: string; password: string; serviceType?: string; phone?: string }
 export interface OtpSentResponse { status: "otp_sent"; email?: string; otpExpiresAt: string }
 export interface JwtUserResponse { jwt: string; user: unknown }
 

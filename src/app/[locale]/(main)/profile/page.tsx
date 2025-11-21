@@ -149,7 +149,10 @@ function ProfilePage() {
         const res = await fetchUnreadForReceiver(uid, 1, 200);
         const localIdsRaw = typeof window !== 'undefined' ? sessionStorage.getItem('locallyReadMessageIds') : null;
         const locallyRead = new Set<string>(localIdsRaw ? JSON.parse(localIdsRaw) : []);
-        const adjusted = res.data.filter((m) => !locallyRead.has(String(m.id)));
+        const adjusted = res.data.filter((m) => {
+          const mid = typeof m.documentId === 'string' ? m.documentId : String(m.id);
+          return !locallyRead.has(mid);
+        });
         setUnreadCount(adjusted.length);
       } catch {
         // ignore silently
@@ -167,7 +170,10 @@ function ProfilePage() {
         const res = await fetchUnreadForReceiver(uid, 1, 200);
         const localIdsRaw = typeof window !== 'undefined' ? sessionStorage.getItem('locallyReadMessageIds') : null;
         const locallyRead = new Set<string>(localIdsRaw ? JSON.parse(localIdsRaw) : []);
-        const adjusted = res.data.filter((m) => !locallyRead.has(String(m.id)));
+        const adjusted = res.data.filter((m) => {
+          const mid = typeof m.documentId === 'string' ? m.documentId : String(m.id);
+          return !locallyRead.has(mid);
+        });
         setUnreadCount(adjusted.length);
       } catch { }
     };

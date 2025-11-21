@@ -8,7 +8,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { registerUser } from "@/store/thunks/authThunks";
 import { Link, useRouter } from "@/i18n/navigation";
 import React, { useMemo, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import { BsCart3 } from "react-icons/bs";
 import { TbTools } from "react-icons/tb";
@@ -20,6 +20,8 @@ import { checkUsernameAvailability } from "@/services/auth";
 import Logo from "@/components/global/Logo";
 import { useSearchParams } from "next/navigation";
 import { SUPPORTED_LOCALES } from "@/config/i18n";
+import PhoneInputField from "@/components/custom/PhoneInputField";
+import { isValidPhoneNumber } from "react-phone-number-input";
 
 function normalizeRedirect(p: string | null): string | null {
   if (!p || typeof p !== 'string') return null;
@@ -39,6 +41,7 @@ type FormValues = {
   password: string;
   confirmPassword: string;
   agreement: boolean;
+  phone?: string;
 };
 
 function RegisterPage() {
@@ -48,6 +51,7 @@ function RegisterPage() {
     register,
     watch,
     setValue,
+    control,
   } = useForm<FormValues>();
   const { parentCategories } = useParentCategories();
   const dispatch = useAppDispatch();
@@ -128,6 +132,7 @@ function RegisterPage() {
       username: data.username,
       email: data.email,
       password: data.password,
+      phone: watch('role') === 'provider' ? (data.phone || '').trim() : undefined,
     };
     await toast.promise(
       dispatch(registerUser(filteredData))
@@ -257,6 +262,28 @@ function RegisterPage() {
                 {errors.serviceType && (
                   <p className="text-red-500">{t("serviceRequired")}</p>
                 )}
+                <Controller
+                  control={control}
+                  name="phone"
+                  rules={{
+                    validate: (val) => {
+                      if (watch('role') !== 'provider') return true;
+                      if (!val) return t("phoneRequired", { default: "Phone is required" });
+                      if (!isValidPhoneNumber(String(val))) return t("phoneInvalid", { default: "Enter a valid phone" });
+                      return true;
+                    },
+                  }}
+                  render={({ field, fieldState }) => (
+                    <PhoneInputField
+                      label={t("phoneLabel", { default: "Phone" })}
+                      placeholder={t("phonePlaceholder", { default: "+370 600 00000" })}
+                      disabled={isSubmitting}
+                      value={(field.value as string) || ''}
+                      onChange={(v?: string | null) => field.onChange(v || "")}
+                      error={fieldState.error ? String(fieldState.error.message) : undefined}
+                    />
+                  )}
+                />
               </div>
             )}
 
@@ -418,6 +445,7 @@ function RegisterPage() {
             className="mt-6"
             onGoogleClick={() => {
               const svc = watch("serviceType");
+              const phone = watch("phone")?.trim();
               const role = watch("role");
               if (!role) {
                 toast.error(t("roleRequired"));
@@ -428,6 +456,10 @@ function RegisterPage() {
                 toast.error(t("serviceRequired"));
                 return;
               }
+              if (role === "provider" && (!phone || phone.length < 6)) {
+                toast.error(t("phoneRequired", { default: "Phone is required" }));
+                return;
+              }
               if (!isChecked) {
                 toast.error(t("tosRequired"));
                 return;
@@ -437,6 +469,7 @@ function RegisterPage() {
                 mode: "register",
                 serviceType: svc || "",
               });
+              if (role === 'provider' && phone) sp.set('phone', phone);
               if (rp) {
                 try { sessionStorage.setItem('postAuthRedirect', rp); } catch {}
                 sp.set('redirect', rp);
@@ -445,6 +478,7 @@ function RegisterPage() {
             }}
             onFacebookClick={() => {
               const svc = watch("serviceType");
+              const phone = watch("phone")?.trim();
               const role = watch("role");
               if (!role) {
                 toast.error(t("roleRequired"));
@@ -454,6 +488,10 @@ function RegisterPage() {
                 toast.error(t("serviceRequired"));
                 return;
               }
+              if (role === "provider" && (!phone || phone.length < 6)) {
+                toast.error(t("phoneRequired", { default: "Phone is required" }));
+                return;
+              }
               if (!isChecked) {
                 toast.error(t("tosRequired"));
                 return;
@@ -463,6 +501,7 @@ function RegisterPage() {
                 mode: "register",
                 serviceType: svc || "",
               });
+              if (role === 'provider' && phone) sp.set('phone', phone);
               if (rp) {
                 try { sessionStorage.setItem('postAuthRedirect', rp); } catch {}
                 sp.set('redirect', rp);

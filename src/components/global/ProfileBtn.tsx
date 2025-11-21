@@ -6,7 +6,7 @@ import Loader from '../custom/Loader';
 import { User } from '@/types/userTypes';
 import { useTranslations } from 'use-intl';
 import { useRouter } from '@/i18n/navigation';
-import { countUnread } from '@/services/messages';
+import { fetchUnreadForReceiver } from '@/services/messages';
 
 function ProfileBtn({loading, user}: {loading: boolean, user: User | null}) {
   const router = useRouter();
@@ -15,19 +15,37 @@ function ProfileBtn({loading, user}: {loading: boolean, user: User | null}) {
 
   useEffect(() => {
     let mounted = true;
-    (async () => {
+    const compute = async () => {
       try {
         if (user?.id) {
-          const total = await countUnread(user.id);
-          if (mounted) setHasUnread(total > 0);
+          const res = await fetchUnreadForReceiver(user.id, 1, 200);
+          const localIdsRaw = typeof window !== 'undefined' ? sessionStorage.getItem('locallyReadMessageIds') : null;
+          const locallyRead = new Set<string>(localIdsRaw ? JSON.parse(localIdsRaw) : []);
+          const adjusted = res.data.filter((m) => {
+            const mid = typeof m.documentId === 'string' ? m.documentId : String(m.id);
+            return !locallyRead.has(mid);
+          });
+          if (mounted) setHasUnread(adjusted.length > 0);
         } else {
           if (mounted) setHasUnread(false);
         }
       } catch {
         // silently ignore
       }
-    })();
-    return () => { mounted = false; };
+    };
+    compute();
+    const onFocus = () => { compute(); };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('focus', onFocus);
+      document.addEventListener('visibilitychange', onFocus);
+    }
+    return () => {
+      mounted = false;
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('focus', onFocus);
+        document.removeEventListener('visibilitychange', onFocus);
+      }
+    };
   }, [user?.id]);
 
   return (

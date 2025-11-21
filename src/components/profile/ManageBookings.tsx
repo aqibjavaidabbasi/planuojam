@@ -266,17 +266,17 @@ const ManageBookings: React.FC = () => {
           </span>
         }
         footer={
-          <div className="flex items-center justify-end gap-3 pt-2">
+          <div className="flex items-center justify-end gap-3 pt-4">
             <Button style="ghost" onClick={() => setConfirmModal({ open: false })} type="button">
-              {t("actions.cancel", { default: "Cancel" })}
+              {t("actions.cancel")}
             </Button>
             {confirmModal.action === "confirm" ? (
               <Button style="primary" onClick={confirmAccept} type="button" disabled={processingId === confirmModal.id}>
-                {processingId === confirmModal.id ? t("actions.saving", { default: "Saving..." }) : t("actions.accept", { default: "Accept" })}
+                {processingId === confirmModal.id ? t("actions.saving") : t("actions.accept")}
               </Button>
             ) : (
               <Button style="destructive" onClick={confirmReject} type="button" disabled={rejectingId === confirmModal.id}>
-                {rejectingId === confirmModal.id ? t("actions.saving", { default: "Saving..." }) : t("actions.reject", { default: "Reject" })}
+                {rejectingId === confirmModal.id ? t("actions.saving") : t("actions.reject")}
               </Button>
             )}
           </div>
