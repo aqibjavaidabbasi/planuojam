@@ -48,6 +48,24 @@ function ProfileBtn({loading, user}: {loading: boolean, user: User | null}) {
     };
   }, [user?.id]);
 
+  // Update immediately when Messages component emits unread changes
+  useEffect(() => {
+    const onUnreadChanged = (e: Event) => {
+      try {
+        const total = (e as CustomEvent).detail?.total;
+        setHasUnread(Number(total) > 0);
+      } catch {}
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('messages:unread-changed', onUnreadChanged as EventListener);
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('messages:unread-changed', onUnreadChanged as EventListener);
+      }
+    };
+  }, []);
+
   return (
     <div
       className="relative border border-primary rounded-full cursor-pointer group hover:bg-primary transition-colors"

@@ -151,7 +151,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
                 category={renderingContent.category?.name}
                 title={renderingContent.title}
                 username={renderingContent.user?.username}
-                vendorUserId={renderingContent?.user?.id}
+                vendorUserId={renderingContent?.user?.documentId}
                 contact={renderingContent.contact}
                 websiteLink={renderingContent.websiteLink}
                 price={renderingContent.price}

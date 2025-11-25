@@ -15,7 +15,7 @@ interface ListingDetailHeroProps {
   category: string;
   title: string;
   username: string;
-  vendorUserId?: number;
+  vendorUserId?: string;
   contact: {
     email: string;
     phone: string;
@@ -122,7 +122,7 @@ function ListingDetailHero({
                 <span className="text-white">{t('viewAvailableSlots', { default: 'View available slots' })}</span>
               </div>
 
-              {typeof vendorUserId === 'number' && user?.id !== vendorUserId && (
+              {typeof vendorUserId === 'string' && user?.documentId !== vendorUserId && (
                 <div
                   className="rounded-xl w-full px-6 py-2 text-center cursor-pointer transition-all duration-200 flex items-center justify-center bg-white/10 border border-white/30 hover:bg-white/30 backdrop-blur"
                   onClick={() => {
@@ -130,13 +130,13 @@ function ListingDetailHero({
                       setShowLoginModal(true);
                       return;
                     }
-                    router.push(`/profile?tab=messages&withUser=${vendorUserId}`);
+                    router.push(`/profile?tab=messages&withUser=${vendorUserId}&username=${encodeURIComponent(username || '')}`);
                   }}
                 >
                   <span className="text-white">
                     {username
-                      ? `${t('messageVendor', { default: `Message` })} ${username.split(' ')[0]}`
-                      : t('sendMessage', { default: 'Send a message' })}
+                      ? `${t('messageVendor')} ${username.split(' ')[0]}`
+                      : t('sendMessage')}
                   </span>
                 </div>
               )}

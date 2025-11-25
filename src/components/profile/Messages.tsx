@@ -8,9 +8,10 @@ import {
   sendMessage,
   Message,
   UserLite,
+  fetchUnreadForReceiver,
 } from "@/services/messages";
-import { fetchUnreadForReceiver } from "@/services/messages";
 import { uploadFilesWithToken, API_URL } from "@/services/api";
+import { getUsersByDocumentIds, type MinimalUserInfo } from "@/services/auth";
 import { MdAttachFile } from "react-icons/md";
 import Button from "../custom/Button";
 import { IoSendSharp } from "react-icons/io5";
@@ -18,10 +19,12 @@ import Image from "next/image";
 
 type MessagesProps = {
   initialUserId?: number;
+  initialUserName?: string;
+  initialUserDocumentId?: string;
   onUnreadChange?: (total: number) => void;
 };
 
-function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
+function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnreadChange }: MessagesProps) {
   const t = useTranslations("Profile.Messages");
   const user = useAppSelector((s) => s.auth.user);
 
@@ -32,7 +35,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
   const [clearedUserIds, setClearedUserIds] = useState<Set<number>>(new Set());
   const [locallyReadIds, setLocallyReadIds] = useState<Set<string>>(new Set());
 
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(initialUserId ?? null);
   const [thread, setThread] = useState<Message[]>([]);
   const [threadLoading, setThreadLoading] = useState(false); // used only for initial load of a thread
   const [threadError, setThreadError] = useState<string | null>(null);
@@ -42,12 +45,13 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
   const [attachments, setAttachments] = useState<File[]>([]);
   const [attachmentPreviews, setAttachmentPreviews] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [listReady, setListReady] = useState(false);
 
-  const pollRef = useRef<NodeJS.Timeout | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const suppressMarkReadRef = useRef<boolean>(false);
   const refreshingRef = useRef<number>(0);
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedCounterpartName, setSelectedCounterpartName] = useState<string>("");
+  const [selectedCounterpartName, setSelectedCounterpartName] = useState<string>(initialUserName || "");
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   // Keep refs in sync to avoid unstable useCallback deps
   const locallyReadIdsRef = useRef<Set<string>>(new Set());
@@ -63,6 +67,24 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
     // Keep a stable ref for thread length so loadThread doesn't depend on thread
     threadLengthRef.current = thread.length;
   }, [thread.length]);
+
+  // Hydrate session-cached read state and cleared unread map on mount
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const clearedRaw = sessionStorage.getItem('clearedUnreadByUser');
+        if (clearedRaw) {
+          const arr = JSON.parse(clearedRaw);
+          if (Array.isArray(arr)) setClearedUserIds(new Set<number>(arr));
+        }
+        const readRaw = sessionStorage.getItem('locallyReadMessageIds');
+        if (readRaw) {
+          const arr = JSON.parse(readRaw);
+          if (Array.isArray(arr)) setLocallyReadIds(new Set<string>(arr));
+        }
+      }
+    } catch {}
+  }, []);
 
   const counterpartFromMessage = useCallback(
     (m: Message) => {
@@ -132,7 +154,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
   }, [list, counterpartFromMessage]);
 
   const loadList = useCallback(async (opts?: { silent?: boolean }) => {
-    const silent = opts?.silent ?? (list.length > 0);
+    const silent = opts?.silent ?? true;
     if (!silent) setListLoading(true);
     setListError(null);
     try {
@@ -171,8 +193,9 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
       setListError(msg);
     } finally {
       if (!silent) setListLoading(false);
+      setListReady(true);
     }
-  }, [user?.id, list.length]);
+  }, [user?.id]);
 
   const loadThread = useCallback(
     async (uid: number, opts?: { silent?: boolean }) => {
@@ -285,8 +308,57 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
   useEffect(() => {
     if (initialUserId) {
       setSelectedUserId(initialUserId);
+      if (initialUserName) {
+        setSelectedCounterpartName(initialUserName);
+      }
+      // Create a temporary thread entry if needed
+      if (!conversationItems.some(c => c.id === initialUserId)) {
+        const tempMessage: Message = {
+          id: 0,
+          documentId: 'temp',
+          sender: { id: initialUserId, username: initialUserName || 'User', email: '' } as UserLite,
+          receiver: user?.id ? { id: user.id, username: user.username || 'You', email: user.email || '' } as UserLite : undefined,
+          body: '',
+          readAt: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          attachments: []
+        } as Message;
+        setThread([tempMessage]);
+        try { threadLengthRef.current = 1; } catch {}
+      }
     }
-  }, [initialUserId]);
+  }, [initialUserId, initialUserName, conversationItems, user?.id, user?.username, user?.email]);
+
+  // If initialUserDocumentId is provided (from URL), resolve to numeric id and preselect
+  useEffect(() => {
+    (async () => {
+      if (!initialUserDocumentId || initialUserId || selectedUserId) return;
+      try {
+        const arr: MinimalUserInfo[] = await getUsersByDocumentIds([initialUserDocumentId]);
+        const u = Array.isArray(arr) ? arr[0] : undefined;
+        if (u?.id) {
+          setSelectedUserId(u.id);
+          setSelectedCounterpartName(initialUserName || u.username || "");
+          if (!conversationItems.some((c) => c.id === u.id)) {
+            const tempMessage: Message = {
+              id: 0,
+              documentId: 'temp',
+              sender: { id: u.id, username: u.username || 'User', email: u.email || '' } as UserLite,
+              receiver: user?.id ? { id: user.id, username: user.username || 'You', email: user.email || '' } as UserLite : undefined,
+              body: '',
+              readAt: null,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              attachments: []
+            } as Message;
+            setThread([tempMessage]);
+            try { threadLengthRef.current = 1; } catch {}
+          }
+        }
+      } catch {}
+    })();
+  }, [initialUserDocumentId, initialUserId, selectedUserId, initialUserName, conversationItems, user?.id, user?.username, user?.email]);
 
   // When list or selection changes, derive counterpart name for header
   useEffect(() => {
@@ -295,15 +367,20 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
       return;
     }
     const found = conversationItems.find((c) => c.id === selectedUserId);
-    setSelectedCounterpartName(found?.counterpart?.username || "");
+    if (found?.counterpart?.username) {
+      setSelectedCounterpartName(found.counterpart.username);
+    }
+    // If not found, keep whatever name was already set (e.g., from URL-resolved user)
   }, [selectedUserId, conversationItems]);
 
   // If current selection disappears due to filtering (e.g., deleted user), clear selection
   useEffect(() => {
-    if (selectedUserId && !conversationItems.some((c) => c.id === selectedUserId)) {
+    if (!listReady) return;
+    // Do not clear if we already have any messages in the thread (including a temp placeholder)
+    if (selectedUserId && !conversationItems.some((c) => c.id === selectedUserId) && threadLengthRef.current === 0) {
       setSelectedUserId(null);
     }
-  }, [selectedUserId, conversationItems]);
+  }, [selectedUserId, conversationItems, listReady]);
 
   // Load thread and set up polling when selected user changes
   useEffect(() => {
@@ -318,6 +395,17 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
       if (pollRef.current) clearInterval(pollRef.current);
     }
   }, [selectedUserId, loadThread]);
+
+  // Revoke any object URLs on unmount or when previews list changes (cleanup previous)
+  useEffect(() => {
+    return () => {
+      try {
+        attachmentPreviews.forEach((u) => {
+          if (u && u.startsWith('blob:')) URL.revokeObjectURL(u);
+        });
+      } catch {}
+    };
+  }, [attachmentPreviews]);
 
   // Auto-scroll to bottom when thread messages change
   useEffect(() => {
@@ -385,9 +473,13 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
 
   // Emit total unread to parent AFTER state updates to avoid render-phase updates
   useEffect(() => {
-    if (!onUnreadChange) return;
     const total = Object.values(unreadByUser).reduce((a, b) => a + b, 0);
-    onUnreadChange(total);
+    if (onUnreadChange) onUnreadChange(total);
+    try {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('messages:unread-changed', { detail: { total } }));
+      }
+    } catch {}
   }, [unreadByUser, onUnreadChange]);
 
   const onSend = async () => {
@@ -399,7 +491,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
     let optimisticId: number | null = null;
     try {
       setSending(true);
-      setUploading(true);
+      setUploading(attachments.length > 0);
       // 1) Upload attachments if any
       let uploaded = [];
       let uploadedIds: number[] = [];
@@ -407,6 +499,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
         uploaded = await uploadFilesWithToken(attachments);
         uploadedIds = (uploaded || []).map((u) => Number(u?.id)).filter((n) => Number.isFinite(n));
       }
+      setUploading(false);
       // 2) Compose body: caption only (attachments stored in dedicated field)
       const composedBody = [text].filter(Boolean).join("\n");
       // optimistic append
@@ -426,6 +519,11 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
       };
       setThread((prev) => [...prev, optimistic]);
       setComposerText("");
+      try {
+        attachmentPreviews.forEach((u) => {
+          if (u && u.startsWith('blob:')) URL.revokeObjectURL(u);
+        });
+      } catch {}
       setAttachments([]);
       setAttachmentPreviews([]);
       const saved = await sendMessage(user.id, selectedUserId, composedBody, uploadedIds);
@@ -467,6 +565,8 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
     }
   };
 
+  const resolvingByDocId = !!initialUserDocumentId && !selectedUserId;
+
   return (
     <div className="p-3 md:p-6 lg:p-8 h-full flex flex-col">
       <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -486,7 +586,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
 
       <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 min-h-[60vh]">
         {/* Left: conversations list - hidden on mobile when thread selected */}
-        <div className={`${selectedUserId ? "hidden md:flex" : "flex"} md:col-span-1 rounded-md shadow overflow-hidden flex-col p-1 max-h-[80vh]`}>
+        <div className={`${(selectedUserId || resolvingByDocId) ? "hidden md:flex" : "flex"} md:col-span-1 rounded-md shadow overflow-hidden flex-col p-1 max-h-[80vh]`}>
           <div className="flex-1 overflow-auto">
             {!listLoading && listError && (
               <div className="p-4 text-sm text-red-600">{listError}</div>
@@ -522,10 +622,10 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
         </div>
 
         {/* Right: thread */}
-        <div className={`${selectedUserId ? "flex" : "hidden md:flex"} md:col-span-3 shadow rounded-lg flex-col max-h-[80vh]`}>
+        <div className={`${(selectedUserId || resolvingByDocId) ? "flex" : "hidden md:flex"} md:col-span-3 shadow rounded-lg flex-col max-h-[80vh]`}>
           {!selectedUserId ? (
             <div className="flex-1 flex items-center justify-center text-gray-500 p-4 sm:p-6">
-              {t("selectConversation", { default: "Select a conversation" })}
+              {resolvingByDocId ? t("loading") : t("selectConversation", { default: "Select a conversation" })}
             </div>
           ) : (
             <>
@@ -565,10 +665,10 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                   const att = (m.attachments ?? []) as MaybeAttrAttachment[];
                   const attachments = Array.isArray(att)
                     ? att.map((a) => ({
-                        id: a?.id ?? 0,
-                        url: a?.url ?? "",
-                        mime: a?.mime,
-                        name: a?.name,
+                        id: (a?.id as number) ?? 0,
+                        url: a?.url ?? a?.attributes?.url ?? "",
+                        mime: a?.mime ?? a?.attributes?.mime,
+                        name: a?.name ?? a?.attributes?.name,
                       }))
                     : [];
                   const normalizedAtt = attachments
@@ -591,7 +691,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                         {normalizedAtt.length > 0 && (
                           <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {normalizedAtt.map((a) => (
-                              <a key={`${a.id}-${a.url}`} href={a.url} target="_blank" rel="noreferrer">
+                              <a key={`${a.id}-${a.url}`} href={a.url} target="_blank" rel="noreferrer noopener">
                                 {a.mime?.startsWith("image/") ? (
                                   <Image src={a.url} alt={a.name || "attachment"} width={320} height={240} className="rounded-md object-cover max-w-full h-auto" />
                                 ) : (
@@ -607,7 +707,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                         {normalizedAtt.length === 0 && legacyImageUrls.length > 0 && (
                           <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {legacyImageUrls.map((u) => (
-                              <a key={u} href={u} target="_blank" rel="noreferrer">
+                              <a key={u} href={u} target="_blank" rel="noreferrer noopener">
                                 <Image src={u} alt="attachment" width={320} height={240} className="rounded-md object-cover max-w-full h-auto" />
                               </a>
                             ))}
@@ -616,7 +716,7 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                         {normalizedAtt.length === 0 && legacyFileUrls.length > 0 && (
                           <div className="mt-2 space-y-1">
                             {legacyFileUrls.map((u) => (
-                              <a key={u} href={u} target="_blank" rel="noreferrer" className={`${mine ? "text-orange-100" : "text-blue-600"} underline break-words`}>
+                              <a key={u} href={u} target="_blank" rel="noreferrer noopener" className={`${mine ? "text-orange-100" : "text-blue-600"} underline break-words`}>
                                 {u}
                               </a>
                             ))}
@@ -642,13 +742,17 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                           {isImg ? (
                             <Image src={src} width={64} height={64} className="h-16 w-16 object-cover rounded" alt="preview" />
                           ) : (
-                            <a href={src} target="_blank" rel="noreferrer" className="h-16 px-2 sm:px-3 py-2 bg-gray-100 rounded flex items-center gap-1 sm:gap-2 text-xs text-gray-800 min-w-0">
+                            <a href={src} target="_blank" rel="noreferrer noopener" className="h-16 px-2 sm:px-3 py-2 bg-gray-100 rounded flex items-center gap-1 sm:gap-2 text-xs text-gray-800 min-w-0">
                               <MdAttachFile size={16} className="flex-shrink-0" />
                               <span className="truncate" title={f?.name || "file"}>{f?.name || "file"}</span>
                             </a>
                           )}
                           <button
                             onClick={() => {
+                              try {
+                                const urlToRevoke = attachmentPreviews[idx];
+                                if (urlToRevoke && urlToRevoke.startsWith('blob:')) URL.revokeObjectURL(urlToRevoke);
+                              } catch {}
                               setAttachments((prev) => prev.filter((_, i) => i !== idx));
                               setAttachmentPreviews((prev) => prev.filter((_, i) => i !== idx));
                             }}
@@ -688,7 +792,6 @@ function Messages({ initialUserId, onUnreadChange }: MessagesProps) {
                           setAttachments((prev) => [...prev, ...files]);
                           const urls = files.map((f) => URL.createObjectURL(f));
                           setAttachmentPreviews((prev) => [...prev, ...urls]);
-                          // clear value to allow re-selecting same file
                           e.currentTarget.value = "";
                         }
                       }}

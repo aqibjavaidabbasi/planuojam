@@ -33,7 +33,8 @@ function ProfilePage() {
   const t = useTranslations("Profile");
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const initialTab = searchParams?.get("tab") || "profile";
+  const withUser = searchParams?.get("withUser");
+  const initialTab = withUser ? 'messages' : (searchParams?.get("tab") || "profile");
   const [activeTab, setActiveTab] = useState(initialTab);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState<number>(0);
@@ -407,7 +408,9 @@ function ProfilePage() {
             {activeTab === "favourite-listings" && <FavouriteListings />}
             {activeTab === "messages" && (
               <Messages
-                initialUserId={Number(searchParams?.get("withUser") || 0) || undefined}
+                initialUserId={withUser && /^\d+$/.test(withUser) ? parseInt(withUser, 10) : undefined}
+                initialUserDocumentId={withUser && !/^\d+$/.test(withUser) ? withUser : undefined}
+                initialUserName={withUser ? searchParams.get('username') || undefined : undefined}
                 onUnreadChange={(total) => setUnreadCount(total)}
               />
             )}
