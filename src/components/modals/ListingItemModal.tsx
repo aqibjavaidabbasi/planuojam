@@ -45,6 +45,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
   const tImage = useTranslations('ImageSection')
   const locale = useLocale();
   const [showSubscriptionHint, setShowSubscriptionHint] = useState(false)
+  const [createdListingData, setCreatedListingData] = useState<ListingItem | undefined>(undefined)
 
   const {
     handleSubmit: rhfHandleSubmit,
@@ -429,8 +430,9 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
 
       const createdListing = await createListing(data, locale)
       toast.success(t('toasts.created'))
-      onSaved?.(createdListing as ListingItem)
-      setShowSubscriptionModal(true)
+      // Defer notifying parent until hint is acknowledged to avoid modal being closed externally
+      setCreatedListingData(createdListing.data)
+      setShowSubscriptionHint(true)
       reset()
       setSelectedCategory("")
       setEventTypesIds([])
@@ -1113,6 +1115,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               style="ghost"
               onClick={() => {
                 setShowSubscriptionHint(false)
+                onSaved?.(createdListingData)
                 onClose()
               }}
             >
@@ -1122,6 +1125,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               style="secondary"
               onClick={() => {
                 setShowSubscriptionHint(false)
+                onSaved?.(createdListingData)
                 onClose()
                 setShowSubscriptionModal(true)
               }}
