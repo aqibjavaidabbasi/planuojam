@@ -8,9 +8,10 @@ import type { ListingItem } from "@/types/pagesTypes"
 import EditListingForm from "@/components/forms/EditListingForm"
 import Button from "@/components/custom/Button"
 import { IoMdArrowRoundBack } from "react-icons/io"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { fetchListingBySlug } from "@/services/listing"
 import { RootState } from "@/store"
+import { getListingPath } from "@/utils/routes"
 
 export default function EditListingPage() {
   const router = useRouter()
@@ -19,6 +20,7 @@ export default function EditListingPage() {
   const { user } = useAppSelector((state: RootState) => state.auth)
   const t = useTranslations("Listing.Edit")
   const tCommon = useTranslations("Common")
+  const locale = useLocale()
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -31,7 +33,7 @@ export default function EditListingPage() {
       setLoading(true)
       setError(null)
       try {
-        const data = await fetchListingBySlug(String(listingId), 'en')
+        const data = await fetchListingBySlug(String(listingId), locale)
         if (!active) return
         if (!data) {
           setError("Listing not found")
@@ -47,7 +49,7 @@ export default function EditListingPage() {
     }
     run()
     return () => { active = false }
-  }, [listingId])
+  }, [listingId, locale])
 
   // ownership check
   const ownsListing = useMemo(() => {
@@ -59,16 +61,16 @@ export default function EditListingPage() {
     if (!loading && listing) {
       if (!user?.serviceType || !ownsListing) {
         // Not authorized -> send to public view
-        router.replace(`/listing/${listing.slug}`)
+        router.replace(getListingPath(listing.slug, locale))
       }
     }
-  }, [loading, listing, ownsListing, router, user?.serviceType])
+  }, [loading, listing, ownsListing, router, user?.serviceType, locale])
 
   const handleSaved = async () => {
     // After a successful save from any section, refetch latest listing to update child forms' props
     if (!listingId) return
     try {
-      const data = await fetchListingBySlug(String(listingId), 'en')
+      const data = await fetchListingBySlug(String(listingId), locale)
       if (data) setListing(data as ListingItem)
     } catch (e) {
       // noop: Sections already toast on success/failure; avoid interrupting UX here
@@ -121,7 +123,7 @@ export default function EditListingPage() {
                   <IoMdArrowRoundBack /> {t("back")}
                 </Button>
                 <Button
-                  onClick={() => router.push(`/listing/${listing?.slug}`)}
+                  onClick={() => router.push(getListingPath(listing?.slug || '', locale))}
                   style="secondary"
                   size="small"
                 >

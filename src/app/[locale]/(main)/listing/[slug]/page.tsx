@@ -7,7 +7,7 @@ import { fetchListingBySlug } from '@/services/listing'
 
 async function ListingDetailPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
-  const listing = await fetchListingBySlug(slug, "en");
+  const listing = await fetchListingBySlug(slug, locale);
   return <ListingDetailsPage initialListing={listing} locale={locale} />;
 }
 

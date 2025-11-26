@@ -46,6 +46,22 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
   const [showUnconfirmed, setShowUnconfirmed] = useState(false);
   const [pendingEmail, setPendingEmail] = useState<string>("");
   const params = useSearchParams();
+  const errorParam = params.get("error") || params.get("errorMessage");
+  const socialErrorCode = errorParam ? errorParam.toUpperCase() : null;
+  const [showSocialError, setShowSocialError] = useState<boolean>(!!socialErrorCode);
+  const socialErrorMessage = (() => {
+    switch (socialErrorCode) {
+      case "EMAIL_REQUIRED":
+      case "MISSING_EMAIL":
+        return t("socialEmailRequired");
+      case "USER_NOT_FOUND":
+        return t("socialUserNotFound");
+      case "INTERNAL_ERROR":
+        return t("socialInternalError");
+      default:
+        return t("loginFailed");
+    }
+  })();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await toast.promise(
@@ -86,6 +102,29 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
   };
   return (
     <form className="space-y-3.5" id="loginForm" onSubmit={handleSubmit(onSubmit)}>
+      {showSocialError && socialErrorCode && (
+        <div className="rounded-md border border-red-300 bg-red-50 text-red-800 p-3 text-sm">
+          <div className="flex items-start justify-between gap-3">
+            <div className="pr-2">{socialErrorMessage}</div>
+            <Button
+              style="link"
+              type="button"
+              onClick={() => {
+                setShowSocialError(false);
+                try {
+                  const sp = new URLSearchParams(params.toString());
+                  sp.delete("error");
+                  sp.delete("errorMessage");
+                  const q = sp.toString();
+                  router.replace(`/auth/login${q ? `?${q}` : ""}`);
+                } catch {}
+              }}
+            >
+              {t("dismiss", { default: "Dismiss" })}
+            </Button>
+          </div>
+        </div>
+      )}
       <div>
         <Input
           type="email"

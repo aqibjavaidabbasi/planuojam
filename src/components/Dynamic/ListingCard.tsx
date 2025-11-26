@@ -18,10 +18,11 @@ import SubscriptionManagementModal from '../modals/SubscriptionManagementModal'
 import ListingSubscriptionModal from '../modals/ListingSubscriptionModal'
 import { addToLikedListing, removeFromLikedListing } from '@/store/thunks/likedListing'
 import toast from 'react-hot-toast'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { RootState } from '@/store'
 import { StripeProductAttributes } from '@/app/api/stripe-products/route'
 import { IoMdSettings } from 'react-icons/io'
+import { getListingEditPath, getListingPath } from '@/utils/routes'
 
 function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem; highPriority?: boolean; stripeProducts?: StripeProductAttributes[] }) {
   const { siteSettings } = useSiteSettings();
@@ -33,6 +34,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
   const [showListingSubscriptionModal, setShowListingSubscriptionModal] = useState(false);
   const [heartLoading, setHeartLoading] = useState(false);
   const t = useTranslations('Dynamic.ListingCard');
+  const locale = useLocale();
 
   const isLiked = Array.isArray(likedListings) && likedListings.some(listing => listing.listing === item.documentId);
 
@@ -76,14 +78,9 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
     );
   }
 
-  function getListingItemUrl() {
-    if (item.listingItem.length === 0) return '#';
-    if (item.locale === 'en') return `/listing/${item.slug}`;
-    if (item.locale !== 'en') {
-      const entry = item.localizations.find(loc => loc.locale === 'en');
-      return entry ? `/listing/${entry.slug}` : '#';
-    }
-  }
+  // Paths derived from centralized helpers
+  const viewPath = getListingPath(item.slug, locale);
+  const editPath = getListingEditPath(item.slug, locale);
 
   return (
     <div
@@ -269,7 +266,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                     <FaInfoCircle size={16} />
                   </Button>
                   <a
-                    href={`${getListingItemUrl() as string}/edit`}
+                    href={editPath}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center capitalize justify-center gap-1.5 font-medium rounded-md bg-black text-white hover:bg-primary py-1 px-3 text-sm cursor-pointer"
@@ -279,7 +276,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                 </div>
               ) : (
                 <a
-                  href={getListingItemUrl() as string}
+                  href={viewPath}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center capitalize justify-center gap-1.5 font-medium rounded-md bg-black text-white hover:bg-primary py-1 px-3 text-sm cursor-pointer"

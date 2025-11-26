@@ -1,9 +1,10 @@
 import { Location } from '@/components/global/MapboxMap';
 import { ListingItem, Vendor } from '../types/pagesTypes';
+import { getListingPath } from './routes';
 
 // Build Location[] directly from vendor serviceArea coordinates without external API calls.
 // Keep async signature to avoid changing existing callers.
-async function geocodeLocations(listings: ListingItem[]): Promise<Location[]> {
+async function geocodeLocations(listings: ListingItem[], locale?: string): Promise<Location[]> {
   const locations: Location[] = [];
 
   for (const listing of listings) {
@@ -26,14 +27,8 @@ async function geocodeLocations(listings: ListingItem[]): Promise<Location[]> {
       ? listing.portfolio[0]
       : listing.category?.image;
 
-    // Build listing path similar to ListingCard
-    const path = (() => {
-      if (!listing) return '#';
-      if (listing.listingItem.length === 0) return '#';
-      if (listing.locale === 'en') return `/listing/${listing.slug}`;
-      const entry = listing.localizations.find((loc) => loc.locale === 'en');
-      return entry ? `/listing/${entry.slug}` : '#';
-    })();
+    // Build listing path using centralized helper and current locale
+    const path = getListingPath(listing.slug, locale);
 
     for (const area of vendor.serviceArea) {
       // Prefer provided coordinates; if missing, skip to avoid API calls

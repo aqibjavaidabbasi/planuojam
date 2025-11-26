@@ -24,7 +24,7 @@ function SubscriptionForm({ data }: { data: SocialLinksComponentBlock }) {
     // }
     return (
         <div className='bg-background px-5 md:px-10 py-3 md:py-5'>
-            <div className='max-w-screen lg:max-w-[1440px] mx-auto flex items-center justify-center flex-col md:flex-row gap-2 md:justify-between'>
+            <div className='max-w-screen lg:max-w-[1440px] mx-auto flex items-center justify-center flex-col md:flex-row gap-2'>
                 {/* <form onSubmit={handleSubmit} id='subscription-form' className='flex gap-2 items-center w-full md:w-auto'>
                     <Input
                         type='email'

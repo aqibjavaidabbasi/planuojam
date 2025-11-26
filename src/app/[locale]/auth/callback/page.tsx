@@ -63,20 +63,15 @@ export default function AuthCallbackPage() {
         if (effectiveError) {
           console.error("Social login error:", effectiveError);
           const code = (effectiveError || "").toUpperCase();
-          switch (code) {
-            case "EMAIL_REQUIRED":
-              toast.error(t("socialEmailRequired"));
-              break;
-            case "USER_NOT_FOUND":
-              toast.error(t("socialUserNotFound"));
-              break;
-            case "INTERNAL_ERROR":
-              toast.error(t("socialInternalError"));
-              break;
-            default:
-              toast.error(t("loginFailed"));
+          try {
+            const sp = new URLSearchParams();
+            sp.set("error", code);
+            const red = params.get("redirect");
+            if (red) sp.set("redirect", red);
+            router.replace(`/auth/login?${sp.toString()}`);
+          } catch {
+            router.replace(`/auth/login`);
           }
-          router.replace(`/auth/login`);
           return;
         }
 

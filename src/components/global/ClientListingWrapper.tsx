@@ -5,13 +5,14 @@ const ListingCard  = dynamic(()=>import("@/components/Dynamic/ListingCard"))
 const NoDataCard = dynamic(()=>import("@/components/custom/NoDataCard"),{ssr:false})
 import { useEventTypes } from "@/context/EventTypesContext";
 import { ListingItem, Venue } from "@/types/pagesTypes";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Location } from "@/components/global/MapboxMap";
 import { useLocale, useTranslations } from "next-intl";
 import geocodeLocations from "@/utils/mapboxLocation";
 import { fetchSortedListingsWithMeta } from "@/services/listing";
 import LoadMoreButton from "@/components/custom/LoadMoreButton";
+import { getListingPath } from "@/utils/routes";
 
 export type ListingWrapperProps = {
   service: string;
@@ -39,6 +40,7 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
   const [pageSize, setPageSize] = useState<number>(12);
   const [total, setTotal] = useState<number>(initialPagination?.total ?? (Array.isArray(initialList) ? initialList.length : 0));
   const [currentFilters, setCurrentFilters] = useState<Record<string, unknown>>({});
+  const currentFiltersRef = useRef<Record<string, unknown>>({});
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const [newIds, setNewIds] = useState<Set<string>>(new Set());
 
@@ -88,7 +90,7 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
   type PaginatedResp = { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } };
   const fetcher = useCallback(
     async (appliedFilters: Record<string, unknown>) => {
-      const filtersChanged = JSON.stringify(appliedFilters || {}) !== JSON.stringify(currentFilters || {});
+      const filtersChanged = JSON.stringify(appliedFilters || {}) !== JSON.stringify(currentFiltersRef.current || {});
       const usedPage = filtersChanged ? 1 : page;
       const usedPageSize = pageSize;
       const resp: PaginatedResp = await fetchSortedListingsWithMeta(
@@ -103,10 +105,12 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
         if (typeof meta.pageSize === 'number') setPageSize(meta.pageSize);
         if (filtersChanged && typeof meta.page === 'number') setPage(meta.page);
       }
-      setCurrentFilters(appliedFilters || {});
+      const nextFilters = appliedFilters || {};
+      setCurrentFilters(nextFilters);
+      currentFiltersRef.current = nextFilters;
       return Array.isArray(resp.data) ? resp.data : [];
     },
-    [service, locale, page, pageSize, currentFilters]
+    [service, locale, page, pageSize]
   );
 
   const translatedPricingFilters = useMemo(
@@ -165,7 +169,6 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
             },
           };
         }
-        setCurrentFilters(filters);
         try {
           const res = await fetcher(filters);
           setList(res);
@@ -186,14 +189,14 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
       try {
         let res: Location[] = [];
         if (service === "vendor") {
-          res = await geocodeLocations(list);
+          res = await geocodeLocations(list, locale);
         } else if (service === "venue") {
-          res = deriveVenueLocations(list);
+          res = deriveVenueLocations(list, locale);
         } else {
           // Fallback: detect by __component on first item
           const first = list[0];
           const hasVendor = first?.listingItem?.some((b) => b.__component === "dynamic-blocks.vendor");
-          res = hasVendor ? await geocodeLocations(list) : deriveVenueLocations(list);
+          res = hasVendor ? await geocodeLocations(list, locale) : deriveVenueLocations(list, locale);
         }
         if (mounted) setLocations(res || []);
       } catch (e) {
@@ -205,7 +208,7 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
     return () => {
       mounted = false;
     };
-  }, [list, service]);
+  }, [list, service, locale]);
 
   
 
@@ -284,16 +287,13 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
 export default ClientListingWrapper;
 
 // Helpers
-function getListingItemUrl(listing: ListingItem): string {
-  // Mirror logic from components/Dynamic/ListingCard.tsx
+function getListingItemUrl(listing: ListingItem, locale?: string): string {
   if (!listing) return '#';
   if (listing.listingItem.length === 0) return '#';
-  if (listing.locale === 'en') return `/listing/${listing.slug}`;
-  const entry = listing.localizations.find((loc) => loc.locale === 'en');
-  return entry ? `/listing/${entry.slug}` : '#';
+  return getListingPath(listing.slug, locale);
 }
 
-function deriveVenueLocations(items: ListingItem[]): Location[] {
+function deriveVenueLocations(items: ListingItem[], locale?: string): Location[] {
   return items
     .map((item) => {
       const venueBlock = item.listingItem.find(
@@ -325,7 +325,7 @@ function deriveVenueLocations(items: ListingItem[]): Location[] {
         },
         address: venueBlock.location.address || "No address provided",
         image: primaryImage,
-        path: getListingItemUrl(item),
+        path: getListingItemUrl(item, locale),
       };
     })
     .filter((loc): loc is Location => loc !== null);

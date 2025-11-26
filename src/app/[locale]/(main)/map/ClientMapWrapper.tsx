@@ -6,11 +6,13 @@ import { fetchListings } from '@/services/common'
 import { ListingItem, Venue } from '@/types/pagesTypes'
 import geocodeLocations from '@/utils/mapboxLocation'
 import React, { useEffect, useState } from 'react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
+import { getListingPath } from '@/utils/routes'
 import { strapiImage } from '@/types/mediaTypes'
 
 function ClientMapWrapper() {
   const t = useTranslations('Map')
+  const locale = useLocale();
   const [locations, setLocations] = useState<Location[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -27,8 +29,8 @@ function ClientMapWrapper() {
         ])
 
         // Process vendors and venues into locations
-        const vendorLocations = await geocodeLocations(vendors)
-        const venueLocations = getLocationsFromVenues(venues, t)
+        const vendorLocations = await geocodeLocations(vendors, locale)
+        const venueLocations = getLocationsFromVenuesHelper(venues, locale, t)
 
         // Combine locations, ensuring unique IDs
         const combinedLocations = [
@@ -49,11 +51,11 @@ function ClientMapWrapper() {
     }
 
     fetchAndProcessLocations()
-  }, [t])
+  }, [t, locale])
 
 
   // Map venues to Location[]
-function getLocationsFromVenues(venues: ListingItem[], t?: ReturnType<typeof useTranslations>): Location[] {
+function getLocationsFromVenuesHelper(venues: ListingItem[], locale: string, t?: ReturnType<typeof useTranslations>): Location[] {
   return venues
     .map(item => {
       const venueBlock = item.listingItem?.find(
@@ -66,12 +68,7 @@ function getLocationsFromVenues(venues: ListingItem[], t?: ReturnType<typeof use
         ? item.portfolio[0]
         : item.category?.image;
 
-      const path = (() => {
-        if (item.listingItem.length === 0) return '#';
-        if (item.locale === 'en') return `/listing/${item.slug}`;
-        const entry = item.localizations.find(loc => loc.locale === 'en');
-        return entry ? `/listing/${entry.slug}` : '#';
-      })();
+      const path = getListingPath(item.slug, locale);
 
       return {
         id: item.id,

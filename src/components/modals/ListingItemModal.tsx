@@ -1105,8 +1105,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           }}
         />
       )}
-      {
-        showSubscriptionHint &&
+      {showSubscriptionHint &&
         <div className="w-full flex items-center justify-center flex-col gap-2 py-4">
           <p className="text-center tracking-wide">{t('subscriptionHint')}</p>
           <div className="flex gap-2 items-center justify-center">

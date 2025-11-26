@@ -100,29 +100,25 @@ export async function fetchFallbackSeo(): Promise<StrapiSeo | null> {
 
 // Fetch SEO for a Listing by slug. Mirrors listing data fetch behavior (locale-first approach).
 export async function fetchListingSeoBySlug(slug: string, locale?: string): Promise<StrapiSeo | null> {
-  // Always fetch in English and include localizations; pick localized SEO if available
   const populate = {
-    seo: { populate: '*' },
-    localizations: { populate: { seo: { populate: '*' } } },
+    seo: { populate: '*' }
   } as const;
   const filters = { filters: { slug: { $eq: slug } } } as const;
 
-  const queryEn = createQuery(populate, { locale: 'en' });
-  const res = await fetchAPI('listings', queryEn, filters);
-  const listing = Array.isArray(res) ? res[0] : res?.[0];
-
-  if (!listing) return null;
-
-  // If requested locale provided, try to extract localized SEO from localizations
-  if (locale && listing.localizations) {
-    const match = listing.localizations?.find((l: {locale: string}) => l?.locale === locale);
-    const locSeo = match?.seo ?? null;
+  // 1) Try requested locale (since slug is global)
+  if (locale) {
+    const queryWithLocale = createQuery(populate, { locale });
+    const resLocale = await fetchAPI('listings', queryWithLocale, filters);
+    const listingLocale = Array.isArray(resLocale) ? resLocale[0] : resLocale?.[0];
+    const locSeo = listingLocale?.seo ?? null;
     if (locSeo) return locSeo;
   }
 
-  // Fallback to base listing's SEO
-  const baseSeo = listing?.seo ?? null;
-  return baseSeo || null;
+  // 2) Fallback: no locale constraint (base)
+  const queryBase = createQuery(populate);
+  const resBase = await fetchAPI('listings', queryBase, filters);
+  const listingBase = Array.isArray(resBase) ? resBase[0] : resBase?.[0];
+  return listingBase?.seo ?? null;
 }
 
 // High-level resolver by page slug -> SEO collection (pageUrl) -> fallback

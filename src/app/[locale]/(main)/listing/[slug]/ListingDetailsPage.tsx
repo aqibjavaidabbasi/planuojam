@@ -14,7 +14,7 @@ const ListingReviews = dynamic(() => import("@/components/custom/ListingReviews"
 const NoDataCard = dynamic(() => import("@/components/custom/NoDataCard"), { ssr: false });
 const PricingPlans = dynamic(() => import("@/components/custom/PricingPlans"), { ssr: false });
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -25,6 +25,7 @@ import geocodeLocations from "@/utils/mapboxLocation";
 import { Location as MapLocation } from "@/components/global/MapboxMap";
 import { notFound } from "next/navigation";
 import { RootState } from "@/store";
+import { getListingPath } from "@/utils/routes";
 
 export default function ListingDetailsPage({ initialListing, locale }: { initialListing: ListingItem; locale: string }) {
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
@@ -35,21 +36,14 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
   const [preselectPlanIndex, setPreselectPlanIndex] = useState<number | null>(null);
   const tSchedule = useTranslations("Listing.Details");
 
-  const renderingContent = useMemo(() => {
-    if (!initialListing) return null;
-    if (locale === 'en') return initialListing;
-    const entry = initialListing.localizations?.find((loc) => loc.locale === locale);
-    return entry || initialListing;
-  }, [initialListing, locale]) as ListingItem;
-
   // typed access to venue block (if listing type is venue)
-  const venueBlock = useMemo(() => {
-    if (!renderingContent) return undefined;
-    const vb = (renderingContent.listingItem || []).find(
+  const venueBlock = (() => {
+    if (!initialListing) return undefined;
+    const vb = (initialListing.listingItem || []).find(
       (i) => (i as { __component?: string }).__component === "dynamic-blocks.venue"
     ) as Venue | undefined;
     return vb;
-  }, [renderingContent]);
+  })();
 
   // Compute a single map location for this listing
   useEffect(() => {
@@ -58,7 +52,6 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
         setDetailLocation(null);
         return;
       }
-      // Prefer localized content for display values
       const content = initialListing;
       try {
         if (initialListing.type === "venue") {
@@ -78,13 +71,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
             const primaryImage = (initialListing.portfolio && initialListing.portfolio.length > 0)
               ? initialListing.portfolio[0]
               : initialListing.category?.image;
-            const path = (() => {
-              if (!initialListing) return "#";
-              if (initialListing.listingItem.length === 0) return "#";
-              if (initialListing.locale === "en") return `/listing/${initialListing.slug}`;
-              const entry = initialListing.localizations.find((loc) => loc.locale === "en");
-              return entry ? `/listing/${entry.slug}` : "#";
-            })();
+            const path = getListingPath(initialListing.slug, locale);
             setDetailLocation({
               id: initialListing.id,
               name: content.title || "",
@@ -100,7 +87,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
           }
         } else if (initialListing.type === "vendor") {
           // Geocode vendor using localized content for better display/address coherency
-          const res = await geocodeLocations([content as ListingItem]);
+          const res = await geocodeLocations([content as ListingItem], locale);
           const first = res?.[0] || null;
           if (first) {
             setDetailLocation({
@@ -121,10 +108,10 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
       }
     }
     computeLocation();
-  }, [initialListing]);
+  }, [initialListing, locale]);
 
 
-  if(!renderingContent) notFound();
+  if(!initialListing) notFound();
 
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 pt-10">
@@ -132,11 +119,11 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
 
         {/* gallery */}
         {
-          renderingContent?.portfolio && renderingContent.portfolio?.length > 0 && (
+          initialListing?.portfolio && initialListing.portfolio?.length > 0 && (
             <ListingGallery 
-              portfolio={renderingContent.portfolio} 
-              title={renderingContent.title || "Listing Gallery"} 
-              mainImageId={renderingContent.mainImageId || ""}
+              portfolio={initialListing.portfolio} 
+              title={initialListing.title || "Listing Gallery"} 
+              mainImageId={initialListing.mainImageId || ""}
             />
           )
         }
@@ -148,14 +135,14 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
             {/* hero section moved to right */}
             <section className="">
               <ListingDetailHero
-                category={renderingContent.category?.name}
-                title={renderingContent.title}
-                username={renderingContent.user?.username}
-                vendorUserId={renderingContent?.user?.documentId}
-                contact={renderingContent.contact}
-                websiteLink={renderingContent.websiteLink}
-                price={renderingContent.price}
-                hotDeal={renderingContent.hotDeal}
+                category={initialListing.category?.name}
+                title={initialListing.title}
+                username={initialListing.user?.username}
+                vendorUserId={initialListing?.user?.documentId}
+                contact={initialListing.contact}
+                websiteLink={initialListing.websiteLink}
+                price={initialListing.price}
+                hotDeal={initialListing.hotDeal}
                 onOpenBooking={(idx) => {
                   setPreselectPlanIndex(typeof idx === 'number' ? idx : null);
                   setShowBookingModal(true);
@@ -167,7 +154,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
               <h2 className="text-2xl font-semibold text-primary mb-4">
                 {t("overview")}
               </h2>
-              <p className="text-secondary my-4">{renderingContent.description}</p>
+              <p className="text-secondary my-4">{initialListing.description}</p>
             </div>
             {/* location map */}
             <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
@@ -185,14 +172,14 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
           {/* right side */}
           <div className="space-y-6 col-span-4 md:col-span-2">
             {/* rating component */}
-            {renderingContent.averageRating && (
+            {initialListing.averageRating && (
               <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
                 <div className="flex items-start lg:items-center flex-row md:flex-col lg:flex-row justify-between md:justify-start lg:justify-between" >
                   <p className="text-lg font-semibold" >{t("rating")}: </p>
                   <div className="flex items-center gap-1.5">
-                    <StarRating rating={renderingContent.averageRating} />
+                    <StarRating rating={initialListing.averageRating} />
                     <p className="text-base lg:text-lg text-secondary">
-                      {renderingContent.averageRating}/5 ({renderingContent.ratingsCount})
+                      {initialListing.averageRating}/5 ({initialListing.ratingsCount})
                     </p>
                   </div>
                 </div>
@@ -202,7 +189,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
             {/* listing item details card*/}
             <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
               <div className="flex items-center gap-2.5 flex-wrap">
-                {renderingContent.eventTypes.map((event) => (
+                {initialListing.eventTypes.map((event) => (
                   <span
                     key={event.id}
                     className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium"
@@ -211,13 +198,13 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
                   </span>
                 ))}
               </div>
-              {renderingContent.listingItem.map((item, index) => (
+              {initialListing.listingItem.map((item, index) => (
                 <div key={index} className="my-4">
-                  {renderingContent.type === "venue" &&
+                  {initialListing.type === "venue" &&
                     item.__component === "dynamic-blocks.venue" && (
                       <VenueCard item={item} />
                     )}
-                  {renderingContent.type === "vendor" &&
+                  {initialListing.type === "vendor" &&
                     item.__component === "dynamic-blocks.vendor" && (
                       <VendorCard item={item} />
                     )}
@@ -226,49 +213,49 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
             </div>
 
             {/* Hot Deal Section */}
-            {renderingContent.hotDeal && renderingContent.hotDeal.enableHotDeal && (
+            {initialListing.hotDeal && initialListing.hotDeal.enableHotDeal && (
               <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
                 <h2 className="text-2xl font-semibold text-primary mb-4">
                   {t("hotDeal")}
                 </h2>
                 <div className="p-3 md:p-4 lg:p-6 bg-primary/10 rounded-lg shadow-sm">
                   <p className="text-secondary">
-                    {renderingContent.hotDeal.discount?.discountType
+                    {initialListing.hotDeal.discount?.discountType
                       .toLowerCase()
                       .includes("flat")
-                      ? `${t("flatRate")}: ${renderingContent.hotDeal.discount.flatRatePrice}`
-                      : `${renderingContent.hotDeal.discount?.percentage}% ${t("percentOff")}`}
+                      ? `${t("flatRate")}: ${initialListing.hotDeal.discount.flatRatePrice}`
+                      : `${initialListing.hotDeal.discount?.percentage}% ${t("percentOff")}`}
                   </p>
-                  <p className="text-secondary">{renderingContent.hotDeal.dealNote}</p>
+                  <p className="text-secondary">{initialListing.hotDeal.dealNote}</p>
                   <p className="text-secondary">
-                    {t("valid")}:{" "}
-                    {new Date(renderingContent.hotDeal.startDate).toLocaleDateString()} -{" "}
-                    {new Date(renderingContent.hotDeal.lastDate).toLocaleDateString()}
+                    {t("valid")}: {" "}
+                    {new Date(initialListing.hotDeal.startDate).toLocaleDateString()} -{" "}
+                    {new Date(initialListing.hotDeal.lastDate).toLocaleDateString()}
                   </p>
                 </div>
               </section>
             )}
 
             {/* Social Links Section */}
-            {renderingContent.socialLinks &&
-              renderingContent.socialLinks.socialLink.length > 0 && (
+            {initialListing.socialLinks &&
+              initialListing.socialLinks.socialLink.length > 0 && (
                 <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
                   <h2 className="text-base font-semibold text-black mb-2 capitalize">
-                    {renderingContent.socialLinks.optionalSectionTitle}
+                    {initialListing.socialLinks.optionalSectionTitle}
                   </h2>
-                  <SocialIcon socialLink={renderingContent.socialLinks.socialLink} />
+                  <SocialIcon socialLink={initialListing.socialLinks.socialLink} />
                 </section>
               )}
 
             {/* Working Schedule Section */}
-            {renderingContent.workingSchedule && renderingContent.workingSchedule.length > 0 && (
+            {initialListing.workingSchedule && initialListing.workingSchedule.length > 0 && (
               <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
                 <h2 className="text-2xl font-semibold text-primary mb-4">
                   {tSchedule("workingScheduleTitle", { default: "Working Schedule" })}
                 </h2>
                 {(() => {
                   const daysOrder = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"] as const;
-                  const schedule = (renderingContent.workingSchedule || []);
+                  const schedule = (initialListing.workingSchedule || []);
                   const byDay: Record<string, {start: string; end: string}[]> = {};
                   for (const d of daysOrder) byDay[d] = [];
                   schedule.forEach(w => {
@@ -308,31 +295,31 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
 
         <div id="availability" className="mt-6">
           {/* availability calendar */}
-          <ListingCalendar listingDocumentId={renderingContent.documentId} workingSchedule={renderingContent.workingSchedule || []} />
+          <ListingCalendar listingDocumentId={initialListing.documentId} workingSchedule={initialListing.workingSchedule || []} />
         </div>
 
         {/* Reviews Section */}
         <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6 my-6">
           <h2 className="text-2xl font-semibold text-primary mb-4">{t("reviews")}</h2>
-          {renderingContent.reviews && renderingContent.reviews.length > 0 ? (
-            <ListingReviews reviews={renderingContent.reviews} />
+          {initialListing.reviews && initialListing.reviews.length > 0 ? (
+            <ListingReviews reviews={initialListing.reviews} />
           ) : (
             <NoDataCard>{t("noReviews")}</NoDataCard>
           )}
         </section>
 
         {/* Pricing Section */}
-        {renderingContent.pricingPackages && (
+        {initialListing.pricingPackages && (
           <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6 my-6">
             <h2 className="text-2xl font-semibold text-primary mb-4">
-              {renderingContent.pricingPackages.sectionTitle}
+              {initialListing.pricingPackages.sectionTitle}
             </h2>
             <div className="flex justify-center items-center">
-              {renderingContent.pricingPackages.plans.map((plan, index) => (
+              {initialListing.pricingPackages.plans.map((plan, index) => (
                 <PricingPlans
                   key={index}
                   plan={plan}
-                  optionalAddons={renderingContent.pricingPackages?.optionalAddons}
+                  optionalAddons={initialListing.pricingPackages?.optionalAddons}
                   planIndex={index}
                   onSelectPlan={(i) => {
                     setPreselectPlanIndex(i);
@@ -345,11 +332,11 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
         )}
 
         {/* FAQs section */}
-        {renderingContent.FAQs && renderingContent.FAQs.items.length > 0 && (
+        {initialListing.FAQs && initialListing.FAQs.items.length > 0 && (
           <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6 my-6">
             <h2 className="text-2xl font-semibold text-primary mb-4">{t("faqs")}</h2>
             <div className="max-w-xl mx-auto">
-              {renderingContent.FAQs.items.map((faq, i) => {
+              {initialListing.FAQs.items.map((faq, i) => {
                 const isOpen = openIndexes.includes(i);
                 return (
                   <Faqitem
@@ -366,18 +353,18 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
         )}
       </div>
       {/* Booking Modal at page level */}
-      {renderingContent && (
+      {initialListing && (
         <BookingModal
           showModal={showBookingModal}
           setShowModal={setShowBookingModal}
-          listingDocumentId={renderingContent.documentId}
+          listingDocumentId={initialListing.documentId}
           userDocumentId={user?.documentId || ""}
           bookingDurationType={venueBlock?.bookingDurationType as ("Per Day" | "Per Hour") | undefined}
           bookingDuration={venueBlock?.bookingDuration}
-          workingSchedule={renderingContent.workingSchedule || []}
-          availablePlans={(renderingContent.pricingPackages?.plans || []).map(p => ({ name: p.name, price: p.price, features: (p.featuresList || []).map(f => f.statement) }))}
-          availableAddons={renderingContent.pricingPackages?.optionalAddons || []}
-          basePrice={renderingContent.price}
+          workingSchedule={initialListing.workingSchedule || []}
+          availablePlans={(initialListing.pricingPackages?.plans || []).map(p => ({ name: p.name, price: p.price, features: (p.featuresList || []).map(f => f.statement) }))}
+          availableAddons={initialListing.pricingPackages?.optionalAddons || []}
+          basePrice={initialListing.price}
           defaultPlanIndex={preselectPlanIndex}
         />
       )}
