@@ -72,6 +72,9 @@ export async function createSubscriptionLog(
       payload.rawMeta = logData.rawMeta;
     }
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout
+
     const response = await fetch(`${apiUrl}/api/subscription-logs`, {
       method: "POST",
       headers: {
@@ -79,7 +82,8 @@ export async function createSubscriptionLog(
         Authorization: `Bearer ${apiToken}`,
       },
       body: JSON.stringify({ data: payload }),
-    });
+      signal: controller.signal,
+    }).finally(() => clearTimeout(timeoutId));
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -88,7 +92,11 @@ export async function createSubscriptionLog(
     }
 
     return true;
-  } catch (error) {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.warn("Subscription logging timed out (Strapi unreachable), skipping log.");
+      return false;
+    }
     console.error("Error creating subscription log:", error);
     return false;
   }

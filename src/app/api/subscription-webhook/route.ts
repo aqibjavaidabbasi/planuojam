@@ -8,16 +8,21 @@ export const runtime = "nodejs";
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
+  console.log("!!! Subscription Webhook HIT !!!");
+  console.log("Request URL:", req.url);
+  
   const body = await req.text();
   const sig = req.headers.get("stripe-signature");
 
   if (!sig) {
-    // Log missing signature to help diagnose header proxying or misconfiguration issues
     await logWebhookEvent("error", "Missing stripe-signature header on subscription webhook", {
       severity: "error",
     });
     return NextResponse.json({ error: "Missing signature" }, { status: 400 });
   }
+
+  console.log("Stripe Signature present:", !!sig);
+  console.log("Webhook Secret present:", !!process.env.STRIPE_SUBSCRIPTION_WEBHOOK_SECRET);
 
   let event: Stripe.Event;
 
@@ -49,12 +54,13 @@ export async function POST(req: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         
-        // Log webhook received
         await logWebhookEvent("webhook_received", `Received checkout.session.completed webhook`, {
           severity: "info",
           stripeEventId: event.id,
           rawMeta: { sessionId: session.id, mode: session.mode },
         });
+
+        console.log("event log added")
         
         // Only handle subscription checkouts
         if (session.mode !== 'subscription') {
@@ -95,6 +101,8 @@ export async function POST(req: NextRequest) {
         } catch (e) {
           console.warn("Subscription idempotency check failed:", e);
         }
+
+        console.log("passed through the check of duplication")
 
         // Create subscription record in Strapi
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions`, {
