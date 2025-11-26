@@ -430,7 +430,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
       const createdListing = await createListing(data, locale)
       toast.success(t('toasts.created'))
       onSaved?.(createdListing as ListingItem)
-      setShowSubscriptionHint(true);
+      setShowSubscriptionModal(true)
       reset()
       setSelectedCategory("")
       setEventTypesIds([])

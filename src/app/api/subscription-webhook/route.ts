@@ -195,7 +195,8 @@ export async function POST(req: NextRequest) {
           
           // Publish the listing after successful subscription
           try {
-            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
+            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings?filters[documentId][$eq]=${encodeURIComponent(listingDocId)}`;
+            
             const updateRes = await fetch(listingUrl, {
               method: "PUT",
               headers: {
@@ -314,7 +315,7 @@ export async function POST(req: NextRequest) {
           if (subscription.status === 'active' && !subscription.cancel_at_period_end) {
             try {
               const listingDocId = existingSubscription.listingDocId;
-              const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
+              const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings?filters[documentId][$eq]=${encodeURIComponent(listingDocId)}`;
               const publishRes = await fetch(listingUrl, {
                 method: "PUT",
                 headers: {
@@ -421,7 +422,7 @@ export async function POST(req: NextRequest) {
           
           // Set listing back to draft when subscription is actually canceled
           try {
-            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
+            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings?filters[documentId][$eq]=${encodeURIComponent(listingDocId)}`;
             const draftRes = await fetch(listingUrl, {
               method: "PUT",
               headers: {
@@ -566,7 +567,7 @@ export async function POST(req: NextRequest) {
           
           // Ensure listing stays published on successful renewal
           try {
-            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
+            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings?filters[documentId][$eq]=${encodeURIComponent(listingDocId)}`;
             const publishRes = await fetch(listingUrl, {
               method: "PUT",
               headers: {
@@ -703,7 +704,7 @@ export async function POST(req: NextRequest) {
           
           // Set listing to draft on payment failure
           try {
-            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
+            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings?filters[documentId][$eq]=${encodeURIComponent(listingDocId)}`;
             const draftRes = await fetch(listingUrl, {
               method: "PUT",
               headers: {

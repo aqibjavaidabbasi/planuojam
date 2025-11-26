@@ -122,13 +122,14 @@ export default function EditListingPage() {
                 >
                   <IoMdArrowRoundBack /> {t("back")}
                 </Button>
-                <Button
+                {/* show this button only if listing is published to avoid 404 errors */}
+               {listing.listingStatus === 'published' && <Button
                   onClick={() => router.push(getListingPath(listing?.slug || '', locale))}
                   style="secondary"
                   size="small"
                 >
                   {t("preview")}
-                </Button>
+                </Button>}
               </div>
             </div>
             <div className="flex items-center gap-3">
