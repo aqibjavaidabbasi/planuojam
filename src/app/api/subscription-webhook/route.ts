@@ -5,12 +5,17 @@ import { logWebhookEvent } from "@/utils/subscriptionLogger";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export const runtime = "nodejs";
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
   const sig = req.headers.get("stripe-signature");
 
   if (!sig) {
+    // Log missing signature to help diagnose header proxying or misconfiguration issues
+    await logWebhookEvent("error", "Missing stripe-signature header on subscription webhook", {
+      severity: "error",
+    });
     return NextResponse.json({ error: "Missing signature" }, { status: 400 });
   }
 
@@ -748,6 +753,10 @@ export async function POST(req: NextRequest) {
 
       default:
         console.log(`Unhandled subscription event type: ${event.type}`);
+        await logWebhookEvent("webhook_received", `Unhandled subscription event type: ${event.type}`, {
+          severity: "info",
+          stripeEventId: event.id,
+        });
     }
 
     return NextResponse.json({ received: true });
