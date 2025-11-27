@@ -257,11 +257,7 @@ export async function fetchListingsByUser(documentId: string, status?: string, l
     return Array.isArray(dataBase) ? (dataBase as ListingItem[]) : [];
 }
 export async function fetchListingsByUserLeastPopulated(documentId: string, status?: string, locale?: string): Promise<ListingItem[]> {
-    const populate = {
-        localizations: {
-            populate: '*'
-        }
-    };
+    const populate = {};
     const baseFilters: Record<string, unknown> = {
         filters: {
             user: { documentId: { $eq: documentId } },

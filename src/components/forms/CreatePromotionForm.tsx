@@ -330,10 +330,10 @@ const CreatePromotionForm: React.FC<CreatePromotionFormProps> = ({
               >
                 <div className="flex flex-col items-center text-center gap-1">
                   <h3 className={`text-base font-bold ${isCustomSelected ? "text-white" : "text-primary"}`}>
-                    {t("promotions.custom", { defaultMessage: "Custom" })}
+                    {t("promotions.custom")}
                   </h3>
                   <div className={`text-sm ${isCustomSelected ? "text-white" : "text-gray-700"}`}>
-                    {t("promotions.customStarsAndDays", { defaultMessage: "Enter stars & days" })}
+                    {t("promotions.customStarsAndDays")}
                   </div>
                 </div>
               </button>
@@ -346,17 +346,17 @@ const CreatePromotionForm: React.FC<CreatePromotionFormProps> = ({
 
         {/* Custom stars + days (shown only when Custom selected or when no packages) */}
         {(isCustomSelected || packages.length === 0) && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <Input
               type="number"
-              label={t("promotions.customStars", { defaultMessage: "Stars (custom)" })}
+              label={t("promotions.customStars")}
               placeholder="100"
               disabled={isSubmitting}
               {...register("stars", { valueAsNumber: true, min: 1 })}
             />
             <Input
               type="number"
-              label={t("promotions.customDays", { defaultMessage: "Days (custom)" })}
+              label={t("promotions.customDays")}
               placeholder="7"
               disabled={isSubmitting}
               {...register("days", { valueAsNumber: true, min: 1 })}
@@ -366,7 +366,7 @@ const CreatePromotionForm: React.FC<CreatePromotionFormProps> = ({
 
         {/* Helper price note for custom */}
         {siteSettings?.pricePerStarPerDay ? (
-          <p className="text-xs text-gray-500">{t("promotions.priceHint", { defaultMessage: "Custom price is computed as pricePerStarPerDay × stars × days." })}</p>
+          <p className="text-xs text-gray-500">{t("promotions.priceHint")}</p>
         ) : null}
         <div className="text-sm font-medium text-gray-800">
           {(() => {
@@ -381,7 +381,7 @@ const CreatePromotionForm: React.FC<CreatePromotionFormProps> = ({
             const total = Number(pricePerStarPerDay) * stars * days;
             return total > 0 ? (
               <span>
-                {t("promotions.total", { defaultMessage: "Total" })}: {currencySym}{total}
+                {t("promotions.total")}: {currencySym}{total}
               </span>
             ) : null;
           })()}

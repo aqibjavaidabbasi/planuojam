@@ -11,6 +11,8 @@ export async function POST(req: NextRequest) {
   const body = await req.text();
   const sig = req.headers.get("stripe-signature");
 
+  console.log("promotion webhook triggered successfully")
+
   if (!sig) {
     return NextResponse.json({ error: "Missing signature" }, { status: 400 });
   }

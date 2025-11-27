@@ -28,37 +28,15 @@ export default function PromotionsTab() {
   useEffect(() => {
     const loadListings = async () => {
       if (!user?.documentId) return;
-      const data = await fetchListingsByUserLeastPopulated(String(user.documentId), "published", 'en');
-      if (locale === 'en') {
-        const opts = data.map((l) => ({
-          id: String(l.documentId),
-          title: l.title ?? l.slug ?? String(l.id),
-          locale: l.locale,
-          localizations: l.localizations?.map((loc) => ({
-            id: String(loc.documentId),
-            title: loc.title ?? loc.slug ?? String(loc.id),
-            locale: loc.locale,
-            documentId: l.documentId
-          })),
-          documentId: l.documentId
-        }));
-        setListings(opts);
-      } else {
-        const entry = data.map(l => l.localizations.find((l) => l.locale === locale));
-        const opts = entry?.map((l) => ({
-          id: String(l?.documentId),
-          title: l?.title ?? l?.slug ?? String(l?.id),
-          locale: l?.locale,
-          localizations: l?.localizations?.map((loc) => ({
-            id: String(loc.documentId),
-            title: loc.title ?? loc.slug ?? String(loc.id),
-            locale: loc.locale,
-            documentId: l.documentId
-          })),
-          documentId: l?.documentId
-        })) as UserListingOption[];
-        setListings(opts);
-      }
+      const data = await fetchListingsByUserLeastPopulated(String(user.documentId), "published", locale);
+      console.log(data)
+      const opts = data.map((l) => ({
+        id: String(l.documentId),
+        title: l.title ?? l.slug ?? String(l.id),
+        locale: l.locale,
+        documentId: l.documentId
+      }));
+      setListings(opts);
     };
     loadListings();
   }, [user?.documentId, locale]);
