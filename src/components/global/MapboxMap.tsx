@@ -178,7 +178,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
             }
             if (!root) {
               root = ReactDOM.createRoot(popupContainer);
-              const href = `/${locale}${location.path || ''}`;
+              const href = `${location.path || ''}`;
               root.render(
                 <MapInfoWindow
                   selectedLocation={location}

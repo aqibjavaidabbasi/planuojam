@@ -1,7 +1,6 @@
 "use client";
 import React from 'react';
 import { Location } from './MapboxMap';
-import Button from '../custom/Button';
 import Image from 'next/image';
 import { getCompleteImageUrl } from '@/utils/helpers';
 
@@ -17,9 +16,8 @@ type Props = {
 };
 
 const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href }) => {
-  const handleViewClick = () => {
-    if (typeof window !== 'undefined') window.location.assign(href);
-  };
+
+  console.log("href",href)
 
   return (
     <div className="text-sm font-sans bg-white/95">
@@ -79,14 +77,9 @@ const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href }) => {
           </p>
         )}
 
-        <Button
-          style="primary"
-          size="small"
-          extraStyles="col-span-2"
-          onClick={handleViewClick}
-        >
+        <a href={href} className="col-span-2 text-[#cc922f] w-full text-center hover:underline" target='_blank'>
           {labels.view}
-        </Button>
+        </a>
       </div>
     </div>
   );

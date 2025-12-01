@@ -8,8 +8,6 @@ export const runtime = "nodejs";
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
-  console.log("!!! Subscription Webhook HIT !!!");
-  console.log("Request URL:", req.url);
   
   const body = await req.text();
   const sig = req.headers.get("stripe-signature");
@@ -21,16 +19,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing signature" }, { status: 400 });
   }
 
-  console.log("Stripe Signature present:", !!sig);
-  console.log("Webhook Secret present:", !!process.env.STRIPE_SUBSCRIPTION_WEBHOOK_SECRET);
-
   let event: Stripe.Event;
 
   try {
     event = stripe.webhooks.constructEvent(
       body,
       sig,
-      process.env.STRIPE_SUBSCRIPTION_WEBHOOK_SECRET!
+      process.env.STRIPE_SUBSCRIPTION_WEBHOOK_SECRET!,
     );
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -49,6 +44,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
+  console.log("------------------", event.type, '-----------------')
   try {
     switch (event.type) {
       case "checkout.session.completed": {
@@ -59,8 +55,6 @@ export async function POST(req: NextRequest) {
           stripeEventId: event.id,
           rawMeta: { sessionId: session.id, mode: session.mode },
         });
-
-        console.log("event log added")
         
         // Only handle subscription checkouts
         if (session.mode !== 'subscription') {
@@ -88,6 +82,7 @@ export async function POST(req: NextRequest) {
         const priceId = subscription.items.data[0]?.price.id;
 
         // Check if subscription already exists (idempotency)
+        let subscriptionAlreadyExists = false;
         try {
           const checkUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
           const checkRes = await fetch(checkUrl, {
@@ -96,156 +91,170 @@ export async function POST(req: NextRequest) {
           const checkJson = await checkRes.json().catch(() => ({}));
           if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
             console.warn("Subscription already exists:", subscriptionId);
-            return NextResponse.json({ received: true });
+            subscriptionAlreadyExists = true;
           }
         } catch (e) {
           console.warn("Subscription idempotency check failed:", e);
         }
 
-        console.log("passed through the check of duplication")
+        // Only create subscription if it doesn't exist, but always try to publish listing
+        if (!subscriptionAlreadyExists) {
+          console.log("Creating new subscription")
 
-        // Create subscription record in Strapi
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
-          },
-          body: JSON.stringify({
-            data: {
-              listingDocId,
-              users_permissions_user: userId,
-              stripeSubscriptionId: subscriptionId,
-              stripePriceId: priceId,
-              stripeCustomerId: subscription.customer as string,
-              subscriptionStatus: subscription.status,
-              currentPeriodEnd: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : new Date().toISOString(),
-              autoRenew: !subscription.cancel_at_period_end,
+          // Create subscription record in Strapi
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
             },
-          }),
-        });
-
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}));
-          console.error("Failed to create subscription in Strapi:", errorData);
-          await logWebhookEvent("error", `Failed to create subscription in Strapi: ${subscriptionId}`, {
-            severity: "error",
-            userId,
-            listingDocId,
-            stripeEventId: event.id,
-            rawMeta: { subscriptionId, errorData },
-          });
-        } else {
-          const subscriptionData = await res.json();
-          const subscriptionDocId = subscriptionData?.data?.documentId;
-          console.log("Subscription created successfully:", subscriptionId);
-          
-          // Log successful subscription creation
-          await logWebhookEvent("subscription_created", `Subscription created: ${subscriptionId}`, {
-            severity: "info",
-            userId,
-            listingDocId,
-            stripeEventId: event.id,
-            rawMeta: { subscriptionId, subscriptionDocId, priceId },
-          });
-          
-          // Create initial transaction record for the first payment
-          if (subscriptionDocId && session.amount_total) {
-            try {
-              const transactionRes = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/subscription-transactions`,
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
-                  },
-                  body: JSON.stringify({
-                    data: {
-                      subscription: subscriptionDocId,
-                      invoiceId: session.invoice as string || `checkout_${session.id}`,
-                      amount: (session.amount_total / 100).toFixed(2),
-                      currency: session.currency || 'usd',
-                      transactionStatus: "paid",
-                      invoiceDate: new Date().toISOString(),
-                      rawData: {
-                        checkoutSessionId: session.id,
-                        paymentStatus: session.payment_status,
-                      },
-                    },
-                  }),
-                }
-              );
-
-              if (!transactionRes.ok) {
-                const errorData = await transactionRes.json().catch(() => ({}));
-                console.error("Failed to create initial transaction:", errorData);
-                await logWebhookEvent("error", `Failed to create initial transaction for checkout: ${session.id}`, {
-                  severity: "error",
-                  userId,
-                  listingDocId,
-                  stripeEventId: event.id,
-                  rawMeta: { sessionId: session.id, errorData },
-                });
-              } else {
-                console.log("Initial transaction created for checkout:", session.id);
-                await logWebhookEvent("payment_succeeded", `Initial payment succeeded for subscription: ${subscriptionId}`, {
-                  severity: "info",
-                  userId,
-                  listingDocId,
-                  stripeEventId: event.id,
-                  rawMeta: { 
-                    subscriptionId, 
-                    amount: (session.amount_total / 100).toFixed(2),
-                    currency: session.currency,
-                  },
-                });
-              }
-            } catch (e) {
-              console.error("Error creating initial transaction:", e);
-            }
-          }
-          
-          // Publish the listing after successful subscription
-          try {
-            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings?filters[documentId][$eq]=${encodeURIComponent(listingDocId)}`;
-            
-            const updateRes = await fetch(listingUrl, {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+            body: JSON.stringify({
+              data: {
+                listingDocId,
+                users_permissions_user: userId,
+                stripeSubscriptionId: subscriptionId,
+                stripePriceId: priceId,
+                stripeCustomerId: subscription.customer as string,
+                subscriptionStatus: subscription.status,
+                currentPeriodEnd: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : new Date().toISOString(),
+                autoRenew: !subscription.cancel_at_period_end,
               },
-              body: JSON.stringify({
-                data: {
-                  listingStatus: "published",
-                },
-              }),
-            });
+            }),
+          });
 
-            if (!updateRes.ok) {
-              const updateError = await updateRes.json().catch(() => ({}));
-              console.error("Failed to publish listing:", listingDocId, updateError);
-              await logWebhookEvent("error", `Failed to publish listing: ${listingDocId}`, {
-                severity: "error",
-                userId,
-                listingDocId,
-                stripeEventId: event.id,
-                rawMeta: { updateError },
-              });
-            } else {
-              console.log("Listing published successfully:", listingDocId);
-              await logWebhookEvent("listing_published", `Listing published after subscription: ${listingDocId}`, {
-                severity: "info",
-                userId,
-                listingDocId,
-                stripeEventId: event.id,
-                rawMeta: { subscriptionId },
-              });
+          if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            console.error("Failed to create subscription in Strapi:", errorData);
+            await logWebhookEvent("error", `Failed to create subscription in Strapi: ${subscriptionId}`, {
+              severity: "error",
+              userId,
+              listingDocId,
+              stripeEventId: event.id,
+              rawMeta: { subscriptionId, errorData },
+            });
+          } else {
+            const subscriptionData = await res.json();
+            const subscriptionDocId = subscriptionData?.data?.documentId;
+            console.log("Subscription created successfully:", subscriptionId);
+            
+            // Log successful subscription creation
+            await logWebhookEvent("subscription_created", `Subscription created: ${subscriptionId}`, {
+              severity: "info",
+              userId,
+              listingDocId,
+              stripeEventId: event.id,
+              rawMeta: { subscriptionId, subscriptionDocId, priceId },
+            });
+            
+            // Create initial transaction record for the first payment
+            if (subscriptionDocId && session.amount_total) {
+              try {
+                const transactionRes = await fetch(
+                  `${process.env.NEXT_PUBLIC_API_URL}/api/subscription-transactions`,
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+                    },
+                    body: JSON.stringify({
+                      data: {
+                        subscription: subscriptionDocId,
+                        invoiceId: session.invoice as string || `checkout_${session.id}`,
+                        amount: (session.amount_total / 100).toFixed(2),
+                        currency: session.currency || 'usd',
+                        transactionStatus: "paid",
+                        invoiceDate: new Date().toISOString(),
+                        rawData: {
+                          checkoutSessionId: session.id,
+                          paymentStatus: session.payment_status,
+                        },
+                      },
+                    }),
+                  }
+                );
+
+                if (!transactionRes.ok) {
+                  const errorData = await transactionRes.json().catch(() => ({}));
+                  console.error("Failed to create initial transaction:", errorData);
+                  await logWebhookEvent("error", `Failed to create initial transaction for checkout: ${session.id}`, {
+                    severity: "error",
+                    userId,
+                    listingDocId,
+                    stripeEventId: event.id,
+                    rawMeta: { sessionId: session.id, errorData },
+                  });
+                } else {
+                  await logWebhookEvent("payment_succeeded", `Initial payment succeeded for subscription: ${subscriptionId}`, {
+                    severity: "info",
+                    userId,
+                    listingDocId,
+                    stripeEventId: event.id,
+                    rawMeta: { 
+                      subscriptionId, 
+                      amount: (session.amount_total / 100).toFixed(2),
+                      currency: session.currency,
+                    },
+                  });
+                }
+              } catch (e) {
+                console.error("Error creating initial transaction:", e);
+              }
             }
-          } catch (e) {
-            console.error("Error publishing listing:", e);
           }
+        } else {
+          console.log("Subscription already exists, skipping creation but will publish listing");
+        }
+        
+        // ALWAYS try to publish the listing, regardless of whether subscription already existed
+        try {
+          const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
+          
+          const updateRes = await fetch(listingUrl, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+            },
+            body: JSON.stringify({
+              data: {
+                listingStatus: "published",
+              },
+            }),
+          });
+
+          if (!updateRes.ok) {
+            const responseText = await updateRes.text().catch(() => 'Unable to read response');
+            let updateError = {};
+            try {
+              updateError = JSON.parse(responseText);
+            } catch {
+              updateError = { message: responseText };
+            }
+            console.error("Failed to publish listing:", listingDocId);
+            console.error("Status:", updateRes.status, updateRes.statusText);
+            console.error("Error details:", updateError);
+            await logWebhookEvent("error", `Failed to publish listing: ${listingDocId}`, {
+              severity: "error",
+              userId,
+              listingDocId,
+              stripeEventId: event.id,
+              rawMeta: { updateError, status: updateRes.status, statusText: updateRes.statusText },
+            });
+          } else {
+            const responseData = await updateRes.json().catch(() => null);
+            console.log("Listing published successfully:", listingDocId);
+            console.log("Strapi response:", JSON.stringify(responseData, null, 2));
+            await logWebhookEvent("listing_published", `Listing published after subscription: ${listingDocId}`, {
+              severity: "info",
+              userId,
+              listingDocId,
+              stripeEventId: event.id,
+              rawMeta: { subscriptionId, strapiResponse: responseData },
+            });
+          }
+        } catch (e) {
+          console.error("Error publishing listing:", e);
         }
 
         break;
@@ -328,7 +337,7 @@ export async function POST(req: NextRequest) {
           if (subscription.status === 'active' && !subscription.cancel_at_period_end) {
             try {
               const listingDocId = existingSubscription.listingDocId;
-              const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings?filters[documentId][$eq]=${encodeURIComponent(listingDocId)}`;
+              const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
               const publishRes = await fetch(listingUrl, {
                 method: "PUT",
                 headers: {
@@ -343,7 +352,6 @@ export async function POST(req: NextRequest) {
               });
 
               if (publishRes.ok) {
-                console.log("Listing re-published after reactivation:", listingDocId);
                 await logWebhookEvent("subscription_reactivated", `Subscription reactivated: ${subscriptionId}`, {
                   severity: "info",
                   userId,
@@ -419,9 +427,7 @@ export async function POST(req: NextRequest) {
             stripeEventId: event.id,
             rawMeta: { subscriptionId, errorData },
           });
-        } else {
-          console.log("Subscription marked as canceled:", subscriptionId);
-          
+        } else {          
           const userId = existingSubscription.users_permissions_user?.id || existingSubscription.users_permissions_user;
           const listingDocId = existingSubscription.listingDocId;
           
@@ -435,7 +441,7 @@ export async function POST(req: NextRequest) {
           
           // Set listing back to draft when subscription is actually canceled
           try {
-            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings?filters[documentId][$eq]=${encodeURIComponent(listingDocId)}`;
+            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
             const draftRes = await fetch(listingUrl, {
               method: "PUT",
               headers: {
@@ -460,7 +466,6 @@ export async function POST(req: NextRequest) {
                 rawMeta: { draftError },
               });
             } else {
-              console.log("Listing set to draft after cancellation:", listingDocId);
               await logWebhookEvent("listing_unpublished", `Listing unpublished after cancellation: ${listingDocId}`, {
                 severity: "info",
                 userId,
@@ -480,17 +485,33 @@ export async function POST(req: NextRequest) {
       case "invoice.paid": {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const invoice = event.data.object as any;
-        const subscriptionId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id;
+        const invoiceId = invoice.id;
+        
+        // Extract subscription ID - it can be a string or null for non-subscription invoices
+        const subscriptionId = invoice.subscription || null;
+        const billingReason = invoice.billing_reason;
+        
+        console.log('Invoice.paid event details:');
+        console.log('  - Invoice ID:', invoiceId);
+        console.log('  - Subscription ID:', subscriptionId);
+        console.log('  - Billing Reason:', billingReason);
+        console.log('  - Invoice Status:', invoice.status);
 
         // Log webhook received
         await logWebhookEvent("webhook_received", `Received invoice.paid webhook`, {
           severity: "info",
           stripeEventId: event.id,
-          rawMeta: { invoiceId: invoice.id, subscriptionId },
+          rawMeta: { invoiceId: invoice.id, subscriptionId, billingReason },
         });
 
         if (!subscriptionId) {
           console.log("Invoice not related to subscription, skipping");
+          break;
+        }
+        
+        // Skip initial subscription creation invoices - those are handled by checkout.session.completed
+        if (billingReason === 'subscription_create') {
+          console.log("Initial subscription invoice (subscription_create) - already handled by checkout.session.completed, skipping");
           break;
         }
 
@@ -580,7 +601,7 @@ export async function POST(req: NextRequest) {
           
           // Ensure listing stays published on successful renewal
           try {
-            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings?filters[documentId][$eq]=${encodeURIComponent(listingDocId)}`;
+            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
             const publishRes = await fetch(listingUrl, {
               method: "PUT",
               headers: {
@@ -613,7 +634,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "invoice.payment_failed": {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        //eslint-disable-next-line @typescript-eslint/no-explicit-any
         const invoice = event.data.object as any;
         const subscriptionId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id;
 
@@ -717,7 +738,7 @@ export async function POST(req: NextRequest) {
           
           // Set listing to draft on payment failure
           try {
-            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings?filters[documentId][$eq]=${encodeURIComponent(listingDocId)}`;
+            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
             const draftRes = await fetch(listingUrl, {
               method: "PUT",
               headers: {
