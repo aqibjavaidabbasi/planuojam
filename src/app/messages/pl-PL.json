@@ -945,7 +945,18 @@
       "noProducts": "Obecnie brak dostępnych planów subskrypcji",
       "footerNote": "Wszystkie plany obejmują bezpieczne przetwarzanie płatności przez Stripe. Anuluj w dowolnym momencie.",
       "invalidProduct": "Nieprawidłowa konfiguracja produktu",
-      "subscriptionError": "Nie udało się rozpocząć subskrypcji"
+      "subscriptionError": "Nie udało się rozpocząć subskrypcji",
+      "promoCodeLabel": "Kod promocyjny (opcjonalnie)",
+      "promoCodePlaceholder": "Wprowadź kod promocyjny",
+      "validatePromoFirst": "Proszę zweryfikować kod promocyjny lub go usunąć, aby kontynuować.",
+      "invalidPromoCode": "Nieprawidłowy lub wygasły kod promocyjny.",
+      "promoServerError": "Błąd serwera — spróbuj ponownie później.",
+      "validating": "Weryfikowanie...",
+      "validatePromo": "Zweryfikuj kod promocyjny",
+      "promoSuccess": "Kod promocyjny pomyślnie zastosowany!",
+      "percentOff": "Otrzymasz {percent}% zniżki na subskrypcję",
+      "amountOff": "Otrzymasz ${amount} zniżki na subskrypcję",
+      "discountApplied": "Zniżka zastosowana do Twojej subskrypcji"
     },
     "SubscriptionManagement": {
       "title": "Zarządzanie subskrypcją",

@@ -694,7 +694,18 @@
       "noProducts": "Šiuo metu nėra prenumeratos planų",
       "footerNote": "Visi planai apima saugų mokėjimo tvarkymą per Stripe. Atšaukite bet kada.",
       "invalidProduct": "Netinkama produkto konfigūracija",
-      "subscriptionError": "Nepavyko pradėti prenumeratos"
+      "subscriptionError": "Nepavyko pradėti prenumeratos",
+      "promoCodeLabel": "Promo kodas (neprivaloma)",
+      "promoCodePlaceholder": "Įveskite promo kodą",
+      "validatePromoFirst": "Prašome patvirtinti promo kodą arba pašalinti jį, kad galėtumėte tęsti.",
+      "invalidPromoCode": "Netinkamas arba nebegaliojantis promo kodas.",
+      "promoServerError": "Serverio klaida — bandykite vėliau.",
+      "validating": "Tikrinama...",
+      "validatePromo": "Patvirtinti promo kodą",
+      "promoSuccess": "Promo kodas sėkmingai taikytas!",
+      "percentOff": "Gausite {percent}% nuolaidą už prenumeratą",
+      "amountOff": "Gausite ${amount} nuolaidą už prenumeratą",
+      "discountApplied": "Nuolaida taikyta jūsų prenumeratai"
     },
     "SubscriptionManagement": {
       "title": "Prenumeratos valdymas",

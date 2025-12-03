@@ -6,6 +6,7 @@ import Modal from "../custom/Modal"
 import { useTranslations } from "next-intl"
 import Button from "../custom/Button"
 import { FaStar } from "react-icons/fa"
+import Input from "../custom/Input"
 
 const ListingSubscriptionModal: React.FC<{
     isOpen: boolean;
@@ -19,10 +20,66 @@ const ListingSubscriptionModal: React.FC<{
     const t = useTranslations('Modals.ListingSubscription')
     const [selectedProduct, setSelectedProduct] = useState<StripeProductAttributes | null>(null)
     const [isProcessing, setIsProcessing] = useState(false)
+    const [promoCode, setPromoCode] = useState('')
+    const [promoError, setPromoError] = useState('')
+    interface PromoData {
+    id: string;
+    code: string;
+    coupon: {
+        percent_off?: number;
+        amount_off?: number;
+        id: string;
+        duration: string;
+    };
+}
+
+const [promoData, setPromoData] = useState<PromoData | null>(null)
+    const [isValidatingPromo, setIsValidatingPromo] = useState(false)
+
+    const validatePromo = async () => {
+        if (!promoCode.trim()) {
+            setPromoError('')
+            setPromoData(null)
+            return
+        }
+
+        setIsValidatingPromo(true)
+        setPromoError('')
+
+        try {
+            const res = await fetch('/api/check-promo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: promoCode.trim() }),
+            })
+
+            const data = await res.json()
+
+            if (!data.valid) {
+                setPromoError(data.error || t('invalidPromoCode') || 'Invalid or expired promotion code.')
+                setPromoData(null)
+            } else {
+                setPromoError('')
+                setPromoData(data.details)
+            }
+        } catch (error) {
+            console.error('Promo validation error:', error)
+            setPromoError(t('promoServerError') || 'Server error — try again later.')
+            setPromoData(null)
+        } finally {
+            setIsValidatingPromo(false)
+        }
+    }
 
     const handleSubscribe = async (product: StripeProductAttributes) => {
         if (!product.stripePriceId) {
             alert(t('invalidProduct') || 'Invalid product configuration')
+            return
+        }
+
+        // Validate promo code if entered
+        if (promoCode.trim() && !promoData) {
+            setPromoError(t('validatePromoFirst') || 'Please validate the promo code first or remove it to continue.')
             return
         }
 
@@ -43,6 +100,7 @@ const ListingSubscriptionModal: React.FC<{
                     listingTitle,
                     successUrl: `${window.location.origin}/profile?tab=my-listings`,
                     cancelUrl: `${window.location.origin}/profile?tab=my-listings`,
+                    promoCode: promoCode.trim() || undefined,
                 }),
             })
 
@@ -50,6 +108,17 @@ const ListingSubscriptionModal: React.FC<{
 
             if (!response.ok) {
                 throw new Error(data.error || 'Failed to create checkout session')
+            }
+
+            // Show promo code status message if applicable
+            if (data.message) {
+                if (data.promoCodeApplied) {
+                    // Success message for valid promo code
+                    console.log(data.message)
+                } else {
+                    // Warning for invalid promo code (but checkout continues)
+                    console.warn(data.message)
+                }
             }
 
             // Redirect to Stripe Checkout using the URL
@@ -61,8 +130,8 @@ const ListingSubscriptionModal: React.FC<{
         } catch (error) {
             console.error('Subscription error:', error)
             alert(
-                error instanceof Error 
-                    ? error.message 
+                error instanceof Error
+                    ? error.message
                     : t('subscriptionError') || 'Failed to start subscription'
             )
             setSelectedProduct(null)
@@ -96,7 +165,7 @@ const ListingSubscriptionModal: React.FC<{
 
     //filter stripe products( show only the one with listing price in range)
     const filteredProducts = stripeProducts.filter((product) => {
-        if (listingPrice){
+        if (listingPrice) {
             const minPrice = product.minListingPrice || 0;
             const maxPrice = product.maxListingPrice || Infinity;
             return listingPrice >= minPrice && listingPrice <= maxPrice;
@@ -117,13 +186,68 @@ const ListingSubscriptionModal: React.FC<{
                     </p>
                 </div>
 
+                {/* Promo Code Input */}
+                <div className="max-w-md mx-auto w-full">
+                    <Input
+                        type="text"
+                        placeholder={t('promoCodePlaceholder') || 'Enter promo code'}
+                        value={promoCode}
+                        onChange={(e) => {
+                            setPromoCode(e.target.value)
+                            setPromoError('')
+                            setPromoData(null)
+                        }}
+                        disabled={isProcessing || isValidatingPromo}
+                        label={t('promoCodeLabel') || 'Promo Code (optional)'}
+                    />
+                    
+                    {/* Validate Button */}
+                    {promoCode.trim() && (
+                        <div className="mt-2">
+                            <Button
+                                style="secondary"
+                                onClick={validatePromo}
+                                disabled={isValidatingPromo || isProcessing}
+                                extraStyles="w-full text-sm"
+                            >
+                                {isValidatingPromo ? t('validating') || 'Validating...' : t('validatePromo') || 'Validate Promo Code'}
+                            </Button>
+                        </div>
+                    )}
+
+                    {/* Promo Error */}
+                    {promoError && (
+                        <div className="mt-2 p-3 rounded bg-red-50 text-red-700 border border-red-200 text-sm">
+                            {promoError}
+                        </div>
+                    )}
+
+                    {/* Promo Success */}
+                    {promoData && (
+                        <div className="mt-2 p-3 rounded bg-green-50 border border-green-200 text-sm">
+                            <div className="text-green-800 font-medium mb-1">
+                                ✓ {t('promoSuccess') || 'Promo code applied successfully!'}
+                            </div>
+                            <div className="text-green-700">
+                                {promoData.coupon?.percent_off ? (
+                                    t('percentOff', { percent: promoData.coupon.percent_off }) || `You get ${promoData.coupon.percent_off}% off your subscription`
+                                ) : promoData.coupon?.amount_off ? (
+                                    t('amountOff', { amount: (promoData.coupon.amount_off / 100).toFixed(2) }) || `You get $${(promoData.coupon.amount_off / 100).toFixed(2)} off your subscription`
+                                ) : (
+                                    t('discountApplied') || 'Discount applied to your subscription'
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+
                 {/* Products Grid */}
                 {filteredProducts && filteredProducts.length > 0 ? (
                     <div className="flex items-center justify-center flex-wrap gap-4 md:gap-6">
                         {filteredProducts.map((product) => {
                             const isPremium = product.badge === 'premium'
                             const isFeatured = product.badge === 'featured'
-                            
+
                             return (
                                 <div
                                     key={product.documentId}

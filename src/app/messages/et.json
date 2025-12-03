@@ -947,7 +947,18 @@
       "noProducts": "Hetkel pole tellimisplaane saadaval",
       "footerNote": "Kõik plaanid sisaldavad turvalist maksete töötlemist Stripe'i kaudu. Tühistage igal ajal.",
       "invalidProduct": "Kehtetu toote konfiguratsioon",
-      "subscriptionError": "Tellimuse alustamine ebaõnnestus"
+      "subscriptionError": "Tellimuse alustamine ebaõnnestus",
+      "promoCodeLabel": "Promokood (valikuline)",
+      "promoCodePlaceholder": "Sisesta promokood",
+      "validatePromoFirst": "Palun kinnitage promokood või eemaldage see, et jätkata.",
+      "invalidPromoCode": "Kehtetu või aegunud promokood.",
+      "promoServerError": "Serveri viga — proovige hiljem uuesti.",
+      "validating": "Kinnitamine...",
+      "validatePromo": "Kinnita promokood",
+      "promoSuccess": "Promokood edukalt rakendatud!",
+      "percentOff": "Saate {percent}% allahindlust tellimusele",
+      "amountOff": "Saate ${amount} allahindlust tellimusele",
+      "discountApplied": "Allahindlus rakendatud teie tellimusele"
     },
     "SubscriptionManagement": {
       "title": "Tellimuse haldamine",

@@ -913,7 +913,18 @@
       "noProducts": "No subscription plans available at the moment",
       "footerNote": "All plans include secure payment processing via Stripe. Cancel anytime.",
       "invalidProduct": "Invalid product configuration",
-      "subscriptionError": "Failed to start subscription"
+      "subscriptionError": "Failed to start subscription",
+      "promoCodeLabel": "Promo Code (optional)",
+      "promoCodePlaceholder": "Enter promo code",
+      "validatePromoFirst": "Please validate the promo code first or remove it to continue.",
+      "invalidPromoCode": "Invalid or expired promotion code.",
+      "promoServerError": "Server error — try again later.",
+      "validating": "Validating...",
+      "validatePromo": "Validate Promo Code",
+      "promoSuccess": "Promo code applied successfully!",
+      "percentOff": "You get {percent}% off your subscription",
+      "amountOff": "You get ${amount} off your subscription",
+      "discountApplied": "Discount applied to your subscription"
     },
     "SubscriptionManagement": {
       "title": "Subscription Management",
