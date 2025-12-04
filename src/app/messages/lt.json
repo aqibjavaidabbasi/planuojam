@@ -1189,7 +1189,15 @@
     "toasts": {
       "updated": "Tiekėjo/Vietos informacija atnaujinta",
       "updateFailed": "Nepavyko atnaujinti Tiekėjo/Vietos informacijos"
-    }
+    },
+    "locationPreview": "Vietos peržiūra",
+    "locationPreviewHint": "Šis žemėlapis rodo jūsų pasirinktas vietas greitam patikrinimui.",
+    "serviceArea": "Paslaugų zona",
+    "serviceAreaDescription": "Paslaugų zona #{index}",
+    "venueLocation": "Vietos vieta",
+    "venueLocationDescription": "Jūsų vietos vieta",
+    "service": "Paslauga",
+    "unknown": "Nežinoma"
   },
   "ListingGallery": {
     "viewMore": "Peržiūrėti daugiau",

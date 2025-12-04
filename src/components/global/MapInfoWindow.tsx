@@ -17,7 +17,7 @@ type Props = {
 
 const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href }) => {
 
-  console.log("href",href)
+  console.log("selected location",selectedLocation)
 
   return (
     <div className="text-sm font-sans bg-white/95">
@@ -42,6 +42,9 @@ const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href }) => {
       <div className="px-6 pb-5 grid grid-cols-2 md:grid-cols-1 gap-2">
         {/* Header: title and category badge (replaces price in v3) */}
           <h2 className="text-base col-span-2 font-semibold text-gray-800 leading-snug pr-2 truncate">
+            {selectedLocation.title}
+          </h2>
+          <h2 className="text-base col-span-2 font-light text-gray-800 leading-snug pr-2 truncate">
             {selectedLocation.name}
           </h2>
         <div className="flex items-start justify-between mb-2">

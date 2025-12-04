@@ -38,11 +38,13 @@ async function geocodeLocations(listings: ListingItem[], locale?: string): Promi
         ? `${area.city.name}, ${area.state.name}`
         : area.city?.name || area.state?.name || 'Service Area';
 
+
       const address = name; // We don't perform reverse geocoding; use name as address label
 
       locations.push({
         id: Number(`${listing.id}${Math.floor(Math.random() * 10000)}`),
         name,
+        title: listing.title,
         position: { lat: area.latitude, lng: area.longitude },
         address,
         description: baseData.description,

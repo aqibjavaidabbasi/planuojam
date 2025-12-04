@@ -14,6 +14,7 @@ const LONGITUDE = 23.8813;
 export interface Location {
   id: number;
   name: string;
+  title: string;
   username: string;
   description: string;
   category: {

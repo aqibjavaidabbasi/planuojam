@@ -44,6 +44,8 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const [newIds, setNewIds] = useState<Set<string>>(new Set());
 
+
+  //use effect for pagination
   useEffect(() => {
     setPage(1);
     if (initialPagination?.pageSize) setPageSize(initialPagination.pageSize);
@@ -198,6 +200,7 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
           const hasVendor = first?.listingItem?.some((b) => b.__component === "dynamic-blocks.vendor");
           res = hasVendor ? await geocodeLocations(list, locale) : deriveVenueLocations(list, locale);
         }
+        console.log(res)
         if (mounted) setLocations(res || []);
       } catch (e) {
         console.error(e);
@@ -313,6 +316,7 @@ function deriveVenueLocations(items: ListingItem[], locale?: string): Location[]
       return {
         id: item.id,
         name: item.title || "Unnamed Venue",
+        // title: item.title || "Unnamed Venue",
         username: item.user?.username || "Unknown",
         description: item.description || "",
         category: {

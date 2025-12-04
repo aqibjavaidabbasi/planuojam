@@ -10,6 +10,13 @@ import { useLocale, useTranslations } from "next-intl";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import multiMonthPlugin from "@fullcalendar/multimonth";
 
+// Import individual locales
+import enGbLocale from '@fullcalendar/core/locales/en-gb';
+import ltLocale from '@fullcalendar/core/locales/lt';
+import ruLocale from '@fullcalendar/core/locales/ru';
+import plLocale from '@fullcalendar/core/locales/pl';
+import etLocale from '@fullcalendar/core/locales/et';
+
 
 type Day = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
 
@@ -60,6 +67,29 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId, wo
   const currentViewType = useRef<string>("dayGridMonth");
   const t = useTranslations("Listing.Calendar");
   const locale = useLocale();
+
+  // Map our locale codes to FullCalendar locale objects
+  const getFullCalendarLocale = useCallback((localeCode: string) => {
+    const localeMap: Record<string, import('@fullcalendar/core').LocaleInput> = {
+      'en': enGbLocale,
+      'lt': ltLocale, 
+      'ru': ruLocale,
+      'pl-PL': plLocale,
+      'et': etLocale
+    };
+    return localeMap[localeCode] || enGbLocale;
+  }, []);
+
+  const calendarLocale = useMemo(() => getFullCalendarLocale(locale), [locale, getFullCalendarLocale]);
+
+  // Get all available locales for the locales prop
+  const availableLocales = useMemo(() => [
+    enGbLocale,
+    ltLocale, 
+    ruLocale,
+    plLocale,
+    etLocale
+  ], []);
 
   // Stable reference for schedule
   const schedule = workingSchedule ?? EMPTY_SCHEDULE;
@@ -226,7 +256,8 @@ const ListingCalendar: React.FC<ListingCalendarProps> = ({ listingDocumentId, wo
           plugins={[dayGridPlugin, timeGridPlugin, multiMonthPlugin, interactionPlugin]}
           initialView={isMobile ? 'dayGridMonth' : 'dayGridMonth'}
           headerToolbar={headerToolbar}
-          locale={locale}
+          locales={availableLocales}
+          locale={calendarLocale}
           height="auto"
           expandRows
           events={events}

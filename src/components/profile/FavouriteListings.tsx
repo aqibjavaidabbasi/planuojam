@@ -61,7 +61,10 @@ function FavouriteListings() {
         });
     } else if (listingIds.length === 0) {
       setListings([]);
+      setListingsLoading(false);
       lastFetchedIdsRef.current = [];
+    } else if (status !== 'loading') {
+      setListingsLoading(false);
     }
 
     // Cleanup function
@@ -70,7 +73,7 @@ function FavouriteListings() {
         abortControllerRef.current.abort();
       }
     };
-  }, [status]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [status, listingIds, locale, listings.length]); // Add listings.length to prevent stale stat
 
   if (status === 'loading' || listingsLoading) {
     return (

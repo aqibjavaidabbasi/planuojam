@@ -1198,7 +1198,15 @@
     "toasts": {
       "updated": "Müüja/Koha andmed on uuendatud",
       "updateFailed": "Müüja/Koha andmete uuendamine ebaõnnestus"
-    }
+    },
+    "locationPreview": "Asukoha eelvaade",
+    "locationPreviewHint": "See kaart näitab teie valitud asukohti kiireks kontrollimiseks.",
+    "serviceArea": "Teeninduspiirkond",
+    "serviceAreaDescription": "Teeninduspiirkond #{index}",
+    "venueLocation": "Koha asukoht",
+    "venueLocationDescription": "Teie koha asukoht",
+    "service": "Teenus",
+    "unknown": "Teadmata"
   },
   "ListingGallery": {
     "viewMore": "Vaata veel",

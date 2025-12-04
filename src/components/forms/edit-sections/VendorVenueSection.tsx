@@ -13,8 +13,10 @@ import type { ListingItem } from "@/types/pagesTypes"
 import { useCities } from "@/context/CitiesContext"
 import { useStates } from "@/context/StatesContext"
 import { geocodePlace } from "@/utils/mapboxLocation"
+import { Location as MapLocation } from "@/components/global/MapboxMap";
 import { useTranslations } from "next-intl"
 const MapPickerModal = dynamic(() => import("@/components/modals/MapPickerModal"))
+const MapboxMap = dynamic(() => import("@/components/global/MapboxMap"), { ssr: false })
 
 // Vendor form
 type ServiceArea = { city?: string; state?: string; latitude?: string; longitude?: string }
@@ -210,11 +212,11 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
     const stateName = states.find((s) => s.documentId === stateId)?.name
     const res = await geocodePlace(cityName, stateName)
     if (res) {
-      vendorRHF.setValue(`serviceArea.${idx}.latitude`, String(res.lat))
-      vendorRHF.setValue(`serviceArea.${idx}.longitude`, String(res.lng))
+      vendorRHF.setValue(`serviceArea.${idx}.latitude`, String(res.lat), { shouldDirty: true })
+      vendorRHF.setValue(`serviceArea.${idx}.longitude`, String(res.lng), { shouldDirty: true })
     }
   }
-
+  
   const onFetchVenueCoords = async () => {
     const cityId = venueRHF.getValues("location.city")
     const stateId = venueRHF.getValues("location.state")
@@ -222,8 +224,8 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
     const stateName = states.find((s) => s.documentId === stateId)?.name
     const res = await geocodePlace(cityName, stateName)
     if (res) {
-      venueRHF.setValue("location.latitude", String(res.lat))
-      venueRHF.setValue("location.longitude", String(res.lng))
+      venueRHF.setValue("location.latitude", String(res.lat), { shouldDirty: true })
+      venueRHF.setValue("location.longitude", String(res.lng), { shouldDirty: true })
     }
   }
 
@@ -284,6 +286,58 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
   }, [venueSource, venueLoc.address, venueLoc.city, venueLoc.state, venueLoc.latitude, venueLoc.longitude, bookingType, venueRHF])
 
   const t = useTranslations("vendorvenueSection")
+  
+  // Get current locations for map display
+  const getCurrentLocations = useMemo((): MapLocation[] => {
+    const locations: MapLocation[] = []
+    
+    if (isVendor) {
+      // Add vendor service areas
+      const serviceAreasData = vendorRHF.watch("serviceArea") || []
+      serviceAreasData.forEach((sa: ServiceArea, index: number) => {
+        if (sa.latitude && sa.longitude && !isNaN(Number(sa.latitude)) && !isNaN(Number(sa.longitude))) {
+          const cityName = cities.find(c => c.documentId === sa.city)?.name || t("unknown")
+          const stateName = states.find(s => s.documentId === sa.state)?.name || t("unknown")
+          locations.push({
+            id: index,
+            name: `${cityName}, ${stateName}`,
+            title: t("serviceArea"),
+            username: "",
+            description: t("serviceAreaDescription", { index: index + 1 }),
+            category: { name: t("service"), type: "vendor" },
+            position: { lat: Number(sa.latitude), lng: Number(sa.longitude) },
+            address: `${cityName}, ${stateName}`,
+            image: listing.portfolio[0],
+            path: ""
+          })
+        }
+      })
+    } else {
+      // Add venue location
+      const venueLocation = venueRHF.watch("location")
+      if (venueLocation?.latitude && venueLocation?.longitude && 
+          !isNaN(Number(venueLocation.latitude)) && !isNaN(Number(venueLocation.longitude))) {
+        const cityName = cities.find(c => c.documentId === venueLocation.city)?.name || t("unknown")
+        const stateName = states.find(s => s.documentId === venueLocation.state)?.name || t("unknown")
+        const address = venueLocation.address || `${cityName}, ${stateName}`
+        locations.push({
+          id: 0,
+          name: address,
+          title: t("venueLocation"),
+          username: "",
+          description: t("venueLocationDescription"),
+          category: { name: t("venue"), type: "venue" },
+          position: { lat: Number(venueLocation.latitude), lng: Number(venueLocation.longitude) },
+          address: address,
+          image: listing.portfolio[0],
+          path: ""
+        })
+      }
+    }
+    
+    return locations
+  }, [isVendor, vendorRHF, venueRHF, cities, states, t, listing.portfolio])
+
   return (
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-4">{`${isVendor ? t("vendor") : t("venue")} ${t("details")}`}</h3>
@@ -471,6 +525,18 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
           </div>
         </form>
       )}
+      
+      {/* Location Preview Map */}
+      {getCurrentLocations.length > 0 && (
+        <div className="mt-6">
+          <h4 className="font-medium mb-3">{t("locationPreview")}</h4>
+          <p className="text-sm text-gray-500 mb-3">{t("locationPreviewHint")}</p>
+          <div className="h-64 w-full border border-gray-200 rounded-lg overflow-hidden">
+            <MapboxMap locations={getCurrentLocations} selectedPlace={null} />
+          </div>
+        </div>
+      )}
+      
       {/* Vendor Map Picker */}
       <MapPickerModal
         isOpen={vendorPickerIndex !== null}

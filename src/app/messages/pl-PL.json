@@ -1196,7 +1196,15 @@
     "toasts": {
       "updated": "Dane sprzedawcy/miejsca zaktualizowane",
       "updateFailed": "Nie udało się zaktualizować danych sprzedawcy/miejsca"
-    }
+    },
+    "locationPreview": "Podgląd lokalizacji",
+    "locationPreviewHint": "Ta mapa pokazuje wybrane lokalizacje do szybkiej weryfikacji.",
+    "serviceArea": "Obszar usług",
+    "serviceAreaDescription": "Obszar usług #{index}",
+    "venueLocation": "Lokalizacja miejsca",
+    "venueLocationDescription": "Twoja lokalizacja miejsca",
+    "service": "Usługa",
+    "unknown": "Nieznane"
   },
   "ListingGallery": {
     "viewMore": "Zobacz więcej",

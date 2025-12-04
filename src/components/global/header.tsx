@@ -78,7 +78,8 @@ function Header({ headerData }: { headerData: HeaderType }) {
         .unwrap()
         .catch(() => { });
     }
-  }, [dispatch, user?.id, likedListings.items.length, likedListings.lastFetched]);
+    //eslint-disable-next-line
+  }, [dispatch, user?.id]);
 
   // Initialize selected locale
   useEffect(() => {

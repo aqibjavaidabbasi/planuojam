@@ -1199,7 +1199,15 @@
     "toasts": {
       "updated": "Vendor/Venue details updated",
       "updateFailed": "Failed to update Vendor/Venue details"
-    }
+    },
+    "locationPreview": "Location Preview",
+    "locationPreviewHint": "This map shows your selected locations for quick verification.",
+    "serviceArea": "Service Area",
+    "serviceAreaDescription": "Service Area #{index}",
+    "venueLocation": "Venue Location",
+    "venueLocationDescription": "Your venue location",
+    "service": "Service",
+    "unknown": "Unknown"
   },
   "contactSections": {
     "title": "Contact",
