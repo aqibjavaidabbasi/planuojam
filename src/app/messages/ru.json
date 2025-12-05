@@ -496,7 +496,14 @@
       "send": "Отправить",
       "comingSoonTitle": "Сообщения скоро",
       "comingSoonDesc": "Мы работаем над удобной системой сообщений для связи с владельцами и арендаторами.",
-      "refresh": "Обновить"
+      "refresh": "Обновить",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "noImage": "No img",
+      "deletedUser": "Deleted User",
+      "isTyping": "{username} is typing...",
+      "file": "file",
+      "view": "View"
     },
     "ReviewsTab": {
       "title": "Отзывы",

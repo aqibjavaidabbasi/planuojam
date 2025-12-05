@@ -21,7 +21,7 @@ import { MdEditCalendar, MdOutlineFavorite, MdStarBorderPurple500 } from "react-
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { fetchUnreadForReceiver } from "@/services/messages";
+import { getUnreadConversationCount } from "@/services/messages";
 import { RootState } from "@/store";
 import { fetchListingsByUserLeastPopulated } from "@/services/listing";
 import { fetchPromotionsByUser } from "@/services/promotion";
@@ -34,6 +34,7 @@ function ProfilePage() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const withUser = searchParams?.get("withUser");
+  const withListing = searchParams?.get("listing");
   const initialTab = withUser ? 'messages' : (searchParams?.get("tab") || "profile");
   const [activeTab, setActiveTab] = useState(initialTab);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -147,14 +148,8 @@ function ProfilePage() {
       try {
         const uid = user?.id;
         if (!uid) return;
-        const res = await fetchUnreadForReceiver(uid, 1, 200);
-        const localIdsRaw = typeof window !== 'undefined' ? sessionStorage.getItem('locallyReadMessageIds') : null;
-        const locallyRead = new Set<string>(localIdsRaw ? JSON.parse(localIdsRaw) : []);
-        const adjusted = res.data.filter((m) => {
-          const mid = typeof m.documentId === 'string' ? m.documentId : String(m.id);
-          return !locallyRead.has(mid);
-        });
-        setUnreadCount(adjusted.length);
+        const count = await getUnreadConversationCount(uid);
+        setUnreadCount(count);
       } catch {
         // ignore silently
       }
@@ -168,14 +163,8 @@ function ProfilePage() {
       try {
         const uid = user?.id;
         if (!uid) return;
-        const res = await fetchUnreadForReceiver(uid, 1, 200);
-        const localIdsRaw = typeof window !== 'undefined' ? sessionStorage.getItem('locallyReadMessageIds') : null;
-        const locallyRead = new Set<string>(localIdsRaw ? JSON.parse(localIdsRaw) : []);
-        const adjusted = res.data.filter((m) => {
-          const mid = typeof m.documentId === 'string' ? m.documentId : String(m.id);
-          return !locallyRead.has(mid);
-        });
-        setUnreadCount(adjusted.length);
+        const count = await getUnreadConversationCount(uid);
+        setUnreadCount(count);
       } catch { }
     };
     // On tab change
@@ -411,6 +400,7 @@ function ProfilePage() {
                 initialUserId={withUser && /^\d+$/.test(withUser) ? parseInt(withUser, 10) : undefined}
                 initialUserDocumentId={withUser && !/^\d+$/.test(withUser) ? withUser : undefined}
                 initialUserName={withUser ? searchParams.get('username') || undefined : undefined}
+                initialListingDocumentId={withListing || undefined}
                 onUnreadChange={(total) => setUnreadCount(total)}
               />
             )}

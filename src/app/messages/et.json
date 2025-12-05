@@ -421,7 +421,14 @@
       "send": "Saada",
       "comingSoonTitle": "Sõnumid peagi",
       "comingSoonDesc": "Töötame sõnumisüsteemi kallal, et saaksid suhelda omanike ja üürnikega.",
-      "refresh": "Värskenda"
+      "refresh": "Värskenda",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "noImage": "No img",
+      "deletedUser": "Deleted User",
+      "isTyping": "{username} is typing...",
+      "file": "file",
+      "view": "View"
     },
     "ReviewsTab": {
       "title": "Arvustused",

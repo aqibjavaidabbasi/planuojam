@@ -944,7 +944,14 @@
       "send": "Siųsti",
       "comingSoonTitle": "Žinutės netrukus",
       "comingSoonDesc": "Dirbame ties galinga žinučių sistema, kad galėtumėte bendrauti su savininkais ir nuomininkais.",
-      "refresh": "Atnaujinti"
+      "refresh": "Atnaujinti",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "noImage": "No img",
+      "deletedUser": "Deleted User",
+      "isTyping": "{username} is typing...",
+      "file": "file",
+      "view": "View"
     }
   },
   "Custom": {

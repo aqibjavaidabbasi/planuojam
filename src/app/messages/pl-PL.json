@@ -421,7 +421,14 @@
       "send": "Wyślij",
       "comingSoonTitle": "Wiadomości wkrótce",
       "comingSoonDesc": "Pracujemy nad systemem wiadomości, aby ułatwić kontakt z właścicielami i najemcami.",
-      "refresh": "Odświeżać"
+      "refresh": "Odświeżać",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "noImage": "No img",
+      "deletedUser": "Deleted User",
+      "isTyping": "{username} is typing...",
+      "file": "file",
+      "view": "View"
     },
     "ReviewsTab": {
       "title": "Opinie",

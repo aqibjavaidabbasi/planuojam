@@ -16,6 +16,7 @@ interface ListingDetailHeroProps {
   title: string;
   username: string;
   vendorUserId?: string;
+  listingDocumentId?: string;
   contact: {
     email: string;
     phone: string;
@@ -36,6 +37,7 @@ function ListingDetailHero({
   title,
   username,
   vendorUserId,
+  listingDocumentId,
   contact,
   price,
   hotDeal,
@@ -130,7 +132,16 @@ function ListingDetailHero({
                       setShowLoginModal(true);
                       return;
                     }
-                    router.push(`/profile?tab=messages&withUser=${vendorUserId}&username=${encodeURIComponent(username || '')}`);
+                    // Build URL with both user and listing context
+                    const params = new URLSearchParams();
+                    params.set('tab', 'messages');
+                    params.set('withUser', vendorUserId);
+                    if (username) params.set('username', username);
+                    if (listingDocumentId) params.set('listing', listingDocumentId);
+                    
+                    const url = `/profile?${params.toString()}`;
+                    console.log('Navigating to messages with URL:', url);
+                    router.push(url);
                   }}
                 >
                   <span className="text-white">

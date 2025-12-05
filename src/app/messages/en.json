@@ -434,7 +434,14 @@
       "send": "Send",
       "comingSoonTitle": "Messages Coming Soon",
       "comingSoonDesc": "We're working on bringing you a powerful messaging system to connect with property owners and renters.",
-      "refresh": "Refresh"
+      "refresh": "Refresh",
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "noImage": "No img",
+      "deletedUser": "Deleted User",
+      "isTyping": "{username} is typing...",
+      "file": "file",
+      "view": "View"
     },
     "ReviewsTab": {
       "title": "Reviews",

@@ -3,42 +3,48 @@ import { useTranslations } from "next-intl";
 import { useAppSelector } from "@/store/hooks";
 import {
   fetchAllForUser,
-  fetchThread,
-  markMessageRead,
   sendMessage,
+  fetchThread,
   Message,
   UserLite,
   fetchUnreadForReceiver,
+  fetchMinimalListingsByDocumentIds,
+  MinimalListingInfo,
 } from "@/services/messages";
 import { uploadFilesWithToken, API_URL } from "@/services/api";
 import { getUsersByDocumentIds, type MinimalUserInfo } from "@/services/auth";
+import { websocketService } from "@/services/websocket";
 import { MdAttachFile } from "react-icons/md";
 import Button from "../custom/Button";
-import { IoSendSharp } from "react-icons/io5";
+import { IoNavigateOutline, IoSendSharp } from "react-icons/io5";
+import { useLocale } from "next-intl";
 import Image from "next/image";
 
 type MessagesProps = {
   initialUserId?: number;
   initialUserName?: string;
   initialUserDocumentId?: string;
+  initialListingDocumentId?: string;
   onUnreadChange?: (total: number) => void;
 };
 
-function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnreadChange }: MessagesProps) {
+function Messages({ initialUserId, initialUserName, initialUserDocumentId, initialListingDocumentId, onUnreadChange }: MessagesProps) {
   const t = useTranslations("Profile.Messages");
+  const locale = useLocale();
   const user = useAppSelector((s) => s.auth.user);
 
   const [list, setList] = useState<Message[]>([]);
   const [listLoading, setListLoading] = useState(false); // used only for initial load
   const [listError, setListError] = useState<string | null>(null);
-  const [unreadByUser, setUnreadByUser] = useState<Record<number, number>>({});
-  const [clearedUserIds, setClearedUserIds] = useState<Set<number>>(new Set());
+  const [threadLoading, setThreadLoading] = useState(false);
+  const [threadError, setThreadError] = useState<string | null>(null);
+  const [unreadByUser, setUnreadByUser] = useState<Record<string, number>>({}); // Key: "userId-listingId"
+  const [clearedConversationIds, setClearedConversationIds] = useState<Set<string>>(new Set());
   const [locallyReadIds, setLocallyReadIds] = useState<Set<string>>(new Set());
 
   const [selectedUserId, setSelectedUserId] = useState<number | null>(initialUserId ?? null);
+  const [selectedListingDocumentId, setSelectedListingDocumentId] = useState<string | null>(initialListingDocumentId ?? null);
   const [thread, setThread] = useState<Message[]>([]);
-  const [threadLoading, setThreadLoading] = useState(false); // used only for initial load of a thread
-  const [threadError, setThreadError] = useState<string | null>(null);
 
   const [composerText, setComposerText] = useState("");
   const [sending, setSending] = useState(false);
@@ -46,36 +52,32 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
   const [attachmentPreviews, setAttachmentPreviews] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [listReady, setListReady] = useState(false);
+  const [listingsInfo, setListingsInfo] = useState<Record<string, MinimalListingInfo>>({});
+  const [websocketConnected, setWebsocketConnected] = useState(false);
+  const [typingUser, setTypingUser] = useState<{ username: string; isTyping: boolean }>({ username: "", isTyping: false });
 
-  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const suppressMarkReadRef = useRef<boolean>(false);
-  const refreshingRef = useRef<number>(0);
-  const [refreshing, setRefreshing] = useState(false);
   const [selectedCounterpartName, setSelectedCounterpartName] = useState<string>(initialUserName || "");
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   // Keep refs in sync to avoid unstable useCallback deps
   const locallyReadIdsRef = useRef<Set<string>>(new Set());
-  const clearedUserIdsRef = useRef<Set<number>>(new Set());
-  const threadLengthRef = useRef<number>(0);
+  const clearedConversationIdsRef = useRef<Set<string>>(new Set());
+  const processedMessageIdsRef = useRef<Set<string>>(new Set());
+  const pendingOptimisticMessagesRef = useRef<Array<{ body: string; timestamp: number; optimisticId: number }>>([]);
+
   useEffect(() => {
     locallyReadIdsRef.current = locallyReadIds;
   }, [locallyReadIds]);
   useEffect(() => {
-    clearedUserIdsRef.current = clearedUserIds;
-  }, [clearedUserIds]);
-  useEffect(() => {
-    // Keep a stable ref for thread length so loadThread doesn't depend on thread
-    threadLengthRef.current = thread.length;
-  }, [thread.length]);
+    clearedConversationIdsRef.current = clearedConversationIds;
+  }, [clearedConversationIds]);
 
-  // Hydrate session-cached read state and cleared unread map on mount
   useEffect(() => {
     try {
       if (typeof window !== 'undefined') {
-        const clearedRaw = sessionStorage.getItem('clearedUnreadByUser');
+        const clearedRaw = sessionStorage.getItem('clearedUnreadByConversation');
         if (clearedRaw) {
           const arr = JSON.parse(clearedRaw);
-          if (Array.isArray(arr)) setClearedUserIds(new Set<number>(arr));
+          if (Array.isArray(arr)) setClearedConversationIds(new Set<string>(arr));
         }
         const readRaw = sessionStorage.getItem('locallyReadMessageIds');
         if (readRaw) {
@@ -86,11 +88,12 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
     } catch {}
   }, []);
 
-  const counterpartFromMessage = useCallback(
+  const conversationFromMessage = useCallback(
     (m: Message) => {
       const myId = user?.id;
       const senderVal = (typeof m.sender === 'object' && m.sender) ? (m.sender as UserLite).id : (typeof m.sender === 'number' ? m.sender : undefined);
       const receiverVal = (typeof m.receiver === 'object' && m.receiver) ? (m.receiver as UserLite).id : (typeof m.receiver === 'number' ? m.receiver : undefined);
+      const listingId = m.listingDocumentId;
 
       let otherIdNum: number = NaN;
       let username = '';
@@ -116,42 +119,81 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
         }
       }
 
-      return { id: otherIdNum, username };
+      const conversationId = listingId ? `${otherIdNum}-${listingId}` : `${otherIdNum}`;
+
+      return { 
+        conversationId, 
+        counterpartId: otherIdNum, 
+        username, 
+        listingDocumentId: listingId 
+      };
     },
     [user?.id]
   );
 
   const conversationItems = useMemo(() => {
-    // Deduplicate by counterpart id, take the latest message for preview
-    const map = new Map<number, Message>();
+    // Deduplicate by conversation ID (user-listing combination), take the latest message for preview
+    const map = new Map<string, Message>();
     for (const m of list) {
-      const { id } = counterpartFromMessage(m);
-      if (!Number.isFinite(id)) continue;
-      const existing = map.get(id);
+      const { conversationId, counterpartId } = conversationFromMessage(m);
+      if (!conversationId || !Number.isFinite(counterpartId)) continue;
+      const existing = map.get(conversationId);
       const mTime = new Date(m.createdAt || 0).getTime();
       if (!existing) {
-        map.set(id, m);
+        map.set(conversationId, m);
       } else {
         const eTime = new Date(existing.createdAt || 0).getTime();
-        if (mTime > eTime) map.set(id, m);
+        if (mTime > eTime) map.set(conversationId, m);
       }
     }
     // Sort conversations by latest message time desc to avoid jumping/reordering flicker
     return Array.from(map.entries())
       .sort(([, a], [, b]) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
-      .map(([id, m]) => ({
-        id,
-        message: m,
-        counterpart: counterpartFromMessage(m),
-      }))
+      .map(([conversationId, m]) => {
+        const { counterpartId, username, listingDocumentId } = conversationFromMessage(m);
+        return {
+          conversationId,
+          message: m,
+          counterpart: { id: counterpartId, username },
+          listingDocumentId,
+        };
+      })
       .filter((c) => {
-        if (!(Number.isFinite(c.id) && c.id > 0)) return false;
+        if (!(Number.isFinite(c.counterpart.id) && c.counterpart.id > 0)) return false;
         const name = (c.counterpart.username || '').trim().toLowerCase();
         if (!name) return false;
         if (name === 'user null' || name === 'user undefined' || name === 'user nan') return false;
         return true;
       });
-  }, [list, counterpartFromMessage]);
+  }, [list, conversationFromMessage]);
+
+  // Helper function to create temporary message for thread
+  const createTempMessage = useCallback((counterpartId: number, counterpartName: string): Message => {
+    return {
+      id: 0,
+      documentId: 'temp',
+      sender: { id: counterpartId, username: counterpartName || 'User', email: '' } as UserLite,
+      receiver: user?.id ? { id: user.id, username: user.username || 'You', email: user.email || '' } as UserLite : undefined,
+      body: '',
+      readAt: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      attachments: []
+    } as Message;
+  }, [user?.id, user?.username, user?.email]);
+
+  // Helper function to set up temporary thread if conversation doesn't exist
+  const setupTempThreadIfNeeded = useCallback((counterpartId: number, counterpartName: string) => {
+    if (!conversationItems.some(c => c.counterpart.id === counterpartId)) {
+      const tempMessage = createTempMessage(counterpartId, counterpartName);
+      setThread([tempMessage]);
+    }
+  }, [conversationItems, createTempMessage]);
+
+  // Helper function to find conversation by user ID
+  const findConversationByUserId = useCallback((userId: number) => {
+    return conversationItems.find((c) => c.counterpart.id === userId);
+  }, [conversationItems]);
 
   const loadList = useCallback(async (opts?: { silent?: boolean }) => {
     const silent = opts?.silent ?? true;
@@ -161,6 +203,22 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
       if (!user?.id) throw new Error("Errors.Auth.noToken");
       const res = await fetchAllForUser(user.id, 1, 200);
       setList(res.data);
+      
+      // Fetch listing information for all messages
+      const listingIds = [...new Set(
+        res.data
+          .map(m => m.listingDocumentId)
+          .filter((id): id is string => id !== undefined && id !== null && id !== '')
+      )];
+      if (listingIds.length > 0) {
+        const listingsData = await fetchMinimalListingsByDocumentIds(listingIds);
+        const listingsMap = listingsData.reduce((acc, listing) => {
+          acc[listing.documentId] = listing;
+          return acc;
+        }, {} as Record<string, MinimalListingInfo>);
+        setListingsInfo(listingsMap);
+      }
+      
       // also fetch unread map for receiver (current user)
       try {
         const unreadRes = await fetchUnreadForReceiver(user.id, 1, 200);
@@ -169,13 +227,15 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
           if (locallyReadIdsRef.current.has(mid)) return acc; // skip locally marked read
           const senderId = (m.sender as UserLite | undefined)?.id ?? (m.sender as unknown as number);
           const sid = Number(senderId);
-          if (Number.isFinite(sid)) acc[sid] = (acc[sid] || 0) + 1;
+          const listingId = m.listingDocumentId;
+          const conversationId = listingId ? `${sid}-${listingId}` : `${sid}`;
+          if (Number.isFinite(sid)) acc[conversationId] = (acc[conversationId] || 0) + 1;
           return acc;
-        }, {} as Record<number, number>);
+        }, {} as Record<string, number>);
         // apply local clears
-        if (clearedUserIdsRef.current.size > 0) {
+        if (clearedConversationIdsRef.current.size > 0) {
           map = { ...map };
-          clearedUserIdsRef.current.forEach((id) => { map[id] = 0; });
+          clearedConversationIdsRef.current.forEach((id) => { map[id] = 0; });
         }
         setUnreadByUser(map);
       } catch {
@@ -197,112 +257,256 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
     }
   }, [user?.id]);
 
-  const loadThread = useCallback(
-    async (uid: number, opts?: { silent?: boolean }) => {
-      // Intentionally use a ref to avoid including `thread.length` in deps and recreating the callback on every fetch.
-      // This prevents the polling effect from resetting and causing render/update loops.
-      const silent = opts?.silent ?? (threadLengthRef.current > 0);
-      if (!silent) setThreadLoading(true);
-      setThreadError(null);
-      try {
-        if (!user?.id) throw new Error("Errors.Auth.noToken");
-        const res = await fetchThread(user.id, uid, 1, 200);
-        setThread(res.data);
-        // Mark received messages as read
-        const myId = user?.id;
-        if (myId) {
-          const unread = res.data.filter(
-            (m) => (m.receiver?.id ?? m.receiver) === myId && !m.readAt
-          );
-          // Mark all unread on server (use numeric id)
-          if (!suppressMarkReadRef.current && unread.length > 0) {
-            const ids = unread.map((m) => String(m.documentId)).filter(Boolean);
-            try {
-              await Promise.allSettled(ids.map((id) => markMessageRead(id)));
-            } catch (err) {
-              if (err && String(err).includes("Not Found")) {
-                suppressMarkReadRef.current = true;
-              }
-            }
-            // Persist locally read ids immediately (handles tab switches before backend reflects state)
-            setLocallyReadIds((prev) => {
-              const next = new Set(prev);
-              ids.forEach((id) => next.add(id));
-              try {
-                if (typeof window !== 'undefined') {
-                  sessionStorage.setItem('locallyReadMessageIds', JSON.stringify(Array.from(next)));
-                }
-              } catch {}
-              return next;
-            });
-          }
-          // After marking on server, refresh unread map from server to keep badges in sync
-          try {
-            const unreadRes = await fetchUnreadForReceiver(myId, 1, 200);
-            let map = unreadRes.data.reduce((acc, m) => {
-              const mid = (typeof m.documentId === 'string' ? m.documentId : String(m.id));
-              if (locallyReadIdsRef.current.has(mid)) return acc; // skip locally marked read
-              const senderId = (m.sender as UserLite | undefined)?.id ?? (m.sender as unknown as number);
-              const sid = Number(senderId);
-              if (Number.isFinite(sid)) acc[sid] = (acc[sid] || 0) + 1;
-              return acc;
-            }, {} as Record<number, number>);
-            // apply local clears
-            if (clearedUserIdsRef.current.size > 0) {
-              map = { ...map };
-              clearedUserIdsRef.current.forEach((id) => { map[id] = 0; });
-            }
-            setUnreadByUser(map);
-          } catch {
-            // ignore refresh errors
-          }
-          // Immediately clear unread badge for this counterpart
-          setUnreadByUser((prev) => ({ ...prev, [uid]: 0 }));
-        }
-      } catch (e: unknown) {
-        let msg: string;
-        if (typeof e === "string") {
-          msg = e;
-        } else if (e && typeof e === "object" && "message" in e) {
-          msg = String((e).message);
-        } else {
-          msg = "Failed to load thread";
-        }
-        setThreadError(msg);
-      } finally {
-        if (!silent) setThreadLoading(false);
-      }
-    },
-    [user?.id]
-  );
-
   // Load list on mount and when user changes
   useEffect(() => {
     loadList();
   }, [loadList]);
 
-  // Also compute unread map once on mount when user changes independently
+  // WebSocket connection setup
   useEffect(() => {
-    (async () => {
+    if (!user?.id) return;
+
+    const connectWebSocket = async () => {
       try {
-        if (!user?.id) return;
-        const unreadRes = await fetchUnreadForReceiver(user.id, 1, 200);
-        const map = unreadRes.data.reduce((acc, m) => {
-          const senderId = (m.sender as UserLite)?.id ?? (m.sender as unknown as number);
-          const sid = Number(senderId);
-          if (Number.isFinite(sid)) acc[sid] = (acc[sid] || 0) + 1;
-          return acc;
-        }, {} as Record<number, number>);
-        setUnreadByUser(map);
-        if (onUnreadChange) {
-          const total = Object.values(map).reduce((a, b) => a + b, 0);
-          onUnreadChange(total);
-        }
+        await websocketService.connect(user.id);
+        setWebsocketConnected(true);
       } catch {
-        // ignore
+        // console.error('Failed to connect to WebSocket:', error);
+        setWebsocketConnected(false);
       }
-    })();
-  }, [user?.id, onUnreadChange]);
+    };
+
+    connectWebSocket();
+
+    // Set up WebSocket event listeners
+    const handleNewMessage = (message: Message) => {      
+      // Mark as processed to avoid double counting in notification handler
+      const mId = typeof message.id === 'string' ? message.id : String(message.id);
+      const dId = message.documentId || '';
+      if (mId) processedMessageIdsRef.current.add(mId);
+      if (dId) processedMessageIdsRef.current.add(dId);
+
+      // Update conversation list with new message
+      setList(prev => {
+        const existingIndex = prev.findIndex(m => 
+          m.documentId === message.documentId || m.id === message.id
+        );
+        if (existingIndex >= 0) {
+          const updated = [...prev];
+          updated[existingIndex] = message;
+          return updated;
+        }
+        return [message, ...prev];
+      });
+
+      // Update thread if it's the current conversation
+      const isCurrentConversation = 
+        (message.sender?.id === selectedUserId && message.receiver?.id === user.id) ||
+        (message.sender?.id === user.id && message.receiver?.id === selectedUserId);
+      
+      if (isCurrentConversation && 
+          message.listingDocumentId === selectedListingDocumentId) {
+        setThread(prev => {
+          // Check if this message matches a pending optimistic message
+          if (message.sender?.id === user.id) {
+             const pendingIdx = pendingOptimisticMessagesRef.current.findIndex(p => 
+               (p.body || "") === (message.body || "") && Math.abs(p.timestamp - new Date(message.createdAt || 0).getTime()) < 10000
+             );
+             if (pendingIdx !== -1) {
+               const pending = pendingOptimisticMessagesRef.current[pendingIdx];
+               // Remove from pending
+               pendingOptimisticMessagesRef.current.splice(pendingIdx, 1);
+               
+               // Replace optimistic message in thread
+               const optId = String(pending.optimisticId);
+               const existingIdx = prev.findIndex(m => String(m.id) === optId);
+               if (existingIdx >= 0) {
+                 const next = [...prev];
+                 next[existingIdx] = message;
+                 return next;
+               }
+             }
+          }
+
+          // More robust duplicate check using both id and documentId
+          const existingByDocumentId = prev.some(m => m.documentId === message.documentId);
+          const existingById = prev.some(m => String(m.id) === String(message.id));
+          
+          if (existingByDocumentId || existingById) {
+            return prev;
+          }
+          
+          return [...prev, message];
+        });
+      } else {
+        // If message is for another conversation (or current but different listing), update unread count
+        // Only if I am the receiver
+        if (message.receiver?.id === user.id) {
+           const senderId = (message.sender as UserLite | undefined)?.id ?? (message.sender as unknown as number);
+           const sid = Number(senderId);
+           const listingId = message.listingDocumentId;
+           const conversationId = listingId ? `${sid}-${listingId}` : `${sid}`;
+           
+           setUnreadByUser(prev => ({
+             ...prev,
+             [conversationId]: (prev[conversationId] || 0) + 1
+           }));
+        }
+      }
+    };
+
+    const handleMessageNotification = (notification: {
+      messageId: string | number;
+      senderId: number;
+      senderUsername: string;
+      listingDocumentId?: string;
+      body: string;
+    }) => {
+      const notifIdStr = String(notification.messageId);
+      
+      // Check if already processed by handleNewMessage
+      if (processedMessageIdsRef.current.has(notifIdStr)) {
+        return;
+      }
+      processedMessageIdsRef.current.add(notifIdStr);
+      
+      // Update conversation list with new message notification
+      setList(prev => {
+        // Find if this message already exists in our list
+        const existing = prev.find(m => 
+          m.id === notification.messageId || m.documentId === notification.messageId
+        );
+        
+        if (existing) return prev;
+        
+        // Create a minimal message object for the notification
+        const notificationMessage: Message = {
+          id: typeof notification.messageId === 'string' ? parseInt(notification.messageId, 10) : notification.messageId,
+          documentId: typeof notification.messageId === 'string' ? notification.messageId : String(notification.messageId),
+          sender: { id: notification.senderId, username: notification.senderUsername, email: '' } as UserLite,
+          receiver: user?.id ? { id: user.id, username: user.username || 'You', email: user.email || '' } as UserLite : undefined,
+          body: notification.body,
+          readAt: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          attachments: [],
+          listingDocumentId: notification.listingDocumentId
+        } as Message;
+        
+        return [notificationMessage, ...prev];
+      });
+      
+      // Update unread count
+      const conversationId = notification.listingDocumentId 
+        ? `${notification.senderId}-${notification.listingDocumentId}`
+        : `${notification.senderId}`;
+      
+      setUnreadByUser(prev => ({
+        ...prev,
+        [conversationId]: (prev[conversationId] || 0) + 1
+      }));
+    };
+
+    const handleTyping = (data: { userId: number; username: string; conversationId: string }) => {
+      // Only show typing for current conversation
+      const currentConversationId = selectedListingDocumentId 
+        ? `${Math.min(user.id, selectedUserId || 0)}-${Math.max(user.id, selectedUserId || 0)}-${selectedListingDocumentId}`
+        : `${Math.min(user.id, selectedUserId || 0)}-${Math.max(user.id, selectedUserId || 0)}`;
+      
+      if (data.conversationId === currentConversationId) {
+        setTypingUser({ username: data.username, isTyping: true });
+        
+        // Clear existing timeout
+        if (typingTimeoutRef.current) {
+          clearTimeout(typingTimeoutRef.current);
+        }
+        
+        // Set new timeout to hide typing indicator
+        typingTimeoutRef.current = setTimeout(() => {
+          setTypingUser({ username: "", isTyping: false });
+        }, 3000);
+      }
+    };
+
+    const handleStopTyping = (data: { userId: number; conversationId: string }) => {
+      const currentConversationId = selectedListingDocumentId 
+        ? `${Math.min(user.id, selectedUserId || 0)}-${Math.max(user.id, selectedUserId || 0)}-${selectedListingDocumentId}`
+        : `${Math.min(user.id, selectedUserId || 0)}-${Math.max(user.id, selectedUserId || 0)}`;
+      
+      if (data.conversationId === currentConversationId) {
+        setTypingUser({ username: "", isTyping: false });
+        if (typingTimeoutRef.current) {
+          clearTimeout(typingTimeoutRef.current);
+          typingTimeoutRef.current = null;
+        }
+      }
+    };
+
+    const handleMessageRead = (data: { messageId: string }) => {
+      // Mark message as read in thread
+      setThread(prev => prev.map(m => {
+        if (m.documentId === data.messageId || String(m.id) === data.messageId) {
+          return { ...m, readAt: new Date().toISOString() };
+        }
+        return m;
+      }));
+
+      // Update locally read IDs
+      setLocallyReadIds(prev => new Set([...prev, data.messageId]));
+      
+      // Decrement unread count
+      const message = thread.find(m => 
+        m.documentId === data.messageId || String(m.id) === data.messageId
+      );
+      if (message) {
+        const senderId = (message.sender as UserLite | undefined)?.id ?? (message.sender as unknown as number);
+        const sid = Number(senderId);
+        const listingId = message.listingDocumentId;
+        const conversationId = listingId ? `${sid}-${listingId}` : `${sid}`;
+        
+        setUnreadByUser(prev => ({
+          ...prev,
+          [conversationId]: Math.max(0, (prev[conversationId] || 0) - 1)
+        }));
+      }
+    };
+
+    const handleUnreadCountUpdated = (data: { count: number }) => {
+      if (onUnreadChange) {
+        onUnreadChange(data.count);
+      }
+    };
+
+    const handleConnect = () => {
+      setWebsocketConnected(true);
+    };
+
+    const handleDisconnect = () => {
+      setWebsocketConnected(false);
+    };
+
+    // Register event listeners
+    websocketService.on('new-message', handleNewMessage);
+    websocketService.on('new-message-notification', handleMessageNotification);
+    websocketService.on('message-read', handleMessageRead);
+    websocketService.on('unread-count-updated', handleUnreadCountUpdated);
+    websocketService.on('user-typing', handleTyping);
+    websocketService.on('user-stop-typing', handleStopTyping);
+    websocketService.on('connect', handleConnect);
+    websocketService.on('disconnect', handleDisconnect);
+
+    // Cleanup
+    return () => {
+      websocketService.off('new-message', handleNewMessage);
+      websocketService.off('new-message-notification', handleMessageNotification);
+      websocketService.off('message-read', handleMessageRead);
+      websocketService.off('unread-count-updated', handleUnreadCountUpdated);
+      websocketService.off('user-typing', handleTyping);
+      websocketService.off('user-stop-typing', handleStopTyping);
+      websocketService.off('connect', handleConnect);
+      websocketService.off('disconnect', handleDisconnect);
+    };
+  }, [user?.id, selectedUserId, selectedListingDocumentId, onUnreadChange, unreadByUser, listingsInfo, user?.email, user?.username, thread]);
 
   // Preselect conversation if initialUserId provided
   useEffect(() => {
@@ -311,24 +515,23 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
       if (initialUserName) {
         setSelectedCounterpartName(initialUserName);
       }
-      // Create a temporary thread entry if needed
-      if (!conversationItems.some(c => c.id === initialUserId)) {
-        const tempMessage: Message = {
-          id: 0,
-          documentId: 'temp',
-          sender: { id: initialUserId, username: initialUserName || 'User', email: '' } as UserLite,
-          receiver: user?.id ? { id: user.id, username: user.username || 'You', email: user.email || '' } as UserLite : undefined,
-          body: '',
-          readAt: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          attachments: []
-        } as Message;
-        setThread([tempMessage]);
-        try { threadLengthRef.current = 1; } catch {}
-      }
+      setupTempThreadIfNeeded(initialUserId, initialUserName || 'User');
     }
-  }, [initialUserId, initialUserName, conversationItems, user?.id, user?.username, user?.email]);
+  }, [initialUserId, initialUserName, setupTempThreadIfNeeded]);
+
+  // Set initial listing document ID if provided
+  useEffect(() => {
+    if (initialListingDocumentId) {
+      setSelectedListingDocumentId(initialListingDocumentId);
+    }
+  }, [initialListingDocumentId]);
+
+  // Ensure listing ID persists when conversation list loads
+  useEffect(() => {
+    if (initialListingDocumentId && !selectedListingDocumentId) {
+      setSelectedListingDocumentId(initialListingDocumentId);
+    }
+  }, [initialListingDocumentId, selectedListingDocumentId, conversationItems]);
 
   // If initialUserDocumentId is provided (from URL), resolve to numeric id and preselect
   useEffect(() => {
@@ -340,25 +543,11 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
         if (u?.id) {
           setSelectedUserId(u.id);
           setSelectedCounterpartName(initialUserName || u.username || "");
-          if (!conversationItems.some((c) => c.id === u.id)) {
-            const tempMessage: Message = {
-              id: 0,
-              documentId: 'temp',
-              sender: { id: u.id, username: u.username || 'User', email: u.email || '' } as UserLite,
-              receiver: user?.id ? { id: user.id, username: user.username || 'You', email: user.email || '' } as UserLite : undefined,
-              body: '',
-              readAt: null,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-              attachments: []
-            } as Message;
-            setThread([tempMessage]);
-            try { threadLengthRef.current = 1; } catch {}
-          }
+          setupTempThreadIfNeeded(u.id, initialUserName || u.username || 'User');
         }
       } catch {}
     })();
-  }, [initialUserDocumentId, initialUserId, selectedUserId, initialUserName, conversationItems, user?.id, user?.username, user?.email]);
+  }, [initialUserDocumentId, initialUserId, selectedUserId, initialUserName, setupTempThreadIfNeeded]);
 
   // When list or selection changes, derive counterpart name for header
   useEffect(() => {
@@ -366,35 +555,91 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
       setSelectedCounterpartName("");
       return;
     }
-    const found = conversationItems.find((c) => c.id === selectedUserId);
+    const found = findConversationByUserId(selectedUserId);
     if (found?.counterpart?.username) {
       setSelectedCounterpartName(found.counterpart.username);
     }
     // If not found, keep whatever name was already set (e.g., from URL-resolved user)
-  }, [selectedUserId, conversationItems]);
+  }, [selectedUserId, findConversationByUserId]);
 
   // If current selection disappears due to filtering (e.g., deleted user), clear selection
   useEffect(() => {
     if (!listReady) return;
+    // Do not clear if we have an initial listing ID from URL (new conversation scenario)
+    if (initialListingDocumentId && selectedUserId) return;
     // Do not clear if we already have any messages in the thread (including a temp placeholder)
-    if (selectedUserId && !conversationItems.some((c) => c.id === selectedUserId) && threadLengthRef.current === 0) {
+    if (selectedUserId && !conversationItems.some((c) => c.conversationId === `${selectedUserId}-${selectedListingDocumentId || ''}`) && thread.length === 0) {
       setSelectedUserId(null);
+      setSelectedListingDocumentId(null);
     }
-  }, [selectedUserId, conversationItems, listReady]);
+  }, [selectedUserId, selectedListingDocumentId, conversationItems, listReady, initialListingDocumentId, thread.length]);
 
-  // Load thread and set up polling when selected user changes
+  // Load thread messages when selection changes
+  const loadThread = useCallback(async () => {
+    if (!selectedUserId || !user?.id) {
+      setThread([]);
+      return;
+    }
+
+    setThreadLoading(true);
+    setThreadError(null);
+    
+    try {
+      const res = await fetchThread(user.id, selectedUserId, selectedListingDocumentId || undefined, 1, 50);
+      // Deduplicate fetched thread immediately
+      const uniqueData = (res.data || []).filter((m, index, self) =>
+        index === self.findIndex((t) => (t.documentId === m.documentId || t.id === m.id))
+      );
+      setThread(uniqueData);
+    } catch (error) {
+      let msg: string;
+      if (typeof error === "string") {
+        msg = error;
+      } else if (error && typeof error === "object" && "message" in error) {
+        msg = String(error.message);
+      } else {
+        msg = "Failed to load thread";
+      }
+      setThreadError(msg);
+    } finally {
+      setThreadLoading(false);
+    }
+  }, [selectedUserId, selectedListingDocumentId, user?.id]);
+
+  // Load thread when selection changes
   useEffect(() => {
     if (selectedUserId) {
-      loadThread(selectedUserId);
-      if (pollRef.current) clearInterval(pollRef.current);
-      pollRef.current = setInterval(() => loadThread(selectedUserId, { silent: true }), 15000);
-      return () => {
-        if (pollRef.current) clearInterval(pollRef.current);
-      };
-    } else {
-      if (pollRef.current) clearInterval(pollRef.current);
+      loadThread();
     }
   }, [selectedUserId, loadThread]);
+
+  // Join/leave WebSocket conversation rooms when selection changes
+  useEffect(() => {
+    if (selectedUserId && websocketConnected) {
+      websocketService.joinConversation(selectedUserId, selectedListingDocumentId || undefined);
+      return () => {
+        websocketService.leaveConversation(selectedUserId, selectedListingDocumentId || undefined);
+      };
+    }
+  }, [selectedUserId, selectedListingDocumentId, websocketConnected]);
+
+  // Cleanup WebSocket connection on unmount
+  useEffect(() => {
+    return () => {
+      if (websocketConnected) {
+        websocketService.disconnect();
+      }
+    };
+  }, [websocketConnected]);
+
+  // Cleanup typing timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Revoke any object URLs on unmount or when previews list changes (cleanup previous)
   useEffect(() => {
@@ -414,10 +659,120 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
     }
   }, [thread]);
 
-  // When a thread is loaded/selected, optimistically clear unread for that user
+  // Ensure thread has unique messages by both documentId and id
+  useEffect(() => {
+    const seen = new Set<string>();
+    const uniqueThread = thread.filter(message => {
+      const key = `${message.documentId}-${message.id}`;
+      if (seen.has(key)) {
+        return false; // Remove duplicate
+      }
+      seen.add(key);
+      return true;
+    });
+    
+    if (uniqueThread.length !== thread.length) {
+      setThread(uniqueThread);
+    }
+  }, [thread]);
+
+  // Memoize the thread items for rendering to strictly prevent duplicates
+  const renderedThreadItems = useMemo(() => {
+    const seen = new Set<string>();
+    return thread.filter(m => {
+      const key = `${m.documentId}-${m.id}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).map((m) => {
+      // Normalize sender id to avoid initial wrong side rendering when sender is a numeric id
+      const senderId = (typeof m.sender === "object" && m.sender)
+        ? (m.sender as UserLite).id
+        : (typeof m.sender === "number" ? m.sender : undefined);
+      const mine = senderId === user?.id;
+      const createdAt = m.createdAt;
+      const rawBody = (m.body ?? "") as string;
+      const lines = rawBody.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+      const urlRegex = /https?:\/\/[^\s]+/i;
+      // Prefer dedicated attachments field when present
+      type MaybeAttrAttachment = NonNullable<Message["attachments"]>[number] & {
+        attributes?: { url?: string; mime?: string; name?: string };
+      };
+      const att = (m.attachments ?? []) as MaybeAttrAttachment[];
+      const attachments = Array.isArray(att)
+        ? att.map((a) => ({
+            id: (a?.id as number) ?? 0,
+            url: a?.url ?? a?.attributes?.url ?? "",
+            mime: a?.mime ?? a?.attributes?.mime,
+            name: a?.name ?? a?.attributes?.name,
+          }))
+        : [];
+      const normalizedAtt = attachments
+        .map((a) => ({ ...a, url: a.url?.startsWith("http") ? a.url : (a.url ? `${API_URL}${a.url}` : a.url) }))
+        .filter((a) => !!a.url);
+
+      // Fallback to URLs inside body for legacy messages
+      const legacyUrls = normalizedAtt.length === 0
+        ? lines.filter((l) => urlRegex.test(l))
+        : [];
+      const caption = normalizedAtt.length === 0
+        ? lines.filter((l) => !urlRegex.test(l)).join("\n")
+        : lines.join("\n");
+      const legacyImageUrls = legacyUrls.filter((u) => /(\.png|\.jpe?g|\.gif|\.webp|\.bmp|\.svg)$/i.test(u));
+      const legacyFileUrls = legacyUrls.filter((u) => !legacyImageUrls.includes(u));
+
+      return (
+        <div key={`${m.documentId}-${m.id}-${m.createdAt}`} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+          <div className={`${normalizedAtt.length > 0 && !caption ? 'inline-block' : 'max-w-[90%] sm:max-w-[75%] md:max-w-[70%]'} rounded-lg px-3 py-2 text-sm break-words ${mine ? "bg-[#cc922f] text-white" : "bg-gray-100 text-gray-800"}`}>
+            {caption && <div className="whitespace-pre-wrap">{caption}</div>}
+            {normalizedAtt.length > 0 && (
+              <div className="mt-2 flex flex-col gap-2">
+                {normalizedAtt.map((a, idx) => (
+                  <a key={`${a.id}-${a.url}-${idx}`} href={a.url} target="_blank" rel="noreferrer noopener" className="inline-block">
+                    {a.mime?.startsWith("image/") ? (
+                      <Image src={a.url} alt={a.name || "attachment"} width={320} height={240} className="rounded-md object-cover h-auto" />
+                    ) : (
+                      <div className={`px-3 py-2 bg-white/80 rounded text-xs flex items-center gap-2 min-w-0 ${mine ? "text-gray-800" : "text-gray-800"}`}>
+                        <MdAttachFile size={16} className="flex-shrink-0" />
+                        <span className="underline truncate" title={a.name || a.url}>{a.name || a.url}</span>
+                      </div>
+                    )}
+                  </a>
+                ))}
+              </div>
+            )}
+            {normalizedAtt.length === 0 && legacyImageUrls.length > 0 && (
+              <div className="mt-2 flex flex-col gap-2">
+                {legacyImageUrls.map((u, idx) => (
+                  <a key={`${u}-${idx}`} href={u} target="_blank" rel="noreferrer noopener" className="inline-block">
+                    <Image src={u} alt="attachment" width={320} height={240} className="rounded-md object-cover h-auto" />
+                  </a>
+                ))}
+              </div>
+            )}
+            {normalizedAtt.length === 0 && legacyFileUrls.length > 0 && (
+              <div className="mt-2 space-y-1">
+                {legacyFileUrls.map((u, idx) => (
+                  <a key={`${u}-${idx}`} href={u} target="_blank" rel="noreferrer noopener" className={`${mine ? "text-orange-100" : "text-blue-600"} underline break-words`}>
+                    {u}
+                  </a>
+                ))}
+              </div>
+            )}
+            <div className={`mt-1 text-[10px] ${mine ? "text-orange-100" : "text-gray-500"}`}>
+              {createdAt ? new Date(createdAt).toLocaleString() : ""}
+            </div>
+          </div>
+        </div>
+      );
+    });
+  }, [thread, user?.id]);
+
+  // When a thread is loaded/selected, optimistically clear unread for that conversation
   useEffect(() => {
     if (!selectedUserId) return;
-    setUnreadByUser((prev) => ({ ...prev, [selectedUserId]: 0 }));
+    const conversationId = selectedListingDocumentId ? `${selectedUserId}-${selectedListingDocumentId}` : `${selectedUserId}`;
+    setUnreadByUser((prev) => ({ ...prev, [conversationId]: 0 }));
     // Optimistically mark currently loaded thread messages as read in client state
     if (user?.id) {
       let changed = false;
@@ -433,14 +788,14 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
         setThread(mapped);
       }
     }
-    // persist cleared id in sessionStorage
-    setClearedUserIds((prev) => {
-      if (prev.has(selectedUserId)) return prev;
+    // persist cleared conversation id in sessionStorage
+    setClearedConversationIds((prev) => {
+      if (prev.has(conversationId)) return prev;
       const next = new Set(prev);
-      next.add(selectedUserId);
+      next.add(conversationId);
       try {
         if (typeof window !== 'undefined') {
-          sessionStorage.setItem('clearedUnreadByUser', JSON.stringify(Array.from(next)));
+          sessionStorage.setItem('clearedUnreadByConversation', JSON.stringify(Array.from(next)));
         }
       } catch {}
       return next;
@@ -469,7 +824,7 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
       }
       return prev;
     });
-  }, [selectedUserId, thread, user?.id]);
+  }, [selectedUserId, selectedListingDocumentId, thread, user?.id]);
 
   // Emit total unread to parent AFTER state updates to avoid render-phase updates
   useEffect(() => {
@@ -482,12 +837,52 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
     } catch {}
   }, [unreadByUser, onUnreadChange]);
 
+  // Typing indicators
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleComposerChange = (text: string) => {
+    setComposerText(text);
+    
+    if (selectedUserId && websocketConnected && text.trim()) {
+      // Send typing indicator
+      websocketService.sendTyping(selectedUserId, selectedListingDocumentId || undefined);
+      
+      // Clear existing timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      
+      // Stop typing after 1 second of inactivity
+      typingTimeoutRef.current = setTimeout(() => {
+        if (selectedUserId && websocketConnected) {
+          websocketService.stopTyping(selectedUserId, selectedListingDocumentId || undefined);
+        }
+      }, 1000);
+    } else if (!text.trim() && typingTimeoutRef.current) {
+      // Stop typing immediately if text is cleared
+      clearTimeout(typingTimeoutRef.current);
+      if (selectedUserId && websocketConnected) {
+        websocketService.stopTyping(selectedUserId, selectedListingDocumentId || undefined);
+      }
+    }
+  };
+
   const onSend = async () => {
     if (!selectedUserId) return;
     const text = composerText.trim();
     if (!text && attachments.length === 0) return;
     // Ensure we have a logged-in user before proceeding (avoids non-null assertions later)
     if (!user?.id) throw new Error("Errors.Auth.noToken");
+    
+    // Stop typing indicator
+    if (websocketConnected) {
+      websocketService.stopTyping(selectedUserId, selectedListingDocumentId || undefined);
+    }
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
+    }
+    
     let optimisticId: number | null = null;
     try {
       setSending(true);
@@ -504,15 +899,24 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
       const composedBody = [text].filter(Boolean).join("\n");
       // optimistic append
       optimisticId = Date.now();
+      
+      // Track optimistic message
+      pendingOptimisticMessagesRef.current.push({
+        body: composedBody,
+        timestamp: optimisticId,
+        optimisticId: optimisticId
+      });
+
       const optimistic: Message = {
         id: optimisticId,
         body: composedBody,
         createdAt: new Date().toISOString(),
         sender: { id: user.id, username: user.username || String(user.id) },
         receiver: { id: selectedUserId, username: `User ${selectedUserId}`},
+        listingDocumentId: selectedListingDocumentId || undefined,
         attachments: (uploaded || []).map((u) => ({
           id: Number(u?.id),
-          url: (u?.url || "").startsWith("http") ? u?.url : `${API_URL}${u?.url}`,
+          url: (u?.url || "").startsWith("http") ? u?.url : `${API_URL}${(u?.url || "").startsWith('/') ? '' : '/'}${u?.url}`,
           mime: u?.mime,
           name: u?.name,
         })),
@@ -526,7 +930,14 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
       } catch {}
       setAttachments([]);
       setAttachmentPreviews([]);
-      const saved = await sendMessage(user.id, selectedUserId, composedBody, uploadedIds);
+      const saved = await sendMessage(user.id, selectedUserId, composedBody, selectedListingDocumentId || undefined, uploadedIds);
+      
+      // Remove from pending if still there (meaning WS didn't pick it up yet)
+      const pIdx = pendingOptimisticMessagesRef.current.findIndex(p => p.optimisticId === optimisticId);
+      if (pIdx !== -1) {
+        pendingOptimisticMessagesRef.current.splice(pIdx, 1);
+      }
+
       // reconcile: replace optimistic by saved using string id comparison; append if optimistic missing
       setThread((prev) => {
         const optId = String(optimisticId);
@@ -536,14 +947,23 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
           next[idx] = saved;
           return next;
         }
+        // If optimistic message not found (e.g. replaced by WS), check if we already have the saved message
+        // (WS might have added it)
+        const alreadyHas = prev.some(m => m.documentId === saved.documentId || String(m.id) === String(saved.id));
+        if (alreadyHas) return prev;
+
         return [...prev, saved];
       });
-      // refresh list to update preview ordering and sync thread silently
+      // refresh list to update preview ordering (WebSocket handles thread updates)
       loadList({ silent: true });
-      loadThread(selectedUserId, { silent: true });
     } catch {
       // rollback optimistic
       if (optimisticId !== null) {
+        // Remove from pending
+        const pIdx = pendingOptimisticMessagesRef.current.findIndex(p => p.optimisticId === optimisticId);
+        if (pIdx !== -1) {
+          pendingOptimisticMessagesRef.current.splice(pIdx, 1);
+        }
         setThread((prev) => prev.filter((m) => m.id !== optimisticId));
       }
     } finally {
@@ -552,18 +972,11 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
     }
   };
 
-  const onRefresh = async () => {
-    const now = Date.now();
-    if (now - refreshingRef.current < 2000) return; // debounce 2s
-    refreshingRef.current = now;
-    setRefreshing(true);
-    try {
-      await loadList({ silent: true });
-      if (selectedUserId) await loadThread(selectedUserId, { silent: true });
-    } finally {
-      setRefreshing(false);
-    }
-  };
+  // Clear conversation unread count when explicitly requested
+  const clearConversationUnread = useCallback((conversationId: string) => {
+    setUnreadByUser((prev) => ({ ...prev, [conversationId]: 0 }));
+    setClearedConversationIds((prev) => new Set([...prev, conversationId]));
+  }, []);
 
   const resolvingByDocId = !!initialUserDocumentId && !selectedUserId;
 
@@ -571,16 +984,22 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
     <div className="p-3 md:p-6 lg:p-8 h-full flex flex-col">
       <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 truncate">{t("title")}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800 truncate">{t("title")}</h1>
+            <div className={`flex items-center gap-1 text-xs ${websocketConnected ? 'text-green-600' : 'text-red-500'}`}>
+              <div className={`w-2 h-2 rounded-full ${websocketConnected ? 'bg-green-600' : 'bg-red-500'}`}></div>
+              <span>{websocketConnected ? t('connected', { default: 'Connected' }) : t('disconnected', { default: 'Disconnected' })}</span>
+            </div>
+          </div>
           <p className="text-sm sm:text-base text-gray-600 mt-1 truncate">{t("subtitle")}</p>
         </div>
         <Button
-          onClick={onRefresh}
-          disabled={refreshing}
+          onClick={() => loadList({ silent: false })}
+          disabled={listLoading}
           style="secondary"
           extraStyles="!whitespace-nowrap flex-shrink-0"
         >
-          {refreshing ? t("loading") : t("refresh")}
+          {listLoading ? t("loading") : t("refresh")}
         </Button>
       </div>
 
@@ -588,31 +1007,58 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
         {/* Left: conversations list - hidden on mobile when thread selected */}
         <div className={`${(selectedUserId || resolvingByDocId) ? "hidden md:flex" : "flex"} md:col-span-1 rounded-md shadow overflow-hidden flex-col p-1 max-h-[80vh]`}>
           <div className="flex-1 overflow-auto">
-            {!listLoading && listError && (
+            {listError && (
               <div className="p-4 text-sm text-red-600">{listError}</div>
             )}
-            {!listLoading && !listError && conversationItems.length === 0 && (
+            {!listError && conversationItems.length === 0 && (
               <div className="p-6 text-sm text-gray-500">{t("noMessages")}</div>
             )}
-
-            {!listLoading && !listError && conversationItems.length > 0 && (
+            {conversationItems.length > 0 && (
               <ul>
-              {conversationItems.map(({ id, counterpart }) => {
-                const isActive = selectedUserId === id;
-                const unread = (id !== user?.id) ? (unreadByUser[id] || 0) : 0;
+              {conversationItems.map(({ conversationId, counterpart, listingDocumentId }) => {
+                const isActive = selectedUserId === counterpart.id && selectedListingDocumentId === listingDocumentId;
+                const unread = unreadByUser[conversationId] || 0;
+                const listingInfo = listingDocumentId ? listingsInfo[listingDocumentId] : null;
                 return (
                   <li
-                    key={id}
+                    key={conversationId}
                     className={`p-2 rounded-md cursor-pointer transition-colors ${isActive ? "bg-gray-50 text-gray-800" : "bg-white hover:bg-gray-50"}`}
-                    onClick={() => setSelectedUserId(id)}
+                    onClick={() => {
+                      setSelectedUserId(counterpart.id);
+                      setSelectedListingDocumentId(listingDocumentId || null);
+                      clearConversationUnread(conversationId);
+                    }}
                   >
-                    <div className="flex items-center justify-between gap-2 min-w-0">
-                      <span className="font-medium truncate">{ counterpart.username ? counterpart.username : "Deleted User"}</span>
-                      {unread > 0 && (
-                        <span className="inline-flex items-center justify-center min-w-5 h-5 px-1 text-xs rounded-full bg-red-600 text-white flex-shrink-0">
-                          {unread}
-                        </span>
-                      )}
+                    <div className="flex items-start gap-2 min-w-0">
+                      {/* Listing image as avatar */}
+                      <div className="flex-shrink-0 w-10 h-10 rounded-md overflow-hidden bg-gray-100">
+                        {listingInfo?.mainImage ? (
+                          <Image 
+                            src={listingInfo.mainImage.startsWith('http') ? listingInfo.mainImage : `${API_URL}${listingInfo.mainImage}`}
+                            alt={listingInfo.title || "Listing"}
+                            width={40}
+                            height={40}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                            {t('noImage', { default: 'No img' })}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-medium truncate">{ counterpart.username ? counterpart.username : t('deletedUser', { default: 'Deleted User' })}</span>
+                          {unread > 0 && (
+                            <span className="inline-flex items-center justify-center min-w-5 h-5 px-1 text-xs rounded-full bg-red-600 text-white flex-shrink-0">
+                              {unread}
+                            </span>
+                          )}
+                        </div>
+                        {listingInfo && (
+                          <p className="text-xs text-gray-500 truncate mt-1">{listingInfo.title}</p>
+                        )}
+                      </div>
                     </div>
                   </li>
                 );
@@ -629,107 +1075,98 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
             </div>
           ) : (
             <>
+              {/* User Conversation Header */}
               <div className="px-3 sm:px-4 py-3 bg-gray-50 font-medium text-sm sm:text-base flex items-center justify-between gap-2">
-                <span className="truncate">{t("conversationWith", { default: "Conversation with" })} {selectedCounterpartName || ""}</span>
+                <div className="min-w-0 flex-1">
+                  <span className="truncate">{t("conversationWith", { default: "Conversation with" })} {selectedCounterpartName || ""}</span>
+                </div>
                 <button
-                  onClick={() => setSelectedUserId(null)}
+                  onClick={() => {
+                    setSelectedUserId(null);
+                    setSelectedListingDocumentId(null);
+                  }}
                   className="md:hidden flex-shrink-0 text-gray-500 hover:text-gray-700 text-lg"
                   aria-label="close"
                 >
                   ×
                 </button>
               </div>
+
+              {/* Listing Details Header - only shown when listing is selected */}
+              {selectedListingDocumentId && listingsInfo[selectedListingDocumentId] && (
+                <div className="px-3 sm:px-4 py-2.5 bg-white flex items-center justify-between gap-2" style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.08)' }}>
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="relative w-12 h-12 rounded-md overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200">
+                      {listingsInfo[selectedListingDocumentId].mainImage ? (
+                        <Image 
+                          src={listingsInfo[selectedListingDocumentId].mainImage!.startsWith('http') ? listingsInfo[selectedListingDocumentId].mainImage! : `${API_URL}${listingsInfo[selectedListingDocumentId].mainImage}`}
+                          alt={listingsInfo[selectedListingDocumentId].title}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                          {t('noImage', { default: 'No img' })}
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-gray-900 truncate text-sm sm:text-base">{listingsInfo[selectedListingDocumentId].title}</h3>
+                      <div className="flex items-center gap-2 text-xs sm:text-sm mt-0.5">
+                        {listingsInfo[selectedListingDocumentId].price !== undefined && (
+                          <span className="font-medium text-primary">
+                            ${listingsInfo[selectedListingDocumentId].price?.toLocaleString()}
+                          </span>
+                        )}
+                        {listingsInfo[selectedListingDocumentId].averageRating !== undefined && (
+                          <div className="flex items-center gap-1 text-gray-500">
+                            <span>★ {listingsInfo[selectedListingDocumentId].averageRating}</span>
+                            <span>({listingsInfo[selectedListingDocumentId].ratingsCount})</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <a 
+                    href={`/${locale}/listing/${listingsInfo[selectedListingDocumentId].slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hidden sm:flex items-center gap-1 px-3 py-1.5 bg-black text-white text-xs sm:text-sm font-medium rounded-md hover:bg-gray-800 transition-colors flex-shrink-0"
+                  >
+                    {t('view', { default: 'View' })} <IoNavigateOutline />
+                  </a>
+                </div>
+              )}
               <div ref={messagesContainerRef} className="flex-1 overflow-auto p-3 sm:p-4 space-y-3">
-                {threadLoading && <div className="text-sm text-gray-500"></div>}
+                {threadLoading && (
+                  <div className="text-sm text-gray-500 text-center py-4">{t("loading", { default: "Loading messages..." })}</div>
+                )}
                 {threadError && (
-                  <div className="text-sm text-red-600">{threadError}</div>
+                  <div className="text-sm text-red-600 text-center py-4">{threadError}</div>
                 )}
                 {!threadLoading && !threadError && thread.length === 0 && (
                   <div className="text-sm text-gray-500">{t("noMessagesInThread", { default: "No messages yet in this thread" })}</div>
                 )}
 
-                {thread.map((m) => {
-                  // Normalize sender id to avoid initial wrong side rendering when sender is a numeric id
-                  const senderId = (typeof m.sender === "object" && m.sender)
-                    ? (m.sender as UserLite).id
-                    : (typeof m.sender === "number" ? m.sender : undefined);
-                  const mine = senderId === user?.id;
-                  const createdAt = m.createdAt;
-                  const rawBody = (m.body ?? "") as string;
-                  const lines = rawBody.split(/\n+/).map((s) => s.trim()).filter(Boolean);
-                  const urlRegex = /https?:\/\/[^\s]+/i;
-                  // Prefer dedicated attachments field when present
-                  type MaybeAttrAttachment = NonNullable<Message["attachments"]>[number] & {
-                    attributes?: { url?: string; mime?: string; name?: string };
-                  };
-                  const att = (m.attachments ?? []) as MaybeAttrAttachment[];
-                  const attachments = Array.isArray(att)
-                    ? att.map((a) => ({
-                        id: (a?.id as number) ?? 0,
-                        url: a?.url ?? a?.attributes?.url ?? "",
-                        mime: a?.mime ?? a?.attributes?.mime,
-                        name: a?.name ?? a?.attributes?.name,
-                      }))
-                    : [];
-                  const normalizedAtt = attachments
-                    .map((a) => ({ ...a, url: a.url?.startsWith("http") ? a.url : (a.url ? `${API_URL}${a.url}` : a.url) }))
-                    .filter((a) => !!a.url);
-
-                  // Fallback to URLs inside body for legacy messages
-                  const legacyUrls = normalizedAtt.length === 0
-                    ? lines.filter((l) => urlRegex.test(l))
-                    : [];
-                  const caption = normalizedAtt.length === 0
-                    ? lines.filter((l) => !urlRegex.test(l)).join("\n")
-                    : lines.join("\n");
-                  const legacyImageUrls = legacyUrls.filter((u) => /(\.png|\.jpe?g|\.gif|\.webp|\.bmp|\.svg)$/i.test(u));
-                  const legacyFileUrls = legacyUrls.filter((u) => !legacyImageUrls.includes(u));
-                  return (
-                    <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-                      <div className={`max-w-[90%] sm:max-w-[75%] md:max-w-[70%] rounded-lg px-3 py-2 text-sm break-words ${mine ? "bg-[#cc922f] text-white" : "bg-gray-100 text-gray-800"}`}>
-                        {caption && <div className="whitespace-pre-wrap">{caption}</div>}
-                        {normalizedAtt.length > 0 && (
-                          <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {normalizedAtt.map((a) => (
-                              <a key={`${a.id}-${a.url}`} href={a.url} target="_blank" rel="noreferrer noopener">
-                                {a.mime?.startsWith("image/") ? (
-                                  <Image src={a.url} alt={a.name || "attachment"} width={320} height={240} className="rounded-md object-cover max-w-full h-auto" />
-                                ) : (
-                                  <div className={`px-3 py-2 bg-white/80 rounded text-xs flex items-center gap-2 min-w-0 ${mine ? "text-gray-800" : "text-gray-800"}`}>
-                                    <MdAttachFile size={16} className="flex-shrink-0" />
-                                    <span className="underline truncate" title={a.name || a.url}>{a.name || a.url}</span>
-                                  </div>
-                                )}
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                        {normalizedAtt.length === 0 && legacyImageUrls.length > 0 && (
-                          <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {legacyImageUrls.map((u) => (
-                              <a key={u} href={u} target="_blank" rel="noreferrer noopener">
-                                <Image src={u} alt="attachment" width={320} height={240} className="rounded-md object-cover max-w-full h-auto" />
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                        {normalizedAtt.length === 0 && legacyFileUrls.length > 0 && (
-                          <div className="mt-2 space-y-1">
-                            {legacyFileUrls.map((u) => (
-                              <a key={u} href={u} target="_blank" rel="noreferrer noopener" className={`${mine ? "text-orange-100" : "text-blue-600"} underline break-words`}>
-                                {u}
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                        <div className={`mt-1 text-[10px] ${mine ? "text-orange-100" : "text-gray-500"}`}>
-                          {createdAt ? new Date(createdAt).toLocaleString() : ""}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                {renderedThreadItems}
               </div>
+
+              {/* Typing Indicator */}
+              {typingUser.isTyping && (
+                <div className="px-3 sm:px-4 py-2">
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                    <span>
+                      {t('isTyping', { username: typingUser.username, default: `${typingUser.username} is typing...` })}
+                    </span>
+                  </div>
+                </div>
+              )}
 
               <div className="border-t p-2 sm:p-3 flex flex-col gap-2 sm:gap-3">
                 {attachmentPreviews.length > 0 && (
@@ -744,7 +1181,7 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
                           ) : (
                             <a href={src} target="_blank" rel="noreferrer noopener" className="h-16 px-2 sm:px-3 py-2 bg-gray-100 rounded flex items-center gap-1 sm:gap-2 text-xs text-gray-800 min-w-0">
                               <MdAttachFile size={16} className="flex-shrink-0" />
-                              <span className="truncate" title={f?.name || "file"}>{f?.name || "file"}</span>
+                              <span className="truncate" title={f?.name || t('file', { default: 'file' })}>{f?.name || t('file', { default: 'file' })}</span>
                             </a>
                           )}
                           <button
@@ -772,7 +1209,7 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, onUnr
                     className="flex-1 border rounded-lg px-2 sm:px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-orange-300"
                     placeholder={t("typeMessage", { default: "Type a message..." })}
                     value={composerText}
-                    onChange={(e) => setComposerText(e.target.value)}
+                    onChange={(e) => handleComposerChange(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();

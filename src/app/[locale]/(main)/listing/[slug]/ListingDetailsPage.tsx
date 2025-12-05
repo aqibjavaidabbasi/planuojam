@@ -139,6 +139,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
                 title={initialListing.title}
                 username={initialListing.user?.username}
                 vendorUserId={initialListing?.user?.documentId}
+                listingDocumentId={initialListing.documentId}
                 contact={initialListing.contact}
                 websiteLink={initialListing.websiteLink}
                 price={initialListing.price}
