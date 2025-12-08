@@ -7,6 +7,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import MapInfoWindow from "./MapInfoWindow";
 import { useLocale, useTranslations } from "next-intl";
 import { strapiImage } from "@/types/mediaTypes";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 const LATITUDE = 55.1694;
 const LONGITUDE = 23.8813;
@@ -28,6 +29,8 @@ export interface Location {
   address: string;
   image: strapiImage;
   path: string; // precomputed navigation path matching ListingCard
+  price?: number;
+  averageRating?: number;
 }
 
 type MapProps = {
@@ -48,6 +51,8 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
   const t = useTranslations('Map.infoWindow');
   const locale = useLocale();
   const [mapError, setMapError] = useState(false);
+  const { siteSettings } = useSiteSettings();
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
 
   useEffect(() => {
     if (!mapContainer.current) {
@@ -65,7 +70,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
       while (containerEl.firstChild) {
         containerEl.removeChild(containerEl.firstChild);
       }
-    } catch {}
+    } catch { }
 
     const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_API_KEY;
     if (!mapboxToken) {
@@ -101,7 +106,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
       if (canvasContainer) {
         canvasContainer.style.touchAction = 'none';
       }
-    } catch {}
+    } catch { }
 
     // Add navigation controls
     map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
@@ -125,7 +130,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
         while (containerEl.firstChild) {
           containerEl.removeChild(containerEl.firstChild);
         }
-      } catch {}
+      } catch { }
     };
   }, []);
 
@@ -179,7 +184,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
             }
             if (!root) {
               root = ReactDOM.createRoot(popupContainer);
-              const href = `${location.path || ''}`;
+              const href = `${baseUrl}/${locale}${location.path || ''}`;
               root.render(
                 <MapInfoWindow
                   selectedLocation={location}
@@ -190,6 +195,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
                     view: t('view'),
                   }}
                   href={href}
+                  currencySymbol={siteSettings?.currency?.symbol || '$'}
                 />
               );
             }
@@ -200,7 +206,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
               const toUnmount = root;
               root = null;
               setTimeout(() => {
-                try { toUnmount.unmount(); } catch {}
+                try { toUnmount.unmount(); } catch { }
               }, 0);
             }
           });
@@ -221,7 +227,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
     } else {
       map.current.once('load', addMarkers);
     }
-  }, [locations, t, locale]);
+  }, [locations, t, locale, siteSettings.currency, baseUrl]);
 
   // Move map when selected place changes
   useEffect(() => {
@@ -231,7 +237,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
         zoom: 15,
       });
     }
-    if(map.current && locations.length === 1){
+    if (map.current && locations.length === 1) {
       map.current.flyTo({
         center: [locations[0].position.lng, locations[0].position.lat],
         zoom: 15,

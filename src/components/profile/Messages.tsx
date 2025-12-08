@@ -1118,7 +1118,7 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
                             ${listingsInfo[selectedListingDocumentId].price?.toLocaleString()}
                           </span>
                         )}
-                        {listingsInfo[selectedListingDocumentId].averageRating !== undefined && (
+                        {listingsInfo[selectedListingDocumentId].averageRating !== undefined && listingsInfo[selectedListingDocumentId].averageRating > 0 && (
                           <div className="flex items-center gap-1 text-gray-500">
                             <span>★ {listingsInfo[selectedListingDocumentId].averageRating}</span>
                             <span>({listingsInfo[selectedListingDocumentId].ratingsCount})</span>

@@ -48,6 +48,7 @@
       "usernamePlaceholder": "Enter your username",
       "usernameRequired": "Please enter a username",
       "checkAvailability": "Check availability",
+      "checkingAvailability": "Checking...",
       "usernameAvailable": "Username is available",
       "usernameTaken": "Username is taken",
       "emailLabel": "Email",
@@ -72,7 +73,6 @@
       "passwordMismatch": "Passwords do not match",
       "tosRequired": "Please read and agree to our Terms of Service and Privacy Policy",
       "tosNotAccepted": "Please accept the Terms of Service and Privacy Policy",
-      "availabilityHint": "Hint: Check username availability. The Register button enables only when a username is available.",
       "registerCta": "Register",
       "alreadyHaveAccount": "Already have an account?",
       "signInHere": "Sign in here",
@@ -256,7 +256,8 @@
         "sunday": "Sunday"
       },
       "noLocation": "Location not available",
-      "messageVendor": "Message vendor"
+      "messageVendor": "Message vendor",
+      "previewBanner": "This is a preview of your listing. It will not be visible to other users until it is published."
     },
     "Hero": {
       "by": "by ",
@@ -1065,6 +1066,14 @@
       "addCityOrState": "Please add a city or state to get coordinates",
       "addCoordinatesManually": "Something went wrong! Please add coordinates manually",
       "unableToGetCoordinates": "We are unable to get your location coordinates. Please add manually"
+    }
+  },
+  "UrlInput": {
+    "willBeSavedAs": "Will be saved as",
+    "errors": {
+      "maliciousUrl": "This URL appears to be unsafe. Please enter a valid web address",
+      "invalidProtocol": "Only http:// and https:// links are allowed",
+      "invalidFormat": "Please enter a valid website address (e.g., example.com or https://example.com)"
     }
   },
   "Search": {

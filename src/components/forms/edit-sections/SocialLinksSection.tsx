@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { useForm, type FieldError } from "react-hook-form"
 import Input from "../../custom/Input"
+import UrlInput from "../../custom/UrlInput"
 import Select from "../../custom/Select"
 import Button from "../../custom/Button"
 import { FaRegTrashAlt } from "react-icons/fa"
@@ -163,16 +164,12 @@ export default function SocialLinksSection({
                 <ErrorMessage error={errors.socialLink?.[idx]?.platform} />
               </div>
               <div>
-                <Input
-                  type="text"
+                <UrlInput
                   label={t("link")}
                   disabled={isWorking}
+                  showNormalizedUrl={true}
                   {...register(`socialLink.${idx}.link`, {
                     required: t("errors.validUrlRequired"),
-                    pattern: {
-                      value: /^(https?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})(\/[^\s]*)?$/,
-                      message: t("errors.validUrlRequired"),
-                    },
                   })}
                 />
                 <ErrorMessage error={errors.socialLink?.[idx]?.link} />

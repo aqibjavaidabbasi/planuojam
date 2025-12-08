@@ -273,17 +273,25 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                   >
                     <IoMdSettings size={16} />
                   </a>
-                </div>
-              ) : (
                 <a
                   href={viewPath}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center capitalize justify-center gap-1.5 font-medium rounded-md bg-black text-white hover:bg-primary py-1 px-3 text-sm cursor-pointer"
                 >
+                  <IoNavigateOutline />
+                </a>
+                </div>
+              ) : (
+                <a
+                href={viewPath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center capitalize justify-center gap-1.5 font-medium rounded-md bg-black text-white hover:bg-primary py-1 px-3 text-sm cursor-pointer"
+                >
                   {t('view')} <IoNavigateOutline />
                 </a>
-              )}
+                )}
             </div>
           </div>
         </div>

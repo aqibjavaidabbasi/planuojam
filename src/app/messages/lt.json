@@ -20,8 +20,8 @@
       "passwordRequired": "Slaptažodis yra privalomas",
       "forgotPassword": "Pamiršote slaptažodį?",
       "signIn": "Prisijungti",
-      "missingToken":"Patikrinkite interneto ryšį ir bandykite dar kartą",
-      "loginNoResponse":"Prisijungimas nepavyko — serveris neatsakė",
+      "missingToken": "Patikrinkite interneto ryšį ir bandykite dar kartą",
+      "loginNoResponse": "Prisijungimas nepavyko — serveris neatsakė",
       "goToConfirm": "Eiti į el. pašto patvirtinimą",
       "dismiss": "Uždaryti",
       "passwordTooShort": "Slaptažodis turi būti bent 8 simbolių"
@@ -48,6 +48,7 @@
       "usernamePlaceholder": "Įveskite vartotojo vardą",
       "usernameRequired": "Įveskite vartotojo vardą",
       "checkAvailability": "Patikrinti prieinamumą",
+      "checkingAvailability": "Tikrinama...",
       "usernameAvailable": "Vartotojo vardas laisvas",
       "usernameTaken": "Vartotojo vardas užimtas",
       "emailLabel": "El. paštas",
@@ -72,11 +73,10 @@
       "passwordMismatch": "Slaptažodžiai nesutampa",
       "tosRequired": "Perskaitykite ir sutikite su Paslaugų teikimo sąlygomis ir Privatumo politika",
       "registerCta": "Registruotis",
-      "availabilityHint": "Patarimas: patikrinkite vartotojo vardo prieinamumą. Registracijos mygtukas įsijungs tik tada, kai vartotojo vardas bus prieinamas.",
       "alreadyHaveAccount": "Jau turite paskyrą?",
       "signInHere": "Prisijunkite čia",
       "tosNotAccepted": "Prašome sutikti su Paslaugų teikimo sąlygomis ir Privatumo politika",
-      "registerNoResponse":"Registracija nepavyko — serveris neatsakė",
+      "registerNoResponse": "Registracija nepavyko — serveris neatsakė",
       "passwordTooShort": "Slaptažodis turi būti bent 8 simbolių"
     },
     "Social": {
@@ -123,7 +123,7 @@
       "tokenRequired": "Reikalingas patvirtinimo kodas",
       "confirmCta": "Patvirtinti el. paštą",
       "resendCta": "Persiųsti patvirtinimo el. laišką",
-      "emailConfirmFailed":"Nepavyko patvirtinti el. pašto. Bandykite dar kartą."
+      "emailConfirmFailed": "Nepavyko patvirtinti el. pašto. Bandykite dar kartą."
     }
   },
   "Contact": {
@@ -222,7 +222,8 @@
         "sunday": "Sekmadienis"
       },
       "noLocation": "Vieta nepasiekiama",
-      "messageVendor": "Rašyti tiekėjui"
+      "messageVendor": "Rašyti tiekėjui",
+      "previewBanner": "Tai jūsų skelbimo peržiūra. Jis nebus matomas kitiems vartotojams, kol nebus paskelbtas."
     },
     "Hero": {
       "by": "autorius ",
@@ -368,6 +369,9 @@
       }
     },
     "ListingItem": {
+      "subscriptionHint": "Jūsų skelbimas buvo išsaugotas kaip juodraštis, prenumeruokite, kad jį paskelbti",
+      "later": "Vėliau",
+      "pay": "Mokėti",
       "days": {
         "monday": "Pirmadienis",
         "tuesday": "Antradienis",
@@ -1448,8 +1452,7 @@
         "completed": "Užbaigta"
       }
     }
-  }
-  ,
+  },
   "hotDealSection": {
     "labels": {
       "title": "Karštas pasiūlymas",
@@ -1487,5 +1490,13 @@
   },
   "Pagination": {
     "loadMore": "Įkelti daugiau"
+  },
+  "UrlInput": {
+    "willBeSavedAs": "Bus išsaugota kaip",
+    "errors": {
+      "maliciousUrl": "Šis URL atrodo nesaugus. Prašome įvesti galiojantį interneto adresą",
+      "invalidProtocol": "Leidžiamos tik http:// ir https:// nuorodos",
+      "invalidFormat": "Prašome įvesti galiojantį svetainės adresą (pvz., example.com arba https://example.com)"
+    }
   }
 }

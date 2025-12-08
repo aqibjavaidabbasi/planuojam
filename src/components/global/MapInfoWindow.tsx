@@ -13,22 +13,21 @@ type Props = {
     view: string;
   };
   href: string;
+  currencySymbol: string;
 };
 
-const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href }) => {
-
-  console.log("selected location",selectedLocation)
-
+const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href, currencySymbol }) => {
+console.log(href)
   return (
-    <div className="text-sm font-sans bg-white/95">
-      {/* Image container */}
-      <div className="m-4 h-40 rounded-xl overflow-hidden relative bg-gradient-to-tr from-teal-100 to-rose-100 flex items-center justify-center">
+    <div className="text-sm font-sans bg-white rounded-lg overflow-hidden" style={{ width: '320px' }}>
+      {/* Image container with overlays */}
+      <div className="relative h-48 bg-gradient-to-tr from-teal-100 to-rose-100 flex items-center justify-center">
         {Boolean((selectedLocation)?.image?.url) ? (
           <Image
             src={getCompleteImageUrl(selectedLocation?.image?.url)}
             alt={selectedLocation.name}
             fill
-            sizes="(max-width: 768px) 100vw, 280px"
+            sizes="320px"
             className="object-cover"
           />
         ) : (
@@ -36,51 +35,46 @@ const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href }) => {
             {selectedLocation?.category?.type === 'venue' ? '🏛️' : selectedLocation?.category?.type === 'vendor' ? '🏪' : '📍'}
           </div>
         )}
+
+        {/* Price Badge - Top Right */}
+        {selectedLocation.price !== undefined && selectedLocation.price !== null && (
+          <div className="absolute top-3 right-3 bg-primary text-white px-3 py-1.5 rounded-md">
+            <div className="text-sm font-bold">{currencySymbol}{selectedLocation.price}</div>
+          </div>
+        )}
+
+        {/* Rating Badge - Bottom Left */}
+        <div className="absolute bottom-3 left-3 bg-white px-2.5 py-1 rounded-md flex items-center gap-1.5">
+          {selectedLocation.averageRating !== undefined && selectedLocation.averageRating !== null && selectedLocation.averageRating > 0 ? (
+            <>
+              <span className="text-yellow-500 text-lg leading-none">⭐</span>
+              <span className="font-semibold text-gray-800">{selectedLocation.averageRating.toFixed(1)}</span>
+            </>
+          ) : (
+            <span className="text-xs text-gray-600 font-medium">Unrated</span>
+          )}
+        </div>
       </div>
 
       {/* Content */}
-      <div className="px-6 pb-5 grid grid-cols-2 md:grid-cols-1 gap-2">
-        {/* Header: title and category badge (replaces price in v3) */}
-          <h2 className="text-base col-span-2 font-semibold text-gray-800 leading-snug pr-2 truncate">
-            {selectedLocation.title}
-          </h2>
-          <h2 className="text-base col-span-2 font-light text-gray-800 leading-snug pr-2 truncate">
-            {selectedLocation.name}
-          </h2>
-        <div className="flex items-start justify-between mb-2">
-          {selectedLocation?.category?.name && (
-            <span className="shrink-0 rounded-full border border-gray-200 bg-white text-gray-700 text-[11px] px-2 py-1 leading-none">
-              {selectedLocation.category.name}
-            </span>
-          )}
+      <div className="p-4">
+        {/* Title */}
+        <h2 className="text-base font-bold text-gray-900 leading-tight mb-1 line-clamp-2">
+          {selectedLocation.title || selectedLocation.name}
+        </h2>
+
+        {/* Address */}
+        <div className="text-sm text-gray-700 mb-4 flex items-start gap-2">
+          <span className="text-base leading-none mt-0.5">📍</span>
+          <span className="line-clamp-2">{selectedLocation.address}</span>
         </div>
 
-        {/* Location */}
-        <div className="text-gray-600 text-[13px] mb-3 flex items-center gap-1.5 ">
-          <span className="leading-none">📍</span>
-          <span className="truncate" title={selectedLocation.address}>{selectedLocation.address}</span>
-        </div>
-
-        {/* Features grid (2x2 like v3, adapted to our data) */}
-        <div className="grid grid-cols-2 gap-2 text-[12px] text-gray-700 mb-3 col-span-2">
-          <div className="bg-gray-50 rounded-md px-2 py-1.5">
-            <div className="font-medium text-gray-800">{labels.user}</div>
-            <div className="truncate">{selectedLocation.username}</div>
-          </div>
-          <div className="bg-gray-50 rounded-md px-2 py-1.5">
-            <div className="font-medium text-gray-800">{labels.category}</div>
-            <div className="truncate">{selectedLocation?.category?.type || '-'}</div>
-          </div>
-        </div>
-
-        {/* Description */}
-        {selectedLocation.description && (
-          <p className="text-[13px] text-gray-700 mb-3 line-clamp-2 col-span-2">
-            {selectedLocation.description}
-          </p>
-        )}
-
-        <a href={href} className="col-span-2 text-[#cc922f] w-full text-center hover:underline" target='_blank'>
+        {/* View Button */}
+        <a 
+          href={href} 
+          className="block w-full text-center bg-primary hover:bg-primary/90 text-white font-medium py-2.5 px-4 rounded-md transition-colors" 
+          target='_blank'
+        >
           {labels.view}
         </a>
       </div>

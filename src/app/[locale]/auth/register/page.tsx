@@ -7,7 +7,7 @@ import { useParentCategories } from "@/context/ParentCategoriesContext";
 import { useAppDispatch } from "@/store/hooks";
 import { registerUser } from "@/store/thunks/authThunks";
 import { Link, useRouter } from "@/i18n/navigation";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import toast from "react-hot-toast";
 import { BsCart3 } from "react-icons/bs";
@@ -65,6 +65,7 @@ function RegisterPage() {
   const params = useSearchParams();
   const redirectParam = params.get("redirect");
   const rp = normalizeRedirect(redirectParam);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const currentUsername = watch("username");
   const passwordValue = watch("password") || "";
@@ -80,34 +81,73 @@ function RegisterPage() {
     return usernameStatus === "available" && isChecked && isPasswordStrong && !isSubmitting;
   }, [usernameStatus, isChecked, isPasswordStrong, isSubmitting]);
 
-  function onUsernameChangeReset() {
-    if (usernameStatus !== "unchecked") {
+  // Automatic username availability check with debouncing
+  useEffect(() => {
+    const uname = (currentUsername || "").trim();
+    
+    // Cancel any pending request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    
+    // Reset status if username is empty
+    if (!uname) {
       setUsernameStatus("unchecked");
       setUsernameSuggestions([]);
-    }
-  }
-
-  async function handleCheckUsername() {
-    const uname = (currentUsername || "").trim();
-    if (!uname) {
-      toast.error(t("usernameRequired"));
       return;
     }
-    setUsernameStatus("checking");
-    try {
-      const res = await checkUsernameAvailability(uname);
-      if (res.available) {
-        setUsernameStatus("available");
-        setUsernameSuggestions([]);
-      } else {
-        setUsernameStatus("taken");
-        setUsernameSuggestions(res.suggestions || []);
+    
+    // Reset to unchecked immediately when username changes
+    setUsernameStatus("unchecked");
+    setUsernameSuggestions([]);
+    
+    // Debounce the API call
+    const timeoutId = setTimeout(async () => {
+      setUsernameStatus("checking");
+      
+      // Create new abort controller for this request
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+      
+      try {
+        const res = await checkUsernameAvailability(uname, controller.signal);
+        
+        // Only update state if this request wasn't aborted
+        if (!controller.signal.aborted) {
+          if (res.available) {
+            setUsernameStatus("available");
+            setUsernameSuggestions([]);
+          } else {
+            setUsernameStatus("taken");
+            setUsernameSuggestions(res.suggestions || []);
+          }
+        }
+      } catch {
+        // Only show error if request wasn't aborted
+        if (!controller.signal.aborted) {
+          setUsernameStatus("unchecked");
+          // Don't show error toast for automatic checks to avoid annoying the user
+        }
       }
-    } catch {
-      setUsernameStatus("unchecked");
-      toast.error(t("registerFailed"));
-    }
-  }
+    }, 600); // 600ms debounce delay
+    
+    // Cleanup function
+    return () => {
+      clearTimeout(timeoutId);
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [currentUsername, t]);
+  
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!isChecked) {
@@ -293,28 +333,32 @@ function RegisterPage() {
                 placeholder={t("usernamePlaceholder")}
                 label={t("usernameLabel")}
                 disabled={isSubmitting}
-                {...register("username", { required: true, onChange: onUsernameChangeReset })}
+                {...register("username", { required: true })}
               />
-              <div className="flex items-center justify-between mx-2">
-                <button
-                  type="button"
-                  onClick={handleCheckUsername}
-                  className="text-xs text-primary hover:underline disabled:opacity-50 cursor-pointer"
-                  disabled={isSubmitting || !currentUsername}
-                >
-                  {usernameStatus === "checking" ? t("registering") : t("checkAvailability", { default: "Check availability" })}
-                </button>
-                {usernameStatus === "available" && (
-                  <span className="flex items-center text-green-600 text-xs">
-                    <AiOutlineCheckCircle className="mr-1" /> {t("usernameAvailable", { default: "Username is available" })}
-                  </span>
-                )}
-                {usernameStatus === "taken" && (
-                  <span className="flex items-center text-red-600 text-xs">
-                    <AiOutlineCloseCircle className="mr-1" /> {t("usernameTaken", { default: "Username is taken" })}
-                  </span>
-                )}
-              </div>
+              {/* Automatic availability status */}
+              {currentUsername && currentUsername.trim() && (
+                <div className="flex items-center justify-end mx-2 -mt-1">
+                  {usernameStatus === "checking" && (
+                    <span className="flex items-center text-gray-500 text-xs">
+                      <svg className="animate-spin h-3 w-3 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      {t("checkingAvailability", { default: "Checking..." })}
+                    </span>
+                  )}
+                  {usernameStatus === "available" && (
+                    <span className="flex items-center text-green-600 text-xs">
+                      <AiOutlineCheckCircle className="mr-1" /> {t("usernameAvailable", { default: "Username is available" })}
+                    </span>
+                  )}
+                  {usernameStatus === "taken" && (
+                    <span className="flex items-center text-red-600 text-xs">
+                      <AiOutlineCloseCircle className="mr-1" /> {t("usernameTaken", { default: "Username is taken" })}
+                    </span>
+                  )}
+                </div>
+              )}
               {errors.username && (
                 <p className="text-red-500">{t("usernameRequired")}</p>
               )}
@@ -429,7 +473,6 @@ function RegisterPage() {
               />
             </div>
 
-            <p className="text-xs text-gray-500 mt-4">{t("availabilityHint")}</p>
             <Button
               type="submit"
               form="registerForm"

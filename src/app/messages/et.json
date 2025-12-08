@@ -47,9 +47,10 @@
       "usernameLabel": "Kasutajanimi",
       "usernamePlaceholder": "Sisesta oma kasutajanimi",
       "usernameRequired": "Palun sisesta kasutajanimi",
-      "checkAvailability": "Check availability",
-      "usernameAvailable": "Username is available",
-      "usernameTaken": "Username is taken",
+      "checkAvailability": "Kontrolli saadavust",
+      "checkingAvailability": "Kontrollimine...",
+      "usernameAvailable": "Kasutajanimi on saadaval",
+      "usernameTaken": "Kasutajanimi on võetud",
       "emailLabel": "E-post",
       "emailPlaceholder": "Sisesta oma e-post",
       "emailRequired": "E-post on kohustuslik",
@@ -72,7 +73,6 @@
       "passwordMismatch": "Paroolid ei ühti",
       "tosRequired": "Palun loe ja nõustu kasutustingimuste ning privaatsuspoliitikaga",
       "tosNotAccepted": "Palun nõustu kasutustingimuste ja privaatsuspoliitikaga",
-      "availabilityHint": "Vihje: kontrolli kasutajanime saadavust. Registreeru nupp on aktiivne ainult siis, kui kasutajanimi on saadaval.",
       "registerCta": "Registreeru",
       "alreadyHaveAccount": "Kas konto on juba olemas?",
       "signInHere": "Logi sisse siin",
@@ -244,7 +244,8 @@
         "friday": "Reede",
         "saturday": "Laupäev",
         "sunday": "Pühapäev"
-      }
+      },
+      "previewBanner": "See on teie kuulutuse eelvaade. See ei ole teistele kasutajatele nähtav enne, kui see on avaldatud."
     },
     "Hero": {
       "by": "autor",
@@ -620,6 +621,9 @@
       }
     },
     "ListingItem": {
+      "subscriptionHint": "Teie kuulutus on salvestatud mustandina, tellige, et see avaldada",
+      "later": "Hiljem",
+      "pay": "Maksa",
       "days": {
         "monday": "Esmaspäev",
         "tuesday": "Teisipäev",
@@ -1495,5 +1499,13 @@
   },
   "Pagination": {
     "loadMore": "Laadi rohkem"
+  },
+  "UrlInput": {
+    "willBeSavedAs": "Salvestatakse kui",
+    "errors": {
+      "maliciousUrl": "See URL näib olevat ebaturvaline. Palun sisestage kehtiv veebiaadress",
+      "invalidProtocol": "Lubatud on ainult http:// ja https:// lingid",
+      "invalidFormat": "Palun sisestage kehtiv veebilehe aadress (nt example.com või https://example.com)"
+    }
   }
 }

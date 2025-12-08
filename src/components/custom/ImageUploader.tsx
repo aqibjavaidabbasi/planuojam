@@ -160,53 +160,34 @@ const ImageUploader = ({
         try {
             toast.loading(t('cropping'));
             const imageSrc = 'isPreview' in croppingImage ? croppingImage.url : getCompleteImageUrl(croppingImage.url);
+            
             const croppedImageUrl = await getCroppedImg(
                 imageSrc,
                 { x: crop.x, y: crop.y, width: 300, height: 225 } // 4:3 aspect
             );
-
+            
             if (croppedImageUrl) {
                 if ('isPreview' in croppingImage && typeof croppingImage.index === 'number') {
-                    if (setMainImageId) {
-                        // Upload cropped image and set as main
-                        const response = await fetch(croppedImageUrl);
-                        const blob = await response.blob();
-                        const file = new File([blob], `cropped-${croppingImage.name}`, { type: 'image/jpeg' });
-
-                        // Upload
-                        const uploadedFiles = await uploadToStrapi([file]);
-                        if (uploadedFiles.length > 0) {
-                            setMainImageId(uploadedFiles[0].id);
-                            setLocalMainImageId(uploadedFiles[0].id);
-                        }
-
-                        // Remove from previews and files
-                        const oldUrl = previews[croppingImage.index];
-                        URL.revokeObjectURL(oldUrl);
-                        const newPreviews = previews.filter((_, i) => i !== croppingImage.index);
-                        const newFiles = files.filter((_, i) => i !== croppingImage.index);
-
-                        setPreviews(newPreviews);
-                        setFiles(newFiles);
-                        toast.success('Main image cropped and set');
-                    } else {
-                        // Replace preview
-                        const oldUrl = previews[croppingImage.index];
-                        URL.revokeObjectURL(oldUrl);
-                        const newPreviews = [...previews];
-                        newPreviews[croppingImage.index] = croppedImageUrl;
-
-                        // Replace file
-                        const response = await fetch(croppedImageUrl);
-                        const blob = await response.blob();
-                        const file = new File([blob], `cropped-${croppingImage.name}`, { type: 'image/jpeg' });
-                        const newFiles = [...files];
-                        newFiles[croppingImage.index] = file;
-
-                        setPreviews(newPreviews);
-                        setFiles(newFiles);
-                        toast.success('Preview cropped');
-                    }
+                    
+                    // Convert cropped image to file and replace both preview and file
+                    const response = await fetch(croppedImageUrl);
+                    const blob = await response.blob();
+                    const file = new File([blob], `cropped-${croppingImage.name}`, { type: 'image/jpeg' });                    
+                    // Create new blob URL for the cropped file
+                    const newCroppedUrl = URL.createObjectURL(file);
+                    
+                    // Revoke old URL and replace preview
+                    const oldUrl = previews[croppingImage.index];
+                    URL.revokeObjectURL(oldUrl);
+                    const newPreviews = [...previews];
+                    newPreviews[croppingImage.index] = newCroppedUrl;
+                    // Replace file
+                    const newFiles = [...files];
+                    newFiles[croppingImage.index] = file;
+                    setPreviews(newPreviews);
+                    setFiles(newFiles);
+                    
+                    toast.success('Image cropped. Click "Upload Images" to save.');
                 } else {
                     // Upload cropped image and set as main
                     const response = await fetch(croppedImageUrl);
@@ -248,56 +229,62 @@ const ImageUploader = ({
 
             {uploaded.length > 0 && (
                 <div className="grid grid-cols-3 gap-4 mt-2">
-                    {uploaded.map((file) => {
-                        const isMain = file.id === localMainImageId;
-                        return (
-                            <div key={file.id} className="relative">
-                                <Image
-                                    src={getCompleteImageUrl(file.url)}
-                                    alt={file.name || `uploaded-${file.id}`}
-                                    width={200}
-                                    height={150}
-                                    className="w-full aspect-[4/3] object-cover rounded-lg"
-                                />
-                                <Button onClick={() => removeUploaded(file.id)} disabled={uploading || disabled} style="secondary" extraStyles="absolute top-1 right-1 !rounded-full !p-2" >
-                                    <FaXmark />
-                                </Button>
-                                {setMainImageId && (
-                                    <Button
-                                        style="primary"
-                                        extraStyles="absolute bottom-1 left-1 !rounded-full !p-2"
-                                        onClick={() => {
-                                            setLocalMainImageId(file.id);
-                                        }}
-                                        aria-label={isMain ? t('deselectMain') : t('selectMain')}
-                                    >
-                                        {isMain ? <FaStar /> : <FaRegStar />}
+                    {(() => {
+                        return uploaded.map((file) => {
+                            const isMain = file.id === localMainImageId;
+                            return (
+                                <div key={file.id} className="relative">
+                                    <Image
+                                        src={getCompleteImageUrl(file.url)}
+                                        alt={file.name || `uploaded-${file.id}`}
+                                        width={200}
+                                        height={150}
+                                        className="w-full aspect-[4/3] object-cover rounded-lg"
+                                    />
+                                    <Button onClick={() => removeUploaded(file.id)} disabled={uploading || disabled} style="secondary" extraStyles="absolute top-1 right-1 !rounded-full !p-2" >
+                                        <FaXmark />
                                     </Button>
-                                )}
-                            </div>
-                        );
-                    })}
+                                    {setMainImageId && (
+                                        <Button
+                                            style="primary"
+                                            extraStyles="absolute bottom-1 left-1 !rounded-full !p-2"
+                                            onClick={() => {
+                                                setLocalMainImageId(file.id);
+                                            }}
+                                            aria-label={isMain ? t('deselectMain') : t('selectMain')}
+                                        >
+                                            {isMain ? <FaStar /> : <FaRegStar />}
+                                        </Button>
+                                    )}
+                                </div>
+                            );
+                        });
+                    })()}
                 </div>
             )}
 
             <div className="grid grid-cols-3 gap-4 mt-4">
-                {previews.map((src, index) => (
-                    <div key={index} className="relative">
-                        <Image
-                            src={src}
-                            alt={`preview-${index}`}
-                            width={200}
-                            height={150}
-                            className="w-full aspect-[4/3] object-cover rounded-lg"
-                        />
-                        <Button onClick={() => removeFile(index)} disabled={uploading || disabled} style="secondary" extraStyles="absolute top-1 right-1 !rounded-full !p-2" >
-                            <FaXmark />
-                        </Button>
-                        <Button onClick={() => openCropModalForPreview(index)} disabled={uploading || disabled} style="primary" extraStyles="absolute bottom-1 left-1 !rounded-full !p-2" >
-                            <FaCropSimple />
-                        </Button>
-                    </div>
-                ))}
+                {(() => {
+                    return previews.map((src, index) => {
+                        return (
+                            <div key={index} className="relative">
+                                <Image
+                                    src={src}
+                                    alt={`preview-${index}`}
+                                    width={200}
+                                    height={150}
+                                    className="w-full aspect-[4/3] object-cover rounded-lg"
+                                />
+                                <Button onClick={() => removeFile(index)} disabled={uploading || disabled} style="secondary" extraStyles="absolute top-1 right-1 !rounded-full !p-2" >
+                                    <FaXmark />
+                                </Button>
+                                <Button onClick={() => openCropModalForPreview(index)} disabled={uploading || disabled} style="primary" extraStyles="absolute bottom-1 left-1 !rounded-full !p-2" >
+                                    <FaCropSimple />
+                                </Button>
+                            </div>
+                        );
+                    });
+                })()}
             </div>
 
             {files.length > 0 && (

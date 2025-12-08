@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import Input from "../../custom/Input"
+import UrlInput from "../../custom/UrlInput"
 import Select from "../../custom/Select"
 import Button from "../../custom/Button"
 import { FaRegTrashAlt } from "react-icons/fa"
@@ -70,9 +71,6 @@ export default function PricingSection({
         if (!p.name?.trim()) throw new Error(t("errors.planNameRequired"))
         if (p.price === undefined || p.price === null || isNaN(Number(p.price)) || Number(p.price) < 0) {
           throw new Error(t("errors.nonNegativePrice"))
-        }
-        if (p.cta?.buttonUrl && !/^https?:\/\//.test(p.cta.buttonUrl)) {
-          throw new Error(t("errors.validCtaUrl"))
         }
       }
       for (const a of values.optionalAddons || []) {
@@ -143,10 +141,10 @@ export default function PricingSection({
                     form.setValue("plans", list, { shouldDirty: true })
                   }}
                 />
-                <Input
-                  type="text"
+                <UrlInput
                   label={t("labels.ctaButtonUrl")}
                   disabled={isWorking}
+                  showNormalizedUrl={true}
                   value={p.cta?.buttonUrl || ""}
                   onChange={(e) => {
                     const list = [...(form.getValues("plans") || [])]

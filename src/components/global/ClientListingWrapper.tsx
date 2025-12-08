@@ -316,7 +316,7 @@ function deriveVenueLocations(items: ListingItem[], locale?: string): Location[]
       return {
         id: item.id,
         name: item.title || "Unnamed Venue",
-        // title: item.title || "Unnamed Venue",
+        title: item.title || undefined,
         username: item.user?.username || "Unknown",
         description: item.description || "",
         category: {
@@ -330,7 +330,9 @@ function deriveVenueLocations(items: ListingItem[], locale?: string): Location[]
         address: venueBlock.location.address || "No address provided",
         image: primaryImage,
         path: getListingItemUrl(item, locale),
+        price: item.price,
+        averageRating: item.averageRating,
       };
     })
-    .filter((loc): loc is Location => loc !== null);
+    .filter((loc) => loc !== null);
 }

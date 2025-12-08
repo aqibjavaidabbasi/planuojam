@@ -52,6 +52,8 @@ async function geocodeLocations(listings: ListingItem[], locale?: string): Promi
         category: baseData.category,
         image: primaryImage,
         path,
+        price: listing.price,
+        averageRating: listing.averageRating,
       });
     }
   }

@@ -48,6 +48,7 @@
       "usernamePlaceholder": "Wpisz swoją nazwę użytkownika",
       "usernameRequired": "Wpisz nazwę użytkownika",
       "checkAvailability": "Sprawdź dostępność",
+      "checkingAvailability": "Sprawdzanie...",
       "usernameAvailable": "Nazwa użytkownika jest dostępna",
       "usernameTaken": "Nazwa użytkownika jest zajęta",
       "emailLabel": "Email",
@@ -71,7 +72,6 @@
       "passwordTooWeak": "Hasło jest zbyt słabe (wymagane 8+ znaków, 1 wielka litera, 1 cyfra)",
       "passwordMismatch": "Hasła nie są takie same",
       "tosRequired": "Przeczytaj i zaakceptuj Regulamin oraz Politykę prywatności",
-      "availabilityHint": "Wskazówka: Sprawdź dostępność nazwy użytkownika. Przycisk Rejestracja będzie aktywny tylko wtedy, gdy nazwa użytkownika jest dostępna.",
       "registerCta": "Zarejestruj się",
       "alreadyHaveAccount": "Masz już konto?",
       "signInHere": "Zaloguj się tutaj",
@@ -243,7 +243,8 @@
         "sunday": "Niedziela"
       },
       "noLocation": "Lokalizacja niedostępna",
-      "messageVendor": "Napisz do dostawcy"
+      "messageVendor": "Napisz do dostawcy",
+      "previewBanner": "To jest podgląd Twojego ogłoszenia. Nie będzie widoczne dla innych użytkowników, dopóki nie zostanie opublikowane."
     },
     "Hero": {
       "by": "przez ",
@@ -620,6 +621,9 @@
       }
     },
     "ListingItem": {
+      "subscriptionHint": "Twoje ogłoszenie zostało zapisane jako szkic, wykup subskrypcję, aby je opublikować",
+      "later": "Później",
+      "pay": "Zapłać",
       "days": {
         "monday": "Poniedziałek",
         "tuesday": "Wtorek",
@@ -1497,5 +1501,13 @@
   },
   "Pagination": {
     "loadMore": "Załaduj więcej"
+  },
+  "UrlInput": {
+    "willBeSavedAs": "Zostanie zapisane jako",
+    "errors": {
+      "maliciousUrl": "Ten adres URL wydaje się niebezpieczny. Proszę wprowadzić prawidłowy adres internetowy",
+      "invalidProtocol": "Dozwolone są tylko linki http:// i https://",
+      "invalidFormat": "Proszę wprowadzić prawidłowy adres strony internetowej (np. example.com lub https://example.com)"
+    }
   }
 }

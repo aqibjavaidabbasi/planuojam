@@ -4,6 +4,7 @@ import type React from "react"
 import { useEffect, useMemo, useState } from "react"
 import Modal from "../custom/Modal"
 import Input from "../custom/Input"
+import UrlInput from "../custom/UrlInput"
 import TextArea from "../custom/TextArea"
 import Select from "../custom/Select"
 import Button from "../custom/Button"
@@ -525,20 +526,13 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               <ErrorMessage error={errors.description} />
             </div>
             <div className="col-span-2" >
-              <Input
-                type="text"
+              <UrlInput
                 label={t('fields.websiteLink.label')}
                 placeholder={t('fields.websiteLink.placeholder')}
                 disabled={isWorking}
-                required
-                {...register("websiteLink", {
-                  pattern: {
-                    value: /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})(\/[^\s]*)?$/
-                    , message: t('fields.websiteLink.errors.invalid')
-                  },
-                })}
+                showNormalizedUrl={true}
+                {...register("websiteLink")}
               />
-              <ErrorMessage error={errors.websiteLink} />
             </div>
             <div className="col-span-2" >
               <div className="flex items-center justify-between mb-2">

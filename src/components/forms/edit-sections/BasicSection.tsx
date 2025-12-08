@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import Input from "../../custom/Input"
+import UrlInput from "../../custom/UrlInput"
 import TextArea from "../../custom/TextArea"
 import Select from "../../custom/Select"
 import Button from "../../custom/Button"
@@ -211,18 +212,13 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
           {errors.description && <p className="text-red-500 text-sm mt-1">{String(errors.description.message)}</p>}
         </div>
         <div className="col-span-2" >
-          <Input
-            type="text"
+          <UrlInput
             label={t('websitelink')}
             disabled={submitting}
-            {...register("websiteLink", {
-              pattern: {
-                value: /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})(\/[^\s]*)?$/
-                , message: t('errors.invalidWebsiteLink')
-              },
-            })}
+            showNormalizedUrl={true}
+            {...register("websiteLink")}
           />
-          {errors.websiteLink && <p className="text-red-500 text-sm mt-1">{errors.websiteLink.message}</p>}            </div>
+        </div>
         {/* Working Schedule Editor */}
         <div className="col-span-2">
           <div className="flex items-center justify-between mb-2">
