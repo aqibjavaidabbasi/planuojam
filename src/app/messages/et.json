@@ -214,7 +214,7 @@
         "basic": "Põhiandmed",
         "vv": "Teenusepakkuja/Koha andmed",
         "deal": "Kuum pakkumine",
-        "images": "Pildid",
+        "images": "Pildid/Videod",
         "contact": "Kontakt",
         "social": "Sotsiaalmeedia lingid",
         "pricing": "Hinnad",
@@ -507,11 +507,11 @@
   },
   "Custom": {
     "ImageUploader": {
-      "selectImages": "Vali pildid",
-      "uploadImages": "Laadi üles {count} pilti",
+      "selectImages": "Vali pildid/videod",
+      "uploadImages": "Laadi üles {count} fail(i)",
       "toasts": {
-        "uploadSuccess": "Pildid laaditi üles edukalt",
-        "uploadFailed": "Piltide üleslaadimine ebaõnnestus"
+        "uploadSuccess": "Meedia üleslaadimine õnnestus",
+        "uploadFailed": "Meedia üleslaadimine ebaõnnestus"
       },
       "setAsMain": "Määra peamiseks",
       "cropTitle": "Kärbi peamist pilti",
@@ -1129,12 +1129,12 @@
     }
   },
   "ImageSection": {
-    "addportfolioimages": "Lisa portfoolio pildid",
+    "addportfolioimages": "Lisa portfoolio Pildid/Videod",
     "saving": "Salvestamine",
-    "saveImages": "Salvesta pildid",
-    "uploadHint": "Laadige üles pildid kuni {size}",
-    "instructionHint": "Valige pildid, seejärel laadige need üles ja seejärel klõpsake salvestamiseks, et salvestada kõik pildid. Klõpsake täheikoonil, et valida peamine pilt",
-    "readyToSave": "{count} pilti valmis salvestamiseks",
+    "saveImages": "Salvesta meedia",
+    "uploadHint": "Laadige üles failid kuni {size} (Pildid ja Videod)",
+    "instructionHint": "Valige meedia, seejärel laadige need üles ja seejärel klõpsake salvestamiseks, et salvestada kõik kirjed. Klõpsake täheikoonil, et valida peamine pilt",
+    "readyToSave": "{count} kirje(t) valmis salvestamiseks",
     "alt": {
       "portfolioImage": "Portfoolio pilt"
     },
@@ -1148,8 +1148,8 @@
       "mainImageError": "Palun vali peamine pilt"
     },
     "toasts": {
-      "saved": "Pildid salvestatud",
-      "saveFailed": "Piltide salvestamine ebaõnnestus",
+      "saved": "Meedia salvestatud",
+      "saveFailed": "Meedia salvestamine ebaõnnestus",
       "removed": "Pilt eemaldatud",
       "removeFailed": "Pildi eemaldamine ebaõnnestus"
     },

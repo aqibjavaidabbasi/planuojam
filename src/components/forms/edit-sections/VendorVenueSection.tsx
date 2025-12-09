@@ -85,6 +85,10 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
   const { fields: serviceAreas, append: appendSA, remove: removeSA } = useFieldArray({ control: vendorControl, name: "serviceArea" })
   const { fields: amenities, append: appendAmenity, remove: removeAmenity } = useFieldArray({ control: venueControl, name: "amneties" })
 
+  // Watch values for map reactivity
+  const watchedServiceAreas = vendorRHF.watch("serviceArea")
+  const watchedVenueLocation = venueRHF.watch("location")
+
   const onSubmitVendor = async (values: VendorForm) => {
     // minimal validation
     if (values.serviceArea?.some(sa => !sa.city || !sa.state)) {
@@ -111,10 +115,10 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
         },
       ]
       await updateListing(listing.documentId, { data: { listingItem } }, listing.locale)
-      toast.success(t("toasts.updated", { default: "Vendor/Venue details updated" }))
+      toast.success(t("toasts.updated"))
       onSaved?.()
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : t("toasts.updateFailed", { default: "Failed to update Vendor/Venue details" })
+      const message = e instanceof Error ? e.message : t("toasts.updateFailed")
       toast.error(message)
     } finally {
       setSubmitting(false)
@@ -195,10 +199,10 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
       }
 
       await updateListing(listing.documentId, { data: { listingItem: [next] } }, listing.locale)
-      toast.success(t("toasts.updated", { default: "Vendor/Venue details updated" }))
+      toast.success(t("toasts.updated"))
       onSaved?.()
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : t("toasts.updateFailed", { default: "Failed to update Vendor/Venue details" })
+      const message = e instanceof Error ? e.message : t("toasts.updateFailed")
       toast.error(message)
     } finally {
       setSubmitting(false)
@@ -293,7 +297,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
     
     if (isVendor) {
       // Add vendor service areas
-      const serviceAreasData = vendorRHF.watch("serviceArea") || []
+      const serviceAreasData = watchedServiceAreas || []
       serviceAreasData.forEach((sa: ServiceArea, index: number) => {
         if (sa.latitude && sa.longitude && !isNaN(Number(sa.latitude)) && !isNaN(Number(sa.longitude))) {
           const cityName = cities.find(c => c.documentId === sa.city)?.name || t("unknown")
@@ -314,7 +318,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
       })
     } else {
       // Add venue location
-      const venueLocation = venueRHF.watch("location")
+      const venueLocation = watchedVenueLocation
       if (venueLocation?.latitude && venueLocation?.longitude && 
           !isNaN(Number(venueLocation.latitude)) && !isNaN(Number(venueLocation.longitude))) {
         const cityName = cities.find(c => c.documentId === venueLocation.city)?.name || t("unknown")
@@ -336,7 +340,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
     }
     
     return locations
-  }, [isVendor, vendorRHF, venueRHF, cities, states, t, listing.portfolio])
+  }, [isVendor, watchedServiceAreas, watchedVenueLocation, cities, states, t, listing.portfolio])
 
   return (
     <div className="py-4">
@@ -378,12 +382,12 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                   min={-90}
                   max={90}
                   label={t("latitude")}
-                  disabled={submitting}
+                  disabled
                   {...vendorRegister(`serviceArea.${idx}.latitude` as const, {
                     validate: (v) => {
                       if (v == null || v === "") return true
                       const n = Number(v)
-                      return (Number.isFinite(n) && n >= -90 && n <= 90) || t("errors.invalidLatitude", { default: "Latitude must be between -90 and 90" })
+                      return (Number.isFinite(n) && n >= -90 && n <= 90) || t("errors.invalidLatitude")
                     },
                   })}
                 />
@@ -393,12 +397,12 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                   min={-180}
                   max={180}
                   label={t("longitude")}
-                  disabled={submitting}
+                  disabled
                   {...vendorRegister(`serviceArea.${idx}.longitude` as const, {
                     validate: (v) => {
                       if (v == null || v === "") return true
                       const n = Number(v)
-                      return (Number.isFinite(n) && n >= -180 && n <= 180) || t("errors.invalidLongitude", { default: "Longitude must be between -180 and 180" })
+                      return (Number.isFinite(n) && n >= -180 && n <= 180) || t("errors.invalidLongitude")
                     },
                   })}
                 />
@@ -450,12 +454,12 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
               min={-90}
               max={90}
               label={t("latitude")}
-              disabled={submitting}
+              disabled
               {...venueRegister("location.latitude", {
                 validate: (v) => {
                   if (v == null || v === "") return true
                   const n = Number(v)
-                  return (Number.isFinite(n) && n >= -90 && n <= 90) || t("errors.invalidLatitude", { default: "Latitude must be between -90 and 90" })
+                  return (Number.isFinite(n) && n >= -90 && n <= 90) || t("errors.invalidLatitude")
                 },
               })}
             />
@@ -465,12 +469,12 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
               min={-180}
               max={180}
               label={t("longitude")}
-              disabled={submitting}
+              disabled
               {...venueRegister("location.longitude", {
                 validate: (v) => {
                   if (v == null || v === "") return true
                   const n = Number(v)
-                  return (Number.isFinite(n) && n >= -180 && n <= 180) || t("errors.invalidLongitude", { default: "Longitude must be between -180 and 180" })
+                  return (Number.isFinite(n) && n >= -180 && n <= 180) || t("errors.invalidLongitude")
                 },
               })}
             />

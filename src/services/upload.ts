@@ -42,6 +42,8 @@ export type UploadedFile = {
   id: number;
   url: string;
   name: string;
+  mime?: string;
+  ext?: string;
 } & Record<string, unknown>;
 
 export type StrapiUploadResponse = UploadedFile[];

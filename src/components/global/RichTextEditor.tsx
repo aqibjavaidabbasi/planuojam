@@ -100,7 +100,7 @@ interface RichTextRendererProps {
 }
 
 const RichTextRenderer: React.FC<RichTextRendererProps> = ({ content }) => {
-  return <div className='mx-32 my-10'>{content?.map((node, index) => renderNode(node, index))}</div>;
+  return <div className='mx-10 md:mx-32 my-10'>{content?.map((node, index) => renderNode(node, index))}</div>;
 };
 
 export default RichTextRenderer;

@@ -105,7 +105,11 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
           const isMain = image.id === mainImageId;
           return (
             <div key={id} className="relative group">
-              <Image src={imagePath} alt={t("alt.portfolioImage")} width={150} height={112} className="aspect-[4/3] rounded object-cover" />
+              {image.mime?.startsWith('video/') ? (
+                <video src={imagePath} controls className="w-[150px] h-[112px] aspect-[4/3] rounded object-cover" />
+              ) : (
+                <Image src={imagePath} alt={t("alt.portfolioImage")} width={150} height={112} className="aspect-[4/3] rounded object-cover" />
+              )}
               <Button
                 style="destructive"
                 extraStyles="absolute top-1 right-1 opacity-90 group-hover:opacity-100 !p-2 !rounded-full"

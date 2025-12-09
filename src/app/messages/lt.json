@@ -960,11 +960,11 @@
   },
   "Custom": {
     "ImageUploader": {
-      "selectImages": "Pasirinkti nuotraukas",
-      "uploadImages": "Įkelti {count} nuotraukas",
+      "selectImages": "Pasirinkti nuotraukas/video",
+      "uploadImages": "Įkelti {count} failus",
       "toasts": {
-        "uploadSuccess": "Nuotraukos sėkmingai įkeltos",
-        "uploadFailed": "Nepavyko įkelti nuotraukų"
+        "uploadSuccess": "Failai sėkmingai įkelti",
+        "uploadFailed": "Nepavyko įkelti failų"
       },
       "setAsMain": "Nustatyti kaip pagrindinį",
       "cropTitle": "Apkarpyti pagrindinį paveikslėlį",
@@ -1120,12 +1120,12 @@
     }
   },
   "ImageSection": {
-    "addportfolioimages": "Pridėti portfelio vaizdus",
+    "addportfolioimages": "Pridėti portfelio nuotraukas/video",
     "saving": "Taupymas",
-    "saveImages": "Išsaugoti paveikslėlius",
-    "uploadHint": "Įkelkite nuotraukas iki {size}",
-    "instructionHint": "Pasirinkite nuotraukas, tada jas įkelkite ir tada spustelėkite išsaugoti, kad išsaugotumėte visas nuotraukas. Spustelėkite žvaigždės piktogramą, kad pasirinktumėte pagrindinę nuotrauką",
-    "readyToSave": "{count} nuotrauka(-os) paruošta(-os) išsaugoti",
+    "saveImages": "Išsaugoti failus",
+    "uploadHint": "Įkelkite failus iki {size} (Nuotraukos ir Video)",
+    "instructionHint": "Pasirinkite failus, tada juos įkelkite ir tada spustelėkite išsaugoti, kad išsaugotumėte visus failus. Spustelėkite žvaigždės piktogramą, kad pasirinktumėte pagrindinę nuotrauką",
+    "readyToSave": "{count} failas(-ai) paruoštas(-i) išsaugoti",
     "alt": {
       "portfolioImage": "Portfelio vaizdas"
     },
@@ -1139,8 +1139,8 @@
       "mainImageError": "Pasirinkite pagrindinį vaizdą"
     },
     "toasts": {
-      "saved": "Nuotraukos išsaugotos",
-      "saveFailed": "Nepavyko išsaugoti nuotraukų",
+      "saved": "Failai išsaugoti",
+      "saveFailed": "Nepavyko išsaugoti failų",
       "removed": "Nuotrauka pašalinta",
       "removeFailed": "Nepavyko pašalinti nuotraukos"
     },

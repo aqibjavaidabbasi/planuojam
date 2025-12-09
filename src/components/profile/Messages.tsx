@@ -10,6 +10,7 @@ import {
   fetchUnreadForReceiver,
   fetchMinimalListingsByDocumentIds,
   MinimalListingInfo,
+  markMessageRead,
 } from "@/services/messages";
 import { uploadFilesWithToken, API_URL } from "@/services/api";
 import { getUsersByDocumentIds, type MinimalUserInfo } from "@/services/auth";
@@ -780,6 +781,7 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
         const isToMe = ((m.receiver as UserLite | undefined)?.id ?? (m.receiver as unknown as number)) === user.id;
         if (isToMe && !m.readAt) {
           changed = true;
+          markMessageRead(m.documentId || String(m.id)).catch(() => {});
           return { ...m, readAt: new Date().toISOString() } as Message;
         }
         return m;

@@ -2,6 +2,8 @@ export interface strapiImage{
     id: number;
     url: string;
     width: number;
+    mime: string;
+    ext: string;
     formats: {
         small: {
             url: string;

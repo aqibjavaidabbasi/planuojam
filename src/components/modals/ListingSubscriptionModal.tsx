@@ -267,10 +267,10 @@ const [promoData, setPromoData] = useState<PromoData | null>(null)
 
                                     {/* Product content */}
                                     <div className="flex flex-col h-full">
-                                        {/* Title */}
-                                        <h3 className="text-xl font-bold text-gray-900 mb-2 text-center">
+
+                                        {/* <h3 className="text-xl font-bold text-gray-900 mb-2 text-center">
                                             {product.title}
-                                        </h3>
+                                        </h3> */}
 
                                         {/* Price */}
                                         <div className="text-center mb-4">
@@ -285,11 +285,11 @@ const [promoData, setPromoData] = useState<PromoData | null>(null)
                                         </div>
 
                                         {/* Description */}
-                                        {product.description && (
+                                        {/* {product.description && (
                                             <p className="text-sm text-gray-600 mb-6 text-center flex-grow">
                                                 {product.description}
                                             </p>
-                                        )}
+                                        )} */}
 
                                         {/* CTA Button */}
                                         <div className="mt-auto">

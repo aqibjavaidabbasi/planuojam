@@ -226,7 +226,7 @@
         "basic": "Basic Details",
         "vv": "Vendor/Venue Details",
         "deal": "Hot Deal",
-        "images": "Images",
+        "images": "Images/Videos",
         "contact": "Contact",
         "social": "Social Links",
         "pricing": "Pricing",
@@ -497,11 +497,11 @@
   },
   "Custom": {
     "ImageUploader": {
-      "selectImages": "Select Images",
-      "uploadImages": "Upload {count} image(s)",
+      "selectImages": "Select Images/Videos",
+      "uploadImages": "Upload {count} file(s)",
       "toasts": {
-        "uploadSuccess": "Images uploaded successfully",
-        "uploadFailed": "Failed to upload images"
+        "uploadSuccess": "Media uploaded successfully",
+        "uploadFailed": "Failed to upload media"
       },
       "setAsMain": "Set as Main",
       "cropTitle": "Crop Main Image",
@@ -1133,12 +1133,12 @@
     }
   },
   "ImageSection": {
-    "addportfolioimages": "Add  Portfolio Images",
+    "addportfolioimages": "Add Portfolio Images/Videos",
     "saving": "Saving",
-    "saveImages": "Save  Images",
-    "uploadHint": "Maximum file size: {size}",
-    "instructionHint": "Select images, then upload them and then click save to save all of the images. Click on star icon to choose a main image",
-    "readyToSave": "{count} image(s) ready to save",
+    "saveImages": "Save Media",
+    "uploadHint": "Maximum file size: {size} (Images & Videos)",
+    "instructionHint": "Select media, then upload them and then click save to save all of the items. Click on star icon to choose a main image",
+    "readyToSave": "{count} item(s) ready to save",
     "alt": {
       "portfolioImage": "Portfolio image"
     },
@@ -1152,10 +1152,10 @@
       "mainImageError": "Please select a main image"
     },
     "toasts": {
-      "saved": "Images saved",
-      "saveFailed": "Failed to save images",
-      "removed": "Image removed",
-      "removeFailed": "Failed to remove image"
+      "saved": "Media saved",
+      "saveFailed": "Failed to save media",
+      "removed": "Item removed",
+      "removeFailed": "Failed to remove item"
     },
     "modal": {
       "deleteTitle": "Delete image",

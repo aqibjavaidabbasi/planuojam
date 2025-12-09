@@ -213,7 +213,7 @@
         "basic": "Podstawowe informacje",
         "vv": "Dane dostawcy/miejsca",
         "deal": "Gorąca oferta",
-        "images": "Obrazy",
+        "images": "Zdjęcia/Wideo",
         "contact": "Kontakt",
         "social": "Linki społecznościowe",
         "pricing": "Cennik",
@@ -507,11 +507,11 @@
   },
   "Custom": {
     "ImageUploader": {
-      "selectImages": "Wybierz obrazy",
-      "uploadImages": "Prześlij {count} obrazów",
+      "selectImages": "Wybierz zdjęcia/wideo",
+      "uploadImages": "Prześlij {count} plik(i/ów)",
       "toasts": {
-        "uploadSuccess": "Obrazy przesłane pomyślnie",
-        "uploadFailed": "Nie udało się przesłać obrazów"
+        "uploadSuccess": "Media przesłane pomyślnie",
+        "uploadFailed": "Nie udało się przesłać mediów"
       },
       "setAsMain": "Ustaw jako główny",
       "cropTitle": "Przytnij główny obraz",
@@ -1126,13 +1126,13 @@
     }
   },
   "ImageSection": {
-    "addportfolioimages": "Dodaj obrazy portfolio",
+    "addportfolioimages": "Dodaj zdjęcia/wideo do portfolio",
     "saving": "Zapisywanie",
     "savingEllipsis": "Zapisywanie...",
-    "saveImages": "Zapisz obrazy",
-    "uploadHint": "Przesyłaj obrazy o rozmiarze do {size}",
-    "instructionHint": "Wybierz zdjęcia, a następnie prześlij je i kliknij zapisz, aby zapisać wszystkie zdjęcia. Kliknij ikonę gwiazdki, aby wybrać główne zdjęcie",
-    "readyToSave": "{count} obraz(y) gotowe do zapisania",
+    "saveImages": "Zapisz media",
+    "uploadHint": "Przesyłaj pliki o rozmiarze do {size} (Zdjęcia i Wideo)",
+    "instructionHint": "Wybierz media, a następnie prześlij je i kliknij zapisz, aby zapisać wszystkie elementy. Kliknij ikonę gwiazdki, aby wybrać główne zdjęcie",
+    "readyToSave": "{count} element(y) gotowe do zapisania",
     "alt": {
       "portfolioImage": "Obraz portfolio"
     },
@@ -1146,8 +1146,8 @@
       "mainImageError": "Proszę wybrać główne zdjęcie"
     },
     "toasts": {
-      "saved": "Obrazy zapisane",
-      "saveFailed": "Nie udało się zapisać obrazów",
+      "saved": "Media zapisane",
+      "saveFailed": "Nie udało się zapisać mediów",
       "removed": "Obraz usunięty",
       "removeFailed": "Nie udało się usunąć obrazu"
     },

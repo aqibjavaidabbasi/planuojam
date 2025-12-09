@@ -213,7 +213,7 @@ const ImageUploader = ({
             <input
                 type="file"
                 multiple
-                accept="image/*"
+                accept="image/*,video/*"
                 onChange={handleFileChange}
                 className="hidden"
                 id="fileInput"
@@ -234,13 +234,21 @@ const ImageUploader = ({
                             const isMain = file.id === localMainImageId;
                             return (
                                 <div key={file.id} className="relative">
-                                    <Image
-                                        src={getCompleteImageUrl(file.url)}
-                                        alt={file.name || `uploaded-${file.id}`}
-                                        width={200}
-                                        height={150}
-                                        className="w-full aspect-[4/3] object-cover rounded-lg"
-                                    />
+                                    {file.mime?.startsWith('video/') ? (
+                                        <video
+                                            src={getCompleteImageUrl(file.url)}
+                                            controls
+                                            className="w-full aspect-[4/3] object-cover rounded-lg"
+                                        />
+                                    ) : (
+                                        <Image
+                                            src={getCompleteImageUrl(file.url)}
+                                            alt={file.name || `uploaded-${file.id}`}
+                                            width={200}
+                                            height={150}
+                                            className="w-full aspect-[4/3] object-cover rounded-lg"
+                                        />
+                                    )}
                                     <Button onClick={() => removeUploaded(file.id)} disabled={uploading || disabled} style="secondary" extraStyles="absolute top-1 right-1 !rounded-full !p-2" >
                                         <FaXmark />
                                     </Button>
@@ -268,19 +276,29 @@ const ImageUploader = ({
                     return previews.map((src, index) => {
                         return (
                             <div key={index} className="relative">
-                                <Image
-                                    src={src}
-                                    alt={`preview-${index}`}
-                                    width={200}
-                                    height={150}
-                                    className="w-full aspect-[4/3] object-cover rounded-lg"
-                                />
+                                {files[index]?.type.startsWith('video/') ? (
+                                    <video
+                                        src={src}
+                                        controls
+                                        className="w-full aspect-[4/3] object-cover rounded-lg"
+                                    />
+                                ) : (
+                                    <Image
+                                        src={src}
+                                        alt={`preview-${index}`}
+                                        width={200}
+                                        height={150}
+                                        className="w-full aspect-[4/3] object-cover rounded-lg"
+                                    />
+                                )}
                                 <Button onClick={() => removeFile(index)} disabled={uploading || disabled} style="secondary" extraStyles="absolute top-1 right-1 !rounded-full !p-2" >
                                     <FaXmark />
                                 </Button>
-                                <Button onClick={() => openCropModalForPreview(index)} disabled={uploading || disabled} style="primary" extraStyles="absolute bottom-1 left-1 !rounded-full !p-2" >
-                                    <FaCropSimple />
-                                </Button>
+                                {!files[index]?.type.startsWith('video/') && (
+                                    <Button onClick={() => openCropModalForPreview(index)} disabled={uploading || disabled} style="primary" extraStyles="absolute bottom-1 left-1 !rounded-full !p-2" >
+                                        <FaCropSimple />
+                                    </Button>
+                                )}
                             </div>
                         );
                     });
