@@ -20,8 +20,8 @@
       "passwordRequired": "Parool on kohustuslik",
       "forgotPassword": "Unustasid parooli?",
       "signIn": "Logi sisse",
-      "missingToken":"Kontrolli oma internetiühendust ja proovi uuesti",
-      "invalidCredentials":"Kontrolli oma e-posti või parooli ja proovi uuesti!",
+      "missingToken": "Kontrolli oma internetiühendust ja proovi uuesti",
+      "invalidCredentials": "Kontrolli oma e-posti või parooli ja proovi uuesti!",
       "goToConfirm": "Mine e-posti kinnitamisele",
       "dismiss": "Sulge",
       "passwordTooShort": "Parool peab olema vähemalt 8 tähemärki"
@@ -76,7 +76,7 @@
       "registerCta": "Registreeru",
       "alreadyHaveAccount": "Kas konto on juba olemas?",
       "signInHere": "Logi sisse siin",
-      "registerNoResponse":"Registreerimine ebaõnnestus — server ei vastanud",
+      "registerNoResponse": "Registreerimine ebaõnnestus — server ei vastanud",
       "passwordTooShort": "Parool peab olema vähemalt 8 tähemärki"
     },
     "Social": {
@@ -104,7 +104,6 @@
       "resetCta": "Lähtesta parool",
       "backToLogin": "Tagasi sisselogimisele",
       "updateUserFailed": "Kasutaja uuendamine ebaõnnestus, palun proovi hiljem uuesti!"
-
     },
     "EmailConfirmation": {
       "title": "E-posti kinnitamine",
@@ -124,7 +123,7 @@
       "tokenRequired": "Kinnituskood on kohustuslik",
       "confirmCta": "Kinnita e-post",
       "resendCta": "Saada kinnituskiri uuesti",
-      "emailConfirmFailed":"E-posti kinnitamine ebaõnnestus. Palun proovi uuesti."
+      "emailConfirmFailed": "E-posti kinnitamine ebaõnnestus. Palun proovi uuesti."
     }
   },
   "Contact": {
@@ -747,8 +746,12 @@
           }
         },
         "bookingDuration": {
-          "label": "Broneeringu kestus",
+          "label": "Broneeringu kestus tundides",
           "placeholder": "nt 4"
+        },
+        "minimumDuration": {
+          "label": "Minimaalne kestus",
+          "placeholder": "nt 2"
         },
         "email": {
           "label": "E-post",
@@ -1027,7 +1030,12 @@
       "view": "Vaata",
       "draft": "Mustand",
       "pending": "Ootel ülevaatus",
-      "subscriptionInfo": "Tellimuse info"
+      "subscriptionInfo": "Tellimuse info",
+      "startsToday": "Soodustus algab täna!",
+      "startsTomorrow": "Soodustus algab homme!",
+      "startsInDays": "Soodustus {days} päeva pärast",
+      "startsOn": "Soodustus {date}",
+      "videoNotSupported": "Teie brauser ei toeta video silti."
     },
     "SelectedCategories": {
       "noCategoriesFound": "Kategooriaid ei leitud"
@@ -1136,11 +1144,14 @@
     "instructionHint": "Valige meedia, seejärel laadige need üles ja seejärel klõpsake salvestamiseks, et salvestada kõik kirjed. Klõpsake täheikoonil, et valida peamine pilt",
     "readyToSave": "{count} kirje(t) valmis salvestamiseks",
     "alt": {
-      "portfolioImage": "Portfoolio pilt"
+      "portfolioImage": "Portfoolio pilt",
+      "portfolioMedia": "Portfoolio meedia"
     },
     "aria": {
-      "deleteImage": "Kustuta pilt"
+      "deleteImage": "Kustuta pilt",
+      "deleteMedia": "Kustuta meedia"
     },
+    "mainMedia": "Peamine Meedia",
     "deselectMainImage": "Eemalda peamise pildina",
     "selectMainImage": "Vali peamiseks pildiks",
     "errors": {
@@ -1194,6 +1205,10 @@
     "statelabel": "Riigi märgis",
     "selectstate": "Vali olek",
     "selectcity": "Vali linn",
+    "minimumDuration": {
+      "label": "Minimaalne kestus",
+      "placeholder": "nt 2"
+    },
     "errors": {
       "cityStateRequired": "Igas teeninduspiirkonnas peab olema linn ja osariik",
       "invalidLatitude": "Laiuskraad peab olema vahemikus -90 kuni 90",

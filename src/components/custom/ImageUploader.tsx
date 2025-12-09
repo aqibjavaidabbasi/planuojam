@@ -14,8 +14,16 @@ const ImageUploader = ({
      setImageIds, 
      disabled, 
      setMainImageId, 
-     mainImageId }:
-         { setImageIds: (ids: number[]) => void, disabled: boolean, setMainImageId?: (id: number) => void, mainImageId?: number | null }) => {
+     mainImageId,
+     onBackendUpload
+     }:
+         { 
+            setImageIds: (ids: number[]) => void, 
+            disabled: boolean, 
+            setMainImageId?: (id: number) => void, 
+            mainImageId?: number | null,
+            onBackendUpload?: (files: UploadedFile[]) => void
+        }) => {
     const t = useTranslations('Custom.ImageUploader');
     const [files, setFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
@@ -70,6 +78,15 @@ const ImageUploader = ({
         try {
             setUploading(true);
             const res = await uploadToStrapi(files);
+
+            if (onBackendUpload) {
+                onBackendUpload(res);
+                setFiles([]);
+                setPreviews([]);
+                toast.success(t('toasts.uploadSuccess'))
+                return;
+            }
+
             const nextUploaded = [...uploaded, ...res];
             setUploaded(nextUploaded);
             setImageIds(nextUploaded.map((item) => item.id));

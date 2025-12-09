@@ -20,8 +20,8 @@
       "passwordRequired": "Password is required",
       "forgotPassword": "Forgot password?",
       "signIn": "Sign in",
-      "missingToken":"Check your Internet and try again",
-      "invalidCredentials":"Check your email or password and try again!",
+      "missingToken": "Check your Internet and try again",
+      "invalidCredentials": "Check your email or password and try again!",
       "goToConfirm": "Go to email confirmation",
       "dismiss": "Dismiss",
       "passwordTooShort": "Password must be at least 8 characters"
@@ -76,7 +76,7 @@
       "registerCta": "Register",
       "alreadyHaveAccount": "Already have an account?",
       "signInHere": "Sign in here",
-      "registerNoResponse":"Registration failed — no response from server",
+      "registerNoResponse": "Registration failed — no response from server",
       "passwordTooShort": "Password must be at least 8 characters"
     },
     "Social": {
@@ -123,7 +123,7 @@
       "tokenRequired": "Confirmation token is required",
       "confirmCta": "Confirm Email",
       "resendCta": "Resend Confirmation Email",
-      "emailConfirmFailed":"Email confirmation failed. Please try again."
+      "emailConfirmFailed": "Email confirmation failed. Please try again."
     },
     "DetailsModal": {
       "title": "Booking Details",
@@ -731,6 +731,10 @@
           "label": "Booking Duration",
           "placeholder": "e.g. 4"
         },
+        "minimumDuration": {
+          "label": "Minimum Duration Hours",
+          "placeholder": "e.g. 2"
+        },
         "email": {
           "label": "Email",
           "placeholder": "you@company.com",
@@ -1013,7 +1017,12 @@
       "view": "View",
       "draft": "Draft",
       "pending": "Pending Review",
-      "subscriptionInfo": "Subscription Info"
+      "subscriptionInfo": "Subscription Info",
+      "startsToday": "Hot deal starts today!",
+      "startsTomorrow": "Hot deal starts tomorrow!",
+      "startsInDays": "Hot deal in {days} days",
+      "startsOn": "Hot deal {date}",
+      "videoNotSupported": "Your browser does not support the video tag."
     },
     "SelectedCategories": {
       "noCategoriesFound": "No Categories Found"
@@ -1140,11 +1149,14 @@
     "instructionHint": "Select media, then upload them and then click save to save all of the items. Click on star icon to choose a main image",
     "readyToSave": "{count} item(s) ready to save",
     "alt": {
-      "portfolioImage": "Portfolio image"
+      "portfolioImage": "Portfolio image",
+      "portfolioMedia": "Portfolio media"
     },
     "aria": {
-      "deleteImage": "Delete image"
+      "deleteImage": "Delete image",
+      "deleteMedia": "Delete media"
     },
+    "mainMedia": "Main Media",
     "deselectMainImage": "Deselect as main image",
     "selectMainImage": "Select as main image",
     "errors": {
@@ -1202,6 +1214,10 @@
     "statelabel": "State",
     "selectstate": "Select State",
     "selectcity": "Select City",
+    "minimumDuration": {
+      "label": "Minimum Duration Hours",
+      "placeholder": "e.g. 2"
+    },
     "errors": {
       "cityRequired": "City is required",
       "stateRequired": "State is required",

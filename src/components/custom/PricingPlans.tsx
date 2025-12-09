@@ -4,6 +4,7 @@ import React from "react";
 import { FaStar } from "react-icons/fa";
 import Button from "../custom/Button";
 import { useTranslations } from "next-intl";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 
 function PricingPlans({
   plan,
@@ -17,6 +18,7 @@ function PricingPlans({
   planIndex?: number;
 }) {
   const t = useTranslations("Custom.PricingPlans");
+  const { siteSettings } = useSiteSettings()
   return (
     <div
       className={`p-4 rounded-lg shadow-sm border bg-white relative ${plan?.isPopular ? "border-primary" : "border-border"
@@ -102,7 +104,7 @@ function PricingPlans({
                     <path d="M13.485 3.929a1 1 0 0 1 0 1.414l-6.364 6.364a1 1 0 0 1-1.414 0l-2.121-2.121a1 1 0 1 1 1.414-1.414l1.414 1.414 5.657-5.657a1 1 0 0 1 1.414 0z" />
                   </svg>
                 </span>
-                {addon?.statement} - ${addon?.price?.toLocaleString()}
+                {addon?.statement} - {siteSettings.currency.symbol}{addon?.price?.toLocaleString()}
               </li>
             ))}
           </ul>

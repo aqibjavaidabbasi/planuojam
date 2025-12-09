@@ -7,7 +7,8 @@ export type CreateListingFormTypes = {
     category: string;
     mainImageId: string;
     description: string;
-    tags: string[] //use set in creation, set replaces the existing ones
+    tags: string[]; //use set in creation, set replaces the existing ones
+    mediaOrder?: string; // Added for tracking media item order
     listingItem: {
         __component: "dynamic-blocks.venue" | "dynamic-blocks.vendor";
         location?: {
@@ -23,6 +24,7 @@ export type CreateListingFormTypes = {
         }[];
         bookingDuration?: number;
         bookingDurationType?: "Per Day" | "Per Hour";
+        minimumDuration?: number;
         about?: string;
         experienceYears?: number;
         serviceArea?: {

@@ -161,10 +161,12 @@ export async function fetchListingSuggestions(keyword: string, displayLocale?: s
 
 export async function fetchHotDealListings(filter = {}) {
     const populate = LISTING_ITEM_POP_STRUCTURE;
+    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
     const filters = {
         filters: {
             hotDeal: {
                 enableHotDeal: true,
+                lastDate: { $gte: today }, // Only show deals that haven't ended
             },
             ...filter,
         }

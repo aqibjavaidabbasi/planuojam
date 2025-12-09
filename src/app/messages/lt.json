@@ -498,6 +498,10 @@
           "label": "Užsakymo trukmė",
           "placeholder": "pvz. 4"
         },
+        "minimumDuration": {
+          "label": "minimalios trukmės valandos",
+          "placeholder": "pvz 2"
+        },
         "email": {
           "label": "El. paštas",
           "placeholder": "jus@imone.com",
@@ -1019,7 +1023,11 @@
       "view": "Peržiūrėti",
       "draft": "Juodraštis",
       "pending": "Laukiama peržiūros",
-      "subscriptionInfo": "Prenumeratos informacija"
+      "subscriptionInfo": "Prenumeratos informacija",
+      "startsToday": "Sodyba prasideda šiandien!",
+      "startsTomorrow": "Sodyba prasideda rytoj!",
+      "startsInDays": "Sodyba po {days} dien",
+      "startsOn": "Sodyba {date}"
     },
     "SelectedCategories": {
       "noCategoriesFound": "Kategorijų nerasta"
@@ -1185,6 +1193,10 @@
     "statelabel": "Valstybės etiketė",
     "selectstate": "Pasirinkite būseną",
     "selectcity": "Pasirinkite miestą",
+    "minimumDuration": {
+      "label": "minimalios trukmės valandos",
+      "placeholder": "pvz 2"
+    },
     "errors": {
       "cityStateRequired": "Kiekvienai aptarnavimo sričiai reikia miesto ir valstijos",
       "invalidLatitude": "Platuma turi būti tarp -90 ir 90",

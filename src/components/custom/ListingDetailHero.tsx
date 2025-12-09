@@ -10,6 +10,7 @@ import LoginNavigateModal from "@/components/modals/LoginNavigateModal";
 import { useRouter } from "@/i18n/navigation";
 import { RootState } from "@/store";
 import { formatPhoneDisplay, getTelHref } from "@/utils/phone";
+import { HotDeal, isHotDealActive } from '@/utils/hotDealHelper';
 
 interface ListingDetailHeroProps {
   category: string;
@@ -27,6 +28,7 @@ interface ListingDetailHeroProps {
     enableHotDeal: boolean;
     startDate: string;
     lastDate: string;
+    dealNote?: string;
     discount: Discount;
   };
   onOpenBooking: (defaultPlanIndex?: number | null) => void;
@@ -46,18 +48,10 @@ function ListingDetailHero({
 }: ListingDetailHeroProps) {
   const { siteSettings } = useSiteSettings();
   const t = useTranslations('Listing.Hero');
-  const user = useAppSelector((s: RootState) => s.auth.user);
+  const user = useAppSelector((state: RootState) => state.auth.user);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const router = useRouter();
-  const startDate = hotDeal && new Date(hotDeal.startDate);
-  const lastDate = hotDeal && new Date(hotDeal.lastDate);
-  const isDealActive =
-    hotDeal &&
-    hotDeal.enableHotDeal &&
-    startDate &&
-    lastDate &&
-    new Date() >= startDate &&
-    new Date() <= lastDate;
+  const isDealActive = isHotDealActive(hotDeal as HotDeal);
 
   return (
     <div className="rounded-2xl overflow-hidden mb-8 relative bg-gradient-to-r from-amber-500 to-pink-500">

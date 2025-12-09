@@ -22,7 +22,8 @@ import { useLocale, useTranslations } from 'next-intl'
 import { RootState } from '@/store'
 import { StripeProductAttributes } from '@/app/api/stripe-products/route'
 import { IoMdSettings } from 'react-icons/io'
-import { getListingEditPath, getListingPath } from '@/utils/routes'
+import { getHotDealInfo, getUpcomingHotDealMessage } from '@/utils/hotDealHelper';
+import { getListingEditPath, getListingPath } from '@/utils/routes';
 
 function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem; highPriority?: boolean; stripeProducts?: StripeProductAttributes[] }) {
   const { siteSettings } = useSiteSettings();
@@ -38,19 +39,8 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
 
   const isLiked = Array.isArray(likedListings) && likedListings.some(listing => listing.listing === item.documentId);
 
-  // Determine if hot deal is currently active
-  const isHotDealActive = (() => {
-    try {
-      const hd = item.hotDeal;
-      if (!hd || !hd.enableHotDeal) return false;
-      const now = new Date();
-      const start = new Date(hd.startDate);
-      const end = new Date(hd.lastDate);
-      return now >= start && now <= end;
-    } catch {
-      return false;
-    }
-  })();
+  // Get hot deal information
+  const hotDealInfo = getHotDealInfo(item.hotDeal);
 
   function handleHeartClick() {
     if (!user) {
@@ -106,8 +96,15 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
         </div>
       )}
 
+      {/* Upcoming Hot Deal Banner */}
+      {hotDealInfo.status === 'upcoming' && (
+        <div className="absolute top-8 left-0 right-0 z-10 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center text-xs font-semibold py-1">
+          {getUpcomingHotDealMessage(item.hotDeal, t)}
+        </div>
+      )}
+
       {/* Hot Deal Badge (only when currently active) */}
-      {isHotDealActive && (
+      {hotDealInfo.status === 'active' && (
         <div className="absolute top-1 md:top-4 right-1 md:right-4 z-10">
           <div className="relative">
             <div className="bg-primary text-white w-14 md:w-16 h-14 md:h-16 rounded-full flex items-center justify-center transform rotate-12">
@@ -132,21 +129,36 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           loop={true}
           autoplay={{ delay: 3000, disableOnInteraction: false }}
         >
-          {item.portfolio?.map((img, idx) => {
-            const imageUrl = getCompleteImageUrl(img.url);
+          {item.portfolio?.map((media, idx) => {
+            const mediaUrl = getCompleteImageUrl(media.url);
+            const isVideo = media.mime?.startsWith('video/');
+            
             return (
               <SwiperSlide key={idx}>
                 <div className="relative w-full aspect-[4/3] bg-black">
-                  <Image
-                    src={imageUrl}
-                    alt={t('imageAlt', { index: idx + 1 })}
-                    fill
-                    className='object-cover obejct-center'
-                    sizes="(max-width: 768px) 100vw, 400px"
-                    priority={idx === 0 && !!highPriority}
-                    fetchPriority={idx === 0 && highPriority ? 'high' : undefined}
-                    loading={idx === 0 && highPriority ? 'eager' : undefined}
-                  />
+                  {isVideo ? (
+                    <video
+                      src={mediaUrl}
+                      className="w-full h-full object-cover"
+                      controls
+                      muted
+                      playsInline
+                      preload="metadata"
+                    >
+                      {t('videoNotSupported')}
+                    </video>
+                  ) : (
+                    <Image
+                      src={mediaUrl}
+                      alt={t('imageAlt', { index: idx + 1 })}
+                      fill
+                      className='object-cover object-center'
+                      sizes="(max-width: 768px) 100vw, 400px"
+                      priority={idx === 0 && !!highPriority}
+                      fetchPriority={idx === 0 && highPriority ? 'high' : 'auto'}
+                      loading={idx === 0 && highPriority ? 'eager' : 'lazy'}
+                    />
+                  )}
                 </div>
               </SwiperSlide>
             );

@@ -9,6 +9,7 @@ import { fetchPromotedHotDealsWithMeta } from '@/services/listing'
 import { ListingItem, TitleDescriptionBlock } from '@/types/pagesTypes'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
+import { shouldShowHotDeal } from '@/utils/hotDealHelper';
 
 function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: TitleDescriptionBlock[]}) {
     const [hotDealListings, setHotDealListings] = useState<ListingItem[]>([])
@@ -21,18 +22,7 @@ function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: T
     const t = useTranslations('hotdeal');
 
     const filterActive = useCallback((list: ListingItem[]) => {
-        const now = new Date();
-        return (list || []).filter((l: ListingItem) => {
-            const hd = l.hotDeal;
-            if (!hd || !hd.enableHotDeal) return false;
-            try {
-                const start = new Date(hd.startDate);
-                const end = new Date(hd.lastDate);
-                return now >= start && now <= end;
-            } catch {
-                return false;
-            }
-        });
+        return (list || []).filter((l: ListingItem) => shouldShowHotDeal(l.hotDeal));
     }, [])
 
     useEffect(function(){
@@ -78,18 +68,7 @@ function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: T
         </div>
         <HotDealFilter
             setList={(list: ListingItem[]) => {
-                const now = new Date();
-                const active = (list || []).filter((l: ListingItem) => {
-                    const hd = (l).hotDeal;
-                    if (!hd || !hd.enableHotDeal) return false;
-                    try {
-                        const start = new Date(hd.startDate);
-                        const end = new Date(hd.lastDate);
-                        return now >= start && now <= end;
-                    } catch {
-                        return false;
-                    }
-                });
+                const active = (list || []).filter((l: ListingItem) => shouldShowHotDeal(l.hotDeal));
                 setHotDealListings(active);
             }}
         />

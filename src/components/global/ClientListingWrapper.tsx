@@ -298,7 +298,7 @@ function getListingItemUrl(listing: ListingItem, locale?: string): string {
 
 function deriveVenueLocations(items: ListingItem[], locale?: string): Location[] {
   return items
-    .map((item) => {
+    .map((item): Location | null => {
       const venueBlock = item.listingItem.find(
         (block) => block.__component === "dynamic-blocks.venue"
       ) as Venue | undefined;
@@ -332,7 +332,8 @@ function deriveVenueLocations(items: ListingItem[], locale?: string): Location[]
         path: getListingItemUrl(item, locale),
         price: item.price,
         averageRating: item.averageRating,
+        maximumCapacity: venueBlock.capacity,
       };
     })
-    .filter((loc) => loc !== null);
+    .filter((loc): loc is Location => loc !== null);
 }

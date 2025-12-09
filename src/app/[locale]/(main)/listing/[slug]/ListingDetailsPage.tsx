@@ -145,7 +145,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
             <ListingGallery 
               portfolio={initialListing.portfolio} 
               title={initialListing.title || "Listing Gallery"} 
-              mainImageId={initialListing.mainImageId || ""}
+              mediaOrder={initialListing.mediaOrder}
             />
           )
         }

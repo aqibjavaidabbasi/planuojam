@@ -31,6 +31,7 @@ export interface Location {
   path: string; // precomputed navigation path matching ListingCard
   price?: number;
   averageRating?: number;
+  maximumCapacity?: number;
 }
 
 type MapProps = {

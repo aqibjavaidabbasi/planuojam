@@ -19,8 +19,8 @@
       "passwordRequired": "Требуется пароль",
       "forgotPassword": "Забыли пароль?",
       "signIn": "Войти",
-      "missingToken":"Проверьте свой Интернет и попробуйте еще раз.",
-      "invalidCredentials":"Проверьте email или пароль и попробуйте снова!",
+      "missingToken": "Проверьте свой Интернет и попробуйте еще раз.",
+      "invalidCredentials": "Проверьте email или пароль и попробуйте снова!",
       "goToConfirm": "Перейти к подтверждению email",
       "dismiss": "Закрыть",
       "passwordTooShort": "Пароль должен быть не менее 8 символов"
@@ -75,7 +75,7 @@
       "alreadyHaveAccount": "Уже есть аккаунт?",
       "signInHere": "Войдите здесь",
       "tosNotAccepted": "Пожалуйста, примите Условия использования и Политику конфиденциальности",
-      "registerNoResponse":"Регистрация не удалась — сервер не ответил",
+      "registerNoResponse": "Регистрация не удалась — сервер не ответил",
       "passwordTooShort": "Пароль должен быть не менее 8 символов"
     },
     "Social": {
@@ -122,7 +122,7 @@
       "tokenRequired": "Требуется код подтверждения",
       "confirmCta": "Подтвердить email",
       "resendCta": "Отправить письмо с подтверждением ещё раз",
-      "emailConfirmFailed":"Не удалось подтвердить email. Попробуйте ещё раз."
+      "emailConfirmFailed": "Не удалось подтвердить email. Попробуйте ещё раз."
     }
   },
   "hotDealSection": {
@@ -735,7 +735,11 @@
         },
         "bookingDuration": {
           "label": "Продолжительность бронирования",
-          "placeholder": "напр. 4"
+          "placeholder": "например, 4"
+        },
+        "minimumDuration": {
+          "label": "Минимальная продолжительность в часах",
+          "placeholder": "например, 2"
         },
         "email": {
           "label": "Email",
@@ -1026,7 +1030,12 @@
       "view": "Просмотр",
       "draft": "Черновик",
       "pending": "Ожидает проверки",
-      "subscriptionInfo": "Информация о подписке"
+      "subscriptionInfo": "Информация о подписке",
+      "startsToday": "Горячее предложение начинается сегодня!",
+      "startsTomorrow": "Горячее предложение начинается завтра!",
+      "startsInDays": "Горячее предложение через {days} дней",
+      "startsOn": "Горячее предложение {date}",
+      "videoNotSupported": "Ваш браузер не поддерживает видео тег."
     },
     "SelectedCategories": {
       "noCategoriesFound": "Категории не найдены"
@@ -1138,11 +1147,14 @@
     "instructionHint": "Выберите медиа, затем загрузите их и нажмите сохранить, чтобы сохранить все элементы. Нажмите на значок звезды, чтобы выбрать главное изображение",
     "readyToSave": "{count} элемент(ов) готово к сохранению",
     "alt": {
-      "portfolioImage": "Изображение портфолио"
+      "portfolioImage": "Изображение портфолио",
+      "portfolioMedia": "Медиа портфолио"
     },
     "aria": {
-      "deleteImage": "Удалить изображение"
+      "deleteImage": "Удалить изображение",
+      "deleteMedia": "Удалить медиа"
     },
+    "mainMedia": "Основное Медиа",
     "deselectMainImage": "Отменить выбор как главное изображение",
     "selectMainImage": "Выбрать как главное изображение",
     "errors": {
@@ -1199,6 +1211,10 @@
     "statelabel": "Метка региона",
     "selectstate": "Выбрать регион",
     "selectcity": "Выбрать город",
+    "minimumDuration": {
+      "label": "Минимальная продолжительность в часах",
+      "placeholder": "например, 2"
+    },
     "errors": {
       "cityStateRequired": "Для каждой зоны обслуживания укажите город и регион",
       "invalidLatitude": "Широта должна быть между -90 и 90",

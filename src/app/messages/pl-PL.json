@@ -76,7 +76,7 @@
       "alreadyHaveAccount": "Masz już konto?",
       "signInHere": "Zaloguj się tutaj",
       "tosNotAccepted": "Proszę zaakceptować Regulamin i Politykę prywatności",
-      "registerNoResponse":"Rejestracja nie powiodła się — brak odpowiedzi z serwera",
+      "registerNoResponse": "Rejestracja nie powiodła się — brak odpowiedzi z serwera",
       "passwordTooShort": "Hasło musi mieć co najmniej 8 znaków"
     },
     "Social": {
@@ -123,7 +123,7 @@
       "tokenRequired": "Token potwierdzający jest wymagany",
       "confirmCta": "Potwierdź email",
       "resendCta": "Wyślij ponownie email potwierdzający",
-      "emailConfirmFailed":"Nie udało się potwierdzić emaila. Spróbuj ponownie."
+      "emailConfirmFailed": "Nie udało się potwierdzić emaila. Spróbuj ponownie."
     }
   },
   "Contact": {
@@ -745,8 +745,12 @@
           }
         },
         "bookingDuration": {
-          "label": "Czas rezerwacji",
+          "label": "Czas trwania rezerwacji",
           "placeholder": "np. 4"
+        },
+        "minimumDuration": {
+          "label": "Minimalny czas trwania w godzinach",
+          "placeholder": "np. 2"
         },
         "email": {
           "label": "Email",
@@ -1025,7 +1029,12 @@
       "view": "Zobacz",
       "draft": "Wersja robocza",
       "pending": "Oczekuje na przegląd",
-      "subscriptionInfo": "Informacje o subskrypcji"
+      "subscriptionInfo": "Informacje o subskrypcji",
+      "startsToday": "Okazja rozpoczyna się dziś!",
+      "startsTomorrow": "Okazja rozpoczyna się jutro!",
+      "startsInDays": "Okazja za {days} dni",
+      "startsOn": "Okazja {date}",
+      "videoNotSupported": "Twoja przeglądarka nie obsługuje znacznika wideo."
     },
     "SelectedCategories": {
       "noCategoriesFound": "Nie znaleziono kategorii"
@@ -1134,11 +1143,14 @@
     "instructionHint": "Wybierz media, a następnie prześlij je i kliknij zapisz, aby zapisać wszystkie elementy. Kliknij ikonę gwiazdki, aby wybrać główne zdjęcie",
     "readyToSave": "{count} element(y) gotowe do zapisania",
     "alt": {
-      "portfolioImage": "Obraz portfolio"
+      "portfolioImage": "Obraz portfolio",
+      "portfolioMedia": "Media portfolio"
     },
     "aria": {
-      "deleteImage": "Usuń obraz"
+      "deleteImage": "Usuń obraz",
+      "deleteMedia": "Usuń media"
     },
+    "mainMedia": "Główne Media",
     "deselectMainImage": "Odznacz jako główny obraz",
     "selectMainImage": "Wybierz jako główny obraz",
     "errors": {
@@ -1192,6 +1204,10 @@
     "statelabel": "Etykieta stanu",
     "selectstate": "Wybierz stan",
     "selectcity": "Wybierz miasto",
+    "minimumDuration": {
+      "label": "Minimalny czas trwania w godzinach",
+      "placeholder": "np. 2"
+    },
     "errors": {
       "cityStateRequired": "Każdy obszar usług wymaga miasta i województwa",
       "invalidLatitude": "Szerokość geograficzna musi wynosić między -90 a 90",

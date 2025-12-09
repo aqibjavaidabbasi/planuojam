@@ -33,6 +33,7 @@ export type VenueForm = {
   capacity?: number
   bookingDurationType?: "Per Day" | "Per Hour" | ""
   bookingDuration?: number
+  minimumDuration?: number
   amneties: { text: string }[]
 }
 
@@ -71,6 +72,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
     capacity: venueSource ? venueSource.capacity : undefined,
     bookingDurationType: bookingType,
     bookingDuration: venueSource ? venueSource.bookingDuration : undefined,
+    minimumDuration: venueSource ? venueSource.minimumDuration : undefined,
     amneties: venueSource?.amneties ?? [],
   }
 
@@ -88,6 +90,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
   // Watch values for map reactivity
   const watchedServiceAreas = vendorRHF.watch("serviceArea")
   const watchedVenueLocation = venueRHF.watch("location")
+  const watchedCapacity = venueRHF.watch("capacity")
 
   const onSubmitVendor = async (values: VendorForm) => {
     // minimal validation
@@ -141,6 +144,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
         capacity?: number
         bookingDurationType?: VenueForm["bookingDurationType"]
         bookingDuration?: number
+        minimumDuration?: number
         amneties?: { text: string }[]
       }
 
@@ -181,6 +185,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
       if (values.capacity) next.capacity = values.capacity
       if (values.bookingDurationType) next.bookingDurationType = values.bookingDurationType
       if (values.bookingDuration) next.bookingDuration = values.bookingDuration
+      if (values.minimumDuration) next.minimumDuration = values.minimumDuration
       // Handle amneties (repeatable component with required text)
       if (Array.isArray(values.amneties)) {
         const cleaned = values.amneties
@@ -220,7 +225,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
       vendorRHF.setValue(`serviceArea.${idx}.longitude`, String(res.lng), { shouldDirty: true })
     }
   }
-  
+
   const onFetchVenueCoords = async () => {
     const cityId = venueRHF.getValues("location.city")
     const stateId = venueRHF.getValues("location.state")
@@ -285,16 +290,17 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
       capacity: venueSource.capacity ?? undefined,
       bookingDurationType: bookingType,
       bookingDuration: venueSource.bookingDuration ?? undefined,
+      minimumDuration: venueSource.minimumDuration ?? undefined,
       amneties: venueSource.amneties ?? [],
     })
   }, [venueSource, venueLoc.address, venueLoc.city, venueLoc.state, venueLoc.latitude, venueLoc.longitude, bookingType, venueRHF])
 
   const t = useTranslations("vendorvenueSection")
-  
+
   // Get current locations for map display
   const getCurrentLocations = useMemo((): MapLocation[] => {
     const locations: MapLocation[] = []
-    
+
     if (isVendor) {
       // Add vendor service areas
       const serviceAreasData = watchedServiceAreas || []
@@ -319,8 +325,8 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
     } else {
       // Add venue location
       const venueLocation = watchedVenueLocation
-      if (venueLocation?.latitude && venueLocation?.longitude && 
-          !isNaN(Number(venueLocation.latitude)) && !isNaN(Number(venueLocation.longitude))) {
+      if (venueLocation?.latitude && venueLocation?.longitude &&
+        !isNaN(Number(venueLocation.latitude)) && !isNaN(Number(venueLocation.longitude))) {
         const cityName = cities.find(c => c.documentId === venueLocation.city)?.name || t("unknown")
         const stateName = states.find(s => s.documentId === venueLocation.state)?.name || t("unknown")
         const address = venueLocation.address || `${cityName}, ${stateName}`
@@ -334,13 +340,14 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
           position: { lat: Number(venueLocation.latitude), lng: Number(venueLocation.longitude) },
           address: address,
           image: listing.portfolio[0],
+          maximumCapacity: watchedCapacity,
           path: ""
         })
       }
     }
-    
+
     return locations
-  }, [isVendor, watchedServiceAreas, watchedVenueLocation, cities, states, t, listing.portfolio])
+  }, [isVendor, watchedServiceAreas, watchedVenueLocation, watchedCapacity, cities, states, t, listing.portfolio])
 
   return (
     <div className="py-4">
@@ -376,36 +383,38 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                   onChange={(e) => vendorRHF.setValue(`serviceArea.${idx}.state`, e.target.value, { shouldDirty: true })}
                   options={[{ label: t("selectstate"), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
                 />
-                <Input
-                  type="number"
-                  step="any"
-                  min={-90}
-                  max={90}
-                  label={t("latitude")}
-                  disabled
-                  {...vendorRegister(`serviceArea.${idx}.latitude` as const, {
-                    validate: (v) => {
-                      if (v == null || v === "") return true
-                      const n = Number(v)
-                      return (Number.isFinite(n) && n >= -90 && n <= 90) || t("errors.invalidLatitude")
-                    },
-                  })}
-                />
-                <Input
-                  type="number"
-                  step="any"
-                  min={-180}
-                  max={180}
-                  label={t("longitude")}
-                  disabled
-                  {...vendorRegister(`serviceArea.${idx}.longitude` as const, {
-                    validate: (v) => {
-                      if (v == null || v === "") return true
-                      const n = Number(v)
-                      return (Number.isFinite(n) && n >= -180 && n <= 180) || t("errors.invalidLongitude")
-                    },
-                  })}
-                />
+                <div className="!hidden">
+                  <Input
+                    type="number"
+                    step="any"
+                    min={-90}
+                    max={90}
+                    label={t("latitude")}
+                    disabled
+                    {...vendorRegister(`serviceArea.${idx}.latitude` as const, {
+                      validate: (v) => {
+                        if (v == null || v === "") return true
+                        const n = Number(v)
+                        return (Number.isFinite(n) && n >= -90 && n <= 90) || t("errors.invalidLatitude")
+                      },
+                    })}
+                  />
+                  <Input
+                    type="number"
+                    step="any"
+                    min={-180}
+                    max={180}
+                    label={t("longitude")}
+                    disabled
+                    {...vendorRegister(`serviceArea.${idx}.longitude` as const, {
+                      validate: (v) => {
+                        if (v == null || v === "") return true
+                        const n = Number(v)
+                        return (Number.isFinite(n) && n >= -180 && n <= 180) || t("errors.invalidLongitude")
+                      },
+                    })}
+                  />
+                </div>
                 <div className="flex flex-col md:flex-row gap-3">
                   <Button type="button" style="secondary" disabled={submitting} onClick={() => onFetchVendorCoords(idx)}>
                     {t("fetchcoordinates")}
@@ -448,36 +457,38 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
             />
           </div>
           <div className="flex gap-3 flex-col">
-            <Input
-              type="number"
-              step="any"
-              min={-90}
-              max={90}
-              label={t("latitude")}
-              disabled
-              {...venueRegister("location.latitude", {
-                validate: (v) => {
-                  if (v == null || v === "") return true
-                  const n = Number(v)
-                  return (Number.isFinite(n) && n >= -90 && n <= 90) || t("errors.invalidLatitude")
-                },
-              })}
-            />
-            <Input
-              type="number"
-              step="any"
-              min={-180}
-              max={180}
-              label={t("longitude")}
-              disabled
-              {...venueRegister("location.longitude", {
-                validate: (v) => {
-                  if (v == null || v === "") return true
-                  const n = Number(v)
-                  return (Number.isFinite(n) && n >= -180 && n <= 180) || t("errors.invalidLongitude")
-                },
-              })}
-            />
+            <div className="!hidden">
+              <Input
+                type="number"
+                step="any"
+                min={-90}
+                max={90}
+                label={t("latitude")}
+                disabled
+                {...venueRegister("location.latitude", {
+                  validate: (v) => {
+                    if (v == null || v === "") return true
+                    const n = Number(v)
+                    return (Number.isFinite(n) && n >= -90 && n <= 90) || t("errors.invalidLatitude")
+                  },
+                })}
+              />
+              <Input
+                type="number"
+                step="any"
+                min={-180}
+                max={180}
+                label={t("longitude")}
+                disabled
+                {...venueRegister("location.longitude", {
+                  validate: (v) => {
+                    if (v == null || v === "") return true
+                    const n = Number(v)
+                    return (Number.isFinite(n) && n >= -180 && n <= 180) || t("errors.invalidLongitude")
+                  },
+                })}
+              />
+            </div>
             <div className="flex flex-col md:flex-row gap-3">
               <Button type="button" style="secondary" disabled={submitting} onClick={onFetchVenueCoords}>
                 {t("fetchcoordinates")}
@@ -501,6 +512,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
               ]}
             />
             <Input type="number" label={t("bookingduration")} disabled={submitting} {...venueRegister("bookingDuration", { valueAsNumber: true })} />
+            <Input type="number" label={t("minimumDuration.label")} disabled={submitting} {...venueRegister("minimumDuration", { valueAsNumber: true })} />
           </div>
 
           <div>
@@ -529,7 +541,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
           </div>
         </form>
       )}
-      
+
       {/* Location Preview Map */}
       {getCurrentLocations.length > 0 && (
         <div className="mt-6">
@@ -540,7 +552,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
           </div>
         </div>
       )}
-      
+
       {/* Vendor Map Picker */}
       <MapPickerModal
         isOpen={vendorPickerIndex !== null}

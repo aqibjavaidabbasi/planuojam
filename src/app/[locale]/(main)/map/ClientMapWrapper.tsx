@@ -8,7 +8,6 @@ import geocodeLocations from '@/utils/mapboxLocation'
 import React, { useEffect, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { getListingPath } from '@/utils/routes'
-import { strapiImage } from '@/types/mediaTypes'
 
 function ClientMapWrapper() {
   const t = useTranslations('Map')
@@ -57,7 +56,7 @@ function ClientMapWrapper() {
   // Map venues to Location[]
 function getLocationsFromVenuesHelper(venues: ListingItem[], locale: string, t?: ReturnType<typeof useTranslations>): Location[] {
   return venues
-    .map(item => {
+    .map((item): Location | null => {
       const venueBlock = item.listingItem?.find(
         block => block.__component === 'dynamic-blocks.venue'
       ) as Venue | undefined;
@@ -85,22 +84,13 @@ function getLocationsFromVenuesHelper(venues: ListingItem[], locale: string, t?:
         },
         address: venueBlock.location.address || t?.('fallback.noAddress') || 'No address provided',
         image: primaryImage,
+        maximumCapacity: venueBlock.capacity,
         path,
       };
     })
 
     .filter(
-      (location): location is {
-        id: number;
-        name: string;
-        username: string;
-        description: string;
-        category: { name: string; type: "venue" };
-        position: { lat: number; lng: number };
-        address: string;
-        image: strapiImage;
-        path: string;
-      } => location !== null
+      (location): location is Location => location !== null
     );
 }
 

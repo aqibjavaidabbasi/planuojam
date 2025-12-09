@@ -26,6 +26,27 @@ import { geocodePlace } from "@/utils/mapboxLocation"
 import { slugify, shortId } from "@/utils/helpers"
 import { useLocale, useTranslations } from "next-intl"
 import MapPickerModal from "./MapPickerModal"
+import Image from "next/image"
+import { getCompleteImageUrl } from "@/utils/helpers"
+import { FaTrash, FaGripVertical } from "react-icons/fa6"
+import {
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  rectSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { strapiImage } from "@/types/mediaTypes"
 
 interface ListingItemModalProps {
   isOpen: boolean
@@ -37,6 +58,83 @@ interface ListingItemModalProps {
 const ErrorMessage = ({ error }: { error?: FieldError | { message?: string } }) => {
   if (!error) return null
   return <p className="text-red-500 text-sm mt-1">{(error as { message?: string }).message}</p>
+}
+
+// Sortable Media Item Component
+function SortableMediaItem({ 
+    id, 
+    media, 
+    onDelete, 
+    isMain,
+    tImage
+}: { 
+    id: number, 
+    media: strapiImage, 
+    onDelete: (id: number) => void,
+    isMain: boolean,
+    tImage: (key: string) => string
+}) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({ id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
+    
+    const imagePath = getCompleteImageUrl(media.url);
+    const isVideo = media.mime?.startsWith('video/');
+
+    return (
+        <div 
+            ref={setNodeRef} 
+            style={style} 
+            className={`relative group bg-gray-50 rounded-lg overflow-hidden border-2 h-[150px] ${isMain ? 'border-primary' : 'border-transparent'}`}
+        >
+            <div className="w-full h-full relative">
+                 {isVideo ? (
+                    <video src={imagePath} className="w-full h-full object-cover pointer-events-none" />
+                  ) : (
+                    <Image 
+                        src={imagePath} 
+                        alt={tImage("alt.portfolioMedia")} 
+                        fill
+                        className="object-cover pointer-events-none" 
+                    />
+                  )}
+            </div>
+            
+            {/* Drag Handle */}
+            <div 
+                {...attributes} 
+                {...listeners} 
+                className="absolute top-2 left-2 p-2 bg-white/80 rounded cursor-grab active:cursor-grabbing hover:bg-white text-gray-700 z-10 opacity-70 hover:opacity-100"
+            >
+                <FaGripVertical />
+            </div>
+
+             {/* Delete Button */}
+            <Button
+                style="destructive"
+                extraStyles="absolute top-2 right-2 opacity-90 group-hover:opacity-100 !p-2 !rounded-full z-10"
+                onClick={() => onDelete(id)}
+                aria-label={tImage("aria.deleteMedia")}
+            >
+                <FaTrash />
+            </Button>
+
+            {isMain && (
+                <div className="absolute bottom-0 left-0 right-0 bg-primary/90 text-white text-xs py-1 text-center font-medium z-10">
+                    {tImage("mainMedia")}
+                </div>
+            )}
+        </div>
+    );
 }
 
 const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, onSaved, setShowSubscriptionModal }) => {
@@ -74,8 +172,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
     },
   })
   const form = watch()
-  const [imageIds, setImageIds] = useState<number[]>([])
-  const [mainImageId, setMainImageId] = useState<number | null>(null)
+  const [mediaItems, setMediaItems] = useState<strapiImage[]>([])
 
   const { eventTypes } = useEventTypes()
   const eventTypeOptions = {
@@ -121,6 +218,43 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
   // Map picker modal states
   const [vendorPickerIndex, setVendorPickerIndex] = useState<number | null>(null)
   const [venuePickerOpen, setVenuePickerOpen] = useState(false)
+
+  // DnD sensors for media ordering
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (over && active.id !== over.id) {
+      setMediaItems((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
+  const handleMediaDelete = (id: number) => {
+    setMediaItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  const handleBackendUpload = (newFiles: { id: number; url: string; mime?: string; width?: number; height?: number; ext?: string; formats?: Record<string, unknown> }[]) => {
+    const formatted: strapiImage[] = newFiles.map(f => ({
+      id: f.id,
+      url: f.url,
+      mime: f.mime || "",
+      width: (f.width as number) || 0,
+      height: (f.height as number) || 0,
+      ext: f.ext || "",
+      formats: (f.formats as unknown as strapiImage['formats']) || {}
+    }));
+    setMediaItems(prev => [...prev, ...formatted]);
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -320,17 +454,23 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
         payload.user = user.documentId
       }
       // Require at least 1 uploaded image
-      if (imageIds.length === 0) {
+      if (mediaItems.length === 0) {
         setError(t('errors.noImage'))
         return
       }
-      //add image ids to portfolio if there are any
-      if (imageIds.length > 0) {
+      // Add media items to portfolio if there are any
+      if (mediaItems.length > 0) {
         // Connect media by numeric id
-        payload.portfolio = imageIds
+        payload.portfolio = mediaItems.map(item => item.id)
       }
-      if (mainImageId) {
-        payload.mainImageId = mainImageId.toString()
+      // Set main image to first item in media order
+      if (mediaItems.length > 0) {
+        payload.mainImageId = mediaItems[0].id.toString()
+      }
+      // Add media ordering if media items exist
+      if (mediaItems.length > 0) {
+        const mediaOrderStr = mediaItems.map(item => item.id).join("-");
+        payload.mediaOrder = mediaOrderStr;
       }
       //   add event types ids to payload if there are any
       if (eventTypesIds.length > 0) {
@@ -438,8 +578,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
       setSelectedCategory("")
       setEventTypesIds([])
       setError(null);
-      setImageIds([]);
-      setMainImageId(null);
+      setMediaItems([]);
     } catch (e: unknown) {
       const message = e && typeof e === 'object' && 'message' in e ? String((e as { message?: unknown }).message) : t('toasts.failed')
       setError(message)
@@ -459,26 +598,41 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
       size={showSubscriptionHint ? "md" : "lg"}
       title={t('title')}
       footer={
-        <>
-          {
-            !showSubscriptionHint &&
+        !showSubscriptionHint && (
             <div className="flex gap-3 justify-between flex-wrap">
               <div className="ml-auto flex gap-2">
-                <Button style="ghost" onClick={onClose} disabled={isWorking}>
+              <Button 
+                style="ghost" 
+                onClick={onClose} 
+                disabled={isWorking}
+              >
                   {t('buttons.cancel')}
                 </Button>
-                <Button style="primary" type="submit" form="listingForm" disabled={isWorking}>
+              <Button 
+                style="primary" 
+                type="submit" 
+                form="listingForm" 
+                disabled={isWorking}
+              >
                   {submitting ? t('buttons.saving') : t('buttons.create')}
                 </Button>
               </div>
             </div>
-          }
-        </>
+        )
       }
     >
-      {error && <div className="mb-4 p-3 rounded bg-red-50 text-red-700 border border-red-200">{error}</div>}
+      {error && (
+        <div className="mb-4 p-3 rounded bg-red-50 text-red-700 border border-red-200">
+          {error}
+        </div>
+      )}
 
-      {!showSubscriptionHint && <form id="listingForm" onSubmit={rhfHandleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-2 gap-6  mt-14 ">
+      {!showSubscriptionHint && (
+        <form 
+          id="listingForm" 
+          onSubmit={rhfHandleSubmit(onSubmit)} 
+          className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-14"
+        >
         {/* left side */}
         <div>
           {/* Basic Details */}
@@ -677,7 +831,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                           options={[{ label: t('fields.state.placeholder'), value: "" }, ...stateOptions.options]}
                         />
                       </div>
-                      <div className="col-span-2">
+                      <div className="col-span-2 !hidden">
                         <Input
                           type="number"
                           step="any"
@@ -685,7 +839,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                           max={90}
                           label={t('fields.latitude.label')}
                           placeholder={t('fields.latitude.placeholder')}
-                          disabled={isWorking}
+                          disabled
                           value={sa.latitude || ""}
                           onChange={(e) => {
                             const currentItems = getValues("listingItem") || []
@@ -712,7 +866,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                           }}
                         />
                       </div>
-                      <div className="col-span-2">
+                      <div className="col-span-2 !hidden">
                         <Input
                           type="number"
                           step="any"
@@ -720,7 +874,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                           max={180}
                           label={t('fields.longitude.label')}
                           placeholder={t('fields.longitude.placeholder')}
-                          disabled={isWorking}
+                          disabled
                           value={sa.longitude || ""}
                           onChange={(e) => {
                             const currentItems = getValues("listingItem") || []
@@ -833,7 +987,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
-                  <div className="col-span-3">
+                  <div className="col-span-3 !hidden">
                     <Input
                       type="number"
                       step="any"
@@ -841,7 +995,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       max={90}
                       label={t('fields.latitude.label')}
                       placeholder={t('fields.latitude.placeholder')}
-                      disabled={isWorking}
+                      disabled
                       value={form.listingItem?.[0]?.location?.latitude || ""}
                       onChange={(e) => {
                         const raw = e.target.value
@@ -849,11 +1003,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                         const n = Number(raw)
                         if (Number.isNaN(n)) return
                         const clamped = Math.max(-90, Math.min(90, n))
-                        updateListingItem("location.latitude", String(clamped))
+                        // Fix rounding issue by using toFixed(6) for coordinates
+                        updateListingItem("location.latitude", Number(clamped.toFixed(6)).toString())
                       }}
                     />
                   </div>
-                  <div className="col-span-3">
+                  <div className="col-span-3 !hidden">
                     <Input
                       type="number"
                       step="any"
@@ -861,7 +1016,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       max={180}
                       label={t('fields.longitude.label')}
                       placeholder={t('fields.longitude.placeholder')}
-                      disabled={isWorking}
+                      disabled
                       value={form.listingItem?.[0]?.location?.longitude || ""}
                       onChange={(e) => {
                         const raw = e.target.value
@@ -869,7 +1024,8 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                         const n = Number(raw)
                         if (Number.isNaN(n)) return
                         const clamped = Math.max(-180, Math.min(180, n))
-                        updateListingItem("location.longitude", String(clamped))
+                        // Fix rounding issue by using toFixed(6) for coordinates
+                        updateListingItem("location.longitude", Number(clamped.toFixed(6)).toString())
                       }}
                     />
                   </div>
@@ -939,6 +1095,17 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       onChange={(e) => updateListingItem("bookingDuration", Number(e.target.value))}
                     />
                   </div>
+                  <div className="col-span-2">
+                    <Input
+                      type="number"
+                      min={0}
+                      disabled={isWorking}
+                      label={t('fields.minimumDuration.label')}
+                      placeholder={t('fields.minimumDuration.placeholder')}
+                      value={form.listingItem?.[0]?.minimumDuration || ""}
+                      onChange={(e) => updateListingItem("minimumDuration", Number(e.target.value))}
+                    />
+                  </div>
                 </div>
                 <div>
                   <div className="flex justify-between items-center mb-2">
@@ -992,12 +1159,42 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           <div className="flex flex-col gap-2 border-b-2 border-t-2 border-primary/20 py-4">
             <h3 className="text-lg font-semibold mb-2">{t('portfolio.title')} </h3>
             <p className="text-sm text-gray-600">{tImage('uploadHint', { size: '20MB' })}</p>
-            <ImageUploader 
-              setImageIds={setImageIds} 
-              disabled={isWorking} 
-              setMainImageId={setMainImageId}
-              mainImageId={mainImageId}
+            <p className="text-sm text-gray-600 mb-4">{tImage('instructionHint')}</p>
+            
+            {/* Sortable Media Grid */}
+            <DndContext 
+              sensors={sensors} 
+              collisionDetection={closestCenter} 
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext 
+                  items={mediaItems.map(i => i.id)} 
+                  strategy={rectSortingStrategy}
+              >
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                      {mediaItems.map((item, index) => (
+                          <SortableMediaItem
+                              key={item.id}
+                              id={item.id}
+                              media={item}
+                              onDelete={handleMediaDelete}
+                              isMain={index === 0}
+                              tImage={tImage}
+                          />
+                      ))}
+                  </div>
+              </SortableContext>
+            </DndContext>
+
+            {/* Image Uploader */}
+            <div className="mt-4">
+              <h4 className="text-md font-medium mb-2">{tImage('addportfolioimages')}</h4>
+              <ImageUploader 
+                setImageIds={() => {}} 
+                disabled={isWorking} 
+                onBackendUpload={handleBackendUpload}
               />
+            </div>
           </div>
           {/* Contact */}
           <div className="border-b-2 border-primary/20 py-4">
@@ -1052,7 +1249,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
             <ErrorMessage error={errors.category} />
           </div>
         </div>
-      </form>}
+      </form>)}
       {/* Vendor map picker (serviceArea by index) */}
       {vendorPickerIndex !== null && (
         <MapPickerModal

@@ -37,7 +37,7 @@ export async function fetchPromotedListingsPerEventsWithMeta(
     return res as { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } };
 }
 
-// Paginated Hot Deal listings with meta
+// Paginated Hot Deal listings with meta (includes upcoming and active deals)
 export async function fetchPromotedHotDealsWithMeta(
     locale?: string,
     pagination?: { page?: number; pageSize?: number },
@@ -49,8 +49,7 @@ export async function fetchPromotedHotDealsWithMeta(
         filters: {
             hotDeal: {
                 enableHotDeal: true,
-                startDate: { $lte: today },
-                lastDate: { $gte: today },
+                lastDate: { $gte: today }, // Only show deals that haven't ended
             },
             ...extraFilters,
         },

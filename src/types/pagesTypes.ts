@@ -276,6 +276,7 @@ export interface ListingItem {
     end: string;
   }[];
   portfolio: strapiImage[];
+  mediaOrder?: string;
   mainImageId?: string;
   FAQs: {
     sectionTitle: string;
@@ -329,6 +330,7 @@ export interface Venue {
   bookingDuration?: number;
   capacity?: number;
   id: number;
+  minimumDuration?: number;
   location?: {
     address: string;
     city: string;

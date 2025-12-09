@@ -20,6 +20,7 @@ interface BookingModalProps {
   onCreated?: (res: unknown) => void;
   bookingDurationType?: "Per Day" | "Per Hour";
   bookingDuration?: number;
+  minimumDuration?: number;
   workingSchedule?: { day: Day; start: string; end: string }[];
   availablePlans?: Array<{
     name: string;
@@ -46,6 +47,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
   onCreated,
   bookingDurationType,
   bookingDuration,
+  minimumDuration,
   workingSchedule = [],
   availablePlans = [],
   availableAddons = [],
@@ -129,6 +131,21 @@ const BookingModal: React.FC<BookingModalProps> = ({
       if (diffMs > limitMs) {
         const unit = bookingDurationType === 'Per Hour' ? t('units.hours', { default: 'hour(s)' }) : t('units.days', { default: 'day(s)' });
         const msg = t("errors.exceedsMaxDuration", { max: (bookingDuration ?? 0), unit, default: `Selected duration exceeds the maximum of ${bookingDuration ?? 0} ${unit} allowed.` });
+        setError(msg);
+        toast.error(msg);
+        return;
+      }
+    }
+
+    // Enforce minimum allowed duration
+    if (minimumDuration && minimumDuration > 0) {
+      const diffMs = end.getTime() - start.getTime();
+      const minMs = (bookingDurationType === "Per Hour")
+        ? minimumDuration * 60 * 60 * 1000
+        : minimumDuration * 24 * 60 * 60 * 1000;
+      if (diffMs < minMs) {
+        const unit = bookingDurationType === 'Per Hour' ? t('units.hours', { default: 'hour(s)' }) : t('units.days', { default: 'day(s)' });
+        const msg = t("errors.belowMinDuration", { min: minimumDuration, unit, default: `Selected duration is less than the minimum of ${minimumDuration} ${unit}.` });
         setError(msg);
         toast.error(msg);
         return;
