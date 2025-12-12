@@ -29,6 +29,7 @@ class WebSocketService {
   private reconnectDelay = 1000;
   private eventListeners = new Map<keyof WebSocketEvents, Set<EventCallback>>();
   private pendingConversationJoins: Array<{ otherUserId: number; listingDocumentId?: string }> = [];
+  private storageListener: ((e: StorageEvent) => void) | null = null;
 
   constructor() {
     this.setupTokenRefresh();
@@ -37,7 +38,7 @@ class WebSocketService {
   private setupTokenRefresh() {
     // Listen for token changes and reconnect if needed
     if (typeof window !== 'undefined') {
-      window.addEventListener('storage', (e) => {
+      this.storageListener = (e) => {
         if (e.key === 'token' && this.socket) {
           const newToken = localStorage.getItem('token');
           if (newToken) {
@@ -45,7 +46,8 @@ class WebSocketService {
             this.connect(Number(this.currentUserId));
           }
         }
-      });
+      };
+      window.addEventListener('storage', this.storageListener);
     }
   }
 
@@ -232,6 +234,12 @@ class WebSocketService {
   cleanup() {
     this.disconnect();
     this.eventListeners.clear();
+    
+    // Remove storage event listener to prevent memory leak
+    if (this.storageListener && typeof window !== 'undefined') {
+      window.removeEventListener('storage', this.storageListener);
+      this.storageListener = null;
+    }
   }
 }
 
