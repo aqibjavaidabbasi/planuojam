@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
       }
     ]
   },
+  // Increase build timeout for static generation
+  staticPageGenerationTimeout: 120, // 2 minutes instead of default 60 seconds
 };
 
 const withNextIntl = createNextIntlPlugin();

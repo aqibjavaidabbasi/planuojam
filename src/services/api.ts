@@ -4,9 +4,11 @@ export const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
 const REVALIDATION_TIME = 3600; // 1 hour
 
-// Reusable fetch options
+// Reusable fetch options with increased timeout
 const FETCH_OPTIONS = {
   next: { revalidate: REVALIDATION_TIME },
+  // Add signal timeout to prevent hanging requests
+  signal: AbortSignal.timeout(30000), // 30 second timeout per request
 } as const;
 
 /**

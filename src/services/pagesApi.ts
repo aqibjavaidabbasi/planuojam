@@ -11,7 +11,7 @@ export async function fetchPageById(docId: string, locale?: string) {
     if (locale) {
         const queryWithLocale = createQuery(populate, { locale });
         const resLocale = await fetchAPI(`pages/${docId}`, queryWithLocale, {});
-        return resLocale;
+        if (resLocale) return resLocale;
     }
 
     // Fallback to default locale
