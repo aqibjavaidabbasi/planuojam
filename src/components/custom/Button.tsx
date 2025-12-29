@@ -9,6 +9,7 @@ interface ButtonProps {
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
   form?: string;
+  tooltip?: string;
 }
 
 function Button({
@@ -19,7 +20,8 @@ function Button({
   onClick = () => { },
   type = 'button',
   disabled = false,
-  form = ""
+  form = "",
+  tooltip
 }: ButtonProps) {
   const styles = {
     primary: 'rounded-full bg-primary text-white hover:bg-black',
@@ -41,6 +43,7 @@ function Button({
       type={type}
       disabled={disabled}
       form={form}
+      title={tooltip}
       className={`flex items-center capitalize justify-center gap-1.5 font-medium ${styles[style]} ${sizes[size]} ${extraStyles} ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none whitespace-nowrap' : 'cursor-pointer'}`}
     >
       {children}

@@ -523,6 +523,19 @@
       "deselectMain": "Odznacz jako główny obraz",
       "selectMain": "Wybierz jako główny obraz"
     },
+    "ImageUploadModal": {
+      "title": "Prześlij obrazy i wideo",
+      "validation": {
+        "noFiles": "Proszę wybrać co najmniej jeden obraz lub wideo do przesłania",
+        "filesNotUploaded": "Wybrano pliki, ale nie zostały one przesłane. Prześlij je najpierw lub anuluj, aby je odrzucić.",
+        "uploadFailed": "Przesyłanie nie powiodło się. Spróbuj ponownie."
+      },
+      "buttons": {
+        "upload": "Prześlij {count} plik(ów)",
+        "cancel": "Anuluj"
+      },
+      "cropping": "Przycinanie..."
+    },
     "NoDataCard": {
       "expandSearchHint": "Spróbuj zwiększyć promień wyszukiwania lub wybierz inną lokalizację."
     },
@@ -1030,6 +1043,10 @@
       "draft": "Wersja robocza",
       "pending": "Oczekuje na przegląd",
       "subscriptionInfo": "Informacje o subskrypcji",
+      "addToFavorites": "Dodaj do ulubionych",
+      "removeFromFavorites": "Usuń z ulubionych",
+      "editListing": "Edytuj ogłoszenie",
+      "viewListing": "Zobacz ogłoszenie",
       "startsToday": "Okazja rozpoczyna się dziś!",
       "startsTomorrow": "Okazja rozpoczyna się jutro!",
       "startsInDays": "Okazja za {days} dni",

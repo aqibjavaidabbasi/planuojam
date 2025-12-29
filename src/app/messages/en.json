@@ -513,6 +513,19 @@
       "deselectMain": "Deselect as main image",
       "selectMain": "Select as main image"
     },
+    "ImageUploadModal": {
+      "title": "Upload Images & Videos",
+      "validation": {
+        "noFiles": "Please select at least one image or video to upload",
+        "filesNotUploaded": "You have selected files but haven't uploaded them. Upload them first or cancel to discard.",
+        "uploadFailed": "Upload failed. Please try again."
+      },
+      "buttons": {
+        "upload": "Upload {count} file(s)",
+        "cancel": "Cancel"
+      },
+      "cropping": "Cropping..."
+    },
     "NoDataCard": {
       "expandSearchHint": "Try expanding your search radius or check different locations."
     },
@@ -1018,6 +1031,10 @@
       "draft": "Draft",
       "pending": "Pending Review",
       "subscriptionInfo": "Subscription Info",
+      "addToFavorites": "Add to favorites",
+      "removeFromFavorites": "Remove from favorites",
+      "editListing": "Edit listing",
+      "viewListing": "View listing",
       "startsToday": "Hot deal starts today!",
       "startsTomorrow": "Hot deal starts tomorrow!",
       "startsInDays": "Hot deal in {days} days",

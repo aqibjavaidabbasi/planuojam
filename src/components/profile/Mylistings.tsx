@@ -43,6 +43,11 @@ function Mylistings() {
       const data = await fetchListingsByUser(user.documentId, statusFilter, locale);
       setListings(data);
     } catch (e: unknown) {
+      // Handle AbortError specifically
+      if (e instanceof Error && e.name === 'AbortError') {
+        console.warn('Listings request was aborted');
+        return; // Don't set error state for aborted requests
+      }
       const message =
         e && typeof e === "object" && "message" in e ? String((e as { message: unknown }).message) : '';
       setError(message);
@@ -98,20 +103,19 @@ function Mylistings() {
       {loading && <p className="text-sm md:text-base text-gray-600">{tCommon('loading')}</p>}
       {!loading && error && <p className="text-sm md:text-base text-red-600">{error}</p>}
 
+      {!loading && !error && listings.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 lg:gap-6">
+          {listings.map((l) => (
+            <ListingCard key={l.documentId} item={l} stripeProducts={stripeProducts} />
+          ))}
+        </div>
+      )}
       {!loading && !error && listings.length === 0 && (
         <div className="flex flex-col items-center justify-center gap-4 py-12">
           <NoDataCard>{t('empty')}</NoDataCard>
           <Button style="secondary" size="large" onClick={() => setOpen(true)}>
             {t('create')}
           </Button>
-        </div>
-      )}
-
-      {!loading && !error && listings.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 lg:gap-6">
-          {listings.map((l) => (
-            <ListingCard key={l.documentId} item={l} stripeProducts={stripeProducts} />
-          ))}
         </div>
       )}
 

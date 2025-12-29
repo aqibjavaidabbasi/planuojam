@@ -253,6 +253,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                   size={24}
                   color="#e53e3e"
                   className="cursor-pointer hover:opacity-80 transition-opacity"
+                  title={isLiked ? t('removeFromFavorites') : t('addToFavorites')}
                 />
               ) : (
                 <FaHeart
@@ -260,6 +261,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                   size={24}
                   color="#9ea2a7"
                   className="cursor-pointer hover:opacity-80 transition-opacity"
+                  title={isLiked ? t('removeFromFavorites') : t('addToFavorites')}
                 />
               )}
             </div>
@@ -274,6 +276,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                     style="primary"
                     size="small"
                     extraStyles='!rounded-md'
+                    tooltip={t('subscriptionInfo')}
                   >
                     <FaInfoCircle size={16} />
                   </Button>
@@ -282,6 +285,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center capitalize justify-center gap-1.5 font-medium rounded-md bg-black text-white hover:bg-primary py-1 px-3 text-sm cursor-pointer"
+                    title={t('editListing')}
                   >
                     <IoMdSettings size={16} />
                   </a>
@@ -290,6 +294,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center capitalize justify-center gap-1.5 font-medium rounded-md bg-black text-white hover:bg-primary py-1 px-3 text-sm cursor-pointer"
+                  title={t('viewListing')}
                 >
                   <IoNavigateOutline />
                 </a>

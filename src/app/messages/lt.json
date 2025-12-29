@@ -980,6 +980,19 @@
       "deselectMain": "Atžymėti kaip pagrindinę nuotrauką",
       "selectMain": "Pasirinkti kaip pagrindinę nuotrauką"
     },
+    "ImageUploadModal": {
+      "title": "Įkelti vaizdus ir vaizdo įrašus",
+      "validation": {
+        "noFiles": "Prašome pasirinkti bent vieną vaizdą arba vaizdo įrašą įkėlimui",
+        "filesNotUploaded": "Jūs pasirinkote failus, bet jų neįkėlėte. Pirmiausia įkelkite juos arba atšaukite, kad atmestumėte.",
+        "uploadFailed": "Įkėlimas nepavyko. Bandykite dar kartą."
+      },
+      "buttons": {
+        "upload": "Įkelti {count} failą(-us)",
+        "cancel": "Atšaukti"
+      },
+      "cropping": "Apkarpomas..."
+    },
     "NoDataCard": {
       "expandSearchHint": "Pabandykite išplėsti paieškos spindulį arba rinkitės kitą vietą."
     },
@@ -1024,6 +1037,10 @@
       "draft": "Juodraštis",
       "pending": "Laukiama peržiūros",
       "subscriptionInfo": "Prenumeratos informacija",
+      "addToFavorites": "Prid",
+      "removeFromFavorites": "Pašalinti iš mėgstamiausių",
+      "editListing": "Redaguoti skelbimą",
+      "viewListing": "Peržiūrėti skelbimą",
       "startsToday": "Sodyba prasideda šiandien!",
       "startsTomorrow": "Sodyba prasideda rytoj!",
       "startsInDays": "Sodyba po {days} dien",

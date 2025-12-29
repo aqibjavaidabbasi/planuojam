@@ -7,8 +7,6 @@ const REVALIDATION_TIME = 3600; // 1 hour
 // Reusable fetch options with increased timeout
 const FETCH_OPTIONS = {
   next: { revalidate: REVALIDATION_TIME },
-  // Add signal timeout to prevent hanging requests
-  signal: AbortSignal.timeout(30000), // 30 second timeout per request
 } as const;
 
 /**
@@ -45,26 +43,45 @@ export async function fetchAPI(
 
   // console.log("fetching from :: ", url);
 
-  const response = await fetch(url, FETCH_OPTIONS);
+  // Create a timeout controller for each request
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
 
-  if (!response.ok) {
-    console.log(url)
-    // Handle errors (e.g., 400, 401, 500, etc.)
-    const errorData = await response.json();
-    console.warn("DEBUG LOGGG:::", errorData);
-    throw new Error(
-      errorData.error?.message || `Strapi API error! status: ${response.status}`
-    );
+  try {
+    const response = await fetch(url, {
+      ...FETCH_OPTIONS,
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      console.log(url)
+      // Handle errors (e.g., 400, 401, 500, etc.)
+      const errorData = await response.json();
+      console.warn("DEBUG LOGGG:::", errorData);
+      throw new Error(
+        errorData.error?.message || `Strapi API error! status: ${response.status}`
+      );
+    }
+
+    // Check for unexpected response statuses
+    if (response.status !== 200) {
+      throw new Error('Errors.Api.generic');
+    }
+
+    const data = await response.json();
+    return data.data || data;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    // Handle AbortError specifically
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.warn('Request was aborted:', error.message);
+      throw new Error('Request was aborted due to timeout');
+    }
+    // Re-throw other errors
+    throw error;
   }
-
-  // Check for unexpected response statuses
-  if (response.status !== 200) {
-    throw new Error('Errors.Api.generic');
-  }
-
-  
-  const data = await response.json();
-  return data.data || data;
 }
 
 export async function fetchAPIWithMeta(
@@ -78,22 +95,42 @@ export async function fetchAPIWithMeta(
       })}`
     : `${API_URL}/api/${endpoint}?${query}`;
 
-  const response = await fetch(url, FETCH_OPTIONS);
+  // Create a timeout controller for each request
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    console.warn("DEBUG LOGGG:::", errorData);
-    throw new Error(
-      errorData.error?.message || `Strapi API error! status: ${response.status}`
-    );
+  try {
+    const response = await fetch(url, {
+      ...FETCH_OPTIONS,
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.warn("DEBUG LOGGG:::", errorData);
+      throw new Error(
+        errorData.error?.message || `Strapi API error! status: ${response.status}`
+      );
+    }
+
+    if (response.status !== 200) {
+      throw new Error('Errors.Api.generic');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    clearTimeout(timeoutId);
+    // Handle AbortError specifically
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.warn('Request was aborted:', error.message);
+      throw new Error('Request was aborted due to timeout');
+    }
+    // Re-throw other errors
+    throw error;
   }
-
-  if (response.status !== 200) {
-    throw new Error('Errors.Api.generic');
-  }
-
-  const data = await response.json();
-  return data;
 }
 
 /**

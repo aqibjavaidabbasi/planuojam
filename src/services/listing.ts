@@ -123,7 +123,7 @@ export async function fetchListingBySlug(slug: string, locale?: string) {
 
 
 // Fetch all listings created by a user, optionally filtered by listingStatus
-export async function fetchListingsByUser(documentId: string, status?: string, locale?: string): Promise<ListingItem[]> {
+export async function fetchListingsByUser(documentId: string, status?: string, locale?: string) {
     const populate = {
         category: {
             populate: '*',
@@ -243,17 +243,30 @@ export async function fetchListingsByUser(documentId: string, status?: string, l
         (baseFilters as { filters: Record<string, unknown> }).filters.listingStatus = { $eq: status };
     }
 
-    // Try requested locale first
-    if (locale) {
-        const queryWithLocale = createQuery(populate, { locale });
+    const queryWithLocale = createQuery(populate, { locale });
+    try {
         const dataLocale = await fetchAPI('listings', queryWithLocale, baseFilters);
-        if (Array.isArray(dataLocale) && dataLocale.length) return dataLocale as ListingItem[];
+        
+        // Ensure we always return an array
+        if (!dataLocale) {
+            return [];
+        }
+        
+        if (Array.isArray(dataLocale)) {
+            return dataLocale as ListingItem[];
+        }
+        
+        // If response has data property, use that
+        if (dataLocale.data && Array.isArray(dataLocale.data)) {
+            return dataLocale.data as ListingItem[];
+        }
+        
+        return [];
+    } catch (error) {
+        console.error('Error in fetchListingsByUser:', error);
+        // Re-throw the error to be handled by the caller
+        throw error;
     }
-
-    // Final fallback: no locale constraint
-    const queryBase = createQuery(populate);
-    const dataBase = await fetchAPI('listings', queryBase, baseFilters);
-    return Array.isArray(dataBase) ? (dataBase as ListingItem[]) : [];
 }
 export async function fetchListingsByUserLeastPopulated(documentId: string, status?: string, locale?: string): Promise<ListingItem[]> {
     const populate = {};

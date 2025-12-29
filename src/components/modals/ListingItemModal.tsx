@@ -11,7 +11,7 @@ import Button from "../custom/Button"
 import type { category, ListingItem } from "@/types/pagesTypes"
 import { useForm } from "react-hook-form"
 import type { FieldError, PathValue } from "react-hook-form"
-import ImageUploader from "../custom/ImageUploader"
+import ImageUploadModal from "./ImageUploadModal"
 import MultiSelect from "../custom/MultiSelect"
 import { useEventTypes } from "@/context/EventTypesContext"
 import { useCities } from "@/context/CitiesContext"
@@ -22,7 +22,6 @@ import type { CreateListingFormTypes } from "@/types/createListingForm"
 import toast from "react-hot-toast"
 import { createListing } from "@/services/listing"
 import { useAppSelector } from "@/store/hooks"
-import { geocodePlace } from "@/utils/mapboxLocation"
 import { slugify, shortId } from "@/utils/helpers"
 import { useLocale, useTranslations } from "next-intl"
 import MapPickerModal from "./MapPickerModal"
@@ -145,6 +144,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
   const locale = useLocale();
   const [showSubscriptionHint, setShowSubscriptionHint] = useState(false)
   const [createdListingData, setCreatedListingData] = useState<ListingItem | undefined>(undefined)
+  const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false)
 
   const {
     handleSubmit: rhfHandleSubmit,
@@ -243,17 +243,17 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
     setMediaItems(prev => prev.filter(item => item.id !== id));
   };
 
-  const handleBackendUpload = (newFiles: { id: number; url: string; mime?: string; width?: number; height?: number; ext?: string; formats?: Record<string, unknown> }[]) => {
-    const formatted: strapiImage[] = newFiles.map(f => ({
-      id: f.id,
-      url: f.url,
-      mime: f.mime || "",
-      width: (f.width as number) || 0,
-      height: (f.height as number) || 0,
-      ext: f.ext || "",
-      formats: (f.formats as unknown as strapiImage['formats']) || {}
-    }));
-    setMediaItems(prev => [...prev, ...formatted]);
+  
+  const handleImageUploadSuccess = (uploadedImages: strapiImage[]) => {
+    setMediaItems(prev => [...prev, ...uploadedImages]);
+  };
+
+  const handleOpenImageUpload = () => {
+    setIsImageUploadModalOpen(true);
+  };
+
+  const handleCloseImageUpload = () => {
+    setIsImageUploadModalOpen(false);
   };
 
   useEffect(() => {
@@ -264,11 +264,26 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
   }, [isOpen, reset])
 
   useEffect(() => {
+    const controller = new AbortController();
+    
     async function fetchChildren() {
-      const res = await fetchChildCategories(serviceDocumentId || 'vendor', locale)
-      setChildCategories(res)
+      try {
+        const res = await fetchChildCategories(serviceDocumentId || 'vendor', locale)
+        if (!controller.signal.aborted) {
+          setChildCategories(res)
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error('Error fetching child categories:', error);
+        }
+      }
     }
+    
     fetchChildren()
+    
+    return () => {
+      controller.abort();
+    }
   }, [serviceDocumentId, locale])
 
   const isVendor = useMemo(() => serviceType === "vendor", [serviceType])
@@ -592,6 +607,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
   const isWorking = submitting || isLoading
 
   return (
+    <>
     <Modal
       isOpen={isOpen}
       onClose={onClose}
@@ -903,7 +919,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       </div>
                       <div className="col-span-2">
                         <div className="flex flex-col gap-3">
-                          <Button
+                          {/* <Button
                             type="button"
                             style="secondary"
                             disabled={isWorking}
@@ -930,7 +946,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                             }}
                           >
                             {t('buttons.fetchCoordinates')}
-                          </Button>
+                          </Button>    */}
                           <Button
                             type="button"
                             style="secondary"
@@ -1030,7 +1046,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                     />
                   </div>
                   <div className="col-span-6 flex items-center gap-2 justify-center">
-                    <Button
+                    {/* <Button
                       type="button"
                       style="secondary"
                       disabled={isWorking}
@@ -1047,7 +1063,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       }}
                     >
                       {t('buttons.fetchCoordinates')}
-                    </Button>
+                    </Button> */}
                     <Button
                       type="button"
                       style="secondary"
@@ -1156,12 +1172,13 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
         {/* right side */}
         <div>
           {/* images */}
-          <div className="flex flex-col gap-2 border-b-2 border-t-2 border-primary/20 py-4">
+          <div className="flex flex-col border-b-2 border-t-2 border-primary/20 py-4">
             <h3 className="text-lg font-semibold mb-2">{t('portfolio.title')} </h3>
             <p className="text-sm text-gray-600">{tImage('uploadHint', { size: '20MB' })}</p>
             <p className="text-sm text-gray-600 mb-4">{tImage('instructionHint')}</p>
             
             {/* Sortable Media Grid */}
+            { mediaItems.length > 0 &&
             <DndContext 
               sensors={sensors} 
               collisionDetection={closestCenter} 
@@ -1171,7 +1188,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   items={mediaItems.map(i => i.id)} 
                   strategy={rectSortingStrategy}
               >
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                       {mediaItems.map((item, index) => (
                           <SortableMediaItem
                               key={item.id}
@@ -1184,16 +1201,18 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       ))}
                   </div>
               </SortableContext>
-            </DndContext>
+            </DndContext>}
 
             {/* Image Uploader */}
             <div className="mt-4">
-              <h4 className="text-md font-medium mb-2">{tImage('addportfolioimages')}</h4>
-              <ImageUploader 
-                setImageIds={() => {}} 
-                disabled={isWorking} 
-                onBackendUpload={handleBackendUpload}
-              />
+              <Button 
+                onClick={handleOpenImageUpload}
+                disabled={isWorking}
+                style="secondary"
+                extraStyles="w-full"
+              >
+                Add Images/Videos
+              </Button>
             </div>
           </div>
           {/* Contact */}
@@ -1298,6 +1317,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           }}
         />
       )}
+      
       {showSubscriptionHint &&
         <div className="w-full flex items-center justify-center flex-col gap-2 py-4">
           <p className="text-center tracking-wide">{t('subscriptionHint')}</p>
@@ -1327,7 +1347,15 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
         </div>
       }
     </Modal>
-  )
-}
+
+    {/* Image Upload Modal */}
+    <ImageUploadModal
+      isOpen={isImageUploadModalOpen}
+      onClose={handleCloseImageUpload}
+      onUploadSuccess={handleImageUploadSuccess}
+    />
+  </>
+  );
+};
 
 export default ListingItemModal

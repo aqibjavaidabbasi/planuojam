@@ -522,6 +522,19 @@
       "deselectMain": "Eemalda peamise pildina",
       "selectMain": "Vali peamiseks pildiks"
     },
+    "ImageUploadModal": {
+      "title": "Piltide ja videote üleslaadimine",
+      "validation": {
+        "noFiles": "Palun valige üleslaadimiseks vähemalt üks pilt või video",
+        "filesNotUploaded": "Olete valinud failid, kuid pole neid üles laadinud. Laadige need üles või tühistage, et need eemaldada.",
+        "uploadFailed": "Üleslaadimine ebaõnnestus. Palun proovige uuesti."
+      },
+      "buttons": {
+        "upload": "Laadi üles {count} fail(i)",
+        "cancel": "Tühista"
+      },
+      "cropping": "Lõikamine..."
+    },
     "NoDataCard": {
       "expandSearchHint": "Proovi laiendada otsinguraadiust või vali teine asukoht."
     },
@@ -1031,6 +1044,10 @@
       "draft": "Mustand",
       "pending": "Ootel ülevaatus",
       "subscriptionInfo": "Tellimuse info",
+      "addToFavorites": "Lisa lemmikutesse",
+      "removeFromFavorites": "Eemalda lemmikutest",
+      "editListing": "Muuda kuulutust",
+      "viewListing": "Vaata kuulutust",
       "startsToday": "Soodustus algab täna!",
       "startsTomorrow": "Soodustus algab homme!",
       "startsInDays": "Soodustus {days} päeva pärast",
