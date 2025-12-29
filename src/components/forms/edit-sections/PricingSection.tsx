@@ -3,7 +3,6 @@
 import React, { useState } from "react"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import Input from "../../custom/Input"
-import UrlInput from "../../custom/UrlInput"
 import Select from "../../custom/Select"
 import Button from "../../custom/Button"
 import { FaRegTrashAlt } from "react-icons/fa"
@@ -138,17 +137,6 @@ export default function PricingSection({
                   onChange={(e) => {
                     const list = [...(form.getValues("plans") || [])]
                     list[idx] = { ...list[idx], cta: { ...list[idx].cta, bodyText: e.target.value as string } }
-                    form.setValue("plans", list, { shouldDirty: true })
-                  }}
-                />
-                <UrlInput
-                  label={t("labels.ctaButtonUrl")}
-                  disabled={isWorking}
-                  showNormalizedUrl={true}
-                  value={p.cta?.buttonUrl || ""}
-                  onChange={(e) => {
-                    const list = [...(form.getValues("plans") || [])]
-                    list[idx] = { ...list[idx], cta: { ...list[idx].cta, buttonUrl: e.target.value as string } }
                     form.setValue("plans", list, { shouldDirty: true })
                   }}
                 />

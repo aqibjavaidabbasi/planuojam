@@ -498,13 +498,13 @@
       "comingSoonTitle": "Сообщения скоро",
       "comingSoonDesc": "Мы работаем над удобной системой сообщений для связи с владельцами и арендаторами.",
       "refresh": "Обновить",
-      "connected": "Connected",
-      "disconnected": "Disconnected",
-      "noImage": "No img",
-      "deletedUser": "Deleted User",
-      "isTyping": "{username} is typing...",
-      "file": "file",
-      "view": "View"
+      "connected": "В сети",
+      "disconnected": "Не в сети",
+      "noImage": "Нет изображения",
+      "deletedUser": "Удалённый пользователь",
+      "isTyping": "{username} печатает...",
+      "file": "файл",
+      "view": "Просмотреть"
     },
     "ReviewsTab": {
       "title": "Отзывы",

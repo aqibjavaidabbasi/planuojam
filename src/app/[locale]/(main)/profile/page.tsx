@@ -210,7 +210,7 @@ function ProfilePage() {
                     <p className="text-gray-600 hidden sm:block">{user?.email}</p>
                     {user?.serviceType ? (
                       <span className="inline-block bg-primary text-white px-3 py-1 rounded-full text-sm mt-2 w-fit">
-                        {t(String(user.serviceType))}
+                        {t(String(user.serviceType.trim()))}
                       </span>
                     ) : null}
                   </div>

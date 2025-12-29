@@ -422,13 +422,13 @@
       "comingSoonTitle": "Sõnumid peagi",
       "comingSoonDesc": "Töötame sõnumisüsteemi kallal, et saaksid suhelda omanike ja üürnikega.",
       "refresh": "Värskenda",
-      "connected": "Connected",
-      "disconnected": "Disconnected",
-      "noImage": "No img",
-      "deletedUser": "Deleted User",
-      "isTyping": "{username} is typing...",
-      "file": "file",
-      "view": "View"
+      "connected": "Ühendatud",
+      "disconnected": "Ühendus katkestatud",
+      "noImage": "Pilti pole",
+      "deletedUser": "Kustutatud kasutaja",
+      "isTyping": "{username} kirjutab...",
+      "file": "fail",
+      "view": "Vaata"
     },
     "ReviewsTab": {
       "title": "Arvustused",

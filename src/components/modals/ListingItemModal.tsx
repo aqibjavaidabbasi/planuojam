@@ -459,7 +459,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
         }))
       }
       // Validate user service type and enforce into payload
-      const st = (user?.serviceType || '').toLowerCase()
+      const st = (user?.serviceType || '').toLowerCase().trim();
       if (st !== 'vendor' && st !== 'venue') {
         throw new Error(t('errors.invalidServiceType'))
       }

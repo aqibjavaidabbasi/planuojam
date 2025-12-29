@@ -423,13 +423,13 @@
       "comingSoonTitle": "Wiadomości wkrótce",
       "comingSoonDesc": "Pracujemy nad systemem wiadomości, aby ułatwić kontakt z właścicielami i najemcami.",
       "refresh": "Odświeżać",
-      "connected": "Connected",
-      "disconnected": "Disconnected",
-      "noImage": "No img",
-      "deletedUser": "Deleted User",
-      "isTyping": "{username} is typing...",
-      "file": "file",
-      "view": "View"
+      "connected": "Połączony",
+      "disconnected": "Rozłączony",
+      "noImage": "Brak obrazu",
+      "deletedUser": "Usunięty użytkownik",
+      "isTyping": "{username} pisze...",
+      "file": "plik",
+      "view": "Zobacz"
     },
     "ReviewsTab": {
       "title": "Opinie",

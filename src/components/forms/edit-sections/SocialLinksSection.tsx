@@ -46,6 +46,8 @@ export default function SocialLinksSection({
   listing: ListingItem
   onSaved?: () => void
 }) {
+
+  console.log(listing)
   const [submitting, setSubmitting] = useState(false)
 
   const initialSocialLinks: SocialLink[] = Array.isArray((listing.socialLinks as unknown as { socialLink?: unknown })?.socialLink)
@@ -168,6 +170,7 @@ export default function SocialLinksSection({
                   label={t("link")}
                   disabled={isWorking}
                   showNormalizedUrl={true}
+                  value={s.link}
                   {...register(`socialLink.${idx}.link`, {
                     required: t("errors.validUrlRequired"),
                   })}
