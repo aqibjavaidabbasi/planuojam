@@ -15,11 +15,15 @@ import {
 import { uploadFilesWithToken, API_URL } from "@/services/api";
 import { getUsersByDocumentIds, type MinimalUserInfo } from "@/services/auth";
 import { websocketService } from "@/services/websocket";
-import { MdAttachFile } from "react-icons/md";
 import Button from "../custom/Button";
-import { IoNavigateOutline, IoSendSharp } from "react-icons/io5";
+import { MdAttachFile } from "react-icons/md";
+import { IoNavigateOutline } from "react-icons/io5";
 import { useLocale } from "next-intl";
 import Image from "next/image";
+import TypingIndicator from "./TypingIndicator";
+import ConversationList from "./ConversationList";
+import Composer from "./Composer";
+import ThreadView from "./ThreadView";
 
 type MessagesProps = {
   initialUserId?: number;
@@ -133,10 +137,31 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
   );
 
   const conversationItems = useMemo(() => {
-    // Deduplicate by conversation ID (user-listing combination), take the latest message for preview
+    // Build preferred listingDocumentId per counterpart (latest timestamp wins)
+    const preferredByCounterpart = new Map<number, { lid: string; ts: number }>();
+    for (const m of list) {
+      const { counterpartId } = conversationFromMessage(m);
+      const lid = m.listingDocumentId;
+      if (!Number.isFinite(counterpartId) || !(counterpartId > 0) || !lid) continue;
+      const ts = new Date(m.createdAt || 0).getTime();
+      const existing = preferredByCounterpart.get(counterpartId);
+      if (!existing || ts >= existing.ts) preferredByCounterpart.set(counterpartId, { lid, ts });
+    }
+
+    // Deduplicate by normalized conversation ID (counterpart + normalized listing id)
     const map = new Map<string, Message>();
     for (const m of list) {
-      const { conversationId, counterpartId } = conversationFromMessage(m);
+      const base = conversationFromMessage(m);
+      const counterpartId = base.counterpartId;
+      let conversationId = base.conversationId;
+      let listingDocumentId = base.listingDocumentId;
+      if (!listingDocumentId) {
+        const pref = preferredByCounterpart.get(counterpartId);
+        if (pref?.lid) {
+          conversationId = `${counterpartId}-${pref.lid}`;
+          listingDocumentId = pref.lid;
+        }
+      }
       if (!conversationId || !Number.isFinite(counterpartId)) continue;
       const existing = map.get(conversationId);
       const mTime = new Date(m.createdAt || 0).getTime();
@@ -152,11 +177,12 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
       .sort(([, a], [, b]) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
       .map(([conversationId, m]) => {
         const { counterpartId, username, listingDocumentId } = conversationFromMessage(m);
+        const normalizedLid = listingDocumentId || preferredByCounterpart.get(counterpartId)?.lid || undefined;
         return {
           conversationId,
           message: m,
           counterpart: { id: counterpartId, username },
-          listingDocumentId,
+          listingDocumentId: normalizedLid,
         };
       })
       .filter((c) => {
@@ -223,12 +249,28 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
       // also fetch unread map for receiver (current user)
       try {
         const unreadRes = await fetchUnreadForReceiver(user.id, 1, 200);
+        // Build preferred listing per counterpart from the full list we just loaded
+        const preferred = new Map<number, { lid: string; ts: number }>();
+        for (const m of res.data) {
+          const senderId = (m.sender as UserLite | undefined)?.id ?? (m.sender as unknown as number);
+          const sidP = Number(senderId);
+          const lidP = m.listingDocumentId;
+          if (!Number.isFinite(sidP) || !(sidP > 0) || !lidP) continue;
+          const ts = new Date(m.createdAt || 0).getTime();
+          const ex = preferred.get(sidP);
+          if (!ex || ts >= ex.ts) preferred.set(sidP, { lid: lidP, ts });
+        }
+
         let map = unreadRes.data.reduce((acc, m) => {
           const mid = (typeof m.documentId === 'string' ? m.documentId : String(m.id));
           if (locallyReadIdsRef.current.has(mid)) return acc; // skip locally marked read
           const senderId = (m.sender as UserLite | undefined)?.id ?? (m.sender as unknown as number);
           const sid = Number(senderId);
-          const listingId = m.listingDocumentId;
+          let listingId = m.listingDocumentId;
+          if (!listingId) {
+            const p = preferred.get(sid)?.lid;
+            if (p) listingId = p;
+          }
           const conversationId = listingId ? `${sid}-${listingId}` : `${sid}`;
           if (Number.isFinite(sid)) acc[conversationId] = (acc[conversationId] || 0) + 1;
           return acc;
@@ -345,7 +387,20 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
         if (message.receiver?.id === user.id) {
            const senderId = (message.sender as UserLite | undefined)?.id ?? (message.sender as unknown as number);
            const sid = Number(senderId);
-           const listingId = message.listingDocumentId;
+           let listingId = message.listingDocumentId;
+           if (!listingId) {
+             const preferred = new Map<number, { lid: string; ts: number }>();
+             for (const m of list) {
+               const { counterpartId } = conversationFromMessage(m);
+               const l = m.listingDocumentId;
+               if (!Number.isFinite(counterpartId) || !(counterpartId > 0) || !l) continue;
+               const ts = new Date(m.createdAt || 0).getTime();
+               const ex = preferred.get(counterpartId);
+               if (!ex || ts >= ex.ts) preferred.set(counterpartId, { lid: l, ts });
+             }
+             const p = preferred.get(sid)?.lid;
+             if (p) listingId = p;
+           }
            const conversationId = listingId ? `${sid}-${listingId}` : `${sid}`;
            
            setUnreadByUser(prev => ({
@@ -397,9 +452,23 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
         return [notificationMessage, ...prev];
       });
       
-      // Update unread count
-      const conversationId = notification.listingDocumentId 
-        ? `${notification.senderId}-${notification.listingDocumentId}`
+      // Update unread count with normalized listing id
+      let notifListingId = notification.listingDocumentId;
+      if (!notifListingId) {
+        const preferred = new Map<number, { lid: string; ts: number }>();
+        for (const m of list) {
+          const { counterpartId } = conversationFromMessage(m);
+          const l = m.listingDocumentId;
+          if (!Number.isFinite(counterpartId) || !(counterpartId > 0) || !l) continue;
+          const ts = new Date(m.createdAt || 0).getTime();
+          const ex = preferred.get(counterpartId);
+          if (!ex || ts >= ex.ts) preferred.set(counterpartId, { lid: l, ts });
+        }
+        const p = preferred.get(notification.senderId)?.lid;
+        if (p) notifListingId = p;
+      }
+      const conversationId = notifListingId 
+        ? `${notification.senderId}-${notifListingId}`
         : `${notification.senderId}`;
       
       setUnreadByUser(prev => ({
@@ -507,7 +576,7 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
       websocketService.off('connect', handleConnect);
       websocketService.off('disconnect', handleDisconnect);
     };
-  }, [user?.id, selectedUserId, selectedListingDocumentId, onUnreadChange, unreadByUser, listingsInfo, user?.email, user?.username, thread]);
+  }, [user?.id, selectedUserId, selectedListingDocumentId, onUnreadChange, unreadByUser, listingsInfo, user?.email, user?.username, thread, list, conversationFromMessage]);
 
   // Preselect conversation if initialUserId provided
   useEffect(() => {
@@ -586,7 +655,10 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
     setThreadError(null);
     
     try {
-      const res = await fetchThread(user.id, selectedUserId, selectedListingDocumentId || undefined, 1, 50);
+      if (!selectedListingDocumentId) {
+        throw new Error("Missing listingDocumentId for thread load");
+      }
+      const res = await fetchThread(user.id, selectedUserId, selectedListingDocumentId, 1, 50);
       // Deduplicate fetched thread immediately
       const uniqueData = (res.data || []).filter((m, index, self) =>
         index === self.findIndex((t) => (t.documentId === m.documentId || t.id === m.id))
@@ -616,10 +688,10 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
 
   // Join/leave WebSocket conversation rooms when selection changes
   useEffect(() => {
-    if (selectedUserId && websocketConnected) {
-      websocketService.joinConversation(selectedUserId, selectedListingDocumentId || undefined);
+    if (selectedUserId && websocketConnected && selectedListingDocumentId) {
+      websocketService.joinConversation(selectedUserId, selectedListingDocumentId);
       return () => {
-        websocketService.leaveConversation(selectedUserId, selectedListingDocumentId || undefined);
+        websocketService.leaveConversation(selectedUserId, selectedListingDocumentId);
       };
     }
   }, [selectedUserId, selectedListingDocumentId, websocketConnected]);
@@ -772,7 +844,22 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
   // When a thread is loaded/selected, optimistically clear unread for that conversation
   useEffect(() => {
     if (!selectedUserId) return;
-    const conversationId = selectedListingDocumentId ? `${selectedUserId}-${selectedListingDocumentId}` : `${selectedUserId}`;
+    // Clear unread based on normalized listing id for this counterpart
+    let normLid = selectedListingDocumentId || undefined;
+    if (!normLid) {
+      const preferred = new Map<number, { lid: string; ts: number }>();
+      for (const m of list) {
+        const { counterpartId } = conversationFromMessage(m);
+        const l = m.listingDocumentId;
+        if (!Number.isFinite(counterpartId) || !(counterpartId > 0) || !l) continue;
+        const ts = new Date(m.createdAt || 0).getTime();
+        const ex = preferred.get(counterpartId);
+        if (!ex || ts >= ex.ts) preferred.set(counterpartId, { lid: l, ts });
+      }
+      const p = preferred.get(selectedUserId)?.lid;
+      if (p) normLid = p;
+    }
+    const conversationId = normLid ? `${selectedUserId}-${normLid}` : `${selectedUserId}`;
     setUnreadByUser((prev) => ({ ...prev, [conversationId]: 0 }));
     // Optimistically mark currently loaded thread messages as read in client state
     if (user?.id) {
@@ -781,7 +868,10 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
         const isToMe = ((m.receiver as UserLite | undefined)?.id ?? (m.receiver as unknown as number)) === user.id;
         if (isToMe && !m.readAt) {
           changed = true;
-          markMessageRead(m.documentId || String(m.id)).catch(() => {});
+          const mid = typeof m.documentId === 'string' ? m.documentId : String(m.id);
+          if (mid && mid !== 'temp' && mid !== '0') {
+            markMessageRead(mid).catch(() => {});
+          }
           return { ...m, readAt: new Date().toISOString() } as Message;
         }
         return m;
@@ -826,7 +916,7 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
       }
       return prev;
     });
-  }, [selectedUserId, selectedListingDocumentId, thread, user?.id]);
+  }, [selectedUserId, selectedListingDocumentId, thread, user?.id, list, conversationFromMessage]);
 
   // Emit total unread to parent AFTER state updates to avoid render-phase updates
   useEffect(() => {
@@ -845,9 +935,9 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
   const handleComposerChange = (text: string) => {
     setComposerText(text);
     
-    if (selectedUserId && websocketConnected && text.trim()) {
-      // Send typing indicator
-      websocketService.sendTyping(selectedUserId, selectedListingDocumentId || undefined);
+    if (selectedUserId && websocketConnected && text.trim() && selectedListingDocumentId) {
+      // Send typing indicator (listing required)
+      websocketService.sendTyping(selectedUserId, selectedListingDocumentId);
       
       // Clear existing timeout
       if (typingTimeoutRef.current) {
@@ -856,15 +946,15 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
       
       // Stop typing after 1 second of inactivity
       typingTimeoutRef.current = setTimeout(() => {
-        if (selectedUserId && websocketConnected) {
-          websocketService.stopTyping(selectedUserId, selectedListingDocumentId || undefined);
+        if (selectedUserId && websocketConnected && selectedListingDocumentId) {
+          websocketService.stopTyping(selectedUserId, selectedListingDocumentId);
         }
       }, 1000);
     } else if (!text.trim() && typingTimeoutRef.current) {
       // Stop typing immediately if text is cleared
       clearTimeout(typingTimeoutRef.current);
-      if (selectedUserId && websocketConnected) {
-        websocketService.stopTyping(selectedUserId, selectedListingDocumentId || undefined);
+      if (selectedUserId && websocketConnected && selectedListingDocumentId) {
+        websocketService.stopTyping(selectedUserId, selectedListingDocumentId);
       }
     }
   };
@@ -875,6 +965,11 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
     if (!text && attachments.length === 0) return;
     // Ensure we have a logged-in user before proceeding (avoids non-null assertions later)
     if (!user?.id) throw new Error("Errors.Auth.noToken");
+    // Enforce listing document ID for listing-based messaging
+    if (!selectedListingDocumentId) {
+      setThreadError("Missing listing context. Please start the chat from a listing or booking link.");
+      return;
+    }
     
     // Stop typing indicator
     if (websocketConnected) {
@@ -909,13 +1004,29 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
         optimisticId: optimisticId
       });
 
+      // Normalize listing id for this counterpart if missing
+      let normListingId = selectedListingDocumentId || undefined;
+      if (!normListingId) {
+        const preferred = new Map<number, { lid: string; ts: number }>();
+        for (const m of list) {
+          const { counterpartId } = conversationFromMessage(m);
+          const l = m.listingDocumentId;
+          if (!Number.isFinite(counterpartId) || !(counterpartId > 0) || !l) continue;
+          const ts = new Date(m.createdAt || 0).getTime();
+          const ex = preferred.get(counterpartId);
+          if (!ex || ts >= ex.ts) preferred.set(counterpartId, { lid: l, ts });
+        }
+        const p = preferred.get(selectedUserId)?.lid;
+        if (p) normListingId = p;
+      }
+
       const optimistic: Message = {
         id: optimisticId,
         body: composedBody,
         createdAt: new Date().toISOString(),
         sender: { id: user.id, username: user.username || String(user.id) },
         receiver: { id: selectedUserId, username: `User ${selectedUserId}`},
-        listingDocumentId: selectedListingDocumentId || undefined,
+        listingDocumentId: selectedListingDocumentId,
         attachments: (uploaded || []).map((u) => ({
           id: Number(u?.id),
           url: (u?.url || "").startsWith("http") ? u?.url : `${API_URL}${(u?.url || "").startsWith('/') ? '' : '/'}${u?.url}`,
@@ -932,7 +1043,7 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
       } catch {}
       setAttachments([]);
       setAttachmentPreviews([]);
-      const saved = await sendMessage(user.id, selectedUserId, composedBody, selectedListingDocumentId || undefined, uploadedIds);
+      const saved = await sendMessage(user.id, selectedUserId, composedBody, selectedListingDocumentId, uploadedIds);
       
       // Remove from pending if still there (meaning WS didn't pick it up yet)
       const pIdx = pendingOptimisticMessagesRef.current.findIndex(p => p.optimisticId === optimisticId);
@@ -1008,65 +1119,17 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
       <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4 min-h-[60vh]">
         {/* Left: conversations list - hidden on mobile when thread selected */}
         <div className={`${(selectedUserId || resolvingByDocId) ? "hidden md:flex" : "flex"} md:col-span-1 rounded-md shadow overflow-hidden flex-col p-1 max-h-[80vh]`}>
-          <div className="flex-1 overflow-auto">
-            {listError && (
-              <div className="p-4 text-sm text-red-600">{listError}</div>
-            )}
-            {!listError && conversationItems.length === 0 && (
-              <div className="p-6 text-sm text-gray-500">{t("noMessages")}</div>
-            )}
-            {conversationItems.length > 0 && (
-              <ul>
-              {conversationItems.map(({ conversationId, counterpart, listingDocumentId }) => {
-                const isActive = selectedUserId === counterpart.id && selectedListingDocumentId === listingDocumentId;
-                const unread = unreadByUser[conversationId] || 0;
-                const listingInfo = listingDocumentId ? listingsInfo[listingDocumentId] : null;
-                return (
-                  <li
-                    key={conversationId}
-                    className={`p-2 rounded-md cursor-pointer transition-colors ${isActive ? "bg-gray-50 text-gray-800" : "bg-white hover:bg-gray-50"}`}
-                    onClick={() => {
-                      setSelectedUserId(counterpart.id);
-                      setSelectedListingDocumentId(listingDocumentId || null);
-                      clearConversationUnread(conversationId);
-                    }}
-                  >
-                    <div className="flex items-start gap-2 min-w-0">
-                      {/* Listing image as avatar */}
-                      <div className="flex-shrink-0 w-10 h-10 rounded-md overflow-hidden bg-gray-100">
-                        {listingInfo?.mainImage ? (
-                          <Image 
-                            src={listingInfo.mainImage.startsWith('http') ? listingInfo.mainImage : `${API_URL}${listingInfo.mainImage}`}
-                            alt={listingInfo.title || "Listing"}
-                            width={40}
-                            height={40}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                            {t('noImage', { default: 'No img' })}
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="font-medium truncate">{ counterpart.username ? counterpart.username : t('deletedUser', { default: 'Deleted User' })}</span>
-                          {unread > 0 && (
-                            <span className="inline-flex items-center justify-center min-w-5 h-5 px-1 text-xs rounded-full bg-red-600 text-white flex-shrink-0">
-                              {unread}
-                            </span>
-                          )}
-                        </div>
-                        {listingInfo && (
-                          <p className="text-xs text-gray-500 truncate mt-1">{listingInfo.title}</p>
-                        )}
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>)}
-          </div>
+          <ConversationList
+            conversations={conversationItems.map(({ conversationId, counterpart, listingDocumentId }) => ({ conversationId, counterpart, listingDocumentId }))}
+            listingsInfo={listingsInfo}
+            unreadByUser={unreadByUser}
+            selectedUserId={selectedUserId}
+            selectedListingDocumentId={selectedListingDocumentId}
+            onSelect={(uid, lid, cid) => { setSelectedUserId(uid); setSelectedListingDocumentId(lid); clearConversationUnread(cid); }}
+            emptyText={t("noMessages")}
+            listError={listError}
+            refreshButton={(<Button onClick={() => loadList({ silent: false })} disabled={listLoading} style="secondary" extraStyles="!whitespace-nowrap flex-shrink-0">{listLoading ? t("loading") : t("refresh")}</Button>)}
+          />
         </div>
 
         {/* Right: thread */}
@@ -1140,112 +1203,45 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
                   </a>
                 </div>
               )}
-              <div ref={messagesContainerRef} className="flex-1 overflow-auto p-3 sm:p-4 space-y-3">
-                {threadLoading && (
-                  <div className="text-sm text-gray-500 text-center py-4">{t("loading", { default: "Loading messages..." })}</div>
-                )}
-                {threadError && (
-                  <div className="text-sm text-red-600 text-center py-4">{threadError}</div>
-                )}
-                {!threadLoading && !threadError && thread.length === 0 && (
-                  <div className="text-sm text-gray-500">{t("noMessagesInThread", { default: "No messages yet in this thread" })}</div>
-                )}
-
+              <ThreadView
+                containerRef={messagesContainerRef}
+                loading={threadLoading}
+                error={threadError}
+                noMessagesText={t("noMessagesInThread", { default: "No messages yet in this thread" })}
+              >
                 {renderedThreadItems}
-              </div>
+              </ThreadView>
 
               {/* Typing Indicator */}
               {typingUser.isTyping && (
-                <div className="px-3 sm:px-4 py-2">
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <div className="flex gap-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                    </div>
-                    <span>
-                      {t('isTyping', { username: typingUser.username, default: `${typingUser.username} is typing...` })}
-                    </span>
-                  </div>
-                </div>
+                <TypingIndicator>
+                  {t('isTyping', { username: typingUser.username, default: `${typingUser.username} is typing...` })}
+                </TypingIndicator>
               )}
 
-              <div className="border-t p-2 sm:p-3 flex flex-col gap-2 sm:gap-3">
-                {attachmentPreviews.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {attachmentPreviews.map((src, idx) => {
-                      const f = attachments[idx];
-                      const isImg = !!f?.type && f.type.startsWith("image/");
-                      return (
-                        <div key={idx} className="relative">
-                          {isImg ? (
-                            <Image src={src} width={64} height={64} className="h-16 w-16 object-cover rounded" alt="preview" />
-                          ) : (
-                            <a href={src} target="_blank" rel="noreferrer noopener" className="h-16 px-2 sm:px-3 py-2 bg-gray-100 rounded flex items-center gap-1 sm:gap-2 text-xs text-gray-800 min-w-0">
-                              <MdAttachFile size={16} className="flex-shrink-0" />
-                              <span className="truncate" title={f?.name || t('file', { default: 'file' })}>{f?.name || t('file', { default: 'file' })}</span>
-                            </a>
-                          )}
-                          <button
-                            onClick={() => {
-                              try {
-                                const urlToRevoke = attachmentPreviews[idx];
-                                if (urlToRevoke && urlToRevoke.startsWith('blob:')) URL.revokeObjectURL(urlToRevoke);
-                              } catch {}
-                              setAttachments((prev) => prev.filter((_, i) => i !== idx));
-                              setAttachmentPreviews((prev) => prev.filter((_, i) => i !== idx));
-                            }}
-                            className="absolute -top-2 -right-2 bg-black/60 text-white rounded-full h-6 w-6 text-xs cursor-pointer transition-colors hover:bg-black/80 focus:outline-none focus:ring-2 focus:ring-white/60"
-                            aria-label="remove"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-                <div className="flex items-center gap-1 sm:gap-2">
-                  <input
-                    type="text"
-                    className="flex-1 border rounded-lg px-2 sm:px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-orange-300"
-                    placeholder={t("typeMessage", { default: "Type a message..." })}
-                    value={composerText}
-                    onChange={(e) => handleComposerChange(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        onSend();
-                      }
-                    }}
-                  />
-                  <label className="p-1 sm:p-2 rounded-md cursor-pointer bg-white hover:bg-gray-50 flex-shrink-0">
-                  <MdAttachFile size={18} className="sm:w-5 sm:h-5" />
-                    <input
-                      type="file"
-                      multiple
-                      className="hidden"
-                      onChange={(e) => {
-                        const files = Array.from(e.target.files || []);
-                        if (files.length) {
-                          setAttachments((prev) => [...prev, ...files]);
-                          const urls = files.map((f) => URL.createObjectURL(f));
-                          setAttachmentPreviews((prev) => [...prev, ...urls]);
-                          e.currentTarget.value = "";
-                        }
-                      }}
-                    />
-                  </label>
-                  <Button
-                    onClick={onSend}
-                    style="ghost"
-                    extraStyles="flex-shrink-0"
-                    disabled={(composerText.trim() === "" && attachments.length === 0) || sending || uploading}
-                  >
-                    <IoSendSharp size={18} className="sm:w-5 sm:h-5" />
-                  </Button>
-                </div>
-              </div>
+              <Composer
+                text={composerText}
+                onTextChange={handleComposerChange}
+                onSend={onSend}
+                sending={sending}
+                uploading={uploading}
+                attachments={attachments}
+                attachmentPreviews={attachmentPreviews}
+                onFilesSelected={(files) => {
+                  setAttachments((prev) => [...prev, ...files]);
+                  const urls = files.map((f) => URL.createObjectURL(f));
+                  setAttachmentPreviews((prev) => [...prev, ...urls]);
+                }}
+                onRemoveAttachment={(idx) => {
+                  try {
+                    const urlToRevoke = attachmentPreviews[idx];
+                    if (urlToRevoke && urlToRevoke.startsWith('blob:')) URL.revokeObjectURL(urlToRevoke);
+                  } catch {}
+                  setAttachments((prev) => prev.filter((_, i) => i !== idx));
+                  setAttachmentPreviews((prev) => prev.filter((_, i) => i !== idx));
+                }}
+                placeholder={t("typeMessage", { default: "Type a message..." })}
+              />
             </>
           )}
         </div>

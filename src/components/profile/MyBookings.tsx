@@ -215,7 +215,7 @@ const MyBookings: React.FC = () => {
                   };
                   setDetailsModal({ open: true, booking: details });
                 }}
-                onMessage={vendorUserId ? () => router.push(`/profile?tab=messages&withUser=${vendorUserId}`) : undefined}
+                onMessage={vendorUserId ? () => router.push(`/profile?tab=messages&withUser=${vendorUserId}&listing=${b?.listing?.documentId || ''}`) : undefined}
                 actions={
                   isEditing ? (
                     <>

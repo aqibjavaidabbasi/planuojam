@@ -206,7 +206,7 @@ const ManageBookings: React.FC = () => {
                   };
                   setDetailsModal({ open: true, booking: details });
                 }}
-                onMessage={customerUserId ? () => router.push(`/profile?tab=messages&withUser=${customerUserId}`) : undefined}
+                onMessage={customerUserId ? () => router.push(`/profile?tab=messages&withUser=${customerUserId}&listing=${b?.listing?.documentId || ''}`) : undefined}
                 actions={
                   <>
                     {b.bookingStatus === "pending" && (
