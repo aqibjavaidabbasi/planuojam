@@ -10,7 +10,6 @@ async function postJson<TResp>(path: string, body: unknown, init: RequestInit = 
     credentials: "include",
     ...init,
   });
-  console.log(`${API_URL}${path}`)
   const data: unknown = await res.json().catch(() => ({}));
   if (!res.ok) throw data as ApiError;
   return data as TResp;

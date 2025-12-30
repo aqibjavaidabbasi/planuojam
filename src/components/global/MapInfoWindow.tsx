@@ -17,7 +17,6 @@ type Props = {
 };
 
 const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href, currencySymbol }) => {
-console.log(selectedLocation)
   return (
     <div className="text-sm font-sans bg-white rounded-lg overflow-hidden" style={{ width: '320px' }}>
       {/* Media container with overlays */}

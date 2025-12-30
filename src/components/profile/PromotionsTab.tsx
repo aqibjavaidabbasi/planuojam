@@ -29,7 +29,6 @@ export default function PromotionsTab() {
     const loadListings = async () => {
       if (!user?.documentId) return;
       const data = await fetchListingsByUserLeastPopulated(String(user.documentId), "published", locale);
-      console.log(data)
       const opts = data.map((l) => ({
         id: String(l.documentId),
         title: l.title ?? l.slug ?? String(l.id),

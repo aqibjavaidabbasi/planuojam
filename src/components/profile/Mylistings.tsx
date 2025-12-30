@@ -125,7 +125,6 @@ function Mylistings() {
         onSaved={(newListing?: ListingItem) => {
           loadListings();
           setOpen(false);
-          console.log(newListing)
           // If a new listing was created, set it for subscription
           if (newListing) {
             setSelectedListingForSubscription(newListing);

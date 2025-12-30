@@ -46,8 +46,6 @@ export default function SocialLinksSection({
   listing: ListingItem
   onSaved?: () => void
 }) {
-
-  console.log(listing)
   const [submitting, setSubmitting] = useState(false)
 
   const initialSocialLinks: SocialLink[] = Array.isArray((listing.socialLinks as unknown as { socialLink?: unknown })?.socialLink)

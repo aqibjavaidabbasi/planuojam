@@ -13,6 +13,7 @@ const SocialIcon = dynamic(() => import("@/components/global/SocialIcon"), { ssr
 const ListingReviews = dynamic(() => import("@/components/custom/ListingReviews"), { ssr: false });
 const NoDataCard = dynamic(() => import("@/components/custom/NoDataCard"), { ssr: false });
 const PricingPlans = dynamic(() => import("@/components/custom/PricingPlans"), { ssr: false });
+const ListingCard = dynamic(() => import("@/components/Dynamic/ListingCard"));
 
 import { useEffect, useState } from "react";
 import "swiper/css";
@@ -26,6 +27,7 @@ import { Location as MapLocation } from "@/components/global/MapboxMap";
 import { notFound } from "next/navigation";
 import { RootState } from "@/store";
 import { getListingPath } from "@/utils/routes";
+import { fetchPromotedListingsWithMeta } from "@/services/listing";
 
 export default function ListingDetailsPage({ initialListing, locale }: { initialListing: ListingItem; locale: string }) {
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
@@ -35,6 +37,8 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [preselectPlanIndex, setPreselectPlanIndex] = useState<number | null>(null);
   const tSchedule = useTranslations("Listing.Details");
+  const [recommended, setRecommended] = useState<ListingItem[] | null>(null);
+  const [loadingRecommended, setLoadingRecommended] = useState(false);
 
   // typed access to venue block (if listing type is venue)
   const venueBlock = (() => {
@@ -109,6 +113,34 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
     }
     computeLocation();
   }, [initialListing, locale]);
+
+  // Fetch recommended (promoted) listings: top 5
+  useEffect(() => {
+    let mounted = true;
+    async function loadRecommended() {
+      try {
+        setLoadingRecommended(true);
+        const res = await fetchPromotedListingsWithMeta(
+          locale,
+          { page: 1, pageSize: 5 },
+          {
+            listingStatus: 'published',
+            documentId: { $ne: initialListing.documentId },
+          }
+        );
+        if (!mounted) return;
+        setRecommended(Array.isArray(res?.data) ? res.data : []);
+      } catch {
+        if (mounted) setRecommended([]);
+      } finally {
+        if (mounted) setLoadingRecommended(false);
+      }
+    }
+    if (initialListing?.documentId) {
+      loadRecommended();
+    }
+    return () => { mounted = false; };
+  }, [initialListing?.documentId, locale]);
 
 
   if(!initialListing) notFound();
@@ -371,6 +403,30 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
                   />
                 );
               })}
+            </div>
+          </section>
+        )}
+
+        {/* Recommended Listings Section - Loading */}
+        {loadingRecommended && (
+          <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6 my-6">
+            <h2 className="text-2xl font-semibold text-primary mb-4">{t("recommended", { default: "Recommended listings" })}</h2>
+            <div className="flex items-center justify-center py-10">
+              <div className="h-10 w-10 rounded-full border-4 border-gray-200 border-t-primary animate-spin" aria-label="loading" />
+            </div>
+          </section>
+        )}
+
+        {/* Recommended Listings Section - Loaded */}
+        {(!loadingRecommended && Array.isArray(recommended) && recommended.length > 0) && (
+          <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6 my-6">
+            <h2 className="text-2xl font-semibold text-primary mb-4">{t("recommended", { default: "Recommended listings" })}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+              {recommended.slice(0, 5).map((item) => (
+                <div key={item.id} className="">
+                  <ListingCard item={item} />
+                </div>
+              ))}
             </div>
           </section>
         )}

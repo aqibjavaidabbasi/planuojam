@@ -83,7 +83,6 @@ export const useImageCrop = (): UseImageCropReturn => {
         const fitsWidth = width >= scaledWidth;
         const fitsHeight = height >= scaledHeight;
         const fitsCompletely = fitsWidth && fitsHeight;
-        console.log(fitsCompletely, fitsHeight, fitsWidth)
         
         return { fitsWidth, fitsHeight, fitsCompletely };
     };

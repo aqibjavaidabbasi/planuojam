@@ -70,8 +70,7 @@ function Search() {
                     // Clear no-hit lockout if we now have data
                     setNoHitPrefix('');
                 }
-            } catch (err) {
-                console.log(err)
+            } catch {
                 setError('failed');
             } finally {
                 setLoading(false);

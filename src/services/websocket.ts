@@ -117,7 +117,6 @@ class WebSocketService {
     if (!this.socket) return;
 
     this.socket.on('new-message', (message: Message) => {
-      console.log('DEBUG: Received new-message event:', message);
       this.emitEvent('new-message', message);
     });
 
@@ -128,12 +127,10 @@ class WebSocketService {
       listingDocumentId?: string;
       body: string;
     }) => {
-      console.log('DEBUG: Received new-message-notification event:', notification);
       this.emitEvent('new-message-notification', notification);
     });
 
     this.socket.on('message-read', (data: { messageId: string }) => {
-      console.log('DEBUG: Received message-read event:', data);
       this.emitEvent('message-read', data);
     });
 
@@ -151,7 +148,6 @@ class WebSocketService {
   }
 
   joinConversation(otherUserId: number, listingDocumentId?: string) {
-    console.log('DEBUG: joinConversation called', { otherUserId, listingDocumentId, connected: this.socket?.connected });
     
     if (!this.socket?.connected) {
       console.warn('Cannot join conversation: WebSocket not connected, queuing for later');
@@ -159,7 +155,6 @@ class WebSocketService {
       return;
     }
 
-    console.log('DEBUG: Emitting join-conversation event', { otherUserId, listingDocumentId });
     this.socket.emit('join-conversation', { otherUserId, listingDocumentId });
   }
 

@@ -212,8 +212,7 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
             const sp = new URLSearchParams({ locale, mode: "login" });
             if (rp) sp.set('redirect', rp);
             window.location.href = `/api/auth/google?${sp.toString()}`;
-          } catch (e) {
-            console.log(e)
+          } catch {
             toast.error(t("loginFailed"));
           }
         }}
@@ -226,8 +225,7 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
             const sp = new URLSearchParams({ locale, mode: "login" });
             if (rp) sp.set('redirect', rp);
             window.location.href = `/api/auth/facebook?${sp.toString()}`;
-          } catch (e) {
-            console.log(e)
+          } catch {
             toast.error(t("loginFailed"));
           }
         }}

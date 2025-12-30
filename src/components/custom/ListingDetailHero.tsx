@@ -134,7 +134,6 @@ function ListingDetailHero({
                     if (listingDocumentId) params.set('listing', listingDocumentId);
                     
                     const url = `/profile?${params.toString()}`;
-                    console.log('Navigating to messages with URL:', url);
                     router.push(url);
                   }}
                 >

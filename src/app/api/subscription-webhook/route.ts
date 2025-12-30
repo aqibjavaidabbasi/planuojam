@@ -44,7 +44,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  console.log("------------------", event.type, '-----------------')
   try {
     switch (event.type) {
       case "checkout.session.completed": {
@@ -58,7 +57,6 @@ export async function POST(req: NextRequest) {
         
         // Only handle subscription checkouts
         if (session.mode !== 'subscription') {
-          console.log('Ignoring non-subscription checkout session');
           break;
         }
 
@@ -99,8 +97,6 @@ export async function POST(req: NextRequest) {
 
         // Only create subscription if it doesn't exist, but always try to publish listing
         if (!subscriptionAlreadyExists) {
-          console.log("Creating new subscription")
-
           // Create subscription record in Strapi
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions`, {
             method: "POST",
@@ -134,9 +130,7 @@ export async function POST(req: NextRequest) {
             });
           } else {
             const subscriptionData = await res.json();
-            const subscriptionDocId = subscriptionData?.data?.documentId;
-            console.log("Subscription created successfully:", subscriptionId);
-            
+            const subscriptionDocId = subscriptionData?.data?.documentId;            
             // Log successful subscription creation
             await logWebhookEvent("subscription_created", `Subscription created: ${subscriptionId}`, {
               severity: "info",
@@ -243,8 +237,6 @@ export async function POST(req: NextRequest) {
             });
           } else {
             const responseData = await updateRes.json().catch(() => null);
-            console.log("Listing published successfully:", listingDocId);
-            console.log("Strapi response:", JSON.stringify(responseData, null, 2));
             await logWebhookEvent("listing_published", `Listing published after subscription: ${listingDocId}`, {
               severity: "info",
               userId,
@@ -314,9 +306,7 @@ export async function POST(req: NextRequest) {
             stripeEventId: event.id,
             rawMeta: { subscriptionId, errorData },
           });
-        } else {
-          console.log("Subscription updated successfully:", subscriptionId);
-          
+        } else {          
           const userId = existingSubscription.users_permissions_user?.id || existingSubscription.users_permissions_user;
           const listingDocId = existingSubscription.listingDocId;
           
@@ -484,18 +474,10 @@ export async function POST(req: NextRequest) {
 
       case "invoice.paid": {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const invoice = event.data.object as any;
-        const invoiceId = invoice.id;
-        
+        const invoice = event.data.object as any;        
         // Extract subscription ID - it can be a string or null for non-subscription invoices
         const subscriptionId = invoice.subscription || null;
         const billingReason = invoice.billing_reason;
-        
-        console.log('Invoice.paid event details:');
-        console.log('  - Invoice ID:', invoiceId);
-        console.log('  - Subscription ID:', subscriptionId);
-        console.log('  - Billing Reason:', billingReason);
-        console.log('  - Invoice Status:', invoice.status);
 
         // Log webhook received
         await logWebhookEvent("webhook_received", `Received invoice.paid webhook`, {
@@ -505,13 +487,11 @@ export async function POST(req: NextRequest) {
         });
 
         if (!subscriptionId) {
-          console.log("Invoice not related to subscription, skipping");
           break;
         }
         
         // Skip initial subscription creation invoices - those are handled by checkout.session.completed
         if (billingReason === 'subscription_create') {
-          console.log("Initial subscription invoice (subscription_create) - already handled by checkout.session.completed, skipping");
           break;
         }
 

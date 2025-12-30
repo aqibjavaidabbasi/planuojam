@@ -200,7 +200,6 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
           const hasVendor = first?.listingItem?.some((b) => b.__component === "dynamic-blocks.vendor");
           res = hasVendor ? await geocodeLocations(list, locale) : deriveVenueLocations(list, locale);
         }
-        console.log(res)
         if (mounted) setLocations(res || []);
       } catch (e) {
         console.error(e);

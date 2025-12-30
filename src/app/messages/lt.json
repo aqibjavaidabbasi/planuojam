@@ -223,7 +223,8 @@
       },
       "noLocation": "Vieta nepasiekiama",
       "messageVendor": "Rašyti tiekėjui",
-      "previewBanner": "Tai jūsų skelbimo peržiūra. Jis nebus matomas kitiems vartotojams, kol nebus paskelbtas."
+      "previewBanner": "Tai jūsų skelbimo peržiūra. Jis nebus matomas kitiems vartotojams, kol nebus paskelbtas.",
+      "recommended": "Rekomenduojami skelbimai"
     },
     "Hero": {
       "by": "autorius ",

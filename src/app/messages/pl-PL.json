@@ -244,7 +244,8 @@
       },
       "noLocation": "Lokalizacja niedostępna",
       "messageVendor": "Napisz do dostawcy",
-      "previewBanner": "To jest podgląd Twojego ogłoszenia. Nie będzie widoczne dla innych użytkowników, dopóki nie zostanie opublikowane."
+      "previewBanner": "To jest podgląd Twojego ogłoszenia. Nie będzie widoczne dla innych użytkowników, dopóki nie zostanie opublikowane.",
+      "recommended": "Polecane ogłoszenia"
     },
     "Hero": {
       "by": "przez ",

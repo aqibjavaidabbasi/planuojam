@@ -15,6 +15,26 @@ export async function createListing(data: Record<string, unknown>, locale?: stri
     return res;
 }
 
+// Generic promoted listings with meta (no special extra filters applied)
+export async function fetchPromotedListingsWithMeta(
+    locale?: string,
+    pagination?: { page?: number; pageSize?: number },
+    extraFilters: Record<string, unknown> = {}
+) {
+    const populate = LISTING_ITEM_POP_STRUCTURE;
+    const baseFilters: Record<string, unknown> = {
+        filters: {
+            ...extraFilters,
+        },
+    };
+    const additional: Record<string, unknown> = {};
+    if (locale) additional.locale = locale;
+    if (pagination) additional.pagination = pagination;
+    const query = createQuery(populate, additional);
+    const res = await fetchAPIWithMeta('listings/promoted', query, baseFilters);
+    return res as { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } };
+}
+
 // Paginated promoted listings filtered by event type with meta
 export async function fetchPromotedListingsPerEventsWithMeta(
     eventTypeDocId: string,

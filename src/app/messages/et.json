@@ -244,7 +244,8 @@
         "saturday": "Laupäev",
         "sunday": "Pühapäev"
       },
-      "previewBanner": "See on teie kuulutuse eelvaade. See ei ole teistele kasutajatele nähtav enne, kui see on avaldatud."
+      "previewBanner": "See on teie kuulutuse eelvaade. See ei ole teistele kasutajatele nähtav enne, kui see on avaldatud.",
+      "recommended": "Soovitatud kuulutused"
     },
     "Hero": {
       "by": "autor",

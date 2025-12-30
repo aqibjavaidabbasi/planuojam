@@ -257,7 +257,8 @@
       },
       "noLocation": "Location not available",
       "messageVendor": "Message vendor",
-      "previewBanner": "This is a preview of your listing. It will not be visible to other users until it is published."
+      "previewBanner": "This is a preview of your listing. It will not be visible to other users until it is published.",
+      "recommended": "Recommended listings"
     },
     "Hero": {
       "by": "by ",

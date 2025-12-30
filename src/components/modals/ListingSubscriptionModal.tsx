@@ -114,7 +114,6 @@ const [promoData, setPromoData] = useState<PromoData | null>(null)
             if (data.message) {
                 if (data.promoCodeApplied) {
                     // Success message for valid promo code
-                    console.log(data.message)
                 } else {
                     // Warning for invalid promo code (but checkout continues)
                     console.warn(data.message)
