@@ -28,6 +28,7 @@ import MapPickerModal from "./MapPickerModal"
 import Image from "next/image"
 import { getCompleteImageUrl } from "@/utils/helpers"
 import { FaTrash, FaGripVertical } from "react-icons/fa6"
+import TagInput from "../custom/TagInput"
 import {
   DndContext, 
   closestCenter,
@@ -159,6 +160,8 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
       listingStatus: "draft",
       type: "vendor",
       price: 0,
+      tagDocumentIds: [],
+      videos: [],
       description: "",
       workingSchedule: [],
       listingItem: [
@@ -683,17 +686,69 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               />
               <ErrorMessage error={errors.price} />
             </div>
-            {/* Description */}
+              <div className="col-span-2">
+                <TextArea
+                  label={t('fields.description.label')}
+                  placeholder={t('fields.description.placeholder')}
+                  disabled={isWorking}
+                  required
+                  rows={4}
+                  {...register("description", { required: t('fields.description.required') })}
+                  />
+                <ErrorMessage error={errors.description} />
+                </div>
+            {/* Tags */}
             <div className="col-span-2">
-              <TextArea
-                label={t('fields.description.label')}
-                placeholder={t('fields.description.placeholder')}
-                disabled={isWorking}
-                required
-                rows={4}
-                {...register("description", { required: t('fields.description.required') })}
+              <label className="block text-sm font-medium mb-1">{t('fields.tags.label') || "Tags"}</label>
+              <TagInput
+                selectedTagIds={watch("tagDocumentIds") || []}
+                onTagsChange={(tagIds) => setValue("tagDocumentIds", tagIds, { shouldDirty: true })}
+                disabled={submitting}
+                maxTags={10}
+                locale={locale}
               />
-              <ErrorMessage error={errors.description} />
+            </div>
+            {/* Videos */}
+            <div className="col-span-2">
+              <label className="block text-sm font-medium mb-1">{t('fields.videos.label') || "Videos"}</label>
+              <div className="space-y-2">
+                {watch("videos")?.map((video, idx) => (
+                  <div key={idx} className="flex gap-2">
+                    <Input
+                      type="url"
+                      placeholder={t('fields.videos.placeholder') || "YouTube URL..."}
+                      {...register(`videos.${idx}.url`, {
+                        pattern: {
+                          value: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/,
+                          message: t('fields.videos.errors.invalid') || "Invalid YouTube URL"
+                        }
+                      })}
+                    />
+                    <Button
+                      type="button"
+                      style="secondary"
+                      onClick={() => {
+                        const currentVideos = getValues("videos") || []
+                        setValue("videos", currentVideos.filter((_, i) => i !== idx), { shouldDirty: true })
+                      }}
+                    >
+                      {t('fields.videos.remove') || "Remove"}
+                    </Button>
+                  </div>
+                ))}
+                {(watch("videos") || []).length < 5 && (
+                  <Button
+                    type="button"
+                    style="secondary"
+                    onClick={() => {
+                      const currentVideos = getValues("videos") || []
+                      setValue("videos", [...currentVideos, { url: "" }], { shouldDirty: true })
+                    }}
+                  >
+                    {t('fields.videos.add') || "Add Video"}
+                  </Button>
+                )}
+              </div>
             </div>
             <div className="col-span-2" >
               <UrlInput
@@ -847,7 +902,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                           options={[{ label: t('fields.state.placeholder'), value: "" }, ...stateOptions.options]}
                         />
                       </div>
-                      <div className="col-span-2 !hidden">
+                      <div className="col-span-2 hidden!">
                         <Input
                           type="number"
                           step="any"
@@ -882,7 +937,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                           }}
                         />
                       </div>
-                      <div className="col-span-2 !hidden">
+                      <div className="col-span-2 hidden!">
                         <Input
                           type="number"
                           step="any"
@@ -1003,7 +1058,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end mb-3">
-                  <div className="col-span-3 !hidden">
+                  <div className="col-span-3 hidden!">
                     <Input
                       type="number"
                       step="any"
@@ -1024,7 +1079,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       }}
                     />
                   </div>
-                  <div className="col-span-3 !hidden">
+                  <div className="col-span-3 hidden!">
                     <Input
                       type="number"
                       step="any"

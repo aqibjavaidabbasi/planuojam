@@ -4,17 +4,23 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { FaAnglesLeft, FaAnglesRight } from "react-icons/fa6";
 
+type MediaItem = {
+  type: 'image' | 'youtube';
+  url: string;
+  videoId?: string | null;
+};
+
 type Props = {
-  images: string[];
+  media: MediaItem[];
   initialIndex?: number;
   onClose: () => void;
 };
 
-const ImagePreviewModal = ({ images, initialIndex = 0, onClose }: Props) => {
+const ImagePreviewModal = ({ media, initialIndex = 0, onClose }: Props) => {
   const [index, setIndex] = useState<number>(initialIndex);
 
   const hasPrev = index > 0;
-  const hasNext = index < images.length - 1;
+  const hasNext = index < media.length - 1;
   const goPrev = useCallback(() => {
     if (hasPrev) setIndex((i) => i - 1);
   }, [hasPrev]);
@@ -22,6 +28,8 @@ const ImagePreviewModal = ({ images, initialIndex = 0, onClose }: Props) => {
   const goNext = useCallback(() => {
     if (hasNext) setIndex((i) => i + 1);
   }, [hasNext]);
+
+  const currentItem = media[index];
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -73,13 +81,29 @@ const ImagePreviewModal = ({ images, initialIndex = 0, onClose }: Props) => {
           </button>
         )}
 
-        <Image
-          src={images[index]}
-          alt={`Preview Image ${index + 1} of ${images.length}`}
-          fill
-          className="object-contain w-full h-full p-10 pointer-events-none select-none"
-          sizes="100vw"
-        />
+        {/* Render Image or YouTube Video */}
+        {currentItem.type === 'image' ? (
+          <Image
+            src={currentItem.url}
+            alt={`Preview Image ${index + 1} of ${media.length}`}
+            fill
+            className="object-contain w-full h-full p-10 pointer-events-none select-none"
+            sizes="100vw"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center p-10">
+            <iframe
+              width="100%"
+              height="100%"
+              src={`https://www.youtube.com/embed/${currentItem.videoId}`}
+              title={`Preview Video ${index + 1} of ${media.length}`}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="max-w-full max-h-full"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

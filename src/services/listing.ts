@@ -1,5 +1,6 @@
 import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
 import { createQuery, deleteAPI, fetchAPI, fetchAPIWithMeta, postAPIWithToken, putAPI, API_URL } from "./api";
+import { fetchTagsByIds } from "./tags";
 import type { ListingItem } from "@/types/pagesTypes";
 import QueryString from "qs";
 
@@ -132,13 +133,28 @@ export async function fetchListingBySlug(slug: string, locale?: string) {
     if (locale) {
         const queryWithLocale = createQuery(populate, { locale });
         const dataLocale = await fetchAPI(`listings`, queryWithLocale, filters);
-        return dataLocale[0]
+        const listing = dataLocale[0];
+        
+        // Populate tags if they exist
+        if (listing?.tagDocumentIds?.length) {
+            listing.tags = await fetchTagsByIds(listing.tagDocumentIds as string[]);
+        }
+        
+
+        return listing;
     }
 
     // Final fallback: no locale constraint
     const queryBase = createQuery(populate);
     const dataBase = await fetchAPI(`listings`, queryBase, filters);
-    return dataBase[0]
+    const listing = dataBase[0];
+    
+    // Populate tags if they exist
+    if (listing?.tags?.length) {
+        listing.tags = await fetchTagsByIds(listing.tags as string[]);
+    }
+    
+    return listing;
 }
 
 
@@ -177,6 +193,9 @@ export async function fetchListingsByUser(documentId: string, status?: string, l
             }
         },
         portfolio: {
+            populate: '*'
+        },
+        videos: {
             populate: '*'
         },
         reviews: {

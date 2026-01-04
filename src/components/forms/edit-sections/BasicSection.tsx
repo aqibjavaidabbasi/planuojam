@@ -9,14 +9,18 @@ import Select from "../../custom/Select"
 import Button from "../../custom/Button"
 import { toast } from "react-hot-toast"
 import { updateListing } from "@/services/listing"
+import { fetchTagsByIds } from "@/services/tags"
 import type { ListingItem } from "@/types/pagesTypes"
-import { useTranslations } from "use-intl"
-import type { StripeProductAttributes } from "@/app/api/stripe-products/route"
+import { useTranslations, useLocale } from "use-intl"
+import { StripeProductAttributes } from "@/app/api/stripe-products/route"
+import TagInput from "../../custom/TagInput"
 
 export type BasicForm = {
   title: string
   price?: number
-  description: string
+  description: string;
+  tagDocumentIds: string[]
+  videos: { url: string }[]
   websiteLink?: string
   workingSchedule?: { day: "" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday"; start: string; end: string }[]
 }
@@ -27,16 +31,36 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
   const [loadingSubscription, setLoadingSubscription] = useState(true)
   const t = useTranslations("basicSelectionForm")
   const tModal = useTranslations("Modals.ListingItem")
+  const locale = useLocale()
 
   const { register, handleSubmit, watch, setValue, getValues, formState: { errors } } = useForm<BasicForm>({
     defaultValues: {
       title: listing.title || "",
       price: (listing.price as number) ?? undefined,
       description: listing.description || "",
+      tagDocumentIds: listing.tagDocumentIds || [],
+      videos: [],
       websiteLink: listing.websiteLink || "",
       workingSchedule: listing.workingSchedule || [],
     },
   })
+
+
+  // Populate tags if listing has tagDocumentIds
+  useEffect(() => {
+    const populateTags = async () => {
+      if (listing?.tagDocumentIds?.length) {
+        try {
+          const tags = await fetchTagsByIds(listing.tagDocumentIds as string[], locale);
+          // Update the listing object with populated tags
+          listing.tags = tags;
+        } catch (error) {
+          console.error("Error populating tags:", error);
+        }
+      }
+    };
+    populateTags();
+  }, [listing, locale]);
 
   // Fetch active subscription and price range
   useEffect(() => {
@@ -66,14 +90,14 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
           }
         }
       } catch (error) {
-        console.error('Error fetching subscription price range:', error)
+        console.error("Error fetching subscription:", error)
       } finally {
         setLoadingSubscription(false)
       }
     }
 
     fetchSubscriptionPriceRange()
-  }, [listing.documentId])
+  }, [listing.documentId, locale])
 
   function timeToMinutes(t: string) {
     const [h, m] = (t || "").split(":").map(Number)
@@ -84,7 +108,9 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
   const onSubmit = async (values: BasicForm) => {
     setSubmitting(true)
     try {
-      const payload = { ...values }
+      const payload = {
+        ...values,
+      }
       if (values.websiteLink === "") delete payload.websiteLink
       if (values.price == null || isNaN(values.price)) delete payload.price
       
@@ -218,6 +244,60 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
             showNormalizedUrl={true}
             {...register("websiteLink")}
           />
+        </div>
+        {/* Tags Section */}
+        <div className="col-span-2">
+          <label className="block text-sm font-medium mb-1">{t("tags") || "Tags"}</label>
+          <TagInput
+            selectedTagIds={watch("tagDocumentIds") || []}
+            onTagsChange={(tagIds) => setValue("tagDocumentIds", tagIds, { shouldDirty: true })}
+            disabled={submitting}
+            maxTags={10}
+            locale={locale}
+          />
+        </div>
+        
+        {/* Videos Section */}
+        <div className="col-span-2">
+          <label className="block text-sm font-medium mb-1">{t("videos") || "Videos"}</label>
+          <div className="space-y-2">
+            {watch("videos")?.map((video, idx) => (
+              <div key={idx} className="flex gap-2">
+                <Input
+                  type="url"
+                  placeholder={t("videoUrlPlaceholder") || "YouTube URL..."}
+                  {...register(`videos.${idx}.url`, {
+                    pattern: {
+                      value: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/,
+                      message: t("errors.invalidYouTubeUrl") || "Invalid YouTube URL"
+                    }
+                  })}
+                />
+                <Button
+                  type="button"
+                  style="secondary"
+                  onClick={() => {
+                    const currentVideos = getValues("videos") || []
+                    setValue("videos", currentVideos.filter((_, i) => i !== idx), { shouldDirty: true })
+                  }}
+                >
+                  {t("remove") || "Remove"}
+                </Button>
+              </div>
+            ))}
+            {(watch("videos") || []).length < 5 && (
+              <Button
+                type="button"
+                style="secondary"
+                onClick={() => {
+                  const currentVideos = getValues("videos") || []
+                  setValue("videos", [...currentVideos, { url: "" }], { shouldDirty: true })
+                }}
+              >
+                {t("addVideo") || "Add Video"}
+              </Button>
+            )}
+          </div>
         </div>
         {/* Working Schedule Editor */}
         <div className="col-span-2">

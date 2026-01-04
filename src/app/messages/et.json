@@ -1,4 +1,12 @@
 {
+  "TagInput": {
+    "placeholder": "Lisa silt...",
+    "maxTagsReached": "Maksimaalselt {max} silti",
+    "loading": "Laadimine...",
+    "errorLoading": "Viga siltide laadimisel",
+    "noMatchingTags": "Sobivaid silte ei leitud",
+    "addTag": "Lisa silt"
+  },
   "Auth": {
     "Login": {
       "title": "Tere tulemast tagasi",
@@ -1034,7 +1042,9 @@
       "hot": "KUUM",
       "deal": "PAKKUMINE",
       "imageAlt": "Koha pilt {index}",
+      "videoThumbnail": "Video pisipilt {index}",
       "placeholderAlt": "kohatäide",
+      "invalidVideoUrl": "Sobimatu video URL",
       "unrated": "Hinnang puudub",
       "noLocation": "Asukoht puudub",
       "noVenueLocation": "Koha asukoht puudub",
@@ -1125,6 +1135,18 @@
     "title": "Pealkiri",
     "price": "Hind",
     "featured": "Esiletõstetud",
+    "overview": "Ülevaade",
+    "overviewPlaceholder": "Esitage oma kuulutuse ülevaate...",
+    "otherInformation": "Lisainfo",
+    "otherInformationPlaceholder": "Lisa lisate detaile...",
+    "tags": "Sildid",
+    "tagPlaceholder": "Lisa silt...",
+    "addTag": "Lisa",
+    "videos": "Videod",
+    "videoUrlPlaceholder": "YouTube URL...",
+    "addVideo": "Lisa video",
+    "removeVideo": "Eemalda",
+    "remove": "Eemalda",
     "description": "Kirjeldus",
     "websitelink": "Veebilehe link",
     "workinghours(perday)": "Tööaeg (päevas)",
@@ -1139,18 +1161,23 @@
     },
     "errors": {
       "titleRequired": "Pealkiri on kohustuslik",
-      "listingStatusRequired": "Nimekirja olek on kohustuslik",
+      "listingStatusRequired": "Kuulutuse olek on kohustuslik",
       "pricePositive": "Hind peab olema positiivne",
       "priceRequired": "Hind on kohustuslik",
       "descriptionRequired": "Kirjeldus on kohustuslik",
-      "invalidWebsiteLink": "Palun lisage kehtiv veebilehe link",
+      "invalidWebsiteLink": "Palun lisage kehtiv veebilehe linki",
       "priceBelowMin": "Hind peab olema vähemalt {min}",
-      "priceAboveMax": "Hind ei tohi ületada {max}"
+      "priceAboveMax": "Hind ei tohi ületada {max}",
+      "maxTags": "Maksimaalselt 10 silti",
+      "tagAlreadyAdded": "Silt on juba lisatud",
+      "duplicate": "Silt on juba lisatud",
+      "invalidYouTubeUrl": "Sobimatu YouTube URL"
     },
     "priceRangeHint": "Lubatud vahemik: {min} - {max}",
-    "loadingPriceRange": "Hinna piirangute laadimine...",
+    "loadingPriceRange": "Hinnavahemike laadimine...",
+    "loadingTags": "Siltide laadimine...",
     "toasts": {
-      "updated": "Põhiandmed on uuendatud",
+      "updated": "Põhiandmed uuendatud",
       "updateFailed": "Põhiandmete uuendamine ebaõnnestus"
     }
   },
@@ -1254,7 +1281,8 @@
   },
   "ListingGallery": {
     "viewMore": "Vaata veel",
-    "viewMoreWithCount": "Vaata veel (+{count})"
+    "viewMoreWithCount": "Vaata veel (+{count})",
+    "watchOnYouTube": "Vaata YouTube'is"
   },
   "contactSections": {
     "title": "Kontakt",

@@ -1,4 +1,12 @@
 {
+  "TagInput": {
+    "placeholder": "Pridėti žymą...",
+    "maxTagsReached": "Maksimalus {max} žymų skaičius",
+    "loading": "Kraunama...",
+    "errorLoading": "Klaida įkeliant žymas",
+    "noMatchingTags": "Nėra atitinkančių žymų",
+    "addTag": "Pridėti žymą"
+  },
   "Auth": {
     "Login": {
       "title": "Sveiki sugrįžę",
@@ -1027,7 +1035,9 @@
       "hot": "KARŠTA",
       "deal": "AKCIJA",
       "imageAlt": "Vietos nuotrauka {index}",
+      "videoThumbnail": "Vaizdo įrašo miniatiūra {index}",
       "placeholderAlt": "vietos rezervacija",
+      "invalidVideoUrl": "Neteisingas vaizdo įrašo URL",
       "unrated": "Neįvertinta",
       "noLocation": "Vieta nenurodyta",
       "noVenueLocation": "Vietos lokacija nenurodyta",
@@ -1116,6 +1126,18 @@
     "title": "Pavadinimas",
     "price": "Kaina",
     "featured": "Rodomas",
+    "overview": "Apžvalga",
+    "overviewPlaceholder": "Pateikite savo skelbimo apžvalgą...",
+    "otherInformation": "Papildoma informacija",
+    "otherInformationPlaceholder": "Pridėkite papildomų detalių...",
+    "tags": "Žymos",
+    "tagPlaceholder": "Pridėkite žymą...",
+    "addTag": "Pridėti",
+    "videos": "Vaizdo įrašai",
+    "videoUrlPlaceholder": "YouTube URL...",
+    "addVideo": "Pridėti vaizdo įrašą",
+    "removeVideo": "Pašalinti",
+    "remove": "Pašalinti",
     "description": "Aprašymas",
     "websitelink": "Tinklalapio nuoroda",
     "workinghours(perday)": "Darbo valandos (per dieną)",
@@ -1136,10 +1158,15 @@
       "descriptionRequired": "Reikalingas aprašymas",
       "invalidWebsiteLink": "Pridėkite galiojančią svetainės nuorodą",
       "priceBelowMin": "Kaina turi būti bent {min}",
-      "priceAboveMax": "Kaina negali viršyti {max}"
+      "priceAboveMax": "Kaina negali viršyti {max}",
+      "maxTags": "Maksimaliai 10 žymų",
+      "tagAlreadyAdded": "Žyma jau pridėta",
+      "duplicate": "Žyma jau pridėta",
+      "invalidYouTubeUrl": "Neteisingas YouTube URL"
     },
     "priceRangeHint": "Leidžiamas diapazonas: {min} - {max}",
     "loadingPriceRange": "Įkeliami kainos apribojimai...",
+    "loadingTags": "Įkeliamos žymos...",
     "toasts": {
       "updated": "Pagrindinės detalės atnaujintos",
       "updateFailed": "Nepavyko atnaujinti pagrindinių detalių"
@@ -1242,7 +1269,8 @@
   },
   "ListingGallery": {
     "viewMore": "Peržiūrėti daugiau",
-    "viewMoreWithCount": "Peržiūrėti daugiau (+{count})"
+    "viewMoreWithCount": "Peržiūrėti daugiau (+{count})",
+    "watchOnYouTube": "Žiūrėti YouTube"
   },
   "contactSections": {
     "title": "Kontaktai",

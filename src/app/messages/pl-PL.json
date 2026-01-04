@@ -1,4 +1,12 @@
 {
+  "TagInput": {
+    "placeholder": "Dodaj tag...",
+    "maxTagsReached": "Maksymalnie {max} tagów",
+    "loading": "Ładowanie...",
+    "errorLoading": "Błąd ładowania tagów",
+    "noMatchingTags": "Brak pasujących tagów",
+    "addTag": "Dodaj tag"
+  },
   "Auth": {
     "Login": {
       "title": "Witamy ponownie",
@@ -1033,7 +1041,9 @@
       "hot": "GORĄCA",
       "deal": "OFERTA",
       "imageAlt": "Zdjęcie miejsca {index}",
+      "videoThumbnail": "Miniaturka wideo {index}",
       "placeholderAlt": "zastępczy",
+      "invalidVideoUrl": "Nieprawidłowy URL wideo",
       "unrated": "Bez oceny",
       "noLocation": "Brak lokalizacji",
       "noVenueLocation": "Brak lokalizacji miejsca",
@@ -1123,10 +1133,22 @@
     "title": "Tytuł",
     "price": "Cena",
     "featured": "Wyróżniony",
+    "overview": "Przegląd",
+    "overviewPlaceholder": "Przedstaw przegląd swojego ogłoszenia...",
+    "otherInformation": "Dodatkowe informacje",
+    "otherInformationPlaceholder": "Dodaj dodatkowe szczegóły...",
+    "tags": "Tagi",
+    "tagPlaceholder": "Dodaj tag...",
+    "addTag": "Dodaj",
+    "videos": "Wideo",
+    "videoUrlPlaceholder": "URL YouTube...",
+    "addVideo": "Dodaj wideo",
+    "removeVideo": "Usuń",
+    "remove": "Usuń",
     "description": "Opis",
     "websitelink": "Link do strony internetowej",
     "workinghours(perday)": "Godziny pracy (dziennie)",
-    "titleDescription": "Tytuł Opis",
+    "titleDescription": "Tytuł opisu",
     "saving": "Zapisywanie",
     "savechanges": "Zapisz zmiany",
     "listingStatus": {
@@ -1141,12 +1163,17 @@
       "pricePositive": "Cena musi być dodatnia",
       "priceRequired": "Cena jest wymagana",
       "descriptionRequired": "Opis jest wymagany",
-      "invalidWebsiteLink": "Proszę dodać poprawny link do strony internetowej",
+      "invalidWebsiteLink": "Proszę dodać poprawny link do strony",
       "priceBelowMin": "Cena musi wynosić co najmniej {min}",
-      "priceAboveMax": "Cena nie może przekraczać {max}"
+      "priceAboveMax": "Cena nie może przekraczać {max}",
+      "maxTags": "Maksymalnie 10 tagów",
+      "tagAlreadyAdded": "Tag został już dodany",
+      "duplicate": "Tag został już dodany",
+      "invalidYouTubeUrl": "Nieprawidłowy URL YouTube"
     },
     "priceRangeHint": "Dozwolony zakres: {min} - {max}",
     "loadingPriceRange": "Ładowanie ograniczeń cenowych...",
+    "loadingTags": "Ładowanie tagów...",
     "toasts": {
       "updated": "Podstawowe dane zaktualizowane",
       "updateFailed": "Nie udało się zaktualizować podstawowych danych"
@@ -1253,7 +1280,8 @@
   },
   "ListingGallery": {
     "viewMore": "Zobacz więcej",
-    "viewMoreWithCount": "Zobacz więcej (+{count})"
+    "viewMoreWithCount": "Zobacz więcej (+{count})",
+    "watchOnYouTube": "Obejrzyj na YouTube"
   },
   "contactSections": {
     "title": "Kontakt",

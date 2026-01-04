@@ -47,7 +47,7 @@ const ToggleButton: React.FC<ToggleButtonProps> = ({
       onClick={toggle}
       disabled={disabled}
       className={`relative inline-flex items-center h-8 w-16 rounded-full transition-colors duration-300
-        ${enabled ? "bg-[#cc922f]" : "bg-gray-300"} ${className}`}
+        ${enabled ? "bg-primary" : "bg-gray-300"} ${className}`}
     >
       <span
         className={`inline-block w-6 h-6 transform bg-white rounded-full shadow-md transition-transform duration-300

@@ -1,4 +1,12 @@
 {
+  "TagInput": {
+    "placeholder": "Добавить тег...",
+    "maxTagsReached": "Максимум {max} тегов",
+    "loading": "Загрузка...",
+    "errorLoading": "Ошибка загрузки тегов",
+    "noMatchingTags": "Нет подходящих тегов",
+    "addTag": "Добавить тег"
+  },
   "Auth": {
     "Login": {
       "title": "С возвращением",
@@ -681,6 +689,32 @@
         "featured": {
           "label": "Рекомендуемое?"
         },
+        "overview": {
+          "label": "Обзор",
+          "placeholder": "Предоставьте обзор вашего объявления..."
+        },
+        "otherInformation": {
+          "label": "Дополнительная информация",
+          "placeholder": "Добавьте любые дополнительные детали..."
+        },
+        "tags": {
+          "label": "Теги",
+          "placeholder": "Добавьте тег...",
+          "add": "Добавить",
+          "errors": {
+            "max": "Максимум 10 тегов",
+            "duplicate": "Тег уже добавлен"
+          }
+        },
+        "videos": {
+          "label": "Видео",
+          "placeholder": "URL YouTube...",
+          "add": "Добавить видео",
+          "remove": "Удалить",
+          "errors": {
+            "invalid": "Недействительный URL YouTube"
+          }
+        },
         "description": {
           "label": "Описание",
           "placeholder": "Добавьте описание вашей услуги",
@@ -1020,7 +1054,8 @@
   "Dynamic": {
     "ListingGallery": {
       "viewMore": "Показать больше",
-      "viewMoreWithCount": "Показать больше (+{count})"
+      "viewMoreWithCount": "Показать больше (+{count})",
+      "watchOnYouTube": "Смотреть на YouTube"
     },
     "ListingCard": {
       "toasts": {
@@ -1034,7 +1069,9 @@
       "hot": "ГОРЯЧЕЕ",
       "deal": "ПРЕДЛОЖЕНИЕ",
       "imageAlt": "Изображение площадки {index}",
+      "videoThumbnail": "Миниатюра видео {index}",
       "placeholderAlt": "заглушка",
+      "invalidVideoUrl": "Недействительный URL видео",
       "unrated": "Без оценки",
       "noLocation": "Местоположение не указано",
       "noVenueLocation": "Местоположение площадки не указано",
@@ -1128,6 +1165,18 @@
     "title": "Заголовок",
     "price": "Цена",
     "featured": "Избранное",
+    "overview": "Обзор",
+    "overviewPlaceholder": "Предоставьте обзор вашего объявления...",
+    "otherInformation": "Дополнительная информация",
+    "otherInformationPlaceholder": "Добавьте любые дополнительные детали...",
+    "tags": "Теги",
+    "tagPlaceholder": "Добавьте тег...",
+    "addTag": "Добавить",
+    "videos": "Видео",
+    "videoUrlPlaceholder": "URL YouTube...",
+    "addVideo": "Добавить видео",
+    "removeVideo": "Удалить",
+    "remove": "Удалить",
     "description": "Описание",
     "websitelink": "Ссылка на сайт",
     "workinghours(perday)": "Рабочие часы (в день)",
@@ -1148,10 +1197,15 @@
       "descriptionRequired": "Требуется описание",
       "invalidWebsiteLink": "Пожалуйста, укажите действительную ссылку на сайт",
       "priceBelowMin": "Цена должна быть не менее {min}",
-      "priceAboveMax": "Цена не должна превышать {max}"
+      "priceAboveMax": "Цена не должна превышать {max}",
+      "maxTags": "Максимум 10 тегов",
+      "tagAlreadyAdded": "Тег уже добавлен",
+      "duplicate": "Тег уже добавлен",
+      "invalidYouTubeUrl": "Недействительный URL YouTube"
     },
     "priceRangeHint": "Допустимый диапазон: {min} - {max}",
     "loadingPriceRange": "Загрузка ценовых ограничений...",
+    "loadingTags": "Загрузка тегов...",
     "toasts": {
       "updated": "Основные данные обновлены",
       "updateFailed": "Не удалось обновить основные данные"

@@ -4,7 +4,7 @@ const ListingGallery = dynamic(() => import("@/components/custom/ListingGallery"
 const MapboxMap = dynamic(() => import("@/components/global/MapboxMap"), { ssr: false });
 const ListingCalendar = dynamic(() => import("@/components/custom/ListingCalendar"), { ssr: false });
 const BookingModal = dynamic(() => import("@/components/modals/BookingModal"), { ssr: false });
-const ListingDetailHero = dynamic(()=>import("@/components/custom/ListingDetailHero"))
+const ListingDetailHero = dynamic(() => import("@/components/custom/ListingDetailHero"))
 const Faqitem = dynamic(() => import("@/components/Dynamic/Faqitem"), { ssr: false });
 const VenueCard = dynamic(() => import("@/components/custom/VenueCard"), { ssr: false });
 const VendorCard = dynamic(() => import("@/components/custom/VendorCard"), { ssr: false });
@@ -143,7 +143,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
   }, [initialListing?.documentId, locale]);
 
 
-  if(!initialListing) notFound();
+  if (!initialListing) notFound();
 
   const isDraft = initialListing.listingStatus !== 'published';
   const isOwner = user?.documentId === initialListing.user?.documentId;
@@ -157,7 +157,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
         {showPreviewBanner && (
           <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-r-lg">
             <div className="flex">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                 </svg>
@@ -173,11 +173,12 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
 
         {/* gallery */}
         {
-          initialListing?.portfolio && initialListing.portfolio?.length > 0 && (
-            <ListingGallery 
-              portfolio={initialListing.portfolio} 
-              title={initialListing.title || "Listing Gallery"} 
+          ((initialListing?.portfolio?.filter(media => !media.mime?.startsWith('video/')) || [])?.length > 0 || (initialListing?.videos?.length || 0) > 0) && (
+            <ListingGallery
+              portfolio={initialListing.portfolio || []}
+              title={initialListing.title || "Listing Gallery"}
               mediaOrder={initialListing.mediaOrder}
+              videos={initialListing.videos}
             />
           )
         }
@@ -210,6 +211,20 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
                 {t("overview")}
               </h2>
               <p className="text-secondary my-4">{initialListing.description}</p>
+
+              {/* tags */}
+              {initialListing.tags && initialListing.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {initialListing.tags.map((tag) => (
+                    <span
+                      key={tag.documentId}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary border border-primary/20"
+                    >
+                      {tag.name}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
             {/* location map */}
             <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
@@ -309,9 +324,9 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
                   {tSchedule("workingScheduleTitle", { default: "Working Schedule" })}
                 </h2>
                 {(() => {
-                  const daysOrder = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"] as const;
+                  const daysOrder = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] as const;
                   const schedule = (initialListing.workingSchedule || []);
-                  const byDay: Record<string, {start: string; end: string}[]> = {};
+                  const byDay: Record<string, { start: string; end: string }[]> = {};
                   for (const d of daysOrder) byDay[d] = [];
                   schedule.forEach(w => {
                     const key = (w?.day || "").toLowerCase();

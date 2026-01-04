@@ -383,7 +383,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                   onChange={(e) => vendorRHF.setValue(`serviceArea.${idx}.state`, e.target.value, { shouldDirty: true })}
                   options={[{ label: t("selectstate"), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
                 />
-                <div className="!hidden">
+                <div className="hidden!">
                   <Input
                     type="number"
                     step="any"
@@ -457,7 +457,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
             />
           </div>
           <div className="flex gap-3 flex-col">
-            <div className="!hidden">
+            <div className="hidden!">
               <Input
                 type="number"
                 step="any"

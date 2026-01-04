@@ -2,9 +2,10 @@
 import { ListingItem } from '@/types/pagesTypes'
 import { getCompleteImageUrl } from '@/utils/helpers'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { Swiper as SwiperClass } from 'swiper/types'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
@@ -36,6 +37,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
   const [heartLoading, setHeartLoading] = useState(false);
   const t = useTranslations('Dynamic.ListingCard');
   const locale = useLocale();
+  const swiperRef = useRef<{ swiper: SwiperClass }>(null);
 
   const isLiked = Array.isArray(likedListings) && likedListings.some(listing => listing.listing === item.documentId);
 
@@ -98,7 +100,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
 
       {/* Upcoming Hot Deal Banner */}
       {hotDealInfo.status === 'upcoming' && (
-        <div className="absolute top-8 left-0 right-0 z-10 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center text-xs font-semibold py-1">
+        <div className="absolute top-8 left-0 right-0 z-10 bg-linear-to-r from-orange-500 to-red-500 text-white text-center text-xs font-semibold py-1">
           {getUpcomingHotDealMessage(item.hotDeal, t)}
         </div>
       )}
@@ -118,8 +120,10 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
         </div>
       )}
 
-      {item.portfolio?.length > 0 && (
+      {/* Combine images from portfolio and YouTube videos */}
+      {((item.portfolio?.filter(media => !media.mime?.startsWith('video/')) || [])?.length > 0 || (item.videos?.length || 0) > 0) && (
         <Swiper
+          ref={swiperRef}
           modules={[Navigation, Pagination, Autoplay]}
           className="custom-swiper"
           spaceBetween={30}
@@ -129,35 +133,117 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           loop={true}
           autoplay={{ delay: 3000, disableOnInteraction: false }}
         >
-          {item.portfolio?.map((media, idx) => {
+          {/* Images from portfolio (filtered to exclude videos) */}
+          {item.portfolio?.filter(media => !media.mime?.startsWith('video/')).map((media, idx) => {
             const mediaUrl = getCompleteImageUrl(media.url);
-            const isVideo = media.mime?.startsWith('video/');
             
             return (
-              <SwiperSlide key={idx}>
-                <div className="relative w-full aspect-[4/3] bg-black">
-                  {isVideo ? (
-                    <video
-                      src={mediaUrl}
-                      className="w-full h-full object-cover"
-                      controls
-                      muted
-                      playsInline
-                      preload="metadata"
-                    >
-                      {t('videoNotSupported')}
-                    </video>
-                  ) : (
-                    <Image
-                      src={mediaUrl}
-                      alt={t('imageAlt', { index: idx + 1 })}
-                      fill
-                      className='object-cover object-center'
-                      sizes="(max-width: 768px) 100vw, 400px"
-                      priority={idx === 0 && !!highPriority}
-                      fetchPriority={idx === 0 && highPriority ? 'high' : 'auto'}
-                      loading={idx === 0 && highPriority ? 'eager' : 'lazy'}
+              <SwiperSlide key={`image-${idx}`}>
+                <div className="relative w-full aspect-4/3 bg-black">
+                  <Image
+                    src={mediaUrl}
+                    alt={t('imageAlt', { index: idx + 1 })}
+                    fill
+                    className='object-cover object-center'
+                    sizes="(max-width: 768px) 100vw, 400px"
+                    priority={idx === 0 && !!highPriority}
+                    fetchPriority={idx === 0 && highPriority ? 'high' : 'auto'}
+                    loading={idx === 0 && highPriority ? 'eager' : 'lazy'}
+                  />
+                </div>
+              </SwiperSlide>
+            );
+          })}
+          
+          {/* YouTube videos */}
+          {item.videos?.map((video, idx) => {
+            // Extract YouTube video ID from URL
+            const getYouTubeId = (url: string) => {
+              const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+              const match = url.match(regExp);
+              return (match && match[2].length === 11) ? match[2] : null;
+            };
+            
+            const videoId = getYouTubeId(video.url);
+            
+            const handleVideoPlay = () => {
+              // Pause Swiper when video starts playing
+              if (swiperRef.current && swiperRef.current.swiper) {
+                swiperRef.current.swiper.autoplay.stop();
+              }
+            };
+            
+            const handleVideoPause = () => {
+              // Resume Swiper when video is paused
+              if (swiperRef.current && swiperRef.current.swiper) {
+                swiperRef.current.swiper.autoplay.start();
+              }
+            };
+            
+            return (
+              <SwiperSlide key={`video-${idx}`}>
+                <div className="relative w-full aspect-4/3 bg-black">
+                  {videoId ? (
+                    <iframe
+                      width="100%"
+                      height="100%"
+                      src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&origin=${window.location.origin}`}
+                      title={t('videoThumbnail', { index: idx + 1 })}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full"
+                      onLoad={(e) => {
+                        const iframe = e.target as HTMLIFrameElement;
+                        
+                        // Wait a bit for YouTube API to be ready
+                        setTimeout(() => {
+                          // Add event listeners for YouTube iframe API
+                          iframe.contentWindow?.postMessage(
+                            JSON.stringify({ event: 'listening', id: videoId }),
+                            '*'
+                          );
+                          
+                        }, 1000);
+                        
+                        const messageHandler = (event: MessageEvent) => {
+                          try {
+                            const data = JSON.parse(event.data);
+                            if (data.id === videoId) {
+                              // Handle infoDelivery events which contain playerState
+                              if (data.event === 'infoDelivery' && data.info && data.info.playerState !== undefined) {
+                                if (data.info.playerState === 1) { // Playing
+                                  handleVideoPlay();
+                                } else if (data.info.playerState === 2) { // Paused
+                                  handleVideoPause();
+                                }
+                              }
+                              // Also handle onStateChange events (if they ever come)
+                              else if (data.event === 'onStateChange') {
+                                if (data.info === 1) { // Playing
+                                  handleVideoPlay();
+                                } else if (data.info === 2) { // Paused
+                                  handleVideoPause();
+                                }
+                              }
+                            }
+                          } catch  {
+                            // Ignore non-JSON messages
+                          }
+                        };
+                        
+                        window.addEventListener('message', messageHandler);
+                        
+                        // Cleanup on unmount
+                        return () => {
+                          window.removeEventListener('message', messageHandler);
+                        };
+                      }}
                     />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-white">
+                      <span>{t('invalidVideoUrl')}</span>
+                    </div>
                   )}
                 </div>
               </SwiperSlide>
@@ -165,8 +251,8 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           })}
         </Swiper>
       )}
-      {item.portfolio?.length === 0 && (
-        <div className="relative w-full aspect-[4/3]">
+      {((item.portfolio?.filter(media => !media.mime?.startsWith('video/')) || [])?.length === 0 && (item.videos?.length || 0) === 0) && (
+        <div className="relative w-full aspect-4/3">
           <Image
             src={"/noImage.jpg"}
             alt={t('placeholderAlt')}
@@ -181,7 +267,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
         {/* Title and Rating */}
         <div className="flex justify-between items-center gap-2">
           <strong className="text-base md:text-lg truncate max-w-[180px]">{item.title}</strong>
-          <div className="flex gap-1 text-primary items-center text-sm flex-shrink-0">
+          <div className="flex gap-1 text-primary items-center text-sm shrink-0">
             <span>{item.averageRating ?? t('unrated')}</span>
             <span>({item.ratingsCount ?? 0})</span>
           </div>

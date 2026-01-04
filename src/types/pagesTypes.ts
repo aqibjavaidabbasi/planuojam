@@ -250,6 +250,17 @@ export interface Contact {
   phone: string;
 }
 
+export type TagLocalization = {
+  id: string;
+  documentId: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string;
+  locale: string;
+  localizations: TagLocalization[];
+};
+
 export interface ListingItem {
   description: string;
   documentId: string;
@@ -278,6 +289,9 @@ export interface ListingItem {
   portfolio: strapiImage[];
   mediaOrder?: string;
   mainImageId?: string;
+  tags?: Array<{ documentId: string; name: string; id: string; createdAt: string; updatedAt: string; publishedAt: string; locale: string; localizations: TagLocalization[] }>;
+  tagDocumentIds?: string[];
+  videos?: { url: string }[];
   FAQs: {
     sectionTitle: string;
     numberOfColumns: number;

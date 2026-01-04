@@ -1,3 +1,4 @@
+
 export type CreateListingFormTypes = {
     title: string;
     slug: string;
@@ -6,8 +7,9 @@ export type CreateListingFormTypes = {
     listingStatus: "draft" | "pending review" | "published" | "archived";
     category: string;
     mainImageId: string;
+    tagDocumentIds: string[];
+    videos: { url: string }[];
     description: string;
-    tags: string[]; //use set in creation, set replaces the existing ones
     mediaOrder?: string; // Added for tracking media item order
     listingItem: {
         __component: "dynamic-blocks.venue" | "dynamic-blocks.vendor";
@@ -100,7 +102,3 @@ export type CreateListingFormTypes = {
     };
     locale: string;
 }
-
-//date examples for strapi payload, choose one as per the one you have configured
-// "eventDate": "2024-06-01"
-//"eventDate": "2024-06-01T12:00:00Z"

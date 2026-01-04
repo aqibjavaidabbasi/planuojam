@@ -193,6 +193,9 @@ export const PAGES_DYNAMIC_ZONE = {
                                     },
                                     'portfolio': {
                                         populate: '*'
+                                    },
+                                    'videos': {
+                                        populate: '*'
                                     }
                                 }
                             }

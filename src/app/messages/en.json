@@ -1,4 +1,12 @@
 {
+  "TagInput": {
+    "placeholder": "Add a tag...",
+    "maxTagsReached": "Maximum {max} tags",
+    "loading": "Loading...",
+    "errorLoading": "Error loading tags",
+    "noMatchingTags": "No matching tags",
+    "addTag": "Add Tag"
+  },
   "Auth": {
     "Login": {
       "title": "Welcome Back",
@@ -686,6 +694,32 @@
         "featured": {
           "label": "Is Featured?"
         },
+        "overview": {
+          "label": "Overview",
+          "placeholder": "Provide an overview of your listing..."
+        },
+        "otherInformation": {
+          "label": "Other Information",
+          "placeholder": "Add any additional details..."
+        },
+        "tags": {
+          "label": "Tags",
+          "placeholder": "Add a tag...",
+          "add": "Add",
+          "errors": {
+            "max": "Maximum 10 tags allowed",
+            "duplicate": "Tag already added"
+          }
+        },
+        "videos": {
+          "label": "Videos",
+          "placeholder": "YouTube URL...",
+          "add": "Add Video",
+          "remove": "Remove",
+          "errors": {
+            "invalid": "Invalid YouTube URL"
+          }
+        },
         "description": {
           "label": "Description",
           "placeholder": "Add description about your service",
@@ -1021,7 +1055,9 @@
       "hot": "HOT",
       "deal": "DEAL",
       "imageAlt": "Venue Image {index}",
+      "videoThumbnail": "Video Thumbnail {index}",
       "placeholderAlt": "placeholder",
+      "invalidVideoUrl": "Invalid video URL",
       "unrated": "Unrated",
       "noLocation": "No location provided",
       "noVenueLocation": "No Venue Location provided",
@@ -1124,6 +1160,18 @@
     "title": "Title",
     "price": "Price",
     "featured": "Featured",
+    "overview": "Overview",
+    "overviewPlaceholder": "Provide an overview of your listing...",
+    "otherInformation": "Other Information",
+    "otherInformationPlaceholder": "Add any additional details...",
+    "tags": "Tags",
+    "tagPlaceholder": "Add a tag...",
+    "addTag": "Add",
+    "videos": "Videos",
+    "videoUrlPlaceholder": "YouTube URL...",
+    "addVideo": "Add Video",
+    "removeVideo": "Remove",
+    "remove": "Remove",
     "description": "Description",
     "websitelink": "Website Link",
     "workinghours(perday)": "Working Hour (Per Day)",
@@ -1144,10 +1192,15 @@
       "descriptionRequired": "Description is required",
       "invalidWebsiteLink": "Please add a valid website link",
       "priceBelowMin": "Price must be at least {min}",
-      "priceAboveMax": "Price must not exceed {max}"
+      "priceAboveMax": "Price must not exceed {max}",
+      "maxTags": "Maximum 10 tags allowed",
+      "tagAlreadyAdded": "Tag already added",
+      "duplicate": "Tag already added",
+      "invalidYouTubeUrl": "Invalid YouTube URL"
     },
     "priceRangeHint": "Allowed range: {min} - {max}",
     "loadingPriceRange": "Loading price constraints...",
+    "loadingTags": "Loading tags...",
     "toasts": {
       "updated": "Basic details updated",
       "updateFailed": "Failed to update basic details"
@@ -1197,7 +1250,8 @@
   },
   "ListingGallery": {
     "viewMore": "View more",
-    "viewMoreWithCount": "View more (+{count})"
+    "viewMoreWithCount": "View more (+{count})",
+    "watchOnYouTube": "Watch on YouTube"
   },
   "vendorvenueSection": {
     "details": "Details",

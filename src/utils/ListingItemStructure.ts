@@ -63,6 +63,9 @@ export const LISTING_ITEM_POP_STRUCTURE = {
     portfolio: {
         populate: '*'
     },
+    videos: {
+        populate: '*'
+    },
     FAQs: {
         populate: '*'
     },
@@ -146,6 +149,9 @@ export const LISTING_ITEM_POP_STRUCTURE = {
                 }
             },
             portfolio: {
+                populate: '*'
+            },
+            videos: {
                 populate: '*'
             },
             FAQs: {
