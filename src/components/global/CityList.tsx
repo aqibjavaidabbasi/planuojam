@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 
 function CityList({ data }: { data: CityListBlock }) {
+  console.log(data.Cities)
   const t = useTranslations('Global.CityList')
   return (
     <div className="bg-white rounded-sm flex"
@@ -21,7 +22,7 @@ function CityList({ data }: { data: CityListBlock }) {
             <Link href={'/map'}
               className='text-primary hover:underline'
             >
-              {city.city.name}
+              {city?.city?.name}
             </Link>
           </li>
         ))}
