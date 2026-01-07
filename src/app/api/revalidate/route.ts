@@ -112,6 +112,11 @@ export async function POST(req: Request) {
                     targets.push(`/${locale}/profile`)
                     //edit listing page
                     targets.push(`/${locale}/listing/${slugToValidate}/edit`)
+                    
+                    //event type pages
+                    eventTypes.forEach((et: { eventType: { slug: string; }; }) => {
+                        targets.push(`/${locale}/event-types/${et.eventType.slug}`)
+                    })
                 }
                 if (bodyModal.includes('page')) {
                     //root page

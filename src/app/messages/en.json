@@ -234,7 +234,7 @@
         "basic": "Basic Details",
         "vv": "Vendor/Venue Details",
         "deal": "Hot Deal",
-        "images": "Images/Videos",
+        "images": "Images",
         "contact": "Contact",
         "social": "Social Links",
         "pricing": "Pricing",
@@ -506,7 +506,7 @@
   },
   "Custom": {
     "ImageUploader": {
-      "selectImages": "Select Images/Videos",
+      "selectImages": "Select Images",
       "uploadImages": "Upload {count} file(s)",
       "toasts": {
         "uploadSuccess": "Media uploaded successfully",
@@ -523,9 +523,9 @@
       "selectMain": "Select as main image"
     },
     "ImageUploadModal": {
-      "title": "Upload Images & Videos",
+      "title": "Upload Images",
       "validation": {
-        "noFiles": "Please select at least one image or video to upload",
+        "noFiles": "Please select at least one image to upload",
         "filesNotUploaded": "You have selected files but haven't uploaded them. Upload them first or cancel to discard.",
         "uploadFailed": "Upload failed. Please try again."
       },
@@ -1213,11 +1213,11 @@
     }
   },
   "ImageSection": {
-    "addportfolioimages": "Add Portfolio Images/Videos",
+    "addportfolioimages": "Add Portfolio Images",
     "saving": "Saving",
     "saveImages": "Save Media",
-    "uploadHint": "Maximum file size: {size} (Images & Videos)",
-    "instructionHint": "Select media, then upload them and then click save to save all of the items. Click on star icon to choose a main image",
+    "uploadHint": "Maximum file size: {size} (Images)",
+    "instructionHint": "Select images, then upload them and then click save to save all of the items. Click on star icon to choose a main image",
     "readyToSave": "{count} item(s) ready to save",
     "alt": {
       "portfolioImage": "Portfolio image",

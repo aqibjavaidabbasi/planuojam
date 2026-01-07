@@ -185,7 +185,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({ isOpen, onClose, on
                     <input
                         type="file"
                         multiple
-                        accept="image/*,video/*"
+                        accept="image/*"
                         onChange={handleFileChange}
                         className="hidden"
                         id="fileInput"
@@ -208,7 +208,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({ isOpen, onClose, on
                                         <video
                                             src={getCompleteImageUrl(file.url)}
                                             controls
-                                            className="w-full aspect-[4/3] object-cover rounded-lg"
+                                            className="w-full aspect-4/3 object-cover rounded-lg"
                                         />
                                     ) : (
                                         <Image
@@ -216,7 +216,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({ isOpen, onClose, on
                                             alt={file.name || `uploaded-${file.id}`}
                                             width={200}
                                             height={150}
-                                            className="w-full aspect-[4/3] object-cover rounded-lg"
+                                            className="w-full aspect-4/3 object-cover rounded-lg"
                                         />
                                     )}
                                     <Button onClick={() => removeUploaded(file.id)} disabled={uploading} style="secondary" extraStyles="absolute top-1 right-1 !rounded-full !p-2" >
@@ -234,7 +234,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({ isOpen, onClose, on
                                     <video
                                         src={src}
                                         controls
-                                        className="w-full aspect-[4/3] object-cover rounded-lg"
+                                        className="w-full aspect-4/3 object-cover rounded-lg"
                                     />
                                 ) : (
                                     <Image
@@ -242,7 +242,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({ isOpen, onClose, on
                                         alt={`preview-${index}`}
                                         width={200}
                                         height={150}
-                                        className="w-full aspect-[4/3] object-cover rounded-lg"
+                                        className="w-full aspect-4/3 object-cover rounded-lg"
                                     />
                                 )}
                                 <Button onClick={() => removeFile(index)} disabled={uploading} style="secondary" extraStyles="absolute top-1 right-1 !rounded-full !p-2" >

@@ -128,13 +128,19 @@ export default function SocialLinksSection({
   return (
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-2">{t("title")}</h3>
-      <form onSubmit={handleSubmit(onSubmit)} id="socialLinksForm" className="flex flex-col gap-3">
-        <Input
-          type="text"
-          label={t("sectiontitle")}
-          disabled
-          {...register("optionalSectionTitle")}
-        />
+      <form 
+        onSubmit={handleSubmit(onSubmit)} 
+        id="socialLinksForm" 
+        className="flex flex-col gap-3"
+      >
+        <div className="hidden!">
+          <Input
+            type="text"
+            label={t("sectiontitle")}
+            disabled
+            {...register("optionalSectionTitle")}
+          />
+        </div>
         <div className="flex flex-col gap-3 mt-2">
           {(socialLinks || []).map((s, idx) => (
             <div key={idx} className="flex flex-col gap-3">

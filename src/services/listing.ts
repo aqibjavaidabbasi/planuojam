@@ -100,10 +100,10 @@ export async function fetchPromotedListingsPerEvents(eventTypeDocId: string, loc
 }
 
 export async function updateListing(
-    id: string,
+    listingdocId: string,
     data: Record<string, unknown>,
     locale?: string,
-) {
+) { 
     const headers = locale
         ? {
             'X-Strapi-Locale': locale,
@@ -112,8 +112,7 @@ export async function updateListing(
         }
         : undefined;
     const query = locale ? `locale=${encodeURIComponent(locale)}` : undefined;
-
-    const res = await putAPI(`listings/${id}`, data, { headers }, query);
+    const res = await putAPI(`listings/${listingdocId}`, data, { headers }, query);
     return res.data;
 }
 

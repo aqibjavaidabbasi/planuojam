@@ -25,7 +25,7 @@ function PricingPlans({
         }`}
     >
       {plan?.isPopular && (
-        <span className="absolute -top-3 -right-3 bg-gradient-to-r from-amber-500 to-pink-500 text-white text-xs font-bold w-10 h-10 rounded-full shadow-lg z-10 flex items-center justify-center">
+        <span className="absolute -top-3 -right-3 bg-linear-to-r from-amber-500 to-pink-500 text-white text-xs font-bold w-10 h-10 rounded-full shadow-lg z-10 flex items-center justify-center">
           <FaStar size={28} />
         </span>
       )}
@@ -33,7 +33,7 @@ function PricingPlans({
       <div className="flex flex-col items-center justify-center">
         <h3 className="text-xl font-semibold text-black">{plan?.name}</h3>
         <p className="text-2xl text-primary font-semibold mb-4">
-          ${plan.price.toLocaleString()}
+          {siteSettings.currency.symbol}{" "}{plan.price.toLocaleString()}
         </p>
       </div>
 

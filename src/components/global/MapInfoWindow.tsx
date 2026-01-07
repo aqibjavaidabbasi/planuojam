@@ -20,7 +20,7 @@ const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href, curren
   return (
     <div className="text-sm font-sans bg-white rounded-lg overflow-hidden" style={{ width: '320px' }}>
       {/* Media container with overlays */}
-      <div className="relative h-48 bg-gradient-to-tr from-teal-100 to-rose-100 flex items-center justify-center overflow-hidden">
+      <div className="relative h-48 bg-linear-to-tr from-teal-100 to-rose-100 flex items-center justify-center overflow-hidden">
         {selectedLocation?.image?.url ? (
           selectedLocation.image.mime?.startsWith('video/') ? (
             <video

@@ -448,6 +448,24 @@
         "featured": {
           "label": "Rekomenduojamas?"
         },
+        "tags": {
+          "label": "Žymos",
+          "placeholder": "Pridėti žymą...",
+          "add": "Pridėti",
+          "errors": {
+            "max": "Maksimaliai 10 žymų",
+            "duplicate": "Žyma jau pridėta"
+          }
+        },
+        "videos": {
+          "label": "Vaizdo įrašai",
+          "placeholder": "YouTube URL...",
+          "add": "Pridėti vaizdo įrašą",
+          "remove": "Pašalinti",
+          "errors": {
+            "invalid": "Neteisingas YouTube URL"
+          }
+        },
         "description": {
           "label": "Aprašymas",
           "placeholder": "Pridėkite paslaugos aprašymą",
@@ -973,7 +991,7 @@
   },
   "Custom": {
     "ImageUploader": {
-      "selectImages": "Pasirinkti nuotraukas/video",
+      "selectImages": "Pasirinkti nuotraukas",
       "uploadImages": "Įkelti {count} failus",
       "toasts": {
         "uploadSuccess": "Failai sėkmingai įkelti",
@@ -990,9 +1008,9 @@
       "selectMain": "Pasirinkti kaip pagrindinę nuotrauką"
     },
     "ImageUploadModal": {
-      "title": "Įkelti vaizdus ir vaizdo įrašus",
+      "title": "Įkelti vaizdus",
       "validation": {
-        "noFiles": "Prašome pasirinkti bent vieną vaizdą arba vaizdo įrašą įkėlimui",
+        "noFiles": "Prašome pasirinkti bent vieną vaizdą įkėlimui",
         "filesNotUploaded": "Jūs pasirinkote failus, bet jų neįkėlėte. Pirmiausia įkelkite juos arba atšaukite, kad atmestumėte.",
         "uploadFailed": "Įkėlimas nepavyko. Bandykite dar kartą."
       },
@@ -1173,11 +1191,11 @@
     }
   },
   "ImageSection": {
-    "addportfolioimages": "Pridėti portfelio nuotraukas/video",
+    "addportfolioimages": "Pridėti portfelio nuotraukas",
     "saving": "Taupymas",
     "saveImages": "Išsaugoti failus",
-    "uploadHint": "Įkelkite failus iki {size} (Nuotraukos ir Video)",
-    "instructionHint": "Pasirinkite failus, tada juos įkelkite ir tada spustelėkite išsaugoti, kad išsaugotumėte visus failus. Spustelėkite žvaigždės piktogramą, kad pasirinktumėte pagrindinę nuotrauką",
+    "uploadHint": "Maksimalus failo dydis: {size} (Nuotraukos)",
+    "instructionHint": "Pasirinkite nuotraukas, tada įkelkite jas ir tada spustelėkite išsaugoti, kad išsaugotumėte visus failus. Spustelėkite žvaigždės piktogramą, kad pasirinktumėte pagrindinę nuotrauką",
     "readyToSave": "{count} failas(-ai) paruoštas(-i) išsaugoti",
     "alt": {
       "portfolioImage": "Portfelio vaizdas"

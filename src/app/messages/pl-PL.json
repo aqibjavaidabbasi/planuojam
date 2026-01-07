@@ -221,7 +221,7 @@
         "basic": "Podstawowe informacje",
         "vv": "Dane dostawcy/miejsca",
         "deal": "Gorąca oferta",
-        "images": "Zdjęcia/Wideo",
+        "images": "Zdjęcia",
         "contact": "Kontakt",
         "social": "Linki społecznościowe",
         "pricing": "Cennik",
@@ -516,7 +516,7 @@
   },
   "Custom": {
     "ImageUploader": {
-      "selectImages": "Wybierz zdjęcia/wideo",
+      "selectImages": "Wybierz zdjęcia",
       "uploadImages": "Prześlij {count} plik(i/ów)",
       "toasts": {
         "uploadSuccess": "Media przesłane pomyślnie",
@@ -533,9 +533,9 @@
       "selectMain": "Wybierz jako główny obraz"
     },
     "ImageUploadModal": {
-      "title": "Prześlij obrazy i wideo",
+      "title": "Prześlij zdjęcia",
       "validation": {
-        "noFiles": "Proszę wybrać co najmniej jeden obraz lub wideo do przesłania",
+        "noFiles": "Proszę wybrać co najmniej jedno zdjęcie do przesłania",
         "filesNotUploaded": "Wybrano pliki, ale nie zostały one przesłane. Prześlij je najpierw lub anuluj, aby je odrzucić.",
         "uploadFailed": "Przesyłanie nie powiodło się. Spróbuj ponownie."
       },
@@ -712,6 +712,24 @@
         },
         "featured": {
           "label": "Polecane?"
+        },
+        "tags": {
+          "label": "Tagi",
+          "placeholder": "Dodaj tag...",
+          "add": "Dodaj",
+          "errors": {
+            "max": "Maksymalnie 10 tagów",
+            "duplicate": "Tag już dodany"
+          }
+        },
+        "videos": {
+          "label": "Wideo",
+          "placeholder": "URL YouTube...",
+          "add": "Dodaj wideo",
+          "remove": "Usuń",
+          "errors": {
+            "invalid": "Nieprawidłowy URL YouTube"
+          }
         },
         "description": {
           "label": "Opis",
@@ -1180,12 +1198,12 @@
     }
   },
   "ImageSection": {
-    "addportfolioimages": "Dodaj zdjęcia/wideo do portfolio",
+    "addportfolioimages": "Dodaj zdjęcia do portfolio",
     "saving": "Zapisywanie",
     "savingEllipsis": "Zapisywanie...",
     "saveImages": "Zapisz media",
-    "uploadHint": "Przesyłaj pliki o rozmiarze do {size} (Zdjęcia i Wideo)",
-    "instructionHint": "Wybierz media, a następnie prześlij je i kliknij zapisz, aby zapisać wszystkie elementy. Kliknij ikonę gwiazdki, aby wybrać główne zdjęcie",
+    "uploadHint": "Maksymalny rozmiar pliku: {size} (Zdjęcia)",
+    "instructionHint": "Wybierz zdjęcia, następnie prześlij je, a następnie kliknij zapisz, aby zapisać wszystkie elementy. Kliknij ikonę gwiazdki, aby wybrać główne zdjęcie",
     "readyToSave": "{count} element(y) gotowe do zapisania",
     "alt": {
       "portfolioImage": "Obraz portfolio",

@@ -39,7 +39,7 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
       price: (listing.price as number) ?? undefined,
       description: listing.description || "",
       tagDocumentIds: listing.tagDocumentIds || [],
-      videos: [],
+      videos: listing.videos || [],
       websiteLink: listing.websiteLink || "",
       workingSchedule: listing.workingSchedule || [],
     },
@@ -110,6 +110,9 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
     try {
       const payload = {
         ...values,
+      }
+      if (values.videos) {
+        payload.videos = values.videos.map(({ url }) => ({ url }));
       }
       if (values.websiteLink === "") delete payload.websiteLink
       if (values.price == null || isNaN(values.price)) delete payload.price

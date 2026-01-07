@@ -1266,7 +1266,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 style="secondary"
                 extraStyles="w-full"
               >
-                Add Images/Videos
+                {tImage('addportfolioimages')}
               </Button>
             </div>
           </div>

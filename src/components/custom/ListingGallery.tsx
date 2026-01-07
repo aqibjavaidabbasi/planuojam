@@ -102,7 +102,7 @@ function ListingGallery({
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
-                    className={`w-full h-full ${isMain ? (isSingle ? "object-cover" : "object-contain") : "object-cover"} rounded-lg pointer-events-none`}
+                    className={`w-full h-full object-cover rounded-lg pointer-events-none`}
                   />
                   {/* Invisible overlay to capture clicks */}
                   <div className="absolute inset-0 bg-transparent cursor-pointer" />
@@ -119,7 +119,7 @@ function ListingGallery({
             width={650}
             height={500}
             onClick={setIndex}
-            className={`w-full h-full ${isMain ? (isSingle ? "object-cover" : "object-contain") : "object-cover"} rounded-lg cursor-pointer`}
+            className={`w-full h-full object-cover rounded-lg cursor-pointer`}
             priority={isMain}
             fetchPriority={isMain ? "high" : "auto"}
             loading={isMain ? "eager" : "lazy"}

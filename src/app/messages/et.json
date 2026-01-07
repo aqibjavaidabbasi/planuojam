@@ -221,7 +221,7 @@
         "basic": "Põhiandmed",
         "vv": "Teenusepakkuja/Koha andmed",
         "deal": "Kuum pakkumine",
-        "images": "Pildid/Videod",
+        "images": "Pildid",
         "contact": "Kontakt",
         "social": "Sotsiaalmeedia lingid",
         "pricing": "Hinnad",
@@ -515,7 +515,7 @@
   },
   "Custom": {
     "ImageUploader": {
-      "selectImages": "Vali pildid/videod",
+      "selectImages": "Vali pildid",
       "uploadImages": "Laadi üles {count} fail(i)",
       "toasts": {
         "uploadSuccess": "Meedia üleslaadimine õnnestus",
@@ -532,9 +532,9 @@
       "selectMain": "Vali peamiseks pildiks"
     },
     "ImageUploadModal": {
-      "title": "Piltide ja videote üleslaadimine",
+      "title": "Laadi pildid üles",
       "validation": {
-        "noFiles": "Palun valige üleslaadimiseks vähemalt üks pilt või video",
+        "noFiles": "Palun valige vähemalt üks pilt üleslaadimiseks",
         "filesNotUploaded": "Olete valinud failid, kuid pole neid üles laadinud. Laadige need üles või tühistage, et need eemaldada.",
         "uploadFailed": "Üleslaadimine ebaõnnestus. Palun proovige uuesti."
       },
@@ -711,6 +711,24 @@
         },
         "featured": {
           "label": "Esile tõstetud?"
+        },
+        "tags": {
+          "label": "Sildid",
+          "placeholder": "Lisa silt...",
+          "add": "Lisa",
+          "errors": {
+            "max": "Maksimaalselt 10 silti",
+            "duplicate": "Silt on juba lisatud"
+          }
+        },
+        "videos": {
+          "label": "Videod",
+          "placeholder": "YouTube URL...",
+          "add": "Lisa video",
+          "remove": "Eemalda",
+          "errors": {
+            "invalid": "Vale YouTube URL"
+          }
         },
         "description": {
           "label": "Kirjeldus",
@@ -1182,11 +1200,11 @@
     }
   },
   "ImageSection": {
-    "addportfolioimages": "Lisa portfoolio Pildid/Videod",
+    "addportfolioimages": "Lisa portfoolio pildid",
     "saving": "Salvestamine",
     "saveImages": "Salvesta meedia",
-    "uploadHint": "Laadige üles failid kuni {size} (Pildid ja Videod)",
-    "instructionHint": "Valige meedia, seejärel laadige need üles ja seejärel klõpsake salvestamiseks, et salvestada kõik kirjed. Klõpsake täheikoonil, et valida peamine pilt",
+    "uploadHint": "Maksimaalne faili suurus: {size} (Pildid)",
+    "instructionHint": "Valige pildid, seejärel laadige need üles ja seejärel klõpsake salvestamiseks, et salvestada kõik kirjed. Klõpsake täheikoonil, et valida peamine pilt",
     "readyToSave": "{count} kirje(t) valmis salvestamiseks",
     "alt": {
       "portfolioImage": "Portfoolio pilt",

@@ -210,7 +210,9 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
               <h2 className="text-2xl font-semibold text-primary mb-4">
                 {t("overview")}
               </h2>
-              <p className="text-secondary my-4">{initialListing.description}</p>
+              <p className="text-secondary my-4 whitespace-pre-wrap wrap-break-word">
+                {initialListing.description}
+              </p>
 
               {/* tags */}
               {initialListing.tags && initialListing.tags.length > 0 && (
@@ -310,9 +312,9 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
             {initialListing.socialLinks &&
               initialListing.socialLinks.socialLink.length > 0 && (
                 <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
-                  <h2 className="text-base font-semibold text-black mb-2 capitalize">
+                  {/* <h2 className="text-base font-semibold text-black mb-2 capitalize">
                     {initialListing.socialLinks.optionalSectionTitle}
-                  </h2>
+                  </h2> */}
                   <SocialIcon socialLink={initialListing.socialLinks.socialLink} />
                 </section>
               )}

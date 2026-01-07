@@ -12,7 +12,6 @@ import { updateListing } from "@/services/listing"
 import type { ListingItem } from "@/types/pagesTypes"
 import { useCities } from "@/context/CitiesContext"
 import { useStates } from "@/context/StatesContext"
-import { geocodePlace } from "@/utils/mapboxLocation"
 import { Location as MapLocation } from "@/components/global/MapboxMap";
 import { useTranslations } from "next-intl"
 const MapPickerModal = dynamic(() => import("@/components/modals/MapPickerModal"))
@@ -214,29 +213,29 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
     }
   }
 
-  const onFetchVendorCoords = async (idx: number) => {
-    const cityId = vendorRHF.getValues(`serviceArea.${idx}.city`)
-    const stateId = vendorRHF.getValues(`serviceArea.${idx}.state`)
-    const cityName = cities.find((c) => c.documentId === cityId)?.name
-    const stateName = states.find((s) => s.documentId === stateId)?.name
-    const res = await geocodePlace(cityName, stateName)
-    if (res) {
-      vendorRHF.setValue(`serviceArea.${idx}.latitude`, String(res.lat), { shouldDirty: true })
-      vendorRHF.setValue(`serviceArea.${idx}.longitude`, String(res.lng), { shouldDirty: true })
-    }
-  }
+  // const onFetchVendorCoords = async (idx: number) => {
+  //   const cityId = vendorRHF.getValues(`serviceArea.${idx}.city`)
+  //   const stateId = vendorRHF.getValues(`serviceArea.${idx}.state`)
+  //   const cityName = cities.find((c) => c.documentId === cityId)?.name
+  //   const stateName = states.find((s) => s.documentId === stateId)?.name
+  //   const res = await geocodePlace(cityName, stateName)
+  //   if (res) {
+  //     vendorRHF.setValue(`serviceArea.${idx}.latitude`, String(res.lat), { shouldDirty: true })
+  //     vendorRHF.setValue(`serviceArea.${idx}.longitude`, String(res.lng), { shouldDirty: true })
+  //   }
+  // }
 
-  const onFetchVenueCoords = async () => {
-    const cityId = venueRHF.getValues("location.city")
-    const stateId = venueRHF.getValues("location.state")
-    const cityName = cities.find((c) => c.documentId === cityId)?.name
-    const stateName = states.find((s) => s.documentId === stateId)?.name
-    const res = await geocodePlace(cityName, stateName)
-    if (res) {
-      venueRHF.setValue("location.latitude", String(res.lat), { shouldDirty: true })
-      venueRHF.setValue("location.longitude", String(res.lng), { shouldDirty: true })
-    }
-  }
+  // const onFetchVenueCoords = async () => {
+  //   const cityId = venueRHF.getValues("location.city")
+  //   const stateId = venueRHF.getValues("location.state")
+  //   const cityName = cities.find((c) => c.documentId === cityId)?.name
+  //   const stateName = states.find((s) => s.documentId === stateId)?.name
+  //   const res = await geocodePlace(cityName, stateName)
+  //   if (res) {
+  //     venueRHF.setValue("location.latitude", String(res.lat), { shouldDirty: true })
+  //     venueRHF.setValue("location.longitude", String(res.lng), { shouldDirty: true })
+  //   }
+  // }
 
   // Map backend vendor service areas (Place + numeric lat/lng) to form-friendly values (ids + string lat/lng)
   useEffect(() => {
@@ -416,9 +415,9 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                   />
                 </div>
                 <div className="flex flex-col md:flex-row gap-3">
-                  <Button type="button" style="secondary" disabled={submitting} onClick={() => onFetchVendorCoords(idx)}>
+                  {/* <Button type="button" style="secondary" disabled={submitting} onClick={() => onFetchVendorCoords(idx)}>
                     {t("fetchcoordinates")}
-                  </Button>
+                  </Button> */}
                   <Button type="button" style="secondary" disabled={submitting} onClick={() => setVendorPickerIndex(idx)}>
                     {t("picklocation")}
                   </Button>
@@ -490,9 +489,9 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
               />
             </div>
             <div className="flex flex-col md:flex-row gap-3">
-              <Button type="button" style="secondary" disabled={submitting} onClick={onFetchVenueCoords}>
+              {/* <Button type="button" style="secondary" disabled={submitting} onClick={onFetchVenueCoords}>
                 {t("fetchcoordinates")}
-              </Button>
+              </Button> */}
               <Button type="button" style="secondary" disabled={submitting} onClick={() => setVenuePickerOpen(true)}>
                 {t("picklocation")}
               </Button>
