@@ -11,13 +11,23 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { shouldShowHotDeal } from '@/utils/hotDealHelper';
 
-function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: TitleDescriptionBlock[]}) {
-    const [hotDealListings, setHotDealListings] = useState<ListingItem[]>([])
-    const [page, setPage] = useState<number>(1)
-    const [pageSize, setPageSize] = useState<number>(5)
-    const [total, setTotal] = useState<number>(0)
+function ClientHotDealWrapper({
+    titleDescriptionBlock,
+    initialHotDeals,
+    initialMeta
+}: { 
+    titleDescriptionBlock: TitleDescriptionBlock[];
+    initialHotDeals?: ListingItem[];
+    initialMeta?: { page: number; pageSize: number; pageCount: number; total: number };
+}) {
+    const [hotDealListings, setHotDealListings] = useState<ListingItem[]>(initialHotDeals || [])
+    const [page, setPage] = useState<number>(initialMeta?.page || 1)
+    const [pageSize, setPageSize] = useState<number>(initialMeta?.pageSize || 5)
+    const [total, setTotal] = useState<number>(initialMeta?.total || 0)
     const [loadingMore, setLoadingMore] = useState<boolean>(false)
+    const [filterLoading, setFilterLoading] = useState<boolean>(false)
     const [newIds, setNewIds] = useState<Set<string>>(new Set())
+    const [isInitialLoad, setIsInitialLoad] = useState<boolean>(!initialHotDeals)
     const locale = useLocale();
     const t = useTranslations('hotdeal');
 
@@ -26,7 +36,13 @@ function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: T
     }, [])
 
     useEffect(function(){
+        if (initialHotDeals) {
+            setIsInitialLoad(false);
+            return;
+        }
+        
         async function fetchListings(){
+            setIsInitialLoad(true);
             const res = await fetchPromotedHotDealsWithMeta(locale, { page: 1, pageSize });
             const meta = res?.meta?.pagination;
             if (meta) {
@@ -36,6 +52,7 @@ function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: T
             }
             const active = filterActive(Array.isArray(res?.data) ? res.data : []);
             setHotDealListings(active);
+            setIsInitialLoad(false);
         }
         fetchListings();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -67,21 +84,35 @@ function ClientHotDealWrapper({titleDescriptionBlock}: {titleDescriptionBlock: T
             )}
         </div>
         <HotDealFilter
-            setList={(list: ListingItem[]) => {
-                const active = (list || []).filter((l: ListingItem) => shouldShowHotDeal(l.hotDeal));
-                setHotDealListings(active);
+            setList={async (list: ListingItem[]) => {
+                setFilterLoading(true);
+                try {
+                    const active = (list || []).filter((l: ListingItem) => shouldShowHotDeal(l.hotDeal));
+                    setHotDealListings(active);
+                } finally {
+                    setFilterLoading(false);
+                }
             }}
         />
         <div className='flex items-center justify-center gap-3 mt-10 flex-wrap'>
             {
-                hotDealListings && hotDealListings.length > 0 ?
+                isInitialLoad ? (
+                    <div className="flex items-center justify-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    </div>
+                ) : hotDealListings && hotDealListings.length > 0 ? (
                     hotDealListings.map(listing => (
                         <AnimatedListItem key={String(listing.documentId)} isNew={newIds.has(String(listing.documentId))}>
                             <ListingCard item={listing} />
                         </AnimatedListItem>
                     ))
-                    :
+                ) : filterLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    </div>
+                ) : (
                     <NoDataCard>{t('noHotDealsFound')}</NoDataCard>
+                )
             }
         </div>
         {hotDealListings.length < (total || 0) && (

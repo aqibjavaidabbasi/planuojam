@@ -219,7 +219,9 @@
       "user": "User",
       "category": "Category",
       "location": "Location",
-      "view": "View"
+      "view": "View",
+      "hot": "HOT",
+      "deal": "DEAL"
     }
   },
   "Listing": {
@@ -727,7 +729,7 @@
         },
         "websiteLink": {
           "label": "Website Link",
-          "placeholder": "https://example.com",
+          "placeholder": "https://jusu-tinklalapis.lt",
           "errors": {
             "invalid": "Please add a valid link"
           }
@@ -1136,7 +1138,7 @@
     "errors": {
       "maliciousUrl": "This URL appears to be unsafe. Please enter a valid web address",
       "invalidProtocol": "Only http:// and https:// links are allowed",
-      "invalidFormat": "Please enter a valid website address (e.g., example.com or https://example.com)"
+      "invalidFormat": "Please enter a valid website address (e.g.jusu-tinklalapis.lt or https://jusu-tinklalapis.lt)"
     }
   },
   "Search": {
@@ -1381,7 +1383,9 @@
       "features": "Features",
       "addonStatement": "Addon Statement",
       "addonPrice": "Addon Price",
-      "deletePlan": "Delete Plan"
+      "deletePlan": "Delete Plan",
+      "plan": "Plan",
+      "preview": "Preview"
     },
     "styleOptions": {
       "primary": "Primary",

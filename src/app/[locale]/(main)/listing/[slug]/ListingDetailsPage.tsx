@@ -22,11 +22,10 @@ import "swiper/css/pagination";
 import { ListingItem, Venue } from "@/types/pagesTypes";
 import { useAppSelector } from "@/store/hooks";
 import { useTranslations } from "next-intl";
-import geocodeLocations from "@/utils/mapboxLocation";
 import { Location as MapLocation } from "@/components/global/MapboxMap";
 import { notFound } from "next/navigation";
 import { RootState } from "@/store";
-import { getListingPath } from "@/utils/routes";
+import { createSingleLocationFromListing } from "@/utils/locationFactory";
 import { fetchPromotedListingsWithMeta } from "@/services/listing";
 
 export default function ListingDetailsPage({ initialListing, locale }: { initialListing: ListingItem; locale: string }) {
@@ -51,67 +50,17 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
 
   // Compute a single map location for this listing
   useEffect(() => {
-    async function computeLocation() {
-      if (!initialListing) {
-        setDetailLocation(null);
-        return;
-      }
-      const content = initialListing;
-      try {
-        if (initialListing.type === "venue") {
-          // Coordinates are taken from the base listing (usually locale-invariant)
-          const venueBlockBase = (initialListing.listingItem || []).find(
-            (i) => i.__component === "dynamic-blocks.venue"
-          ) as unknown as { location?: { latitude?: number; longitude?: number; address?: string } } | undefined;
-          // Prefer localized address if available
-          const venueBlockLocalized = (content?.listingItem || []).find(
-            (i) => i.__component === "dynamic-blocks.venue"
-          ) as { location?: { address?: string } } | undefined;
-
-          const lat = venueBlockBase?.location?.latitude;
-          const lng = venueBlockBase?.location?.longitude;
-          if (typeof lat === "number" && typeof lng === "number") {
-
-            const primaryImage = (initialListing.portfolio && initialListing.portfolio.length > 0)
-              ? initialListing.portfolio[0]
-              : initialListing.category?.image;
-            const path = getListingPath(initialListing.slug, locale);
-            setDetailLocation({
-              id: initialListing.id,
-              name: content.title || "",
-              username: initialListing.user?.username || "",
-              description: content.description || "",
-              category: { name: content.category?.name || "", type: "venue" },
-              position: { lat, lng },
-              address: venueBlockLocalized?.location?.address || venueBlockBase?.location?.address || "",
-              image: primaryImage,
-              path,
-            });
-            return;
-          }
-        } else if (initialListing.type === "vendor") {
-          // Geocode vendor using localized content for better display/address coherency
-          const res = await geocodeLocations([content as ListingItem], locale);
-          const first = res?.[0] || null;
-          if (first) {
-            setDetailLocation({
-              ...first,
-              name: content.title || first.name,
-              description: content.description || first.description,
-              category: { name: content.category?.name || first.category?.name || "", type: "vendor" },
-            });
-          } else {
-            setDetailLocation(null);
-          }
-          return;
-        }
-        setDetailLocation(null);
-      } catch (e) {
-        console.error(e);
-        setDetailLocation(null);
-      }
+    if (!initialListing) {
+      setDetailLocation(null);
+      return;
     }
-    computeLocation();
+
+    const location = createSingleLocationFromListing({
+      listing: initialListing,
+      locale,
+    });
+    
+    setDetailLocation(location);
   }, [initialListing, locale]);
 
   // Fetch recommended (promoted) listings: top 5

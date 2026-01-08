@@ -133,7 +133,7 @@ const UrlInput = forwardRef<HTMLInputElement, UrlInputProps>(
   (
     {
       label,
-      placeholder = "https://example.com",
+      placeholder = "https://jusu-tinklalapis.lt",
       disabled = false,
       required = false,
       value = '',

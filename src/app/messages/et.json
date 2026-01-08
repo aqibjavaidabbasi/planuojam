@@ -206,7 +206,9 @@
       "user": "Kasutaja",
       "category": "Kategooria",
       "location": "Asukoht",
-      "view": "Vaata"
+      "view": "Vaata",
+      "hot": "KUUM",
+      "deal": "PAKK"
     }
   },
   "Listing": {
@@ -737,7 +739,7 @@
         },
         "websiteLink": {
           "label": "Veebilehe link",
-          "placeholder": "https://example.com",
+          "placeholder": "https://jusu-tinklalapis.lt",
           "errors": {
             "invalid": "Palun lisa kehtiv link"
           }
@@ -1361,16 +1363,18 @@
     "sectiontitle": "Sektsiooni pealkiri",
     "optionaladdons": "Valikulised lisad",
     "labels": {
-      "title": "Hinnapakettid",
+      "title": "Pakettide hinnad",
       "planName": "Paketi nimi",
       "price": "Hind",
-      "ctaBodyText": "CTA sisu",
+      "ctaBodyText": "CTA keha tekst",
       "ctaButtonUrl": "CTA nupu URL",
       "ctaStyle": "CTA stiil",
       "features": "Omadused",
-      "addonStatement": "Lisa kirjeldus",
-      "addonPrice": "Lisa hind",
-      "deletePlan": "Kustuta plaan"
+      "addonStatement": "Lisaomaduse lausung",
+      "addonPrice": "Lisaomaduse hind",
+      "deletePlan": "Kustuta pakett",
+      "plan": "Pakett",
+      "preview": "Eelvaade"
     },
     "styleOptions": {
       "primary": "Peamine",
@@ -1584,7 +1588,7 @@
     "errors": {
       "maliciousUrl": "See URL näib olevat ebaturvaline. Palun sisestage kehtiv veebiaadress",
       "invalidProtocol": "Lubatud on ainult http:// ja https:// lingid",
-      "invalidFormat": "Palun sisestage kehtiv veebilehe aadress (nt example.com või https://example.com)"
+      "invalidFormat": "Palun sisestage kehtiv veebilehe aadress (nt jusu-tinklalapis.lt või https://jusu-tinklalapis.lt)"
     }
   }
 }

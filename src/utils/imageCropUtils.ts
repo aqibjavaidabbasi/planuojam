@@ -6,16 +6,22 @@ export const createImage = (url: string): Promise<HTMLImageElement> =>
         const image = document.createElement('img');
         image.addEventListener('load', () => resolve(image));
         image.addEventListener('error', (error: unknown) => reject(error));
-        image.setAttribute('crossOrigin', 'anonymous');
+        // Only set crossOrigin for non-blob URLs
+        if (!url.startsWith('blob:')) {
+            image.setAttribute('crossOrigin', 'anonymous');
+        }
         image.src = url;
     });
 
 export const getCroppedImg = async (
     imageSrc: string,
     pixelCrop: { x: number; y: number; width: number; height: number },
-    rotation = 0
+    rotation = 0,
+    outputWidth = 400,
+    outputHeight = 300
 ): Promise<string | null> => {
     const image = await createImage(imageSrc);
+    
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -23,43 +29,48 @@ export const getCroppedImg = async (
         return null;
     }
 
-    const maxSize = Math.max(image.width, image.height);
-    const safeArea = 2 * ((maxSize / 2) * Math.sqrt(2));
+    // Set output canvas to target dimensions for listing cards
+    canvas.width = outputWidth;
+    canvas.height = outputHeight;
 
-    canvas.width = safeArea;
-    canvas.height = safeArea;
+    ctx.save();
+    
+    if (rotation !== 0) {
+        ctx.translate(outputWidth / 2, outputHeight / 2);
+        ctx.rotate((rotation * Math.PI) / 180);
+        ctx.translate(-outputWidth / 2, -outputHeight / 2);
+    }
 
-    ctx.translate(safeArea / 2, safeArea / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.translate(-safeArea / 2, -safeArea / 2);
-
+    // Draw the cropped area directly - pixelCrop already contains correct coordinates
     ctx.drawImage(
         image,
-        safeArea / 2 - image.width * 0.5,
-        safeArea / 2 - image.height * 0.5
+        pixelCrop.x,
+        pixelCrop.y,
+        pixelCrop.width,
+        pixelCrop.height,
+        0,
+        0,
+        outputWidth,
+        outputHeight
     );
-
-    const data = ctx.getImageData(0, 0, safeArea, safeArea);
-
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
-
-    ctx.putImageData(
-        data,
-        Math.round(0 - safeArea / 2 + image.width * 0.5 - pixelCrop.x),
-        Math.round(0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y)
-    );
+    
+    ctx.restore();
 
     return new Promise((resolve) => {
         canvas.toBlob((file) => {
-            resolve(file ? URL.createObjectURL(file) : null);
-        }, 'image/jpeg');
+            if (file) {
+                const url = URL.createObjectURL(file);
+                resolve(url);
+            } else {
+                resolve(null);
+            }
+        }, 'image/jpeg', 0.9);
     });
 };
 
 export const handleCropProcess = async (
     croppingImage: CroppingImage | UploadedFile,
-    crop: { x: number; y: number },
+    croppedAreaPixels: { x: number; y: number; width: number; height: number },
     getCompleteImageUrl: (url: string) => string,
     previews: string[],
     files: File[],
@@ -67,21 +78,28 @@ export const handleCropProcess = async (
     setFiles: (files: File[]) => void,
     uploadToStrapi: (files: File[]) => Promise<unknown>
 ): Promise<void> => {
-    if (!croppingImage) return;
+    if (!croppingImage || !croppedAreaPixels) return;
+
+    let tempCroppedUrl: string | null = null;
 
     try {
         const imageSrc = 'isPreview' in croppingImage 
             ? croppingImage.url 
             : getCompleteImageUrl((croppingImage as UploadedFile & { url: string }).url);
         
+        // Use the exact pixel coordinates provided by react-easy-crop
         const croppedImageUrl = await getCroppedImg(
             imageSrc,
-            { x: crop.x, y: crop.y, width: 300, height: 225 } // 4:3 aspect
+            croppedAreaPixels,
+            0, // no rotation
+            400, // target width for listing cards
+            300  // target height for listing cards (4:3 aspect)
         );
+        
+        tempCroppedUrl = croppedImageUrl;
         
         if (croppedImageUrl) {
             if ('isPreview' in croppingImage && typeof croppingImage.index === 'number') {
-                
                 // Convert cropped image to file and replace both preview and file
                 const response = await fetch(croppedImageUrl);
                 const blob = await response.blob();
@@ -99,8 +117,6 @@ export const handleCropProcess = async (
                 newFiles[croppingImage.index] = file;
                 setPreviews(newPreviews);
                 setFiles(newFiles);
-                
-                // Success message will be handled by caller
             } else {
                 // Upload cropped image and set as main
                 const response = await fetch(croppedImageUrl);
@@ -109,11 +125,15 @@ export const handleCropProcess = async (
 
                 // Upload
                 await uploadToStrapi([file]);
-                // Success message will be handled by caller
             }
         }
     } catch (err) {
         console.error('Crop error:', err);
         throw new Error('Failed to crop image');
+    } finally {
+        // Clean up temporary cropped image URL
+        if (tempCroppedUrl) {
+            URL.revokeObjectURL(tempCroppedUrl);
+        }
     }
 };

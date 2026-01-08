@@ -206,7 +206,9 @@
       "user": "Użytkownik",
       "category": "Kategoria",
       "location": "Lokalizacja",
-      "view": "Zobacz"
+      "view": "Zobacz",
+      "hot": "GORĄCY",
+      "deal": "OFERTA"
     }
   },
   "Listing": {
@@ -738,7 +740,7 @@
         },
         "websiteLink": {
           "label": "Link do strony",
-          "placeholder": "https://example.com",
+          "placeholder": "https://jusu-tinklalapis.lt",
           "errors": {
             "invalid": "Proszę dodać prawidłowy link"
           }
@@ -1365,13 +1367,15 @@
       "title": "Pakiety cenowe",
       "planName": "Nazwa planu",
       "price": "Cena",
-      "ctaBodyText": "Treść CTA",
+      "ctaBodyText": "Tekst CTA",
       "ctaButtonUrl": "URL przycisku CTA",
       "ctaStyle": "Styl CTA",
       "features": "Funkcje",
       "addonStatement": "Opis dodatku",
       "addonPrice": "Cena dodatku",
-      "deletePlan": "Usuń plan"
+      "deletePlan": "Usuń plan",
+      "plan": "Plan",
+      "preview": "Podgląd"
     },
     "styleOptions": {
       "primary": "Podstawowy",
@@ -1587,7 +1591,7 @@
     "errors": {
       "maliciousUrl": "Ten adres URL wydaje się niebezpieczny. Proszę wprowadzić prawidłowy adres internetowy",
       "invalidProtocol": "Dozwolone są tylko linki http:// i https://",
-      "invalidFormat": "Proszę wprowadzić prawidłowy adres strony internetowej (np. example.com lub https://example.com)"
+      "invalidFormat": "Proszę wprowadzić prawidłowy adres strony internetowej (np. jusu-tinklalapis.lt lub https://jusu-tinklalapis.lt)"
     }
   }
 }

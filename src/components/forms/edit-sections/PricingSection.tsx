@@ -3,12 +3,12 @@
 import React, { useState } from "react"
 import { useForm, type SubmitHandler } from "react-hook-form"
 import Input from "../../custom/Input"
-import Select from "../../custom/Select"
 import Button from "../../custom/Button"
+import PricingPlans from "../../custom/PricingPlans"
 import { FaRegTrashAlt } from "react-icons/fa"
 import { toast } from "react-hot-toast"
 import { updateListing } from "@/services/listing"
-import type { ListingItem } from "@/types/pagesTypes"
+import type { ListingItem, Plans } from "@/types/pagesTypes"
 import { useTranslations } from "next-intl"
 
 export type PlanFeature = { statement: string }
@@ -35,6 +35,27 @@ export default function PricingSection({
   onSaved?: () => void
 }) {
   const [submitting, setSubmitting] = useState(false)
+  
+  // Helper function to convert PricingPlan to Plans type for preview
+  const convertToPlansType = (plan: PricingPlan): Plans => ({
+    name: plan.name,
+    price: plan.price,
+    isPopular: plan.isPopular || false,
+    cta: plan.cta ? {
+      __component: 'dynamic-blocks.call-to-action',
+      id: 0, // dummy id for preview
+      bodyText: plan.cta.bodyText || '',
+      buttonUrl: plan.cta.buttonUrl || '',
+      style: plan.cta.style || 'primary'
+    } : {
+      __component: 'dynamic-blocks.call-to-action',
+      id: 0,
+      bodyText: '',
+      buttonUrl: '',
+      style: 'primary'
+    },
+    featuresList: plan.featuresList || []
+  })
   const form = useForm<PricingPackagesForm>({
     defaultValues: listing.pricingPackages || { sectionTitle: "", plans: [], optionalAddons: [] },
   })
@@ -100,110 +121,137 @@ export default function PricingSection({
       <form onSubmit={form.handleSubmit(onSubmit)} id="pricingForm" className="flex flex-col gap-4">
         <Input type="text" label={t("sectiontitle")} disabled={isWorking} {...form.register("sectionTitle")} />
 
-        <div className="flex flex-col gap-4 mt-2">
+        <div className="flex flex-col gap-6 mt-2">
           {plans.map((p, idx) => (
-            <div key={idx} className="flex flex-col gap-3">
-              <div>
-                <Input
-                  type="text"
-                  label={t("labels.planName")}
-                  disabled={isWorking}
-                  value={p.name || ""}
-                  onChange={(e) => {
-                    const list = [...(form.getValues("plans") || [])]
-                    list[idx] = { ...list[idx], name: e.target.value }
-                    form.setValue("plans", list, { shouldDirty: true })
-                  }}
-                />
+            <div key={idx} className="border border-gray-200 rounded-lg overflow-hidden">
+              {/* Plan Header */}
+              <div className="bg-gray-50 px-4 py-2 border-b border-gray-200">
+                <h4 className="font-medium text-gray-700">
+                  {t("labels.plan")} {idx + 1} {p.name ? `- ${p.name}` : ''}
+                </h4>
               </div>
-              <div>
-                <Input
-                  type="number"
-                  label={t("labels.price")}
-                  disabled={isWorking}
-                  value={p.price ?? ""}
-                  onChange={(e) => {
-                    const list = [...(form.getValues("plans") || [])]
-                    list[idx] = { ...list[idx], price: Number(e.target.value) }
-                    form.setValue("plans", list, { shouldDirty: true })
-                  }}
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <Input
-                  type="text"
-                  label={t("labels.ctaBodyText")}
-                  value={p.cta?.bodyText || ""}
-                  onChange={(e) => {
-                    const list = [...(form.getValues("plans") || [])]
-                    list[idx] = { ...list[idx], cta: { ...list[idx].cta, bodyText: e.target.value as string } }
-                    form.setValue("plans", list, { shouldDirty: true })
-                  }}
-                />
-                <Select
-                  label={t("labels.ctaStyle")}
-                  disabled={isWorking}
-                  value={p.cta?.style || "primary"}
-                  onChange={(e) => {
-                    const list = [...(form.getValues("plans") || [])]
-                    list[idx] = { ...list[idx], cta: { ...list[idx].cta, style: e.target.value as "primary" | "secondary" | "ghost" } }
-                    form.setValue("plans", list, { shouldDirty: true })
-                  }}
-                  options={[
-                    { label: t("styleOptions.primary"), value: "primary" },
-                    { label: t("styleOptions.secondary"), value: "secondary" },
-                    { label: t("styleOptions.ghost"), value: "ghost" },
-                  ]}
-                />
-              </div>
-              <div>
-                <div className="flex flex-col gap-2">
-                  <h4 className="text-gray-500 font-medium tracking-wide">{t("labels.features")}</h4>
-                  {(p.featuresList || []).map((feature, fIdx) => (
-                    <div key={fIdx} className="grid grid-cols-12 items-end gap-2">
-                      <div className="col-span-10">
-                        <Input
-                          type="text"
-                          label={`${t("labels.features")} ${fIdx + 1}`}
-                          value={feature.statement || ""}
-                          onChange={(e) => {
-                            const list = [...(form.getValues("plans") || [])]
-                            const features = [...(list[idx].featuresList || [])]
-                            features[fIdx] = { statement: e.target.value }
-                            list[idx] = { ...list[idx], featuresList: features }
-                            form.setValue("plans", list, { shouldDirty: true })
-                          }}
-                        />
-                      </div>
-                      <div className="col-span-2 flex justify-end">
-                        <Button type="button" size="large" style="destructive" disabled={isWorking} onClick={() => {
+              
+              {/* Content Grid: Form Fields + Preview */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
+                {/* Form Fields Column */}
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <Input
+                      type="text"
+                      label={t("labels.planName")}
+                      disabled={isWorking}
+                      value={p.name || ""}
+                      onChange={(e) => {
+                        const list = [...(form.getValues("plans") || [])]
+                        list[idx] = { ...list[idx], name: e.target.value }
+                        form.setValue("plans", list, { shouldDirty: true })
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      type="number"
+                      label={t("labels.price")}
+                      disabled={isWorking}
+                      value={p.price ?? ""}
+                      onChange={(e) => {
+                        const list = [...(form.getValues("plans") || [])]
+                        list[idx] = { ...list[idx], price: Number(e.target.value) }
+                        form.setValue("plans", list, { shouldDirty: true })
+                      }}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <Input
+                      type="text"
+                      label={t("labels.ctaBodyText")}
+                      value={p.cta?.bodyText || ""}
+                      onChange={(e) => {
+                        const list = [...(form.getValues("plans") || [])]
+                        list[idx] = { ...list[idx], cta: { ...list[idx].cta, bodyText: e.target.value as string } }
+                        form.setValue("plans", list, { shouldDirty: true })
+                      }}
+                    />
+                    {/* <Select
+                      label={t("labels.ctaStyle")}
+                      disabled={isWorking}
+                      value={p.cta?.style || "primary"}
+                      onChange={(e) => {
+                        const list = [...(form.getValues("plans") || [])]
+                        list[idx] = { ...list[idx], cta: { ...list[idx].cta, style: e.target.value as "primary" | "secondary" | "ghost" } }
+                        form.setValue("plans", list, { shouldDirty: true })
+                      }}
+                      options={[
+                        { label: t("styleOptions.primary"), value: "primary" },
+                        { label: t("styleOptions.secondary"), value: "secondary" },
+                        { label: t("styleOptions.ghost"), value: "ghost" },
+                      ]}
+                    /> */}
+                  </div>
+                  <div>
+                    <div className="flex flex-col gap-2">
+                      <h4 className="text-gray-500 font-medium tracking-wide">{t("labels.features")}</h4>
+                      {(p.featuresList || []).map((feature, fIdx) => (
+                        <div key={fIdx} className="grid grid-cols-12 items-end gap-2">
+                          <div className="col-span-10">
+                            <Input
+                              type="text"
+                              label={`${t("labels.features")} ${fIdx + 1}`}
+                              value={feature.statement || ""}
+                              onChange={(e) => {
+                                const list = [...(form.getValues("plans") || [])]
+                                const features = [...(list[idx].featuresList || [])]
+                                features[fIdx] = { statement: e.target.value }
+                                list[idx] = { ...list[idx], featuresList: features }
+                                form.setValue("plans", list, { shouldDirty: true })
+                              }}
+                            />
+                          </div>
+                          <div className="col-span-2 flex justify-end">
+                            <Button type="button" size="large" style="destructive" disabled={isWorking} onClick={() => {
+                              const list = [...(form.getValues("plans") || [])]
+                              const features = [...(list[idx].featuresList || [])]
+                              features.splice(fIdx, 1)
+                              list[idx] = { ...list[idx], featuresList: features }
+                              form.setValue("plans", list, { shouldDirty: true })
+                            }}>
+                              <FaRegTrashAlt />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      <div>
+                        <Button type="button" style="secondary" disabled={isWorking} onClick={() => {
                           const list = [...(form.getValues("plans") || [])]
-                          const features = [...(list[idx].featuresList || [])]
-                          features.splice(fIdx, 1)
+                          const features = [...(list[idx].featuresList || []), { statement: "" }]
                           list[idx] = { ...list[idx], featuresList: features }
                           form.setValue("plans", list, { shouldDirty: true })
                         }}>
-                          <FaRegTrashAlt />
+                          {t("+addfeature")}
                         </Button>
                       </div>
                     </div>
-                  ))}
+                  </div>
                   <div>
-                    <Button type="button" style="secondary" disabled={isWorking} onClick={() => {
-                      const list = [...(form.getValues("plans") || [])]
-                      const features = [...(list[idx].featuresList || []), { statement: "" }]
-                      list[idx] = { ...list[idx], featuresList: features }
-                      form.setValue("plans", list, { shouldDirty: true })
-                    }}>
-                      {t("+addfeature")}
+                    <Button type="button" style="destructive" disabled={isWorking} size="large" onClick={() => removePlan(idx)}>
+                      {t("labels.deletePlan")} <FaRegTrashAlt />
                     </Button>
                   </div>
                 </div>
-              </div>
-              <div>
-                <Button type="button" style="destructive" disabled={isWorking} size="large" onClick={() => removePlan(idx)}>
-                  {t("labels.deletePlan")} <FaRegTrashAlt />
-                </Button>
+                
+                {/* Preview Column */}
+                <div className="lg:border-l lg:border-gray-200 lg:pl-6">
+                  <div className="sticky top-4">
+                    <h4 className="text-sm font-medium text-gray-600 mb-3">{t("labels.preview")}</h4>
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                      <PricingPlans
+                        plan={convertToPlansType(p)}
+                        optionalAddons={addons}
+                        planIndex={idx}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           ))}

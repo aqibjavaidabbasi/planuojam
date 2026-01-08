@@ -4,7 +4,6 @@ import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 
 function CityList({ data }: { data: CityListBlock }) {
-  console.log(data.Cities)
   const t = useTranslations('Global.CityList')
   return (
     <div className="bg-white rounded-sm flex"

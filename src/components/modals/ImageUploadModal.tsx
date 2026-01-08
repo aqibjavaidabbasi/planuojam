@@ -69,14 +69,14 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({ isOpen, onClose, on
 
 
     const handleCrop = async () => {
-        if (!cropState.croppingImage) return;
+        if (!cropState.croppingImage || !cropState.croppedAreaPixels) return;
 
         try {
             toast.loading(t('cropping'));
             
             await handleCropProcess(
                 cropState.croppingImage,
-                cropState.crop,
+                cropState.croppedAreaPixels,
                 getCompleteImageUrl,
                 previews,
                 files,
@@ -290,6 +290,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({ isOpen, onClose, on
                             onCropChange={cropActions.setCrop}
                             onZoomChange={cropActions.setZoom}
                             onMediaLoaded={cropActions.onMediaLoaded}
+                            onCropComplete={cropActions.onCropComplete}
                         />
                     )}
                 </div>

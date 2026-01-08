@@ -14,6 +14,7 @@ interface CroppingState {
     crop: { x: number; y: number };
     zoom: number;
     minZoom: number;
+    croppedAreaPixels: { x: number; y: number; width: number; height: number } | null;
 }
 
 interface UseImageCropReturn {
@@ -24,6 +25,7 @@ interface UseImageCropReturn {
         onMediaLoaded: (mediaSize: { width: number; height: number }) => void;
         setCrop: (crop: { x: number; y: number }) => void;
         setZoom: (zoom: number) => void;
+        onCropComplete: (croppedArea: { x: number; y: number; width: number; height: number }, croppedAreaPixels: { x: number; y: number; width: number; height: number }) => void;
     };
     utils: {
         checkImageFit: (mediaSize: { width: number; height: number }) => {
@@ -40,6 +42,7 @@ export const useImageCrop = (): UseImageCropReturn => {
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [minZoom, setMinZoom] = useState(0.5);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
 
     const openCropModalForPreview = (index: number, previews: string[]) => {
         setCroppingImage({ 
@@ -123,6 +126,10 @@ export const useImageCrop = (): UseImageCropReturn => {
         setZoom(Math.max(1, finalMinZoom)); // Start with zoom 1 or calculated min zoom
     };
 
+    const onCropComplete = (croppedArea: { x: number; y: number; width: number; height: number }, croppedAreaPixels: { x: number; y: number; width: number; height: number }) => {
+        setCroppedAreaPixels(croppedAreaPixels);
+    };
+
     return {
         state: {
             isCropModalOpen,
@@ -130,6 +137,7 @@ export const useImageCrop = (): UseImageCropReturn => {
             crop,
             zoom,
             minZoom,
+            croppedAreaPixels,
         },
         actions: {
             openCropModalForPreview,
@@ -137,6 +145,7 @@ export const useImageCrop = (): UseImageCropReturn => {
             onMediaLoaded,
             setCrop,
             setZoom,
+            onCropComplete,
         },
         utils: {
             checkImageFit,

@@ -304,7 +304,9 @@
       "user": "Пользователь",
       "category": "Категория",
       "location": "Местоположение",
-      "view": "Просмотр"
+      "view": "Просмотр",
+      "hot": "ГОРЯЧИЙ",
+      "deal": "ПРЕДЛОЖЕНИЕ"
     }
   },
   "Vendors": {
@@ -722,7 +724,7 @@
         },
         "websiteLink": {
           "label": "Ссылка на сайт",
-          "placeholder": "https://example.com",
+          "placeholder": "https://jusu-tinklalapis.lt",
           "errors": {
             "invalid": "Пожалуйста, добавьте правильную ссылку"
           }
@@ -1376,16 +1378,18 @@
     "sectiontitle": "название раздела ",
     "optionaladdons": "дополнительные надстройки ",
     "labels": {
-      "title": "Пакеты цен",
+      "title": "Ценовые пакеты",
       "planName": "Название плана",
       "price": "Цена",
       "ctaBodyText": "Текст CTA",
       "ctaButtonUrl": "URL кнопки CTA",
       "ctaStyle": "Стиль CTA",
-      "features": "Особенности",
+      "features": "Функции",
       "addonStatement": "Описание дополнения",
       "addonPrice": "Цена дополнения",
-      "deletePlan": "Удалить план"
+      "deletePlan": "Удалить план",
+      "plan": "План",
+      "preview": "Предпросмотр"
     },
     "styleOptions": {
       "primary": "Основной",
@@ -1568,7 +1572,7 @@
     "errors": {
       "maliciousUrl": "Этот URL выглядит небезопасным. Пожалуйста, введите действительный веб-адрес",
       "invalidProtocol": "Разрешены только ссылки http:// и https://",
-      "invalidFormat": "Пожалуйста, введите действительный адрес сайта (например, example.com или https://example.com)"
+      "invalidFormat": "Пожалуйста, введите действительный адрес сайта (например, jusu-tinklalapis.lt или https://jusu-tinklalapis.lt)"
     }
   }
 }

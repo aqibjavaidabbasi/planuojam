@@ -51,9 +51,12 @@ async function geocodeLocations(listings: ListingItem[], locale?: string): Promi
         username: baseData.username,
         category: baseData.category,
         image: primaryImage,
+        videos: listing.videos,
         path,
         price: listing.price,
         averageRating: listing.averageRating,
+        maximumCapacity: undefined, // Vendors don't have capacity
+        hotDeal: listing.hotDeal,
       });
     }
   }

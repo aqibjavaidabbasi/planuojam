@@ -277,7 +277,9 @@
       "user": "Vartotojas",
       "category": "Kategorija",
       "location": "Vieta",
-      "view": "Peržiūrėti"
+      "view": "Peržiūrėti",
+      "hot": "KARŠTAS",
+      "deal": "PASIŪLYMAS"
     }
   },
   "Vendors": {
@@ -473,7 +475,7 @@
         },
         "websiteLink": {
           "label": "Svetainės nuoroda",
-          "placeholder": "https://example.com",
+          "placeholder": "https://jusu-tinklalapis.lt",
           "errors": {
             "invalid": "Prašome pridėti galiojančią nuorodą"
           }
@@ -1349,16 +1351,18 @@
     "sectiontitle": "Skyriaus pavadinimas",
     "optionaladdons": "Pasirenkami priedai",
     "labels": {
-      "title": "Kainodaros paketai",
-      "planName": "Plano pavadinimas",
+      "title": "Kainų paketai",
+      "planName": "Paketo pavadinimas",
       "price": "Kaina",
-      "ctaBodyText": "CTA teksto turinys",
+      "ctaBodyText": "CTA teksto kūnas",
       "ctaButtonUrl": "CTA mygtuko URL",
       "ctaStyle": "CTA stilius",
-      "features": "Funkcijos",
-      "addonStatement": "Priedo aprašymas",
+      "features": "Ypatybės",
+      "addonStatement": "Priedo teiginys",
       "addonPrice": "Priedo kaina",
-      "deletePlan": "Ištrinti planą"
+      "deletePlan": "Ištrinti paketą",
+      "plan": "Paketas",
+      "preview": "Peržiūra"
     },
     "styleOptions": {
       "primary": "Pagrindinis",
@@ -1572,7 +1576,7 @@
     "errors": {
       "maliciousUrl": "Šis URL atrodo nesaugus. Prašome įvesti galiojantį interneto adresą",
       "invalidProtocol": "Leidžiamos tik http:// ir https:// nuorodos",
-      "invalidFormat": "Prašome įvesti galiojantį svetainės adresą (pvz., example.com arba https://example.com)"
+      "invalidFormat": "Prašome įvesti galiojantį svetainės adresą (pvz., jusu-tinklalapis.lt arba https://jusu-tinklalapis.lt)"
     }
   }
 }

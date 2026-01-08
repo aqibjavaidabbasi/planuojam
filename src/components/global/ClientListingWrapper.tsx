@@ -4,15 +4,14 @@ const FiltersAndMap = dynamic(()=>import("@/components/global/FiltersAndMap"),{s
 const ListingCard  = dynamic(()=>import("@/components/Dynamic/ListingCard"))
 const NoDataCard = dynamic(()=>import("@/components/custom/NoDataCard"),{ssr:false})
 import { useEventTypes } from "@/context/EventTypesContext";
-import { ListingItem, Venue } from "@/types/pagesTypes";
+import { ListingItem } from "@/types/pagesTypes";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Location } from "@/components/global/MapboxMap";
 import { useLocale, useTranslations } from "next-intl";
-import geocodeLocations from "@/utils/mapboxLocation";
+import { createLocationFromListing } from "@/utils/locationFactory";
 import { fetchSortedListingsWithMeta } from "@/services/listing";
 import LoadMoreButton from "@/components/custom/LoadMoreButton";
-import { getListingPath } from "@/utils/routes";
 
 export type ListingWrapperProps = {
   service: string;
@@ -183,24 +182,20 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
     [service, categoryFromUrl, eventTypeFromUrl, fetcher, locale, initialList, initialFiltersFromServer, initialPagination]
   );
 
-  // Derive locations from current list based on type/__component
+  // Derive locations from current list using the factory
   const [locations, setLocations] = useState<Location[]>([]);
   useEffect(() => {
     let mounted = true;
     const run = async () => {
       try {
-        let res: Location[] = [];
-        if (service === "vendor") {
-          res = await geocodeLocations(list, locale);
-        } else if (service === "venue") {
-          res = deriveVenueLocations(list, locale);
-        } else {
-          // Fallback: detect by __component on first item
-          const first = list[0];
-          const hasVendor = first?.listingItem?.some((b) => b.__component === "dynamic-blocks.vendor");
-          res = hasVendor ? await geocodeLocations(list, locale) : deriveVenueLocations(list, locale);
+        const allLocations: Location[] = [];
+        
+        for (const listing of list) {
+          const locations = createLocationFromListing({ listing, locale });
+          allLocations.push(...locations);
         }
-        if (mounted) setLocations(res || []);
+        
+        if (mounted) setLocations(allLocations);
       } catch (e) {
         console.error(e);
         if (mounted) setLocations([]);
@@ -210,7 +205,7 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
     return () => {
       mounted = false;
     };
-  }, [list, service, locale]);
+  }, [list, locale]);
 
   
 
@@ -288,51 +283,3 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
 
 export default ClientListingWrapper;
 
-// Helpers
-function getListingItemUrl(listing: ListingItem, locale?: string): string {
-  if (!listing) return '#';
-  if (listing.listingItem.length === 0) return '#';
-  return getListingPath(listing.slug, locale);
-}
-
-function deriveVenueLocations(items: ListingItem[], locale?: string): Location[] {
-  return items
-    .map((item): Location | null => {
-      const venueBlock = item.listingItem.find(
-        (block) => block.__component === "dynamic-blocks.venue"
-      ) as Venue | undefined;
-      if (!venueBlock?.location) return null;
-      if (
-        typeof venueBlock.location.latitude !== "number" ||
-        typeof venueBlock.location.longitude !== "number"
-      )
-        return null;
-
-      const primaryImage = (item.portfolio && item.portfolio.length > 0)
-        ? item.portfolio[0]
-        : item.category?.image;
-
-      return {
-        id: item.id,
-        name: item.title || "Unnamed Venue",
-        title: item.title || undefined,
-        username: item.user?.username || "Unknown",
-        description: item.description || "",
-        category: {
-          name: item.category?.name || "Uncategorized",
-          type: "venue",
-        },
-        position: {
-          lat: venueBlock.location.latitude,
-          lng: venueBlock.location.longitude,
-        },
-        address: venueBlock.location.address || "No address provided",
-        image: primaryImage,
-        path: getListingItemUrl(item, locale),
-        price: item.price,
-        averageRating: item.averageRating,
-        maximumCapacity: venueBlock.capacity,
-      };
-    })
-    .filter((loc): loc is Location => loc !== null);
-}

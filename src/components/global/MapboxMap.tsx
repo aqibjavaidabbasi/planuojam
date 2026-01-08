@@ -8,6 +8,7 @@ import MapInfoWindow from "./MapInfoWindow";
 import { useLocale, useTranslations } from "next-intl";
 import { strapiImage } from "@/types/mediaTypes";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
+import { HotDeal } from "@/utils/hotDealHelper";
 
 const LATITUDE = 55.1694;
 const LONGITUDE = 23.8813;
@@ -28,10 +29,12 @@ export interface Location {
   };
   address: string;
   image: strapiImage;
+  videos?: { url: string }[];
   path: string; // precomputed navigation path matching ListingCard
   price?: number;
   averageRating?: number;
   maximumCapacity?: number;
+  hotDeal?: HotDeal;
 }
 
 type MapProps = {
@@ -146,9 +149,25 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
     const addMarkers = () => {
       if (!map.current) return;
 
-      // Remove existing markers
+      // Remove existing markers and their popups
       const existingMarkers = document.querySelectorAll('.mapbox-marker');
-      existingMarkers.forEach(marker => marker.remove());
+      existingMarkers.forEach(marker => {
+        try {
+          // Check if marker has an associated popup and close it first
+          const markerElement = marker as { _popup?: mapboxgl.Popup };
+          const popup = markerElement._popup;
+          if (popup) {
+            popup.remove();
+          }
+          
+          if (marker.parentNode) {
+            marker.remove();
+          }
+        } catch (error) {
+          // Ignore errors during cleanup (node might already be removed)
+          console.warn('Marker cleanup error:', error);
+        }
+      });
 
       locations.forEach((location) => {
         // Create marker element using custom SVG from public
@@ -183,6 +202,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
                 duration: 300,
               });
             }
+            // Only create root if it doesn't exist yet
             if (!root) {
               root = ReactDOM.createRoot(popupContainer);
               const href = `${baseUrl}/${locale}${location.path || ''}`;
@@ -194,6 +214,8 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
                     category: t('category'),
                     location: t('location'),
                     view: t('view'),
+                    hot: t('hot'),
+                    deal: t('deal'),
                   }}
                   href={href}
                   currencySymbol={siteSettings?.currency?.symbol || '$'}
@@ -207,7 +229,12 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
               const toUnmount = root;
               root = null;
               setTimeout(() => {
-                try { toUnmount.unmount(); } catch { }
+                try { 
+                  toUnmount.unmount(); 
+                } catch (error) {
+                  // Ignore errors during cleanup (node might already be removed)
+                  console.warn('Popup cleanup error:', error);
+                }
               }, 0);
             }
           });

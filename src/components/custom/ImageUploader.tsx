@@ -105,14 +105,14 @@ const ImageUploader = ({
 
 
     const handleCrop = async () => {
-        if (!cropState.croppingImage) return;
+        if (!cropState.croppingImage || !cropState.croppedAreaPixels) return;
 
         try {
             toast.loading(t('cropping'));
             
             await handleCropProcess(
                 cropState.croppingImage,
-                cropState.crop,
+                cropState.croppedAreaPixels,
                 getCompleteImageUrl,
                 previews,
                 files,
@@ -161,7 +161,7 @@ const ImageUploader = ({
                                         <video
                                             src={getCompleteImageUrl(file.url)}
                                             controls
-                                            className="w-full aspect-[4/3] object-cover rounded-lg"
+                                            className="w-full aspect-4/3 object-cover rounded-lg"
                                         />
                                     ) : (
                                         <Image
@@ -169,7 +169,7 @@ const ImageUploader = ({
                                             alt={file.name || `uploaded-${file.id}`}
                                             width={200}
                                             height={150}
-                                            className="w-full aspect-[4/3] object-contain rounded-lg"
+                                            className="w-full aspect-4/3 object-contain rounded-lg"
                                         />
                                     )}
                                     <Button onClick={() => removeUploaded(file.id)} disabled={uploading || disabled} style="secondary" extraStyles="absolute top-1 right-1 !rounded-full !p-2" >
@@ -203,7 +203,7 @@ const ImageUploader = ({
                                     <video
                                         src={src}
                                         controls
-                                        className="w-full aspect-[4/3] object-cover rounded-lg"
+                                        className="w-full aspect-4/3 object-cover rounded-lg"
                                     />
                                 ) : (
                                     <Image
@@ -211,7 +211,7 @@ const ImageUploader = ({
                                         alt={`preview-${index}`}
                                         width={200}
                                         height={150}
-                                        className="w-full aspect-[4/3] object-cover rounded-lg"
+                                        className="w-full aspect-4/3 object-cover rounded-lg"
                                     />
                                 )}
                                 <Button onClick={() => removeFile(index)} disabled={uploading || disabled} style="secondary" extraStyles="absolute top-1 right-1 !rounded-full !p-2" >
