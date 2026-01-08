@@ -161,7 +161,7 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
             const cur = ranges[i]
             if (cur.s < prev.e) {
               setSubmitting(false)
-              return toast.error(tModal("workingSchedule.errors.conflictDay", { default: `Conflicting schedule entries on ${day}.`, day }))
+              return toast.error(tModal("workingSchedule.errors.conflictDay", { default: `Conflicting schedule entries on ${day}.`, day: tModal(`days.${day}`) }))
             }
           }
         }

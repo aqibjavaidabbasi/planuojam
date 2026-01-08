@@ -420,7 +420,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
       for (let i = 1; i < ranges.length; i++) {
         const prev = ranges[i - 1]
         const cur = ranges[i]
-        if (cur.s < prev.e) return t('workingSchedule.errors.conflictDay', { day })
+        if (cur.s < prev.e) return t('workingSchedule.errors.conflictDay', { day: t(`days.${day}`) })
       }
     }
     return null
