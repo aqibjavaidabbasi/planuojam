@@ -20,7 +20,17 @@ type Props = {
   locale: string;
 };
 
-function ClientEventTypeWrapper({ eventBlocks, listingsVenueInitial, listingsVendorInitial, vendorParentId, venueParentId, venuePagination, vendorPagination, eventTypeId, locale }: Props) {
+function ClientEventTypeWrapper({
+  eventBlocks,
+  listingsVenueInitial,
+  listingsVendorInitial,
+  vendorParentId,
+  venueParentId,
+  venuePagination,
+  vendorPagination,
+  eventTypeId,
+  locale
+}: Props) {
   const eventBlock = Array.isArray(eventBlocks) ? eventBlocks : [];
 
   // derived states for better data management
