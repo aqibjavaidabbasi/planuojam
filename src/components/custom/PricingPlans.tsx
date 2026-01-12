@@ -39,7 +39,7 @@ function PricingPlans({
 
       {plan?.featuresList?.length ? (
         <>
-          <h4 className="text-sm font-semibold text-secondary mb-2 text-left">
+          <h4 className="text-lg uppercase font-semibold text-secondary mb-2 text-left">
             {t("featuresHeading")}
           </h4>
           <ul className="text-secondary mb-4 space-y-1">
@@ -87,10 +87,10 @@ function PricingPlans({
 
       {optionalAddons && optionalAddons.length > 0 && (
         <>
-          <h4 className="text-sm font-semibold text-secondary my-2 text-center">
+          <h4 className="text-lg uppercase font-semibold text-secondary my-2 text-left">
             {t("optionalAddonsHeading")}
           </h4>
-          <ul className="flex items-center justify-center gap-2 mt-2 text-secondary w-full">
+          <ul className="flex flex-col items-start justify-start gap-2 mt-2 text-secondary w-full">
             {optionalAddons.map((addon, i) => (
               <li key={i} className="flex items-center gap-2 mb-1">
                 <span className="text-green-500">

@@ -325,7 +325,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
             <h2 className="text-2xl font-semibold text-primary mb-4">
               {initialListing.pricingPackages.sectionTitle}
             </h2>
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center gap-2 flex-wrap">
               {initialListing.pricingPackages.plans.map((plan, index) => (
                 <PricingPlans
                   key={index}

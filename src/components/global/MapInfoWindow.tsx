@@ -86,7 +86,7 @@ const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href, curren
         <div className='absolute top-3 right-3 z-10 flex flex-row-reverse gap-2 items-start'>
           {hotDealInfo.status === 'active' && (
               <div className="mb-4">
-                <div className="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center transform rotate-12">
+                <div className="bg-primary text-white w-16 h-16 rounded-full flex items-center justify-center transform rotate-12">
                   <div className="text-center">
                     <div className="text-xs font-bold">{labels.hot}</div>
                     <div className="text-xs">{labels.deal}</div>

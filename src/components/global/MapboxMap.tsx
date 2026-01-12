@@ -52,7 +52,8 @@ type MapProps = {
 const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const t = useTranslations('Map.infoWindow');
+  const tMap = useTranslations('Map.infoWindow');
+  const tCard = useTranslations('Dynamic.ListingCard');
   const locale = useLocale();
   const [mapError, setMapError] = useState(false);
   const { siteSettings } = useSiteSettings();
@@ -210,12 +211,12 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
                 <MapInfoWindow
                   selectedLocation={location}
                   labels={{
-                    user: t('user'),
-                    category: t('category'),
-                    location: t('location'),
-                    view: t('view'),
-                    hot: t('hot'),
-                    deal: t('deal'),
+                    user: tMap('user'),
+                    category: tMap('category'),
+                    location: tMap('location'),
+                    view: tMap('view'),
+                    hot: tCard('hot'),
+                    deal: tCard('deal'),
                   }}
                   href={href}
                   currencySymbol={siteSettings?.currency?.symbol || '$'}
@@ -255,7 +256,7 @@ const MapboxMap = ({ selectedPlace, locations }: MapProps) => {
     } else {
       map.current.once('load', addMarkers);
     }
-  }, [locations, t, locale, siteSettings.currency, baseUrl]);
+  }, [locations, tMap, tCard, locale, siteSettings.currency, baseUrl]);
 
   // Move map when selected place changes
   useEffect(() => {

@@ -96,8 +96,6 @@ export async function POST(req: Request) {
         let slugToValidate;
         const targets: string[] = []
 
-        console.log(`[revalidate] Webhook received: ${bodyModal} (${bodyLocale})`);
-
         // Simple deduplication to prevent multiple rapid revalidations from auto-translate
         const deduplicationKey = `${bodyModal}-${body?.slug ?? body?.entry?.slug}`;
         const now = Date.now();
@@ -105,7 +103,6 @@ export async function POST(req: Request) {
         const lastRevalidation = global.revalidationCache?.get(deduplicationKey);
         
         if (lastRevalidation && now - lastRevalidation < 10000) {
-            console.log(`[revalidate] Skipped duplicate: ${deduplicationKey}`);
             return NextResponse.json({ revalidated: false, reason: 'recently_revalidated' });
         }
         
@@ -116,7 +113,6 @@ export async function POST(req: Request) {
         global.revalidationCache.set(deduplicationKey, now);
 
         if (bodyLocale && typeof bodyLocale === 'string' && SUPPORTED_LOCALES.includes(bodyLocale)) {
-            console.log(`[revalidate] Processing: ${bodyModal} from ${bodyLocale}`);
             slugToValidate = body?.slug ?? body?.entry?.slug;
             for (const locale of SUPPORTED_LOCALES) {
                 if (bodyModal.includes('listing')) {
@@ -224,7 +220,6 @@ export async function POST(req: Request) {
             revalidatePath(p)
         };
 
-        console.log(`[revalidate] Completed: ${targets.length} paths revalidated for ${bodyModal}`);
         return NextResponse.json({ revalidated: true, paths: Array.from(targets) });
     } catch (err) {
         console.error("Revalidate error:", err);

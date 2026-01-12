@@ -269,7 +269,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
           {mobileNavOpen && (
             <div className="fixed inset-0 z-40 bg-black/40 flex overflow-hidden" style={{ height: '100dvh' }}>
               <div className="bg-white w-[90%] max-w-xs flex flex-col animate-slide-in-left" style={{ height: '100dvh' }}>
-                <div className="p-4 md:p-5 flex-shrink-0">
+                <div className="p-4 md:p-5 shrink-0">
                   <div className="flex items-center justify-between">
                     <Logo variant="sm" />
                     <button
@@ -402,7 +402,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                   <Link
                     key={id}
                     href={getEventTypeUrl(eventType.documentId) as string}
-                    className={`cursor-pointer text-xs md:text-sm px-2 md:px-3 py-1 rounded-sm transition-colors whitespace-nowrap flex-shrink-0
+                    className={`cursor-pointer text-xs md:text-sm px-2 md:px-3 py-1 rounded-sm transition-colors whitespace-nowrap shrink-0
                                     ${isActive
                         ? "bg-primary text-white"
                         : "text-primary hover:bg-primary hover:text-white"
@@ -413,7 +413,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                 );
               })}
               <Link
-                className={`cursor-pointer text-xs md:text-sm px-2 md:px-3 py-1 rounded-sm transition-colors whitespace-nowrap flex-shrink-0 ${isHotDealActive()
+                className={`cursor-pointer text-xs md:text-sm px-2 md:px-3 py-1 rounded-sm transition-colors whitespace-nowrap shrink-0 ${isHotDealActive()
                   ? "bg-primary text-white"
                   : "text-primary hover:bg-primary hover:text-white"
                   }`}
@@ -422,7 +422,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                 {t('HotDeal')}
               </Link>
               <Link
-                className={`cursor-pointer text-xs md:text-sm px-2 md:px-3 py-1 rounded-sm transition-colors whitespace-nowrap flex-shrink-0 ${isMapActive()
+                className={`cursor-pointer text-xs md:text-sm px-2 md:px-3 py-1 rounded-sm transition-colors whitespace-nowrap shrink-0 ${isMapActive()
                   ? "bg-primary text-white"
                   : "text-primary hover:bg-primary hover:text-white"
                   }`}
