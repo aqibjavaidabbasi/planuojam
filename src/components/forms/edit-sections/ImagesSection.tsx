@@ -1,9 +1,8 @@
 "use client"
-import { type UploadedFile } from "@/services/upload";
 
 import React, { useState, useEffect } from "react"
 import Button from "../../custom/Button"
-import ImageUploader from "../../custom/ImageUploader"
+import ImageUploadModal from "../../modals/ImageUploadModal"
 import { toast } from "react-hot-toast"
 import { updateListing } from "@/services/listing"
 import type { ListingItem } from "@/types/pagesTypes"
@@ -119,6 +118,7 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
   const [deleting, setDeleting] = useState(false)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [itemToDelete, setItemToDelete] = useState<number | null>(null)
+  const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false)
 
   // Initialize items from listing
   useEffect(() => {
@@ -164,19 +164,8 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
     }
   };
 
-  const handleBackendUpload = (newFiles: UploadedFile[]) => {
-      // Cast UploadedFile to strapiImage format if needed. 
-      // Assuming structure is similar enough or mapping:
-       const formatted: strapiImage[] = newFiles.map(f => ({
-          id: f.id,
-          url: f.url,
-          mime: f.mime || "",
-          width: (f.width as number) || 0,
-          height: (f.height as number) || 0,
-          ext: f.ext || "",
-          formats: (f.formats as unknown as strapiImage['formats']) || {}
-      }));
-      setItems(prev => [...prev, ...formatted]);
+  const handleImageUploadSuccess = (uploadedImages: strapiImage[]) => {
+    setItems(prev => [...prev, ...uploadedImages]);
   }
 
   const handleRequestDelete = (id: number) => {
@@ -289,12 +278,13 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
 
       <h3 className="text-lg font-semibold mb-2">{t("addportfolioimages")}</h3>
       <div className="flex flex-col gap-2">
-        {/* Pass dummy setImageIds and handle logic via onBackendUpload */}
-        <ImageUploader 
-            setImageIds={() => {}} 
-            disabled={submitting} 
-            onBackendUpload={handleBackendUpload}
-        />
+        <Button 
+          onClick={() => setIsImageUploadModalOpen(true)}
+          style="secondary"
+          disabled={submitting}
+        >
+          {t("addImages")}
+        </Button>
         
         {/* Show unsaved changes hint? */}
         <div className="flex justify-end mt-2">
@@ -322,6 +312,13 @@ export default function ImagesSection({ listing, onSaved }: { listing: ListingIt
       >
         <p>{t("modal.confirm")}</p>
       </Modal>
+
+      {/* Image Upload Modal */}
+      <ImageUploadModal
+        isOpen={isImageUploadModalOpen}
+        onClose={() => setIsImageUploadModalOpen(false)}
+        onUploadSuccess={handleImageUploadSuccess}
+      />
     </div>
   )
 }

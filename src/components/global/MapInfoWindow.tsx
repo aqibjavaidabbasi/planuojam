@@ -39,7 +39,13 @@ const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href, curren
   const hasMedia = selectedLocation?.image?.url || youtubeVideos.length > 0;
 
   return (
-    <div className="text-sm font-sans bg-white rounded-lg overflow-hidden" style={{ width: '320px' }}>
+    <div 
+      className="text-sm font-sans bg-white rounded-lg overflow-hidden" 
+      style={{ 
+          width: '320px',
+          boxShadow: "rgba(0, 0, 0, 0.4) -20px 20px 40px, rgba(0, 0, 0, 0.4) 20px 20px 40px, rgba(0, 0, 0, 0.25) 10px 10px 20px"
+      }}
+    >
       {/* Upcoming Hot Deal Banner */}
       {hotDealInfo.status === 'upcoming' && (
         <div className="bg-linear-to-r from-orange-500 to-red-500 text-white text-center text-xs font-semibold py-1">

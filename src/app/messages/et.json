@@ -1202,8 +1202,10 @@
     }
   },
   "ImageSection": {
+    "addImages": "Lisa pilte",
     "addportfolioimages": "Lisa portfoolio pildid",
     "saving": "Salvestamine",
+    "savingEllipsis": "Salvestamine...",
     "saveImages": "Salvesta meedia",
     "uploadHint": "Maksimaalne faili suurus: {size} (Pildid)",
     "instructionHint": "Valige pildid, seejärel laadige need üles ja seejärel klõpsake salvestamiseks, et salvestada kõik kirjed. Klõpsake täheikoonil, et valida peamine pilt",

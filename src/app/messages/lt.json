@@ -1193,18 +1193,23 @@
     }
   },
   "ImageSection": {
+    "addImages": "Pridėti nuotraukas",
     "addportfolioimages": "Pridėti portfelio nuotraukas",
     "saving": "Taupymas",
+    "savingEllipsis": "Taupomas...",
     "saveImages": "Išsaugoti failus",
     "uploadHint": "Maksimalus failo dydis: {size} (Nuotraukos)",
     "instructionHint": "Pasirinkite nuotraukas, tada įkelkite jas ir tada spustelėkite išsaugoti, kad išsaugotumėte visus failus. Spustelėkite žvaigždės piktogramą, kad pasirinktumėte pagrindinę nuotrauką",
     "readyToSave": "{count} failas(-ai) paruoštas(-i) išsaugoti",
     "alt": {
-      "portfolioImage": "Portfelio vaizdas"
+      "portfolioImage": "Portfelio vaizdas",
+      "portfolioMedia": "Portfelio medija"
     },
     "aria": {
-      "deleteImage": "Ištrinti vaizdą"
+      "deleteImage": "Ištrinti vaizdą",
+      "deleteMedia": "Ištrinti mediją"
     },
+    "mainMedia": "Pagrindinė Medija",
     "deselectMainImage": "Atžymėti kaip pagrindinę nuotrauką",
     "selectMainImage": "Pasirinkti kaip pagrindinę nuotrauką",
     "errors": {

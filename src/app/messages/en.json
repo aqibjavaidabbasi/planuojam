@@ -1215,8 +1215,10 @@
     }
   },
   "ImageSection": {
+    "addImages": "Add Images",
     "addportfolioimages": "Add Portfolio Images",
     "saving": "Saving",
+    "savingEllipsis": "Saving...",
     "saveImages": "Save Media",
     "uploadHint": "Maximum file size: {size} (Images)",
     "instructionHint": "Select images, then upload them and then click save to save all of the items. Click on star icon to choose a main image",
