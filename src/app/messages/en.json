@@ -94,6 +94,7 @@
     },
     "ResetPassword": {
       "title": "Reset Password",
+      "subtitle": "Reset your password securely",
       "resetting": "Resetting your password...",
       "resetSuccessToast": "Password reset successfully! You can log in now",
       "resetFailed": "Password reset failed. Please try again.",
@@ -115,6 +116,7 @@
     },
     "EmailConfirmation": {
       "title": "Email Confirmation",
+      "subtitle": "Confirm your email address to activate your account",
       "instruction": "Please confirm your email address to activate your account.",
       "resendHint": "If you did not receive the confirmation email, you can resend it below.",
       "resendLoading": "Sending confirmation email...",
@@ -205,6 +207,8 @@
     "saving": "Saving..."
   },
   "Map": {
+    "title": "Interactive Map",
+    "description": "Explore venues and services on our interactive map",
     "loading": "Loading map...",
     "errors": {
       "failedToLoadLocations": "Failed to load locations"
@@ -225,6 +229,9 @@
     }
   },
   "Listing": {
+    "editTitle": "Edit {title}",
+    "editDescription": "Edit your listing details",
+    "notFound": "Listing Not Found",
     "Edit": {
       "preview": "Preview Listing",
       "editing": "Editing",

@@ -93,8 +93,9 @@
       "facebook": "Tęsti su Facebook"
     },
     "ResetPassword": {
-      "title": "Atkurti slaptažodį",
-      "resetting": "Atkuriamas slaptažodis...",
+      "title": "Slaptažodžio nustatymas",
+      "subtitle": "Saugiai nustatykite savo slaptažodį",
+      "resetting": "Atliekamas slaptažodžio nustatymas...",
       "resetSuccessToast": "Slaptažodis sėkmingai atkurtas! Dabar galite prisijungti",
       "resetFailed": "Nepavyko atkurti slaptažodžio. Bandykite dar kartą.",
       "resetSuccess": "Slaptažodis sėkmingai atkurtas!",
@@ -115,7 +116,8 @@
     },
     "EmailConfirmation": {
       "title": "El. pašto patvirtinimas",
-      "instruction": "Patvirtinkite savo el. pašto adresą, kad suaktyvintumėte paskyrą.",
+      "subtitle": "Patvirtinkite savo el. paštą, kad aktyvuotumėte paskyrą",
+      "instruction": "Prašome patvirtinti savo el. paštą, kad aktyvuotumėte paskyrą.",
       "resendHint": "Jei negavote patvirtinimo laiško, galite jį persiųsti žemiau.",
       "resendLoading": "Siunčiamas patvirtinimo laiškas...",
       "resendSuccess": "Patvirtinimo laiškas sėkmingai išsiųstas!",
@@ -189,6 +191,9 @@
     "saving": "Saugoma..."
   },
   "Listing": {
+    "editTitle": "Redaguoti {title}",
+    "editDescription": "Redaguoti skelbimo detales",
+    "notFound": "Skelbimas nerastas",
     "Edit": {
       "preview": "Peržiūrėti įrašą",
       "editing": "Redaguojama",
@@ -260,6 +265,8 @@
     }
   },
   "Map": {
+    "title": "Interaktyvi žemėlapis",
+    "description": "Tyrinėkite vietas ir paslaugas mūsų interaktyviame žemėlapyje",
     "loading": "Kraunamas žemėlapis...",
     "errors": {
       "failedToLoadLocations": "Nepavyko įkelti vietų",

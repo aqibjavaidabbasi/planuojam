@@ -93,7 +93,8 @@
       "facebook": "Jätka Facebookiga"
     },
     "ResetPassword": {
-      "title": "Parooli lähtestamine",
+      "title": "Lähtesta parool",
+      "subtitle": "Lähtesta oma parool turvaliselt",
       "resetting": "Parooli lähtestamine...",
       "resetSuccessToast": "Parool on edukalt lähtestatud! Nüüd saad sisse logida",
       "resetFailed": "Parooli lähtestamine ebaõnnestus. Palun proovi uuesti.",
@@ -115,7 +116,8 @@
     },
     "EmailConfirmation": {
       "title": "E-posti kinnitamine",
-      "instruction": "Palun kinnita oma e-posti aadress, et konto aktiveerida.",
+      "subtitle": "Kinnitage oma e-posti aadress, et aktiveerida oma kontot",
+      "instruction": "Palun kinnitage oma e-posti aadress, et aktiveerida oma kontot.",
       "resendHint": "Kui sa ei saanud kinnituskirja, võid selle allpool uuesti saata.",
       "resendLoading": "Kinnituskirja saatmine...",
       "resendSuccess": "Kinnituskiri on edukalt saadetud!",
@@ -189,6 +191,8 @@
     "saving": "Salvestamine..."
   },
   "Map": {
+    "title": "Interaktiivne kaart",
+    "description": "Avasta paigad ja teenused meie interaktiivsel kaardil",
     "loading": "Kaardi laadimine...",
     "errors": {
       "failedToLoadLocations": "Asukohtade laadimine ebaõnnestus",
@@ -212,6 +216,9 @@
     }
   },
   "Listing": {
+    "editTitle": "Muuda {title}",
+    "editDescription": "Muuda kuulutuse detaile",
+    "notFound": "Kuulutust ei leitud",
     "Edit": {
       "preview": "Kuulutuse eelvaade",
       "editing": "Redigeerimine",

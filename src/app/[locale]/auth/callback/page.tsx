@@ -9,6 +9,23 @@ import { fetchUser } from "@/services/auth";
 import { useAppDispatch } from "@/store/hooks";
 import { setUser } from "@/store/slices/authSlice";
 import { SUPPORTED_LOCALES } from "@/config/i18n";
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+
+// This would need to be moved to a separate server component for proper metadata generation
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Auth.Login' });
+  
+  return {
+    title: t('loggingIn', { default: 'Logging in...' }),
+    description: t('subtitle', { default: 'Processing your authentication' }),
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 function normalizeRedirect(p: string | null): string | null {
   if (!p || typeof p !== 'string') return null;

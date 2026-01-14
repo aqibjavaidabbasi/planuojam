@@ -93,7 +93,8 @@
       "facebook": "Kontynuuj z Facebook"
     },
     "ResetPassword": {
-      "title": "Resetuj hasło",
+      "title": "Zresetuj hasło",
+      "subtitle": "Bezpiecznie zresetuj swoje hasło",
       "resetting": "Resetowanie hasła...",
       "resetSuccessToast": "Hasło zostało pomyślnie zresetowane! Możesz się teraz zalogować",
       "resetFailed": "Nie udało się zresetować hasła. Spróbuj ponownie.",
@@ -114,8 +115,9 @@
       "updateUserFailed": "Nie udało się zaktualizować użytkownika. Spróbuj później!"
     },
     "EmailConfirmation": {
-      "title": "Potwierdzenie adresu email",
-      "instruction": "Potwierdź swój adres email, aby aktywować konto.",
+      "title": "Potwierdzenie email",
+      "subtitle": "Potwierdź swój adres email, aby aktywować konto",
+      "instruction": "Proszę potwierdzić swój adres email, aby aktywować konto.",
       "resendHint": "Jeśli nie otrzymałeś wiadomości z potwierdzeniem, możesz wysłać ją ponownie poniżej.",
       "resendLoading": "Wysyłanie wiadomości z potwierdzeniem...",
       "resendSuccess": "Wiadomość z potwierdzeniem została wysłana!",
@@ -189,6 +191,8 @@
     "saving": "Zapisywanie..."
   },
   "Map": {
+    "title": "Mapa interaktywna",
+    "description": "Odkrywaj miejsca i usługi na naszej interaktywnej mapie",
     "loading": "Ładowanie mapy...",
     "errors": {
       "failedToLoadLocations": "Nie udało się wczytać lokalizacji",
@@ -212,6 +216,9 @@
     }
   },
   "Listing": {
+    "editTitle": "Edytuj {title}",
+    "editDescription": "Edytuj szczegóły ogłoszenia",
+    "notFound": "Ogłoszenie nie znalezione",
     "Edit": {
       "preview": "Podgląd ogłoszenia",
       "editing": "Edycja",
