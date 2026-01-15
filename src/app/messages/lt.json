@@ -1,11 +1,11 @@
 {
   "TagInput": {
-    "placeholder": "Pridėti žymą...",
-    "maxTagsReached": "Maksimalus {max} žymų skaičius",
-    "loading": "Kraunama...",
-    "errorLoading": "Klaida įkeliant žymas",
-    "noMatchingTags": "Nėra atitinkančių žymų",
-    "addTag": "Pridėti žymą"
+    "placeholder": "Pridėti funkciją...",
+    "maxTagsReached": "Maksimaliai {max} funkcijos",
+    "loading": "Kraunasi...",
+    "errorLoading": "Klaida kraunant funkcijų",
+    "noMatchingTags": "Atitinkamų funkcijų nerasta",
+    "addTag": "Pridėti Funkciją"
   },
   "Auth": {
     "Login": {
@@ -209,7 +209,39 @@
         "contact": "Kontaktai",
         "social": "Socialiniai tinklai",
         "pricing": "Kainodara",
-        "faqs": "DUK"
+        "faqs": "DUK",
+        "archive": "Archyvuoti/Trinti"
+      },
+      "archive": {
+        "title": "Archyvuoti/Trinti skelbimą",
+        "description": "Valdykite savo skelbimo būseną",
+        "archiveSection": {
+          "title": "Archyvuoti skelbimą",
+          "description": "Archyvuojant, jūsų skelbimas bus paslėptas nuo viešosios peržiūros. Jį galėsite vėliau atkurti.",
+          "button": "Archyvuoti skelbimą",
+          "confirmTitle": "Archyvuoti skelbimą",
+          "confirmMessage": "Ar tikrai norite archyvuoti šį skelbimą? Jis nebebus matomas vartotojams, bet galėsite jį vėliau atkurti.",
+          "confirmButton": "Taip, archyvuoti",
+          "success": "Skelbimas sėkmingai archyvuotas"
+        },
+        "unarchiveSection": {
+          "title": "Atkurti skelbimą",
+          "description": "Atkūrimas padarys jūsų skelbimą vėl matomą vartotojams.",
+          "button": "Atkurti skelbimą",
+          "confirmTitle": "Atkurti skelbimą",
+          "confirmMessage": "Ar tikrai norite atkurti šį skelbimą? Jis bus vėl matomas vartotojams.",
+          "confirmButton": "Taip, atkurti",
+          "success": "Skelbimas sėkmingai atkurtas"
+        },
+        "deleteSection": {
+          "title": "Trinti skelbimą",
+          "description": "Trinant, jūsų skelbimas bus visiškai pašalintas. Šio veiksmo negalima atšaukti.",
+          "button": "Trinti skelbimą",
+          "confirmTitle": "Trinti skelbimą",
+          "confirmMessage": "Ar tikrai norite visiškai pašalinti šį skelbimą? Šio veiksmo negalima atšaukti ir visi duomenys bus prarasti.",
+          "confirmButton": "Taip, trinti",
+          "success": "Skelbimas sėkmingai pašalintas"
+        }
       }
     },
     "Details": {
@@ -457,13 +489,13 @@
         "featured": {
           "label": "Rekomenduojamas?"
         },
-        "tags": {
-          "label": "Žymos",
-          "placeholder": "Pridėti žymą...",
+        "features": {
+          "label": "Funkcijos",
+          "placeholder": "Pridėti funkciją...",
           "add": "Pridėti",
           "errors": {
-            "max": "Maksimaliai 10 žymų",
-            "duplicate": "Žyma jau pridėta"
+            "max": "Leidžiamai 10 funkcijų",
+            "duplicate": "Funkcija jau pridėta"
           }
         },
         "videos": {
@@ -545,7 +577,7 @@
         },
         "phone": {
           "label": "Telefonas",
-          "placeholder": "+1 (555) 000-0000",
+          "placeholder": "+370 600 00000",
           "message": "Telefono numeris yra privalomas"
         },
         "address": {
@@ -1073,7 +1105,8 @@
       "edit": "Redaguoti",
       "view": "Peržiūrėti",
       "draft": "Juodraštis",
-      "pending": "Laukiama peržiūros",
+      "pending": "Laukia peržiūros",
+      "archived": "Archyvuotas",
       "subscriptionInfo": "Prenumeratos informacija",
       "addToFavorites": "Prid",
       "removeFromFavorites": "Pašalinti iš mėgstamiausių",
@@ -1157,9 +1190,13 @@
     "overviewPlaceholder": "Pateikite savo skelbimo apžvalgą...",
     "otherInformation": "Papildoma informacija",
     "otherInformationPlaceholder": "Pridėkite papildomų detalių...",
-    "tags": "Žymos",
-    "tagPlaceholder": "Pridėkite žymą...",
-    "addTag": "Pridėti",
+    "fields": {
+      "tags": {
+        "label": "Funkcijos",
+        "placeholder": "Pridėti funkciją..."
+      }
+    },
+    "addTag": "Pridėti funkciją",
     "videos": "Vaizdo įrašai",
     "videoUrlPlaceholder": "YouTube URL...",
     "addVideo": "Pridėti vaizdo įrašą",
@@ -1186,14 +1223,18 @@
       "invalidWebsiteLink": "Pridėkite galiojančią svetainės nuorodą",
       "priceBelowMin": "Kaina turi būti bent {min}",
       "priceAboveMax": "Kaina negali viršyti {max}",
-      "maxTags": "Maksimaliai 10 žymų",
-      "tagAlreadyAdded": "Žyma jau pridėta",
-      "duplicate": "Žyma jau pridėta",
+      "maxTags": "Maksimaliai {max} funkcijų",
+      "tagAlreadyAdded": "Funkcija jau pridėta",
+      "loadingTags": "Funkcijų kraunamas...",
+      "maxFeatures": "Leidžiamai 10 funkcijų",
+      "featureAlreadyAdded": "Funkcija jau pridėta",
+      "loadingFeatures": "Funkcijų kraunamas...",
+      "duplicate": "Funkcija jau pridėta",
       "invalidYouTubeUrl": "Neteisingas YouTube URL"
     },
     "priceRangeHint": "Leidžiamas diapazonas: {min} - {max}",
     "loadingPriceRange": "Įkeliami kainos apribojimai...",
-    "loadingTags": "Įkeliamos žymos...",
+    "loadingTags": "Funkcijų kraunamas...",
     "toasts": {
       "updated": "Pagrindinės detalės atnaujintos",
       "updateFailed": "Nepavyko atnaujinti pagrindinių detalių"
@@ -1355,6 +1396,9 @@
     }
   },
   "pricingSection": {
+    "cta": {
+      "choose": "Pasirinkti"
+    },
     "+addoptionaladdon": "+ Pridėti pasirenkamą priedą",
     "+addplan": "+ Pridėti planą",
     "+addfeature": "+ Pridėti funkciją",

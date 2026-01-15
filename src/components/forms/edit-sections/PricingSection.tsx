@@ -44,13 +44,13 @@ export default function PricingSection({
     cta: plan.cta ? {
       __component: 'dynamic-blocks.call-to-action',
       id: 0, // dummy id for preview
-      bodyText: plan.cta.bodyText || '',
+      bodyText: plan.cta?.bodyText || t("cta.choose"),
       buttonUrl: plan.cta.buttonUrl || '',
       style: plan.cta.style || 'primary'
     } : {
       __component: 'dynamic-blocks.call-to-action',
       id: 0,
-      bodyText: '',
+      bodyText: t("cta.choose"),
       buttonUrl: '',
       style: 'primary'
     },
@@ -165,12 +165,8 @@ export default function PricingSection({
                     <Input
                       type="text"
                       label={t("labels.ctaBodyText")}
-                      value={p.cta?.bodyText || ""}
-                      onChange={(e) => {
-                        const list = [...(form.getValues("plans") || [])]
-                        list[idx] = { ...list[idx], cta: { ...list[idx].cta, bodyText: e.target.value as string } }
-                        form.setValue("plans", list, { shouldDirty: true })
-                      }}
+                      disabled={true}
+                      value={t("cta.choose")}
                     />
                     {/* <Select
                       label={t("labels.ctaStyle")}
@@ -192,8 +188,8 @@ export default function PricingSection({
                     <div className="flex flex-col gap-2">
                       <h4 className="text-gray-500 font-medium tracking-wide">{t("labels.features")}</h4>
                       {(p.featuresList || []).map((feature, fIdx) => (
-                        <div key={fIdx} className="grid grid-cols-12 items-end gap-2">
-                          <div className="col-span-10">
+                        <div key={fIdx} className="flex flex-col gap-2">
+                          <div>
                             <Input
                               type="text"
                               label={`${t("labels.features")} ${fIdx + 1}`}
@@ -207,7 +203,7 @@ export default function PricingSection({
                               }}
                             />
                           </div>
-                          <div className="col-span-2 flex justify-end">
+                          <div>
                             <Button type="button" size="large" style="destructive" disabled={isWorking} onClick={() => {
                               const list = [...(form.getValues("plans") || [])]
                               const features = [...(list[idx].featuresList || [])]
@@ -268,7 +264,7 @@ export default function PricingSection({
                 price: 0,
                 isPopular: false,
                 cta: {
-                  bodyText: "",
+                  bodyText: t("cta.choose"),
                   buttonUrl: "",
                   style: "primary",
                 },

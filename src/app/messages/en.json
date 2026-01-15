@@ -1,11 +1,11 @@
 {
   "TagInput": {
-    "placeholder": "Add a tag...",
-    "maxTagsReached": "Maximum {max} tags",
+    "placeholder": "Add a feature...",
+    "maxTagsReached": "Maximum {max} features",
     "loading": "Loading...",
-    "errorLoading": "Error loading tags",
-    "noMatchingTags": "No matching tags",
-    "addTag": "Add Tag"
+    "errorLoading": "Error loading features",
+    "noMatchingTags": "No matching features",
+    "addTag": "Add Feature"
   },
   "Auth": {
     "Login": {
@@ -247,7 +247,39 @@
         "contact": "Contact",
         "social": "Social Links",
         "pricing": "Pricing",
-        "faqs": "FAQs"
+        "faqs": "FAQs",
+        "archive": "Archive/Delete"
+      },
+      "archive": {
+        "title": "Archive/Delete Listing",
+        "description": "Manage your listing status",
+        "archiveSection": {
+          "title": "Archive Listing",
+          "description": "Archiving will hide your listing from public view. You can unarchive it later.",
+          "button": "Archive Listing",
+          "confirmTitle": "Archive Listing",
+          "confirmMessage": "Are you sure you want to archive this listing? It will no longer be visible to users but you can restore it later.",
+          "confirmButton": "Yes, Archive",
+          "success": "Listing archived successfully"
+        },
+        "unarchiveSection": {
+          "title": "Unarchive Listing",
+          "description": "Unarchiving will make your listing visible to users again.",
+          "button": "Unarchive Listing",
+          "confirmTitle": "Unarchive Listing",
+          "confirmMessage": "Are you sure you want to unarchive this listing? It will be visible to users again.",
+          "confirmButton": "Yes, Unarchive",
+          "success": "Listing unarchived successfully"
+        },
+        "deleteSection": {
+          "title": "Delete Listing",
+          "description": "Deleting will permanently remove your listing. This action cannot be undone.",
+          "button": "Delete Listing",
+          "confirmTitle": "Delete Listing",
+          "confirmMessage": "Are you sure you want to permanently delete this listing? This action cannot be undone and all data will be lost.",
+          "confirmButton": "Yes, Delete",
+          "success": "Listing deleted successfully"
+        }
       }
     },
     "Details": {
@@ -712,12 +744,12 @@
           "placeholder": "Add any additional details..."
         },
         "tags": {
-          "label": "Tags",
-          "placeholder": "Add a tag...",
+          "label": "Features",
+          "placeholder": "Add a features...",
           "add": "Add",
           "errors": {
-            "max": "Maximum 10 tags allowed",
-            "duplicate": "Tag already added"
+            "max": "Maximum 10 features allowed",
+            "duplicate": "Feature already added"
           }
         },
         "videos": {
@@ -799,7 +831,7 @@
         },
         "phone": {
           "label": "Phone",
-          "placeholder": "+1 (555) 000-0000",
+          "placeholder": "+370 600 00000",
           "message": "Phone number is required"
         },
         "address": {
@@ -1076,6 +1108,7 @@
       "view": "View",
       "draft": "Draft",
       "pending": "Pending Review",
+      "archived": "Archived",
       "subscriptionInfo": "Subscription Info",
       "addToFavorites": "Add to favorites",
       "removeFromFavorites": "Remove from favorites",
@@ -1173,8 +1206,8 @@
     "overviewPlaceholder": "Provide an overview of your listing...",
     "otherInformation": "Other Information",
     "otherInformationPlaceholder": "Add any additional details...",
-    "tags": "Tags",
-    "tagPlaceholder": "Add a tag...",
+    "tags": "Features",
+    "tagPlaceholder": "Add a features...",
     "addTag": "Add",
     "videos": "Videos",
     "videoUrlPlaceholder": "YouTube URL...",
@@ -1202,14 +1235,14 @@
       "invalidWebsiteLink": "Please add a valid website link",
       "priceBelowMin": "Price must be at least {min}",
       "priceAboveMax": "Price must not exceed {max}",
-      "maxTags": "Maximum 10 tags allowed",
-      "tagAlreadyAdded": "Tag already added",
-      "duplicate": "Tag already added",
+      "maxTags": "Maximum 10 features allowed",
+      "tagAlreadyAdded": "Feature already added",
+      "duplicate": "Feature already added",
       "invalidYouTubeUrl": "Invalid YouTube URL"
     },
     "priceRangeHint": "Allowed range: {min} - {max}",
     "loadingPriceRange": "Loading price constraints...",
-    "loadingTags": "Loading tags...",
+    "loadingTags": "Loading features...",
     "toasts": {
       "updated": "Basic details updated",
       "updateFailed": "Failed to update basic details"
@@ -1375,6 +1408,9 @@
     }
   },
   "pricingSection": {
+    "cta": {
+      "choose": "Choose"
+    },
     "+addoptionaladdon": "+add optional addon",
     "+addplan": "+add plan",
     "+addfeature": "+add feature",

@@ -355,7 +355,6 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
         {/* FAQs section */}
         {initialListing.FAQs && initialListing.FAQs.items.length > 0 && (
           <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6 my-6">
-            <h2 className="text-2xl font-semibold text-primary mb-4">{t("faqs")}</h2>
             <div className="max-w-xl mx-auto">
               {initialListing.FAQs.items.map((faq, i) => {
                 const isOpen = openIndexes.includes(i);

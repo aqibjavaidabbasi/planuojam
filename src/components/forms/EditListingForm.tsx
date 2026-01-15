@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useRouter } from "@/i18n/navigation";
 import dynamic from "next/dynamic";
 import { fetchListingBySlug } from "@/services/listing";
+import ArchiveDeleteSection from "./edit-sections/ArchiveDeleteSection";
 
 const SocialLinksSection = dynamic(() => import("./edit-sections/SocialLinksSection"));
 const PricingSection = dynamic(() => import("./edit-sections/PricingSection"));
@@ -21,7 +22,7 @@ const HotDealSection = dynamic(() => import("./edit-sections/HotDealSection"));
 const BasicSection = dynamic(() => import("./edit-sections/BasicSection"));
 const VendorVenueSection = dynamic(() => import("./edit-sections/VendorVenueSection"));
 
-type EditTabKey = "basic" | "vv" | "deal" | "images" | "contact" | "social" | "pricing" | "faqs"
+type EditTabKey = "basic" | "vv" | "deal" | "images" | "contact" | "social" | "pricing" | "faqs" | "archive"
 
 interface EditListingFormProps {
   listing: ListingItem
@@ -59,6 +60,7 @@ const EditListingForm: React.FC<EditListingFormProps> = ({ listing }) => {
     { key: "social", label: t("tabs.social") },
     { key: "pricing", label: t("tabs.pricing") },
     { key: "faqs", label: t("tabs.faqs") },
+    { key: "archive", label: t("tabs.archive") },
   ] as const
 
    const handleSaved = async () => {
@@ -173,6 +175,11 @@ const EditListingForm: React.FC<EditListingFormProps> = ({ listing }) => {
         {/* FAQs */}
         {activeTab === "faqs" && (
           <FAQsSection listing={currentListing} onSaved={handleSaved} />
+        )}
+
+        {/* Archive/Delete */}
+        {activeTab === "archive" && (
+          <ArchiveDeleteSection listing={currentListing} onSaved={handleSaved} />
         )}
 
       </div>

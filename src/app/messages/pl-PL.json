@@ -1,11 +1,12 @@
 {
   "TagInput": {
-    "placeholder": "Dodaj tag...",
-    "maxTagsReached": "Maksymalnie {max} tagów",
+    "features": "Funkcje",
+    "placeholder": "Dodaj funkcję...",
+    "maxTagsReached": "Maksymalnie {max} funkcji",
     "loading": "Ładowanie...",
-    "errorLoading": "Błąd ładowania tagów",
-    "noMatchingTags": "Brak pasujących tagów",
-    "addTag": "Dodaj tag"
+    "errorLoading": "Błąd ładowania funkcji",
+    "noMatchingTags": "Brak pasujących funkcji",
+    "addTag": "Dodaj funkcję"
   },
   "Auth": {
     "Login": {
@@ -234,7 +235,39 @@
         "contact": "Kontakt",
         "social": "Linki społecznościowe",
         "pricing": "Cennik",
-        "faqs": "FAQ"
+        "faqs": "FAQ",
+        "archive": "Archiwum/Usuń"
+      },
+      "archive": {
+        "title": "Archiwum/Usuń ogłoszenie",
+        "description": "Zarządzaj statusem ogłoszenia",
+        "archiveSection": {
+          "title": "Archiwum ogłoszenia",
+          "description": "Archiwizacja ukryje Twoje ogłoszenie przed publicznym widokiem. Możesz je później przywrócić.",
+          "button": "Archiwum ogłoszenia",
+          "confirmTitle": "Archiwum ogłoszenia",
+          "confirmMessage": "Czy na pewno chcesz zarchiwizować to ogłoszenie? Nie będzie już widoczne dla użytkowników, ale możesz je później przywrócić.",
+          "confirmButton": "Tak, zarchiwizuj",
+          "success": "Ogłoszenie zarchiwizowane pomyślnie"
+        },
+        "unarchiveSection": {
+          "title": "Przywróć ogłoszenie",
+          "description": "Przywrócenie sprawi, że Twoje ogłoszenie znowu będzie widoczne dla użytkowników.",
+          "button": "Przywróć ogłoszenie",
+          "confirmTitle": "Przywróć ogłoszenie",
+          "confirmMessage": "Czy na pewno chcesz przywrócić to ogłoszenie? Znowu będzie widoczne dla użytkowników.",
+          "confirmButton": "Tak, przywróć",
+          "success": "Ogłoszenie przywrócone pomyślnie"
+        },
+        "deleteSection": {
+          "title": "Usuń ogłoszenie",
+          "description": "Usuwanie usunie Twoje ogłoszenie na zawsze. Ta akcja nie może być cofnięta.",
+          "button": "Usuń ogłoszenie",
+          "confirmTitle": "Usuń ogłoszenie",
+          "confirmMessage": "Czy na pewno chcesz usunąć to ogłoszenie na zawsze? Ta akcja nie może być cofnięta i wszystkie dane zostaną utracone.",
+          "confirmButton": "Tak, usuń",
+          "success": "Ogłoszenie usunięte pomyślnie"
+        }
       }
     },
     "Details": {
@@ -722,13 +755,13 @@
         "featured": {
           "label": "Polecane?"
         },
-        "tags": {
-          "label": "Tagi",
-          "placeholder": "Dodaj tag...",
+        "features": {
+          "label": "Funkcje",
+          "placeholder": "Dodaj funkcję...",
           "add": "Dodaj",
           "errors": {
-            "max": "Maksymalnie 10 tagów",
-            "duplicate": "Tag już dodany"
+            "max": "Maksymalnie 10 funkcji",
+            "duplicate": "Funkcja już dodana"
           }
         },
         "videos": {
@@ -808,7 +841,7 @@
         },
         "phone": {
           "label": "Telefon",
-          "placeholder": "+1 (555) 000-0000",
+          "placeholder": "+370 600 00000",
           "message": "Numer telefonu jest wymagany"
         },
         "address": {
@@ -1080,6 +1113,7 @@
       "view": "Zobacz",
       "draft": "Wersja robocza",
       "pending": "Oczekuje na przegląd",
+      "archived": "Zarchiwizowane",
       "subscriptionInfo": "Informacje o subskrypcji",
       "addToFavorites": "Dodaj do ulubionych",
       "removeFromFavorites": "Usuń z ulubionych",
@@ -1164,9 +1198,13 @@
     "overviewPlaceholder": "Przedstaw przegląd swojego ogłoszenia...",
     "otherInformation": "Dodatkowe informacje",
     "otherInformationPlaceholder": "Dodaj dodatkowe szczegóły...",
-    "tags": "Tagi",
-    "tagPlaceholder": "Dodaj tag...",
-    "addTag": "Dodaj",
+    "fields": {
+      "tags": {
+        "label": "Funkcje",
+        "placeholder": "Dodaj funkcję..."
+      }
+    },
+    "addTag": "Dodaj funkcję",
     "videos": "Wideo",
     "videoUrlPlaceholder": "URL YouTube...",
     "addVideo": "Dodaj wideo",
@@ -1193,14 +1231,18 @@
       "invalidWebsiteLink": "Proszę dodać poprawny link do strony",
       "priceBelowMin": "Cena musi wynosić co najmniej {min}",
       "priceAboveMax": "Cena nie może przekraczać {max}",
-      "maxTags": "Maksymalnie 10 tagów",
-      "tagAlreadyAdded": "Tag został już dodany",
-      "duplicate": "Tag został już dodany",
+      "maxTags": "Maksymalnie {max} funkcji",
+      "tagAlreadyAdded": "Funkcja już dodana",
+      "loadingTags": "Ładowanie funkcji...",
+      "maxFeatures": "Maksymalnie 10 funkcji",
+      "featureAlreadyAdded": "Funkcja już dodana",
+      "loadingFeatures": "Ładowanie funkcji...",
+      "duplicate": "Funkcja została już dodana",
       "invalidYouTubeUrl": "Nieprawidłowy URL YouTube"
     },
     "priceRangeHint": "Dozwolony zakres: {min} - {max}",
     "loadingPriceRange": "Ładowanie ograniczeń cenowych...",
-    "loadingTags": "Ładowanie tagów...",
+    "loadingTags": "Ładowanie funkcji...",
     "toasts": {
       "updated": "Podstawowe dane zaktualizowane",
       "updateFailed": "Nie udało się zaktualizować podstawowych danych"
@@ -1363,6 +1405,9 @@
     }
   },
   "pricingSection": {
+    "cta": {
+      "choose": "Wybierz"
+    },
     "+addoptionaladdon": "+ Dodaj opcjonalny dodatek",
     "+addplan": "+ Dodaj plan",
     "+addfeature": "+ Dodaj funkcję",

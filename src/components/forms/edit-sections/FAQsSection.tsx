@@ -51,7 +51,6 @@ export default function FAQsSection({ listing, onSaved }: { listing: ListingItem
     <div className="py-4">
       <h3 className="text-lg font-semibold mb-2">{t("title")}</h3>
       <form onSubmit={handleSubmit(onSubmit)} id="faqsForm" className="flex flex-col gap-4">
-        <Input type="text" label={t("sectiontitle")} disabled={submitting} {...register("sectionTitle")} />
 
         <div className="flex flex-col gap-3">
           {fields.map((field, idx) => (

@@ -90,10 +90,10 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           </span>
         </div>
       )}
-      {user?.documentId === item.user?.documentId && item.listingStatus === 'pending review' && (
+      {user?.documentId === item.user?.documentId && item.listingStatus === 'archived' && (
         <div className="absolute top-2 left-2 z-10">
           <span className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
-            {t('pending')}
+            {t('archived')}
           </span>
         </div>
       )}

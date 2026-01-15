@@ -1,11 +1,11 @@
 {
   "TagInput": {
-    "placeholder": "Lisa silt...",
-    "maxTagsReached": "Maksimaalselt {max} silti",
+    "placeholder": "Lisa funktsioon...",
+    "maxTagsReached": "Maksimaalselt {max} funktsiooni",
     "loading": "Laadimine...",
-    "errorLoading": "Viga siltide laadimisel",
-    "noMatchingTags": "Sobivaid silte ei leitud",
-    "addTag": "Lisa silt"
+    "errorLoading": "Viga funktsioonide laadimisel",
+    "noMatchingTags": "Sobivaid funktsioone ei leitud",
+    "addTag": "Lisa funktsioon"
   },
   "Auth": {
     "Login": {
@@ -234,7 +234,39 @@
         "contact": "Kontakt",
         "social": "Sotsiaalmeedia lingid",
         "pricing": "Hinnad",
-        "faqs": "KKK"
+        "faqs": "KKK",
+        "archive": "Arhiveeri/Kustuta"
+      },
+      "archive": {
+        "title": "Arhiveeri/Kustuta kuulutus",
+        "description": "Halda oma kuulutuse staatust",
+        "archiveSection": {
+          "title": "Arhiveeri kuulutus",
+          "description": "Arhiveerimine peidab teie kuulutuse avalikust vaatest. Te saate selle hiljem taastada.",
+          "button": "Arhiveeri kuulutus",
+          "confirmTitle": "Arhiveeri kuulutus",
+          "confirmMessage": "Kas te kindlad, et soovite arhiveerida selle kuulutuse? See ei ole enam kasutajatele nähtav, kuid te saate selle hiljem taastada.",
+          "confirmButton": "Jah, arhiveeri",
+          "success": "Kuulutus arhiveeritud edukalt"
+        },
+        "unarchiveSection": {
+          "title": "Taasta kuulutus",
+          "description": "Taastamine teeb teie kuulutuse jälle kasutajatele nähtavaks.",
+          "button": "Taasta kuulutus",
+          "confirmTitle": "Taasta kuulutus",
+          "confirmMessage": "Kas te kindlad, et soovite taastada selle kuulutuse? See on jälle kasutajatele nähtav.",
+          "confirmButton": "Jah, taasta",
+          "success": "Kuulutus taastatud edukalt"
+        },
+        "deleteSection": {
+          "title": "Kustuta kuulutus",
+          "description": "Kustutamine eemaldab teie kuulutuse lõplikult. Seda toimingut ei saa tagasi võtta.",
+          "button": "Kustuta kuulutus",
+          "confirmTitle": "Kustuta kuulutus",
+          "confirmMessage": "Kas te kindlad, et soovite kustutada selle kuulutuse lõplikult? Seda toimingut ei saa tagasi võtta ning kõik andmed kaovad.",
+          "confirmButton": "Jah, kustuta",
+          "success": "Kuulutus kustutatud edukalt"
+        }
       }
     },
     "Details": {
@@ -722,12 +754,12 @@
           "label": "Esile tõstetud?"
         },
         "tags": {
-          "label": "Sildid",
+          "label": "Funktsioonid",
           "placeholder": "Lisa silt...",
           "add": "Lisa",
           "errors": {
-            "max": "Maksimaalselt 10 silti",
-            "duplicate": "Silt on juba lisatud"
+            "max": "Maksimaalselt 10 funktsiooni lubatud",
+            "duplicate": "Funktsioon juba lisatud"
           }
         },
         "videos": {
@@ -809,7 +841,7 @@
         },
         "phone": {
           "label": "Telefon",
-          "placeholder": "+1 (555) 000-0000",
+          "placeholder": "+370 600 00000",
           "message": "Telefoninumber on kohustuslik"
         },
         "address": {
@@ -1081,6 +1113,7 @@
       "view": "Vaata",
       "draft": "Mustand",
       "pending": "Ootel ülevaatus",
+      "archived": "Arhiveeritud",
       "subscriptionInfo": "Tellimuse info",
       "addToFavorites": "Lisa lemmikutesse",
       "removeFromFavorites": "Eemalda lemmikutest",
@@ -1166,7 +1199,7 @@
     "overviewPlaceholder": "Esitage oma kuulutuse ülevaate...",
     "otherInformation": "Lisainfo",
     "otherInformationPlaceholder": "Lisa lisate detaile...",
-    "tags": "Sildid",
+    "tags": "Siltid",
     "tagPlaceholder": "Lisa silt...",
     "addTag": "Lisa",
     "videos": "Videod",
@@ -1195,9 +1228,9 @@
       "invalidWebsiteLink": "Palun lisage kehtiv veebilehe linki",
       "priceBelowMin": "Hind peab olema vähemalt {min}",
       "priceAboveMax": "Hind ei tohi ületada {max}",
-      "maxTags": "Maksimaalselt 10 silti",
-      "tagAlreadyAdded": "Silt on juba lisatud",
-      "duplicate": "Silt on juba lisatud",
+      "maxTags": "Maksimaalselt 10 funktsiooni",
+      "tagAlreadyAdded": "Funktsioon on juba lisatud",
+      "duplicate": "Funktsioon on juba lisatud",
       "invalidYouTubeUrl": "Sobimatu YouTube URL"
     },
     "priceRangeHint": "Lubatud vahemik: {min} - {max}",
@@ -1364,6 +1397,9 @@
     }
   },
   "pricingSection": {
+    "cta": {
+      "choose": "Vali"
+    },
     "+addoptionaladdon": "+ Lisa valikuline lisand",
     "+addplan": "+ Lisa pakett",
     "+addfeature": "+ Lisa funktsioon",
