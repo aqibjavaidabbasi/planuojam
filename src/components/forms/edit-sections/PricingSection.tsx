@@ -161,7 +161,8 @@ export default function PricingSection({
                       }}
                     />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="hidden!">
+                  {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-3"> */}
                     <Input
                       type="text"
                       label={t("labels.ctaBodyText")}

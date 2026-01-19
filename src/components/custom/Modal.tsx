@@ -23,13 +23,32 @@ const Modal: React.FC<ModalProps> = ({
 
     useEffect(() => {
         if (!isOpen) return;
-
         const onEsc = (e: KeyboardEvent) => {
             if (e.key === "Escape") onClose();
         };
 
+        const handleBackdropClick = (e: MouseEvent) => {
+            const selection = window.getSelection();
+            const hasSelection = selection && selection.toString().trim().length > 0;
+            
+            if (e.target === modalRef.current && !hasSelection) {
+                onClose();
+            }
+        };
+
         window.addEventListener("keydown", onEsc);
-        return () => window.removeEventListener("keydown", onEsc);
+        
+        const currentModal = modalRef.current;
+        if (currentModal) {
+            currentModal.addEventListener("click", handleBackdropClick);
+        }
+
+        return () => {
+            window.removeEventListener("keydown", onEsc);
+            if (currentModal) {
+                currentModal.removeEventListener("click", handleBackdropClick);
+            }
+        };
     }, [isOpen, onClose]);
 
     useEffect(() => {
@@ -53,9 +72,6 @@ const Modal: React.FC<ModalProps> = ({
             aria-labelledby={title ? "modal-title" : undefined}
             tabIndex={-1}
             ref={modalRef}
-            onClick={(e) => {
-                if (e.target === e.currentTarget) onClose();
-            }}
             className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
             style={{ animation: "fadeIn 0.2s ease" }}
         >

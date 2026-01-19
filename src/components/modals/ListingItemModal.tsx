@@ -432,6 +432,13 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
     setIsLoading(true);
     try {
       const payload = getValues()
+      
+      // Validate address for venues
+      if (!isVendor && (!payload.listingItem?.[0]?.location?.address || payload.listingItem[0].location.address.trim() === '')) {
+        setError(t('errors.addressRequired'))
+        return
+      }
+      
       // Validate working schedule conflicts
       const wsError = validateWorkingSchedule()
       if (wsError) {
@@ -544,6 +551,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           // Transform venue location city/state to relation connects (backend updated to relations)
           if (next.location && typeof next.location === 'object') {
             const loc = { ...next.location }
+            
+            // Ensure address is a string (required field for venues)
+            if (!loc.address || loc.address.trim() === '') {
+              throw new Error(t('errors.addressRequired'))
+            }
+            
             if (loc.city) {
               ; (loc as unknown as { city: { connect: string[] } }).city = { connect: [loc.city] as string[] }
             } else {
@@ -598,7 +611,21 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
       setError(null);
       setMediaItems([]);
     } catch (e: unknown) {
-      const message = e && typeof e === 'object' && 'message' in e ? String((e as { message?: unknown }).message) : t('toasts.failed')
+      let message = t('toasts.failed')
+      
+      if (e && typeof e === 'object' && 'message' in e) {
+        const errorMessage = String((e as { message?: unknown }).message)
+        
+        // Transform backend validation errors to user-friendly messages
+        if (errorMessage.includes('listingItem[0].location.address must be a `string` type')) {
+          message = t('errors.addressRequired')
+        } else if (errorMessage.includes('address')) {
+          message = t('errors.addressInvalid')
+        } else {
+          message = errorMessage
+        }
+      }
+      
       setError(message)
       toast.error(t('toasts.fixErrors'))
     } finally {
@@ -1034,6 +1061,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       label={t('fields.address.label')}
                       placeholder={t('fields.address.placeholder')}
                       disabled={isWorking}
+                      required={!isVendor}
                       value={form.listingItem?.[0]?.location?.address || ""}
                       onChange={(e) => updateListingItem("location.address", e.target.value)}
                     />

@@ -697,7 +697,9 @@
       },
       "errors": {
         "noImage": "Palun laadige üles vähemalt üks pilt",
-        "invalidServiceType": "Teil pole selle kuulutuse loomiseks õigusi"
+        "invalidServiceType": "Teil pole selle kuulutuse loomiseks õigusi",
+        "addressRequired": "Aadress on kohustuslik kohtade jaoks (venue)",
+        "addressInvalid": "Vale aadressi vorming"
       },
       "toasts": {
         "created": "Kuulutus on edukalt loodud",

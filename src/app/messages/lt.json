@@ -433,7 +433,9 @@
       },
       "errors": {
         "noImage": "Prašome įkelti bent vieną nuotrauką",
-        "invalidServiceType": "Jūs neturite leidimų kurti šio įrašo"
+        "invalidServiceType": "Jūs neturite leidimų kurti šio įrašo",
+        "addressRequired": "Adresas yra privalomas vietoms (venue)",
+        "addressInvalid": "Neteisingas adreso formatas"
       },
       "toasts": {
         "created": "Skelbimas sėkmingai sukurtas",
@@ -496,6 +498,15 @@
           "errors": {
             "max": "Leidžiamai 10 funkcijų",
             "duplicate": "Funkcija jau pridėta"
+          }
+        },
+        "tags": {
+          "label": "Žymės",
+          "placeholder": "Pridėti žymę...",
+          "add": "Pridėti",
+          "errors": {
+            "max": "Maksimaliai 10 žymių",
+            "duplicate": "Žymė jau pridėta"
           }
         },
         "videos": {
@@ -1257,7 +1268,7 @@
       "deleteImage": "Ištrinti vaizdą",
       "deleteMedia": "Ištrinti mediją"
     },
-    "mainMedia": "Pagrindinė Medija",
+    "mainMedia": "Pagrindinės nuotrauka",
     "deselectMainImage": "Atžymėti kaip pagrindinę nuotrauką",
     "selectMainImage": "Pasirinkti kaip pagrindinę nuotrauką",
     "errors": {

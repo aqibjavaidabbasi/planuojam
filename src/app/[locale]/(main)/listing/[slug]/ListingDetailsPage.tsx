@@ -322,7 +322,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
         {/* Pricing Section */}
         {initialListing.pricingPackages && (
           <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6 my-6">
-            <h2 className="text-2xl font-semibold text-primary mb-4">
+            <h2 className="text-2xl font-semibold text-primary mb-4 text-center">
               {initialListing.pricingPackages.sectionTitle}
             </h2>
             <div className="flex justify-center items-center gap-2 flex-wrap">
@@ -344,7 +344,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
 
         {/* Reviews Section */}
         <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6 my-6">
-          <h2 className="text-2xl font-semibold text-primary mb-4">{t("reviews")}</h2>
+          <h2 className="text-2xl font-semibold text-primary mb-4 text-center">{t("reviews")}</h2>
           {initialListing.reviews && initialListing.reviews.length > 0 ? (
             <ListingReviews reviews={initialListing.reviews} />
           ) : (

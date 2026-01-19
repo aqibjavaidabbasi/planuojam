@@ -679,7 +679,9 @@
       "pay": "Pay",
       "errors": {
         "noImage": "Please upload at least one image",
-        "invalidServiceType": "You do not have permissions to create this listing"
+        "invalidServiceType": "You do not have permissions to create this listing",
+        "addressRequired": "Address is required for venues",
+        "addressInvalid": "Invalid address format"
       },
       "toasts": {
         "created": "Listing Created Successfully",

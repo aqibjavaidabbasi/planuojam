@@ -699,7 +699,9 @@
       },
       "errors": {
         "noImage": "Proszę przesłać co najmniej jedno zdjęcie",
-        "invalidServiceType": "Nie masz uprawnień do utworzenia tej oferty"
+        "invalidServiceType": "Nie masz uprawnień do utworzenia tej oferty",
+        "addressRequired": "Adres jest wymagany dla miejsc (venue)",
+        "addressInvalid": "Nieprawidłowy format adresu"
       },
       "toasts": {
         "created": "Ogłoszenie zostało pomyślnie utworzone",
