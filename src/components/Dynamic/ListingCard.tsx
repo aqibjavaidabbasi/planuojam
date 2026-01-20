@@ -100,7 +100,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
 
       {/* Upcoming Hot Deal Banner */}
       {hotDealInfo.status === 'upcoming' && (
-        <div className="absolute top-8 left-0 right-0 z-10 bg-linear-to-r from-orange-500 to-red-500 text-white text-center text-xs font-semibold py-1">
+        <div className="absolute top-8 left-0 right-0 z-10 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center text-xs font-semibold py-1">
           {getUpcomingHotDealMessage(item.hotDeal, t)}
         </div>
       )}

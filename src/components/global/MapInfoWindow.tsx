@@ -48,13 +48,13 @@ const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href, curren
     >
       {/* Upcoming Hot Deal Banner */}
       {hotDealInfo.status === 'upcoming' && (
-        <div className="bg-linear-to-r from-orange-500 to-red-500 text-white text-center text-xs font-semibold py-1">
+        <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-center text-xs font-semibold py-1">
           {getUpcomingHotDealMessage(selectedLocation.hotDeal)}
         </div>
       )}
 
       {/* Media container with overlays */}
-      <div className="relative h-48 bg-linear-to-tr from-teal-100 to-rose-100 flex items-center justify-center overflow-hidden">
+      <div className="relative h-48 bg-gradient-to-tr from-teal-100 to-rose-100 flex items-center justify-center overflow-hidden">
         {hasMedia ? (
           <>
             {/* Display first image or first YouTube video */}

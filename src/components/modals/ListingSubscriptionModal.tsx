@@ -254,7 +254,7 @@ const [promoData, setPromoData] = useState<PromoData | null>(null)
                                 >
                                     {/* Badge indicator */}
                                     {isPremium && (
-                                        <span className="absolute -top-3 -right-3 bg-linear-to-r from-amber-500 to-pink-500 text-white text-xs font-bold w-12 h-12 rounded-full shadow-lg z-10 flex items-center justify-center">
+                                        <span className="absolute -top-3 -right-3 bg-gradient-to-r from-amber-500 to-pink-500 text-white text-xs font-bold w-12 h-12 rounded-full shadow-lg z-10 flex items-center justify-center">
                                             <FaStar size={20} />
                                         </span>
                                     )}

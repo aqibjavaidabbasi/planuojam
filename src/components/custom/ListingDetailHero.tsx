@@ -54,7 +54,7 @@ function ListingDetailHero({
   const isDealActive = isHotDealActive(hotDeal as HotDeal);
 
   return (
-    <div className="rounded-2xl overflow-hidden mb-8 relative bg-lienar-to-r from-amber-500 to-pink-500">
+    <div className="rounded-2xl overflow-hidden mb-8 relative bg-gradient-to-r from-amber-500 to-pink-500">
       <div className="absolute inset-0 bg-black/20"></div>
       <div className="relative z-10 p-2.5 md:p-4 text-white">
         <div className="flex flex-col gap-2">

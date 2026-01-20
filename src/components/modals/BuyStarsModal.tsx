@@ -130,7 +130,7 @@ function BuyStarsModal({ isOpen, onClose, currentUserId }: { isOpen: boolean; on
                   onClick={() => setSelectedIndex(idx)}
                   className={`text-left rounded-2xl border-2 p-2 cursor-pointer transition-all w-[150px] h-[100px] ${
                     isSelected
-                      ? 'border-primary bg-linear-to-br from-primary to-[#e6a942] text-white shadow-lg -translate-y-0.5'
+                      ? 'border-primary bg-gradient-to-br from-primary to-[#e6a942] text-white shadow-lg -translate-y-0.5'
                       : 'border-gray-200 bg-white hover:border-primary hover:shadow-md hover:-translate-y-0.5'
                   }`}
                 >
