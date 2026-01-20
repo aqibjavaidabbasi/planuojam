@@ -39,20 +39,13 @@ const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href, curren
   const hasMedia = selectedLocation?.image?.url || youtubeVideos.length > 0;
 
   return (
-    <div 
-      className="text-sm font-sans bg-white rounded-lg overflow-hidden" 
-      style={{ 
-          width: '320px',
-          boxShadow: "rgba(0, 0, 0, 0.4) -20px 20px 40px, rgba(0, 0, 0, 0.4) 20px 20px 40px, rgba(0, 0, 0, 0.25) 10px 10px 20px"
+    <div
+      className="text-sm font-sans bg-white rounded-lg overflow-hidden"
+      style={{
+        width: '320px',
+        boxShadow: "rgba(0, 0, 0, 0.4) -20px 20px 40px, rgba(0, 0, 0, 0.4) 20px 20px 40px, rgba(0, 0, 0, 0.25) 10px 10px 20px"
       }}
     >
-      {/* Upcoming Hot Deal Banner */}
-      {hotDealInfo.status === 'upcoming' && (
-        <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-center text-xs font-semibold py-1">
-          {getUpcomingHotDealMessage(selectedLocation.hotDeal)}
-        </div>
-      )}
-
       {/* Media container with overlays */}
       <div className="relative h-48 bg-gradient-to-tr from-teal-100 to-rose-100 flex items-center justify-center overflow-hidden">
         {hasMedia ? (
@@ -89,44 +82,46 @@ const MapInfoWindow: React.FC<Props> = ({ selectedLocation, labels, href, curren
           </div>
         )}
 
-        <div className='absolute top-3 right-3 z-10 flex flex-row-reverse gap-2 items-start'>
+        <div className='absolute top-0 left-0 right-0'>
           {hotDealInfo.status === 'active' && (
-              <div className="mb-4">
-                <div className="bg-primary text-white w-16 h-16 rounded-full flex items-center justify-center transform rotate-12">
-                  <div className="text-center">
-                    <div className="text-xs font-bold">{labels.hot}</div>
-                    <div className="text-xs">{labels.deal}</div>
-                  </div>
+            <div>
+              <div className="bg-primary text-white h-fit flex items-center justify-center">
+                <div className="text-center py-2">
+                  <div className="text-sm font-bold">{labels.hot} {" "} {labels.deal}</div>
                 </div>
               </div>
+            </div>
           )}
-          {selectedLocation.price !== undefined && selectedLocation.price !== null && (
-            <div className="bg-primary text-white px-3 py-1.5 rounded-md">
-              <div className="text-sm font-bold">{currencySymbol}{selectedLocation.price}</div>
+          {/* Upcoming Hot Deal Banner */}
+          {hotDealInfo.status === 'upcoming' && (
+            <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-center text-xs font-semibold py-1">
+              {getUpcomingHotDealMessage(selectedLocation.hotDeal)}
             </div>
           )}
         </div>
 
-        {/* Capacity Badge - Top Left */}
-        {selectedLocation.maximumCapacity !== undefined && selectedLocation.maximumCapacity !== null && (
-          <div className="absolute top-3 left-3 bg-white/90 text-gray-800 px-2.5 py-1 rounded-md backdrop-blur-sm shadow-sm">
-            <div className="text-xs font-semibold flex items-center gap-1">
-              <span>👥</span>
-              <span>{selectedLocation.maximumCapacity}</span>
-            </div>
-          </div>
-        )}
-
-
-        {/* Rating Badge - Bottom Left */}
         <div className="absolute bottom-3 left-3 bg-white px-2.5 py-1 rounded-md flex items-center gap-1.5">
-          {selectedLocation.averageRating !== undefined && selectedLocation.averageRating !== null && selectedLocation.averageRating > 0 ? (
-            <>
+          {/* Rating Badge */}
+          {selectedLocation.averageRating !== undefined && selectedLocation.averageRating !== null && selectedLocation.averageRating > 0 && (
+            <div>
               <span className="text-yellow-500 text-lg leading-none">⭐</span>
               <span className="font-semibold text-gray-800">{selectedLocation.averageRating.toFixed(1)}</span>
-            </>
-          ) : (
-            <span className="text-xs text-gray-600 font-medium">Unrated</span>
+            </div>
+          )}
+          {/* Capacity Badge */}
+          {selectedLocation.maximumCapacity !== undefined && selectedLocation.maximumCapacity !== null && (
+            <div className=" bg-white/90 text-gray-800 px-2.5 py-1 rounded-md backdrop-blur-sm shadow-sm">
+              <div className="text-xs font-semibold flex items-center gap-1">
+                <span>👥</span>
+                <span>{selectedLocation.maximumCapacity}</span>
+              </div>
+            </div>
+          )}
+          {/* Price Badge */}
+          {selectedLocation.price !== undefined && selectedLocation.price !== null && (
+            <div className="bg-primary text-white px-3 py-1.5 rounded-md">
+              <div className="text-sm font-bold">{currencySymbol}{selectedLocation.price}</div>
+            </div>
           )}
         </div>
       </div>

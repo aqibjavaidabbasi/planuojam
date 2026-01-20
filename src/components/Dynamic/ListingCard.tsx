@@ -100,22 +100,16 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
 
       {/* Upcoming Hot Deal Banner */}
       {hotDealInfo.status === 'upcoming' && (
-        <div className="absolute top-8 left-0 right-0 z-10 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center text-xs font-semibold py-1">
+        <div className="absolute top-0 left-0 right-0 z-10 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center text-xs font-semibold py-1">
           {getUpcomingHotDealMessage(item.hotDeal, t)}
         </div>
       )}
 
       {/* Hot Deal Badge (only when currently active) */}
       {hotDealInfo.status === 'active' && (
-        <div className="absolute top-1 md:top-4 right-1 md:right-4 z-10">
-          <div className="relative">
-            <div className="bg-primary text-white w-14 md:w-16 h-14 md:h-16 rounded-full flex items-center justify-center transform rotate-12">
-              <div className="text-center">
-                <div className="text-xs font-bold">{t('hot')}</div>
-                <div className="text-xs">{t('deal')}</div>
-              </div>
-            </div>
-            <div className="absolute inset-0 rounded-full border-2 border-white transform rotate-12"></div>
+        <div className="absolute top-0 left-0 right-0 z-10 bg-primary text-white h-fit flex items-center justify-center ">
+          <div className="text-center py-2">
+            <div className="text-sm font-bold">{t('hot')} {" "} {t('deal')}</div>
           </div>
         </div>
       )}
@@ -136,7 +130,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           {/* Images from portfolio (filtered to exclude videos) */}
           {item.portfolio?.filter(media => !media.mime?.startsWith('video/')).map((media, idx) => {
             const mediaUrl = getCompleteImageUrl(media.url);
-            
+
             return (
               <SwiperSlide key={`image-${idx}`}>
                 <div className="relative w-full aspect-4/3 bg-black">
@@ -154,7 +148,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
               </SwiperSlide>
             );
           })}
-          
+
           {/* YouTube videos */}
           {item.videos?.map((video, idx) => {
             // Extract YouTube video ID from URL
@@ -163,23 +157,23 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
               const match = url.match(regExp);
               return (match && match[2].length === 11) ? match[2] : null;
             };
-            
+
             const videoId = getYouTubeId(video.url);
-            
+
             const handleVideoPlay = () => {
               // Pause Swiper when video starts playing
               if (swiperRef.current && swiperRef.current.swiper) {
                 swiperRef.current.swiper.autoplay.stop();
               }
             };
-            
+
             const handleVideoPause = () => {
               // Resume Swiper when video is paused
               if (swiperRef.current && swiperRef.current.swiper) {
                 swiperRef.current.swiper.autoplay.start();
               }
             };
-            
+
             return (
               <SwiperSlide key={`video-${idx}`}>
                 <div className="relative w-full aspect-4/3 bg-black">
@@ -195,7 +189,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                       className="w-full h-full"
                       onLoad={(e) => {
                         const iframe = e.target as HTMLIFrameElement;
-                        
+
                         // Wait a bit for YouTube API to be ready
                         setTimeout(() => {
                           // Add event listeners for YouTube iframe API
@@ -203,9 +197,9 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                             JSON.stringify({ event: 'listening', id: videoId }),
                             '*'
                           );
-                          
+
                         }, 1000);
-                        
+
                         const messageHandler = (event: MessageEvent) => {
                           try {
                             const data = JSON.parse(event.data);
@@ -227,13 +221,13 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                                 }
                               }
                             }
-                          } catch  {
+                          } catch {
                             // Ignore non-JSON messages
                           }
                         };
-                        
+
                         window.addEventListener('message', messageHandler);
-                        
+
                         // Cleanup on unmount
                         return () => {
                           window.removeEventListener('message', messageHandler);
@@ -375,26 +369,26 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                   >
                     <IoMdSettings size={16} />
                   </a>
+                  <a
+                    href={viewPath}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center capitalize justify-center gap-1.5 font-medium rounded-md bg-black text-white hover:bg-primary py-1 px-3 text-sm cursor-pointer"
+                    title={t('viewListing')}
+                  >
+                    <IoNavigateOutline />
+                  </a>
+                </div>
+              ) : (
                 <a
                   href={viewPath}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center capitalize justify-center gap-1.5 font-medium rounded-md bg-black text-white hover:bg-primary py-1 px-3 text-sm cursor-pointer"
-                  title={t('viewListing')}
-                >
-                  <IoNavigateOutline />
-                </a>
-                </div>
-              ) : (
-                <a
-                href={viewPath}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center capitalize justify-center gap-1.5 font-medium rounded-md bg-black text-white hover:bg-primary py-1 px-3 text-sm cursor-pointer"
                 >
                   {t('view')} <IoNavigateOutline />
                 </a>
-                )}
+              )}
             </div>
           </div>
         </div>
