@@ -193,6 +193,7 @@
   "Map": {
     "title": "Interaktiivne kaart",
     "description": "Avasta paigad ja teenused meie interaktiivsel kaardil",
+    "helperText": "Vali asukoht kaardilt või kasuta filtreid",
     "loading": "Kaardi laadimine...",
     "errors": {
       "failedToLoadLocations": "Asukohtade laadimine ebaõnnestus",

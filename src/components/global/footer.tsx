@@ -80,7 +80,7 @@ function Footer({ footerData }: { footerData: footer }) {
                         </span>
                     ))}
                 </div>
-                <p className='text-white'>&copy; {footerData?.copyRightText}</p>
+                <p className='text-white'>&copy; {new Date().getFullYear()} {footerData?.copyRightText}</p>
             </div>
         </div>
     )

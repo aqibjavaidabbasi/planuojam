@@ -194,6 +194,7 @@
   "Map": {
     "title": "Mapa interaktywna",
     "description": "Odkrywaj miejsca i usługi na naszej interaktywnej mapie",
+    "helperText": "Wybierz lokalizację na mapie lub użyj filtrów",
     "loading": "Ładowanie mapy...",
     "errors": {
       "failedToLoadLocations": "Nie udało się wczytać lokalizacji",

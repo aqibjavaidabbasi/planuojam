@@ -299,6 +299,7 @@
   "Map": {
     "title": "Interaktyvi žemėlapis",
     "description": "Tyrinėkite vietas ir paslaugas mūsų interaktyviame žemėlapyje",
+    "helperText": "Pasirinkite vietą žemėlapyje arba naudokite filtrus",
     "loading": "Kraunamas žemėlapis...",
     "errors": {
       "failedToLoadLocations": "Nepavyko įkelti vietų",
@@ -324,20 +325,20 @@
   "Vendors": {
     "filters": {
       "chooseVendor": "Pasirinkite tiekėją",
-      "selectPricing": "Pasirinkite kainodarą",
+      "selectPricing": "Pasirinkite kainą",
       "pickEventType": "Pasirinkite renginio tipą",
-      "withPricingOnly": "Tik su kaina",
-      "withoutPricingOnly": "Tik be kainos"
+      "withPricingOnly": "Rodyti tik su kaina",
+      "withoutPricingOnly": "Rodyti tik be kainos"
     },
     "noVendorsFound": "Tiekėjų nerasta"
   },
   "Venues": {
     "filters": {
       "chooseVenue": "Pasirinkite vietą",
-      "selectPricing": "Pasirinkite kainodarą",
+      "selectPricing": "Pasirinkite kainą",
       "chooseEventType": "Pasirinkite renginio tipą",
-      "withPricingOnly": "Tik su kaina",
-      "withoutPricingOnly": "Tik be kainos"
+      "withPricingOnly": "Rodyti tik su kaina",
+      "withoutPricingOnly": "Rodyti tik be kainos"
     },
     "noVenuesFound": "Vietų nerasta"
   },
@@ -1137,7 +1138,7 @@
     "SelectsubCategory": "Pasirinkite subkategoriją",
     "ChooseEventType": "Pasirinkite Įvykio tipas",
     "Apply": "Taikyti",
-    "Clear": "Aišku",
+    "Clear": "Išvalyti",
     "noHotDealsFound": "Nerasta karštų sandorių"
   },
   "hotdealstatic": {
@@ -1178,7 +1179,7 @@
   },
   "Search": {
     "search": "Ieškoti čia",
-    "searchListings": "Ieškoti įrašų",
+    "searchListings": "Ieškoti vietų ir paslaugų",
     "loading": "Kraunama...",
     "error": "Įvyko klaida",
     "noResults": "Rezultatų nėra"
@@ -1189,8 +1190,8 @@
   },
   "VenueInfo": {
     "searchPlace": "Ieškokite vietos",
-    "apply": "taikyti",
-    "clear": "aišku"
+    "apply": "Taikyti",
+    "clear": "Išvalyti"
   },
   "basicSelectionForm": {
     "basicDetails": "Pagrindinės detalės",

@@ -44,7 +44,7 @@ function Button({
       disabled={disabled}
       form={form}
       title={tooltip}
-      className={`flex items-center capitalize justify-center gap-1.5 font-medium ${styles[style]} ${sizes[size]} ${extraStyles} ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none whitespace-nowrap' : 'cursor-pointer'}`}
+      className={`flex items-center justify-center gap-1.5 font-medium ${styles[style]} ${sizes[size]} ${extraStyles} ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none whitespace-nowrap' : 'cursor-pointer'}`}
     >
       {children}
     </button>

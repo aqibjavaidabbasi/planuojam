@@ -209,6 +209,7 @@
   "Map": {
     "title": "Interactive Map",
     "description": "Explore venues and services on our interactive map",
+    "helperText": "Select a location on the map or use the filters",
     "loading": "Loading map...",
     "errors": {
       "failedToLoadLocations": "Failed to load locations"

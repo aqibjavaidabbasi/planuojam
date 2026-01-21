@@ -17,16 +17,18 @@ function SelectedCategories({ data }: { data: SelectedCategoriesList }) {
                 <Heading headingPiece={data.sectionTitle.heading.headingPiece} />
                 <p className='text-center max-w-prose'>{data.sectionTitle.sectionDescription}</p>
             </div>
-            <div className='flex items-center justify-center gap-5 mt-10 flex-wrap'>
-                {
-                    updatedData.length > 0 ?
-                        updatedData.map(item => {
-                            const category = item.category;
-                            return (<CategoryCard key={category.documentId} category={category} />)
-                        })
-                        :
-                        <NoDataCard>{t('noCategoriesFound')}</NoDataCard>
-                }
+            <div className='flex items-center justify-center mt-10'>
+                <div className="flex flex-wrap gap-5 justify-center">
+                    {
+                        updatedData.length > 0 ?
+                            updatedData.map(item => {
+                                const category = item.category;
+                                return (<CategoryCard key={category.documentId} category={category} />)
+                            })
+                            :
+                            <NoDataCard>{t('noCategoriesFound')}</NoDataCard>
+                    }
+                </div>
             </div>
         </div>
     )

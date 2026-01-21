@@ -34,7 +34,7 @@ function CategoryCard({category}: {category: category}) {
         />
     </div>
     <div className='m-2.5 flex-1 overflow-hidden'>
-        <h3 className='text-primary font-medium text-lg truncate'>{category.name}</h3>
+        <h3 className='text-primary font-medium text-lg'>{category.name}</h3>
     </div>
 </div>
   )

@@ -152,6 +152,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
 
     const t=useTranslations("VenueInfo")
     const tSearch = useTranslations('Search');
+    const tMap = useTranslations('Map');
     return (
         <div className="lg:max-w-[1700px] mx-auto px-4">
             <div className="mb-4 flex flex-col gap-2.5">
@@ -181,6 +182,10 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
                         <Button style='secondary' onClick={handleClear} disabled={isLoading || isPending} >{t("clear")}</Button>
                     </div>
                 </div>
+            </div>
+            {/* Map helper text */}
+            <div className="mb-4 text-center text-sm text-gray-600">
+                {tMap('helperText')}
             </div>
             <div className='h-[60vh] md:h-[90vh] lg:h-[calc(100vh-150px)]' style={{ contain: 'layout paint size' }}>
                 <MapboxMap locations={locations} />
