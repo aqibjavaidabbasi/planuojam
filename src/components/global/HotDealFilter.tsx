@@ -54,12 +54,12 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
             const childCategories: category[] = await fetchChildCategories(subCategory, locale);
             setSubcategoryOptions({
                 name: 'subCategory',
-                placeholder: 'Choose a sub Category',
+                placeholder: t("selectSubCategory"),
                 options: childCategories.map(cat => cat.name)
             })
         }
      fetchChildren();
-    }, [subCategory,locale])
+    }, [subCategory, locale, t])
 
     const handleFilterChange = (name: string, value: string) => {
         //subCategory filter setup
@@ -114,7 +114,7 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
                         handleFilterChange(categoryOptions.name, e.target.value)
                     }}
                     options={categoryOptions.options.map((opt) => ({ label: opt.name, value: opt.documentId }))}
-                    placeholder={t("selectCategory")}
+                    placeholder={t("selectLocationOrServiceType")}
                     disabled={isLoading}
                 />
 
@@ -124,7 +124,7 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({
                         value={tempFilterValues[subcategoryOptions.name] || ''}
                         onChange={(e) => handleFilterChange(subcategoryOptions.name, e.target.value)}
                         options={subcategoryOptions.options.map((opt) => ({ label: opt, value: opt }))}
-                        placeholder={t("SelectsubCategory")}
+                        placeholder={t("selectSubCategory")}
                         disabled={!tempFilterValues['category'] || isLoading}
                     />}
 

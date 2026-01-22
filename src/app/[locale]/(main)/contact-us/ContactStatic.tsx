@@ -7,11 +7,10 @@ type Props = {
   address?: string;
   email?: string;
   phone?: string;
-  description?: string; // from site-setting.contactDescription
   socialLinks?: { platform: string; link: string; visible?: boolean }[]; // from site-setting.socialLink
 };
 
-export default function ContactStatic({ address, email, phone, description, socialLinks }: Props) {
+export default function ContactStatic({ address, email, phone, socialLinks }: Props) {
   const t = useTranslations('Contact');
   const visibleSocials = (socialLinks || []).filter((s) => s.link && s.visible !== false);
 
@@ -22,11 +21,9 @@ export default function ContactStatic({ address, email, phone, description, soci
   };
   return (
     <div className="space-y-8 text-gray-700">
-      {description && (
-        <div>
-          <p className="text-gray-700">{description}</p>
-        </div>
-      )}
+      <div>
+        <p className="text-gray-700">{t('description')}</p>
+      </div>
       <div>
         <h3 className="text-xl font-semibold mb-2">{t('chatWithUs.title')}</h3>
         <ul className="space-y-1 flex gap-1.5 items-center">

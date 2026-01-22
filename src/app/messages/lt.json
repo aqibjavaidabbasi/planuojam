@@ -35,17 +35,17 @@
       "passwordTooShort": "Slaptažodis turi būti bent 8 simbolių"
     },
     "Register": {
-      "title": "Sukurti paskyrą",
-      "subtitle": "Prisijunkite prie mūsų bendruomenės šiandien",
+      "title": "Susikurkite paskyrą",
+      "subtitle": "Prisijunkite prie Planuojam bendruomenės ir pradėkite planuoti renginius lengviau",
       "registering": "Registruojami jūsų duomenys...",
       "registered": "Sėkmingai užsiregistravote!",
       "registerFailed": "Registracija nepavyko. Bandykite dar kartą.",
       "joinAs": "Noriu prisijungti kaip:",
-      "roleRequired": "Pasirinkite rolę",
+      "roleRequired": "Pasirinkite paskyros tipą",
       "roleBuyer": "Pirkėjas",
-      "roleBuyerDesc": "Raskite paslaugas",
+      "roleBuyerDesc": "Raskite paslaugas savo renginiui",
       "roleProvider": "Paslaugų teikėjas",
-      "roleProviderDesc": "Siūlykite paslaugas",
+      "roleProviderDesc": "Siūlykite savo paslaugas ir raskite klientus",
       "chooseService": "Pasirinkite paslaugą",
       "serviceRequired": "Paslauga privaloma",
       "phoneLabel": "Telefonas",
@@ -57,7 +57,7 @@
       "usernameRequired": "Įveskite vartotojo vardą",
       "checkAvailability": "Patikrinti prieinamumą",
       "checkingAvailability": "Tikrinama...",
-      "usernameAvailable": "Vartotojo vardas laisvas",
+      "usernameAvailable": "Vartotojo vardas galimas",
       "usernameTaken": "Vartotojo vardas užimtas",
       "emailLabel": "El. paštas",
       "emailPlaceholder": "Įveskite el. paštą",
@@ -74,13 +74,13 @@
       "termsOfService": "Paslaugų teikimo sąlygomis",
       "and": "ir",
       "privacyPolicy": "Privatumo politika",
-      "passwordCriteriaLength": "8+ simbolių",
+      "passwordCriteriaLength": "Mažiausiai 8 simboliai, 1 didžioji raidė ir 1 skaičius",
       "passwordCriteriaUpper": "1 didžioji raidė",
       "passwordCriteriaNumber": "1 skaičius",
       "passwordTooWeak": "Slaptažodis per silpnas (reikia 8+ simbolių, 1 didžiosios raidės, 1 skaičiaus)",
       "passwordMismatch": "Slaptažodžiai nesutampa",
       "tosRequired": "Perskaitykite ir sutikite su Paslaugų teikimo sąlygomis ir Privatumo politika",
-      "registerCta": "Registruotis",
+      "registerCta": "Sukurti paskyrą",
       "alreadyHaveAccount": "Jau turite paskyrą?",
       "signInHere": "Prisijunkite čia",
       "tosNotAccepted": "Prašome sutikti su Paslaugų teikimo sąlygomis ir Privatumo politika",
@@ -88,9 +88,9 @@
       "passwordTooShort": "Slaptažodis turi būti bent 8 simbolių"
     },
     "Social": {
-      "orContinue": "Arba tęskite su",
-      "google": "Tęsti su Google",
-      "facebook": "Tęsti su Facebook"
+      "orContinue": "Arba registruokitės su",
+      "google": "Registruotis su Google",
+      "facebook": "Registruotis su Facebook"
     },
     "ResetPassword": {
       "title": "Slaptažodžio nustatymas",
@@ -104,7 +104,7 @@
       "newPasswordPlaceholder": "Naujas slaptažodis",
       "passwordRequired": "Slaptažodis yra privalomas",
       "passwordMinLength": "Slaptažodis turi būti bent 8 simbolių",
-      "passwordCriteriaLength": "8+ simbolių",
+      "passwordCriteriaLength": "Mažiausiai 8 simboliai, 1 didžioji raidė ir 1 skaičius",
       "passwordCriteriaUpper": "1 didžioji raidė",
       "passwordCriteriaNumber": "1 skaičius",
       "confirmNewPasswordPlaceholder": "Patvirtinkite naują slaptažodį",
@@ -137,6 +137,7 @@
     }
   },
   "Contact": {
+    "description": "Prisijunkime! Nesvarbu, ar ieškote informacijos, pagalbos, ar norite tapti Planuojam bendruomenės dalimi – susisiekite su mumis jums patogiu būdu.",
     "chatWithUs": {
       "title": "Susisiekite su mumis",
       "liveChat": "Pradėti pokalbį gyvai",
@@ -159,12 +160,12 @@
     },
     "Form": {
       "title": "Susisiekite su mūsų komanda",
-      "description": "Turite klausimų apie produktą ar plėtrą mūsų platformoje? Mes pasiruošę padėti. Susisiekite su mūsų draugiška komanda 24/7 ir pradėkite naudotis per mažiau nei 5 minutes.",
-      "firstName": "Vardas",
+      "description": "Turite klausimų apie Planuojam platformą, norite bendradarbiauti ar reikia pagalbos?\nMūsų komanda pasiruošusi padėti ir atsakyti į jūsų klausimus.\n\nParašykite mums – atsakysime kaip įmanoma greičiau.",
+      "firstName": "Jūsų vardas",
       "firstNameLabel": "Vardas",
-      "lastName": "Pavardė",
+      "lastName": "Jūsų pavardė",
       "lastNameLabel": "Pavardė",
-      "emailPlaceholder": "jūs@imone.com",
+      "emailPlaceholder": "jusu@email.lt",
       "emailLabel": "El. paštas",
       "country": {
         "lt": "LT",
@@ -172,13 +173,13 @@
       },
       "phonePlaceholder": "+370 600 00000",
       "phoneLabel": "Telefonas",
-      "messagePlaceholder": "Palikite mums žinutę...",
+      "messagePlaceholder": "Parašykite, kuo galime jums padėti…",
       "messageLabel": "Žinutė",
       "send": "Siųsti žinutę",
       "sending": "Siunčiama...",
       "success": "Žinutė sėkmingai išsiųsta.",
       "failure": "Nepavyko išsiųsti žinutės. Bandykite dar kartą.",
-      "validationRequired": "Užpildykite privalomus laukus.",
+      "validationRequired": "Prašome užpildyti šį lauką",
       "countryPlaceholder": "Pasirinkite šalį"
     }
   },
@@ -195,11 +196,11 @@
     "editDescription": "Redaguoti skelbimo detales",
     "notFound": "Skelbimas nerastas",
     "Edit": {
-      "preview": "Peržiūrėti įrašą",
+      "preview": "Peržiūrėti skelbimą",
       "editing": "Redaguojama",
-      "listingFallback": "Įrašas",
+      "listingFallback": "Skelbimas",
       "documentId": "Dokumento ID",
-      "back": "Grįžti į įrašus",
+      "back": "Grįžti į skelbimus",
       "status": "Būsena",
       "tabs": {
         "basic": "Pagrindinė informacija",
@@ -303,9 +304,9 @@
     "loading": "Kraunamas žemėlapis...",
     "errors": {
       "failedToLoadLocations": "Nepavyko įkelti vietų",
-      "addCityOrState": "Prašome pridėti miestą arba valstiją, kad gautumėte koordinates",
-      "addCoordinatesManually": "Kažkas negerai! Pridėkite koordinates rankiniu būdu",
-      "unableToGetCoordinates": "Nepavyko gauti jūsų vietos koordinačių. Pridėkite jas rankiniu būdu"
+      "addCityOrState": "Prašome pridėti miestą arba valstiją",
+      "addCoordinatesManually": "Kažkas negerai! Pridėkite vietą rankiniu būdu",
+      "unableToGetCoordinates": "Nepavyko gauti jūsų vietos. Pridėkite ją rankiniu būdu"
     },
     "fallback": {
       "unnamedVenue": "Be pavadinimo",
@@ -448,8 +449,8 @@
         "cancel": "Atšaukti",
         "saving": "Saugoma...",
         "create": "Sukurti skelbimą",
-        "fetchCoordinates": "Gauti koordinates",
-        "pickOnMap": "Pasirinkti žemėlapyje",
+        "fetchCoordinates": "Gauti vietą",
+        "pickOnMap": "Pasirinkti vietą žemėlapyje",
         "remove": "Pašalinti"
       },
       "map": {
@@ -503,7 +504,7 @@
         },
         "tags": {
           "label": "Žymės",
-          "placeholder": "Pridėti žymę...",
+          "placeholder": "Pridėti žymas (pvz.: vestuvės, gimtadienis, DJ)",
           "add": "Pridėti",
           "errors": {
             "max": "Maksimaliai 10 žymių",
@@ -563,8 +564,8 @@
           "placeholder": "pvz. -74.0060"
         },
         "capacity": {
-          "label": "Talpa",
-          "placeholder": "pvz. 100"
+          "label": "Žmonių skaičius (talpa)",
+          "placeholder": "pvz. 100 žmonių"
         },
         "bookingDurationType": {
           "label": "Užsakymo trukmės tipas",
@@ -579,7 +580,7 @@
           "placeholder": "pvz. 4"
         },
         "minimumDuration": {
-          "label": "minimalios trukmės valandos",
+          "label": "Minimali trukmės valandos",
           "placeholder": "pvz 2"
         },
         "email": {
@@ -631,7 +632,7 @@
         },
         "chooseCategory": {
           "label": "Pasirinkite kategoriją",
-          "placeholder": "Pasirinkite kategoriją"
+          "placeholder": "Pasirinkite pagrindinę kategoriją"
         },
         "name": {
           "label": "Vardas"
@@ -665,7 +666,7 @@
         }
       },
       "serviceArea": {
-        "helpText": "Pasirinkite miestą arba regioną ir naudokite koordinatų gavimo mygtuką, arba įveskite rankiniu būdu",
+        "helpText": "Pasirinkite miestą ir regioną arba nurodykite adresą rankiniu būdu.",
         "title": "Paslaugų zona",
         "add": "Pridėti paslaugų zoną",
         "errors": {
@@ -678,9 +679,12 @@
       },
       "amenities": {
         "title": "Patogumai",
+        "description": "Patogumai – papildomos savybės ar privalumai, kuriuos siūlo ši vieta ar paslauga.",
+        "helperText": "Čia galite nurodyti, kokie patogumai ar ypatybės yra prieinami klientams. Pavyzdžiui: automobilių stovėjimo aikštelė, Wi-Fi, kondicionavimas, terasa, vaikų zona, gyva muzika, projektorius ir pan.",
+        "tooltip": "Įrašykite trumpus, klientui aiškius patogumus arba privalumus, kurie padeda greičiau apsispręsti.",
         "add": "Pridėti patogumą",
-        "itemLabel": "Elementas",
-        "itemPlaceholder": "Įveskite patogumą"
+        "itemLabel": "Patogumas",
+        "itemPlaceholder": "pvz. Nemokamas parkingas, Wi-Fi, Terasa, Kondicionavimas"
       },
       "hotDeal": {
         "title": "Karštas pasiūlymas",
@@ -703,7 +707,7 @@
       },
       "workingSchedule": {
         "title": "Darbo grafikas",
-        "add": "Pridėti įrašą",
+        "add": "Pridėti darbo laiką",
         "placeholder": "Pasirinkite dieną",
         "day": "Diena",
         "start": "Pradžia",
@@ -858,8 +862,8 @@
     "venue": "Vieta",
     "tabs": {
       "profile": "Profilis",
-      "myListings": "Mano sąrašai",
-      "favouriteListings": "Mėgstamiausi sąrašai",
+      "myListings": "Mano skelbimai",
+      "favouriteListings": "Mėgstamiausi skelbimai",
       "messages": "Pranešimas",
       "reviews": "Apžvalgos",
       "bookings": "Užsakymai",
@@ -867,8 +871,8 @@
       "calendar": "Kalendorius",
       "promotions": "Akcijos"
     },
-    "promoteHint": "Padidinkite savo įrašo matomumą reklamuodami jį.",
-    "promoteCta": "Reklamuoti įrašą",
+    "promoteHint": "Padidinkite savo skelbimo matomumą reklamuodami jį.",
+    "promoteCta": "Reklamuoti skelbimą",
     "promoteLater": "Vėliau",
     "promoteHintWithTitle": "Padidinkite matomumą reklamuodami \"{title}\".",
     "ReviewsTab": {
@@ -962,9 +966,9 @@
       "usernamePlaceholder": "Vartotojo vardas",
       "saveUsername": "Išsaugoti vardą",
       "checkAvailability": "Patikrinti prieinamumą",
-      "usernameAvailable": "Vartotojo vardas laisvas",
+      "usernameAvailable": "Vartotojo vardas galimas",
       "usernameTaken": "Vartotojo vardas užimtas",
-      "passwordCriteriaLength": "8+ simbolių",
+      "passwordCriteriaLength": "Mažiausiai 8 simboliai, 1 didžioji raidė ir 1 skaičius",
       "passwordCriteriaUpper": "1 didžioji raidė",
       "passwordCriteriaNumber": "1 skaičius",
       "errors": {
@@ -999,17 +1003,17 @@
       }
     },
     "FavouriteListings": {
-      "title": "Mėgstami įrašai",
-      "subtitle": "Jūsų išsaugoti ir mėgstami objektai.",
-      "empty": "Nėra mėgstamų įrašų, kuriuos būtų galima rodyti"
+      "title": "Mėgstami skelbimai",
+      "subtitle": "Jūsų išsaugoti ir mėgstami skelbimai.",
+      "empty": "Nėra mėgstamų skelbimų, kuriuos būtų galima rodyti"
     },
     "MyListings": {
-      "title": "Mano įrašai",
-      "subtitle": "Tvarkykite visus savo įrašus.",
+      "title": "Mano skelbimai",
+      "subtitle": "Tvarkykite visus savo skelbimus.",
       "filterLabel": "Filtruoti pagal būseną",
       "allStatuses": "Visos būsenos",
-      "create": "Sukurti įrašą",
-      "empty": "Nėra įrašų rodymui. Pradėkite sukurdami pirmą įrašą",
+      "create": "Sukurti skelbimą",
+      "empty": "Šiuo metu neturite skelbimų. Pradėkite sukurdami savo pirmą skelbimą.",
       "status": {
         "draft": "Juodraštis",
         "published": "Paskelbtas",
@@ -1134,9 +1138,10 @@
     }
   },
   "hotdeal": {
+    "selectLocationOrServiceType": "Pasirinkite vietos arba paslaugos tipą",
     "selectCategory": "Pasirinkite kategoriją",
-    "SelectsubCategory": "Pasirinkite subkategoriją",
-    "ChooseEventType": "Pasirinkite Įvykio tipas",
+    "selectSubCategory": "Pasirinkite subkategoriją",
+    "ChooseEventType": "Pasirinkite renginio tipą",
     "Apply": "Taikyti",
     "Clear": "Išvalyti",
     "noHotDealsFound": "Nerasta karštų sandorių"
@@ -1254,12 +1259,12 @@
   },
   "ImageSection": {
     "addImages": "Pridėti nuotraukas",
-    "addportfolioimages": "Pridėti portfelio nuotraukas",
+    "addportfolioimages": "Įkelti nuotraukas",
     "saving": "Taupymas",
     "savingEllipsis": "Taupomas...",
     "saveImages": "Išsaugoti failus",
     "uploadHint": "Maksimalus failo dydis: {size} (Nuotraukos)",
-    "instructionHint": "Pasirinkite nuotraukas, tada įkelkite jas ir tada spustelėkite išsaugoti, kad išsaugotumėte visus failus. Spustelėkite žvaigždės piktogramą, kad pasirinktumėte pagrindinę nuotrauką",
+    "instructionHint": "Įkelkite nuotraukus, tada įkelkite jas ir tada spustelėkite išsaugoti.",
     "readyToSave": "{count} failas(-ai) paruoštas(-i) išsaugoti",
     "alt": {
       "portfolioImage": "Portfelio vaizdas",
@@ -1306,16 +1311,15 @@
     "perday": "Per dieną",
     "perhour": "Per valandą",
     "bookingduration": "Maksimali užsakymo trukmė",
-    "amenities": "Patogumai",
-    "amenityLabel": "Patogumas {index}",
-    "serviceareas": "Paslaugų zonos",
-    "serviceAreaHint": "Nurodykite miestus ir regionus, kuriuose teikiate savo paslaugas.",
-    "addservicearea": "Pridėti paslaugų zoną",
-    "saving": "Taupymas",
-    "savechanges": "Išsaugoti pakeitimus",
-    "fetchcoordinates": "Gauti koordinates",
-    "picklocation": "Pasirinkite vietą žemėlapyje",
-    "adamenity": "Pridėti patogumą",
+    "amenities": {
+      "title": "Patogumai",
+      "description": "Patogumai – papildomos savybės ar privalumai, kuriuos siūlo ši vieta ar paslauga.",
+      "helperText": "Čia galite nurodyti, kokie patogumai ar ypatybės yra prieinami klientams. Pavyzdžiui: automobilių stovėjimo aikštelė, Wi-Fi, kondicionavimas, terasa, vaikų zona, gyva muzika, projektorius ir pan.",
+      "tooltip": "Įrašykite trumpus, klientui aiškius patogumus arba privalumus, kurie padeda greičiau apsispręsti.",
+      "add": "Pridėti patogumą",
+      "itemLabel": "Patogumas",
+      "itemPlaceholder": "pvz. Nemokamas parkingas, Wi-Fi, Terasa, Kondicionavimas"
+    },
     "address": "Adresas",
     "locationHint": "Ši informacija nurodo jūsų vietos vietą.",
     "remove": "Pašalinti",

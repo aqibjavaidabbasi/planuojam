@@ -20,7 +20,6 @@ export default async function ContactUs({ params }: { params: Promise<{ locale: 
     const contactQuery = createQuery(contactPop, { locale: locale})
     const contactSettings = await fetchAPI('contact-setting', contactQuery);
     const contactInfo = contactSettings?.info || {};
-    const description = contactSettings?.contactDescription;
     const socialLinks = contactSettings?.links || [];
 
     return (
@@ -33,7 +32,6 @@ export default async function ContactUs({ params }: { params: Promise<{ locale: 
                   address={contactInfo.address}
                   email={contactInfo.email}
                   phone={contactInfo.phone}
-                  description={description}
                   socialLinks={socialLinks}
                 />
             </div>

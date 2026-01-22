@@ -35,17 +35,17 @@
       "passwordTooShort": "Password must be at least 8 characters"
     },
     "Register": {
-      "title": "Create Account",
-      "subtitle": "Join our community today",
+      "title": "Create Your Account",
+      "subtitle": "Join the Planuojam community and start planning events more easily",
       "registering": "Registering your data...",
       "registered": "Registered successfully!",
       "registerFailed": "Registration failed. Please try again.",
       "joinAs": "I want to join as:",
-      "roleRequired": "Please select a role",
+      "roleRequired": "Please select an account type",
       "roleBuyer": "Buyer",
-      "roleBuyerDesc": "Find services",
+      "roleBuyerDesc": "Find services for your event",
       "roleProvider": "Service Provider",
-      "roleProviderDesc": "Offer services",
+      "roleProviderDesc": "Offer your services and find customers",
       "chooseService": "Choose a service",
       "serviceRequired": "Service is required",
       "phoneLabel": "Phone",
@@ -81,16 +81,16 @@
       "passwordMismatch": "Passwords do not match",
       "tosRequired": "Please read and agree to our Terms of Service and Privacy Policy",
       "tosNotAccepted": "Please accept the Terms of Service and Privacy Policy",
-      "registerCta": "Register",
+      "registerCta": "Create account",
       "alreadyHaveAccount": "Already have an account?",
       "signInHere": "Sign in here",
       "registerNoResponse": "Registration failed — no response from server",
       "passwordTooShort": "Password must be at least 8 characters"
     },
     "Social": {
-      "orContinue": "Or continue with",
-      "google": "Continue with Google",
-      "facebook": "Continue with Facebook"
+      "orContinue": "Or register with",
+      "google": "Create account with Google",
+      "facebook": "Create account with Facebook"
     },
     "ResetPassword": {
       "title": "Reset Password",
@@ -153,6 +153,7 @@
     }
   },
   "Contact": {
+    "description": "Let's connect! Whether you're looking for information, need help, or want to become part of the Planuojam community – reach out to us in a way that's convenient for you.",
     "chatWithUs": {
       "title": "Get in touch",
       "liveChat": "Start live chat",
@@ -175,12 +176,12 @@
     },
     "Form": {
       "title": "Contact our team",
-      "description": "Questions about the product or growing on our platform? We’re ready to help. Reach out 24/7 and get started in under 5 minutes.",
-      "firstName": "First name",
+      "description": "Questions about the Planuojam platform, want to collaborate, or need help?\nOur team is ready to help and answer your questions.\n\nWrite to us – we'll respond as quickly as possible.",
+      "firstName": "Your first name",
       "firstNameLabel": "First name",
-      "lastName": "Last name",
+      "lastName": "Your last name",
       "lastNameLabel": "Last name",
-      "emailPlaceholder": "you@company.com",
+      "emailPlaceholder": "your.email@example.com",
       "emailLabel": "Email",
       "country": {
         "lt": "LT",
@@ -188,7 +189,7 @@
       },
       "phonePlaceholder": "+370 600 00000",
       "phoneLabel": "Phone",
-      "messagePlaceholder": "Leave us a message...",
+      "messagePlaceholder": "Tell us how we can help you…",
       "messageLabel": "Message",
       "send": "Send message",
       "sending": "Sending...",
@@ -694,8 +695,8 @@
         "cancel": "Cancel",
         "saving": "Saving...",
         "create": "Create Listing",
-        "fetchCoordinates": "Fetch Coordinates",
-        "pickOnMap": "Pick on Map",
+        "fetchCoordinates": "Get Location",
+        "pickOnMap": "Pick Location on Map",
         "remove": "Remove"
       },
       "map": {
@@ -733,7 +734,7 @@
             "min": "Price can not be less than 0",
             "max": "Price can not be more than 1000000"
           },
-          "placeholder": "e.g. 100"
+          "placeholder": "e.g. 100 people"
         },
         "featured": {
           "label": "Is Featured?"
@@ -747,8 +748,8 @@
           "placeholder": "Add any additional details..."
         },
         "tags": {
-          "label": "Features",
-          "placeholder": "Add a features...",
+          "label": "Tags",
+          "placeholder": "Add tags (e.g.: wedding, birthday, DJ)",
           "add": "Add",
           "errors": {
             "max": "Maximum 10 features allowed",
@@ -809,7 +810,7 @@
         },
         "capacity": {
           "label": "Capacity",
-          "placeholder": "e.g. 100"
+          "placeholder": "e.g. 100 people"
         },
         "bookingDurationType": {
           "label": "Booking Duration Type",
@@ -910,15 +911,18 @@
         }
       },
       "serviceArea": {
-        "helpText": "Choose a city or state and use fetch coordinates button to fetch coordinates or you can also add manually",
+        "helpText": "Choose a city or state or add manually",
         "title": "Service Area",
         "add": "Add Service area"
       },
       "amenities": {
         "title": "Amenities",
+        "description": "Amenities – additional features or benefits offered by this venue or service.",
+        "helperText": "Here you can specify what amenities or features are available to customers. For example: parking, Wi-Fi, air conditioning, terrace, kids area, live music, projector, etc.",
+        "tooltip": "Enter short, customer-friendly amenities or benefits that help customers make decisions faster.",
         "add": "Add Amenities",
-        "itemLabel": "Item",
-        "itemPlaceholder": "Enter amenity"
+        "itemLabel": "Amenity",
+        "itemPlaceholder": "e.g. Free parking, Wi-Fi, Terrace, Air conditioning"
       },
       "hotDeal": {
         "title": "Hot Deal",
@@ -941,7 +945,7 @@
       },
       "workingSchedule": {
         "title": "Working schedule",
-        "add": "Add entry",
+        "add": "Add work time",
         "placeholder": "Select day",
         "day": "Day",
         "start": "Start",
@@ -1128,8 +1132,9 @@
     }
   },
   "hotdeal": {
+    "selectLocationOrServiceType": "Select location or service type",
     "selectCategory": "Select Category",
-    "SelectsubCategory": "Select Sub Category",
+    "selectSubCategory": "Select Sub Category",
     "ChooseEventType": "Select Event Type",
     "Apply": "Apply",
     "Clear": "Clear",
@@ -1171,9 +1176,9 @@
       "userIdRequired": "User ID is required to update user data"
     },
     "Map": {
-      "addCityOrState": "Please add a city or state to get coordinates",
-      "addCoordinatesManually": "Something went wrong! Please add coordinates manually",
-      "unableToGetCoordinates": "We are unable to get your location coordinates. Please add manually"
+      "addCityOrState": "Please add a city or state",
+      "addCoordinatesManually": "Something went wrong! Please add location manually",
+      "unableToGetCoordinates": "We are unable to get your location. Please add manually"
     }
   },
   "UrlInput": {
@@ -1316,15 +1321,22 @@
     "perday": "Per Day",
     "perhour": "Per Hour",
     "bookingduration": "Maximum Booking Duration",
-    "amenities": "Amenities",
-    "amenityLabel": "Amenity {index}",
+    "amenities": {
+      "title": "Amenities",
+      "description": "Amenities – additional features or benefits offered by this venue or service.",
+      "helperText": "Here you can specify what amenities or features are available to customers. For example: parking, Wi-Fi, air conditioning, terrace, kids area, live music, projector, etc.",
+      "tooltip": "Enter short, customer-friendly amenities or benefits that help customers make decisions faster.",
+      "add": "Add Amenities",
+      "itemLabel": "Amenity",
+      "itemPlaceholder": "e.g. Free parking, Wi-Fi, Terrace, Air conditioning"
+    },
     "serviceareas": "Service Areas",
     "serviceAreaHint": "Specify the cities and states where you offer your services.",
     "addservicearea": "Add Service Area",
     "saving": "Saving",
     "savechanges": "Save  Changes",
     "adamenity": "Add amenity",
-    "fetchcoordinates": "Fetch Coordinates",
+    "fetchcoordinates": "Get Location",
     "picklocation": "Pick location on map",
     "address": "Address",
     "locationHint": "This information specifies the location of your venue.",

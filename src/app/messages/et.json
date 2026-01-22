@@ -35,17 +35,17 @@
       "passwordTooShort": "Parool peab olema vähemalt 8 tähemärki"
     },
     "Register": {
-      "title": "Loo konto",
-      "subtitle": "Liitu meie kogukonnaga täna",
+      "title": "Loo oma konto",
+      "subtitle": "Liitu Planuojam kogukonnaga ja alga sündmusi lihtsamalt planeerima",
       "registering": "Registreerime sinu andmeid...",
       "registered": "Registreerimine õnnestus!",
       "registerFailed": "Registreerimine ebaõnnestus. Palun proovi uuesti.",
       "joinAs": "Soovin liituda kui:",
-      "roleRequired": "Palun vali roll",
+      "roleRequired": "Palun vali konto tüüp",
       "roleBuyer": "Ostja",
-      "roleBuyerDesc": "Leia teenuseid",
+      "roleBuyerDesc": "Leia teenuseid oma üritusele",
       "roleProvider": "Teenusepakkuja",
-      "roleProviderDesc": "Paku teenuseid",
+      "roleProviderDesc": "Paku oma teenuseid ja leia kliente",
       "chooseService": "Vali teenus",
       "serviceRequired": "Teenus on kohustuslik",
       "phoneLabel": "Telefon",
@@ -81,16 +81,16 @@
       "passwordMismatch": "Paroolid ei ühti",
       "tosRequired": "Palun loe ja nõustu kasutustingimuste ning privaatsuspoliitikaga",
       "tosNotAccepted": "Palun nõustu kasutustingimuste ja privaatsuspoliitikaga",
-      "registerCta": "Registreeru",
+      "registerCta": "Loo konto",
       "alreadyHaveAccount": "Kas konto on juba olemas?",
       "signInHere": "Logi sisse siin",
       "registerNoResponse": "Registreerimine ebaõnnestus — server ei vastanud",
       "passwordTooShort": "Parool peab olema vähemalt 8 tähemärki"
     },
     "Social": {
-      "orContinue": "Või jätka",
-      "google": "Jätka Google'iga",
-      "facebook": "Jätka Facebookiga"
+      "orContinue": "Või loo konto",
+      "google": "Loo konto Google'iga",
+      "facebook": "Loo konto Facebookiga"
     },
     "ResetPassword": {
       "title": "Lähtesta parool",
@@ -137,6 +137,7 @@
     }
   },
   "Contact": {
+    "description": "Ühendust võtma! Olenemata sellest, kas otsid teavet, vajad abi või soovid saada Planuojam kogukonna osaks – võta meiega ühendust endale sobival viisil.",
     "chatWithUs": {
       "title": "Vestle meiega",
       "liveChat": "Alusta vestlust",
@@ -159,12 +160,12 @@
     },
     "Form": {
       "title": "Võta meie tiimiga ühendust",
-      "description": "Kas sul on küsimusi toote või platvormil kasvamise kohta? Oleme abiks. Vestle meie sõbraliku tiimiga 24/7 ja alusta vähem kui 5 minutiga.",
-      "firstName": "Eesnimi",
+      "description": "Kas sul on küsimusi Planuojam platvormi kohta, soovid koostööd teha või on vaja abi?\nMeie meeskond on valmis aitama ja vastama sinu küsimustele.\n\nKirjuta meile – vastame nii kiiresti kui võimalik.",
+      "firstName": "Sinu eesnimi",
       "firstNameLabel": "Eesnimi",
-      "lastName": "Perekonnanimi",
+      "lastName": "Sinu perekonnanimi",
       "lastNameLabel": "Perekonnanimi",
-      "emailPlaceholder": "you@company.com",
+      "emailPlaceholder": "sinu.email@example.com",
       "emailLabel": "E-post",
       "country": {
         "lt": "LT",
@@ -172,7 +173,7 @@
       },
       "phonePlaceholder": "+370 600 00000",
       "phoneLabel": "Telefon",
-      "messagePlaceholder": "Jäta meile sõnum...",
+      "messagePlaceholder": "Kirjuta, kuidas saame sind aidata…",
       "messageLabel": "Sõnum",
       "send": "Saada sõnum",
       "sending": "Saatmine...",
@@ -197,9 +198,9 @@
     "loading": "Kaardi laadimine...",
     "errors": {
       "failedToLoadLocations": "Asukohtade laadimine ebaõnnestus",
-      "addCityOrState": "Palun lisage linn või osariik, et saada koordinaadid",
-      "addCoordinatesManually": "Midagi läks valesti! Palun lisage koordinaadid käsitsi",
-      "unableToGetCoordinates": "Me ei saa teie asukoha koordinaate. Palun lisage käsitsi"
+      "addCityOrState": "Palun lisage linn või osariik",
+      "addCoordinatesManually": "Midagi läks valesti! Palun lisage asukoht käsitsi",
+      "unableToGetCoordinates": "Me ei saa teie asukoha. Palun lisage käsitsi"
     },
     "fallback": {
       "unnamedVenue": "Nimetu koht",
@@ -350,8 +351,8 @@
       "usernamePlaceholder": "Kasutajanimi",
       "saveUsername": "Salvesta nimi",
       "checkAvailability": "Check availability",
-      "usernameAvailable": "Username is available",
-      "usernameTaken": "Username is taken",
+      "usernameAvailable": "Kasutajanimi on saadaval",
+      "usernameTaken": "Kasutajanimi on võetud",
       "passwordCriteriaLength": "8+ märki",
       "passwordCriteriaUpper": "1 suur täht",
       "passwordCriteriaNumber": "1 number",
@@ -751,18 +752,18 @@
             "min": "Hind ei tohi olla väiksem kui 0",
             "max": "Hind ei tohi ületada 1000000"
           },
-          "placeholder": "nt 100"
+          "placeholder": "nt 100 inimest"
         },
         "featured": {
           "label": "Esile tõstetud?"
         },
         "tags": {
-          "label": "Funktsioonid",
-          "placeholder": "Lisa silt...",
+          "label": "Sildid",
+          "placeholder": "Lisa sildid (nt.: pulmad, sünnipäev, DJ)",
           "add": "Lisa",
           "errors": {
-            "max": "Maksimaalselt 10 funktsiooni lubatud",
-            "duplicate": "Funktsioon juba lisatud"
+            "max": "Maksimaalselt 10 silti",
+            "duplicate": "Silt on juba lisatud"
           }
         },
         "videos": {
@@ -819,7 +820,7 @@
         },
         "capacity": {
           "label": "Mahutavus",
-          "placeholder": "nt 100"
+          "placeholder": "nt 100 inimest"
         },
         "bookingDurationType": {
           "label": "Broneeringu kestuse tüüp",
@@ -933,9 +934,12 @@
       },
       "amenities": {
         "title": "Mugavused",
+        "description": "Mugavused – lisafunktsioonid või eelised, mida pakub see koht või teenus.",
+        "helperText": "Siin saate määrata, millised mugavused või funktsioonid on kliendile kättesaadavad. Näiteks: parkimine, Wi-Fi, konditsioneer, terrass, lastenurk, live muusika, projektor jne.",
+        "tooltip": "Sisestage lühikesed, kliendile sõbralikud mugavused või eelised, mis aitavad klientidel kiiremini otsustada.",
         "add": "Lisa mugavus",
-        "itemLabel": "Element",
-        "itemPlaceholder": "Lisa mugavus"
+        "itemLabel": "Mugavus",
+        "itemPlaceholder": "nt. Tasuta parkimine, Wi-Fi, Terrass, Konditsioneer"
       },
       "hotDeal": {
         "title": "Eripakkumine",
@@ -958,7 +962,7 @@
       },
       "workingSchedule": {
         "title": "Tööajakava",
-        "add": "Lisa kirje",
+        "add": "Lisa tööaeg",
         "placeholder": "Vali päev",
         "day": "Päev",
         "start": "Algus",
@@ -1133,8 +1137,9 @@
     }
   },
   "hotdeal": {
+    "selectLocationOrServiceType": "Valige asukoha või teenuse tüüp",
     "selectCategory": "Valige Kategooria",
-    "SelectsubCategory": "Valige alamkategooria",
+    "selectSubCategory": "Valige alamkategooria",
     "ChooseEventType": "Valige Sündmuse tüüp",
     "Apply": "Rakenda",
     "Clear": "Selge",
@@ -1298,8 +1303,15 @@
     "perday": "Päeva kohta",
     "perhour": "Tunni kohta",
     "bookingduration": "Maksimaalne broneeringu kestus",
-    "amenities": "Mugavused",
-    "amenityLabel": "Mugavus {index}",
+    "amenities": {
+      "title": "Mugavused",
+      "description": "Mugavused – lisafunktsioonid või eelised, mida pakub see koht või teenus.",
+      "helperText": "Siin saate määrata, millised mugavused või funktsioonid on kliendile kättesaadavad. Näiteks: parkimine, Wi-Fi, konditsioneer, terrass, lastenurk, live muusika, projektor jne.",
+      "tooltip": "Sisestage lühikesed, kliendile sõbralikud mugavused või eelised, mis aitavad klientidel kiiremini otsustada.",
+      "add": "Lisa mugavus",
+      "itemLabel": "Mugavus",
+      "itemPlaceholder": "nt. Tasuta parkimine, Wi-Fi, Terrass, Konditsioneer"
+    },
     "serviceareas": "Teeninduspiirkonnad",
     "serviceAreaHint": "Määrake linnad ja osariigid, kus te oma teenuseid pakute.",
     "addservicearea": "Lisa teeninduspiirkond",

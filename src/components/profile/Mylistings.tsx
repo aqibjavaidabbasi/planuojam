@@ -113,9 +113,6 @@ function Mylistings() {
       {!loading && !error && listings.length === 0 && (
         <div className="flex flex-col items-center justify-center gap-4 py-12">
           <NoDataCard>{t('empty')}</NoDataCard>
-          <Button style="secondary" size="large" onClick={() => setOpen(true)}>
-            {t('create')}
-          </Button>
         </div>
       )}
 

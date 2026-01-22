@@ -395,7 +395,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
       {Array.isArray(headerData?.eventTypes) &&
         headerData.eventTypes.length > 0 && (
           <div className="hidden md:block w-full bg-gray-50 border-t border-b border-border px-2.5 md:px-4 py-2 z-20 overflow-x-auto">
-            <div className="max-w-screen lg:max-w-[1700px] mx-auto flex flex-wrap items-center gap-1 md:gap-2">
+            <div className="max-w-screen lg:max-w-[1700px] mx-auto flex flex-wrap items-center gap-1 md:gap-2 capitalize">
               {headerData.eventTypes.map(({ id, eventType }) => {
                 const isActive = isEventTypeActive(eventType.documentId);
                 return (

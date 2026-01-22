@@ -1208,18 +1208,40 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                 </div>
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-medium">{t('amenities.title')}</h4>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-medium">{t('amenities.title')}</h4>
+                      <div className="group relative">
+                        <div className="absolute -right-6 -top-1 w-5 h-5 flex items-center justify-center">
+                          <div className="w-4 h-4 rounded-full bg-gray-200 flex items-center justify-center cursor-help">
+                            <span className="text-xs">ℹ️</span>
+                          </div>
+                        </div>
+                        <div className="invisible group-hover:visible absolute z-10 w-64 p-3 mt-8 bg-white border border-gray-200 rounded-lg shadow-lg">
+                          <div className="text-sm text-gray-600">{t('amenities.tooltip')}</div>
+                        </div>
+                      </div>
+                    </div>
                     <Button type="button" disabled={isWorking} style="secondary" onClick={addAmenity}>
                       {t('amenities.add')}
                     </Button>
                   </div>
+                  {t('amenities.description') && (
+                    <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-sm text-blue-700">{t('amenities.description')}</p>
+                    </div>
+                  )}
+                  {t('amenities.helperText') && (
+                    <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                      <p className="text-sm text-gray-600">{t('amenities.helperText')}</p>
+                    </div>
+                  )}
                   {(form.listingItem?.[0]?.amneties || []).map((amenity, idx) => (
                     <div key={idx} className="flex gap-2 items-end mb-2">
                       <div className="flex-1">
                         <Input
                           type="text"
                           disabled={isWorking}
-                          label={`${t('amenities.itemLabel')} ${idx + 1}`}
+                          label={t('amenities.itemLabel')}
                           placeholder={t('amenities.itemPlaceholder')}
                           value={amenity.text || ""}
                           onChange={(e) => {

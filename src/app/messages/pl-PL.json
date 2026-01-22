@@ -36,17 +36,17 @@
       "passwordTooShort": "Hasło musi mieć co najmniej 8 znaków"
     },
     "Register": {
-      "title": "Utwórz konto",
-      "subtitle": "Dołącz do naszej społeczności już dziś",
+      "title": "Utwórz swoje konto",
+      "subtitle": "Dołącz do społeczności Planuojam i zacznij planować wydarzenia łatwiej",
       "registering": "Rejestrowanie danych...",
       "registered": "Pomyślnie zarejestrowano!",
       "registerFailed": "Rejestracja nie powiodła się. Spróbuj ponownie.",
       "joinAs": "Chcę dołączyć jako:",
-      "roleRequired": "Wybierz rolę",
+      "roleRequired": "Wybierz typ konta",
       "roleBuyer": "Kupujący",
-      "roleBuyerDesc": "Znajdź usługi",
+      "roleBuyerDesc": "Znajdź usługi na swoje wydarzenie",
       "roleProvider": "Dostawca usług",
-      "roleProviderDesc": "Oferuj usługi",
+      "roleProviderDesc": "Oferuj swoje usługi i znajduj klientów",
       "chooseService": "Wybierz usługę",
       "serviceRequired": "Usługa jest wymagana",
       "phoneLabel": "Telefon",
@@ -81,7 +81,7 @@
       "passwordTooWeak": "Hasło jest zbyt słabe (wymagane 8+ znaków, 1 wielka litera, 1 cyfra)",
       "passwordMismatch": "Hasła nie są takie same",
       "tosRequired": "Przeczytaj i zaakceptuj Regulamin oraz Politykę prywatności",
-      "registerCta": "Zarejestruj się",
+      "registerCta": "Załóż konto",
       "alreadyHaveAccount": "Masz już konto?",
       "signInHere": "Zaloguj się tutaj",
       "tosNotAccepted": "Proszę zaakceptować Regulamin i Politykę prywatności",
@@ -89,9 +89,9 @@
       "passwordTooShort": "Hasło musi mieć co najmniej 8 znaków"
     },
     "Social": {
-      "orContinue": "Lub kontynuuj z",
-      "google": "Kontynuuj z Google",
-      "facebook": "Kontynuuj z Facebook"
+      "orContinue": "Lub załóż konto przez",
+      "google": "Załóż konto przez Google",
+      "facebook": "Załóż konto przez Facebook"
     },
     "ResetPassword": {
       "title": "Zresetuj hasło",
@@ -138,6 +138,7 @@
     }
   },
   "Contact": {
+    "description": "Połączmy się! Niezależnie od tego, czy szukasz informacji, potrzebujesz pomocy, czy chcesz stać się częścią społeczności Planuojam – skontaktuj się z nami w dogodny dla siebie sposób.",
     "chatWithUs": {
       "title": "Porozmawiaj z nami",
       "liveChat": "Rozpocznij czat na żywo",
@@ -160,12 +161,12 @@
     },
     "Form": {
       "title": "Skontaktuj się z naszym zespołem",
-      "description": "Masz pytania dotyczące produktu lub skalowania na naszej platformie? Jesteśmy tu, aby pomóc. Skontaktuj się z naszym przyjaznym zespołem 24/7 i rozpocznij w mniej niż 5 minut.",
-      "firstName": "Imię",
+      "description": "Masz pytania o platformę Planuojam, chcesz współpracować czy potrzebujesz pomocy?\nNasz zespół jest gotowy, aby pomóc i odpowiedzieć na Twoje pytania.\n\nNapisz do nas – odpowiemy tak szybko, jak to możliwe.",
+      "firstName": "Twoje imię",
       "firstNameLabel": "Imię",
-      "lastName": "Nazwisko",
+      "lastName": "Twoje nazwisko",
       "lastNameLabel": "Nazwisko",
-      "emailPlaceholder": "you@company.com",
+      "emailPlaceholder": "twoj.email@example.com",
       "emailLabel": "Email",
       "country": {
         "lt": "LT",
@@ -173,7 +174,7 @@
       },
       "phonePlaceholder": "+370 600 00000",
       "phoneLabel": "Telefon",
-      "messagePlaceholder": "Zostaw nam wiadomość...",
+      "messagePlaceholder": "Napisz, w czym możemy Ci pomóc…",
       "messageLabel": "Wiadomość",
       "send": "Wyślij wiadomość",
       "sending": "Wysyłanie...",
@@ -198,9 +199,9 @@
     "loading": "Ładowanie mapy...",
     "errors": {
       "failedToLoadLocations": "Nie udało się wczytać lokalizacji",
-      "addCityOrState": "Dodaj miasto lub województwo, aby uzyskać współrzędne",
-      "addCoordinatesManually": "Coś poszło nie tak! Dodaj współrzędne ręcznie",
-      "unableToGetCoordinates": "Nie możemy uzyskać współrzędnych Twojej lokalizacji. Dodaj je ręcznie"
+      "addCityOrState": "Dodaj miasto lub województwo",
+      "addCoordinatesManually": "Coś poszło nie tak! Dodaj lokalizację ręcznie",
+      "unableToGetCoordinates": "Nie możemy uzyskać lokalizacji. Dodaj ją ręcznie"
     },
     "fallback": {
       "unnamedVenue": "Miejsce bez nazwy",
@@ -753,7 +754,7 @@
             "min": "Cena nie może być mniejsza niż 0",
             "max": "Cena nie może być większa niż 1000000"
           },
-          "placeholder": "np. 100"
+          "placeholder": "np. 100 osób"
         },
         "featured": {
           "label": "Polecane?"
@@ -765,6 +766,15 @@
           "errors": {
             "max": "Maksymalnie 10 funkcji",
             "duplicate": "Funkcja już dodana"
+          }
+        },
+        "tags": {
+          "label": "Tagi",
+          "placeholder": "Dodaj tagi (np.: wesele, urodziny, DJ)",
+          "add": "Dodaj",
+          "errors": {
+            "max": "Maksymalnie 10 tagów",
+            "duplicate": "Tag już dodany"
           }
         },
         "videos": {
@@ -819,7 +829,7 @@
         },
         "capacity": {
           "label": "Pojemność",
-          "placeholder": "np. 100"
+          "placeholder": "np. 100 osób"
         },
         "bookingDurationType": {
           "label": "Rodzaj czasu rezerwacji",
@@ -920,7 +930,7 @@
         }
       },
       "serviceArea": {
-        "helpText": "Wybierz miasto lub województwo i użyj przycisku pobierania współrzędnych, albo wprowadź je ręcznie",
+        "helpText": "Wybierz miasto lub województwo lub wprowadź ręcznie",
         "title": "Obszar usług",
         "add": "Dodaj obszar usług",
         "errors": {
@@ -933,9 +943,12 @@
       },
       "amenities": {
         "title": "Udogodnienia",
+        "description": "Udogodnienia – dodatkowe funkcje lub korzyści oferowane przez to miejsce lub usługę.",
+        "helperText": "Tutaj możesz określić, jakie udogodnienia lub funkcje są dostępne dla klientów. Na przykład: parking, Wi-Fi, klimatyzacja, taras, strefa dla dzieci, muzyka na żywo, projektor itp.",
+        "tooltip": "Wpisz krótkie, przyjazne dla klienta udogodnienia lub korzyści, które pomagają w szybszym podjęciu decyzji.",
         "add": "Dodaj udogodnienie",
-        "itemLabel": "Element",
-        "itemPlaceholder": "Wpisz udogodnienie"
+        "itemLabel": "Udogodnienie",
+        "itemPlaceholder": "np. Darmowy parking, Wi-Fi, Taras, Klimatyzacja"
       },
       "hotDeal": {
         "title": "Gorąca oferta",
@@ -958,7 +971,7 @@
       },
       "workingSchedule": {
         "title": "Harmonogram pracy",
-        "add": "Dodaj wpis",
+        "add": "Dodaj czas pracy",
         "placeholder": "Wybierz dzień",
         "day": "Dzień",
         "start": "Początek",
@@ -1133,8 +1146,9 @@
     }
   },
   "hotdeal": {
+    "selectLocationOrServiceType": "Wybierz typ lokalizacji lub usługi",
     "selectCategory": "Wybierz kategorię",
-    "SelectsubCategory": "Wybierz podkategorię",
+    "selectSubCategory": "Wybierz podkategorię",
     "ChooseEventType": "Wybierz Typ zdarzenia",
     "Apply": "Stosować",
     "Clear": "Jasne",
@@ -1305,8 +1319,15 @@
     "perday": "Za dzień",
     "perhour": "Za godzinę",
     "bookingduration": "Maksymalny czas trwania rezerwacji",
-    "amenities": "Udogodnienia",
-    "amenityLabel": "Udogodnienie {index}",
+    "amenities": {
+      "title": "Udogodnienia",
+      "description": "Udogodnienia – dodatkowe funkcje lub korzyści oferowane przez to miejsce lub usługę.",
+      "helperText": "Tutaj możesz określić, jakie udogodnienia lub funkcje są dostępne dla klientów. Na przykład: parking, Wi-Fi, klimatyzacja, taras, strefa dla dzieci, muzyka na żywo, projektor itp.",
+      "tooltip": "Wpisz krótkie, przyjazne dla klienta udogodnienia lub korzyści, które pomagają w szybszym podjęciu decyzji.",
+      "add": "Dodaj udogodnienie",
+      "itemLabel": "Udogodnienie",
+      "itemPlaceholder": "np. Darmowy parking, Wi-Fi, Taras, Klimatyzacja"
+    },
     "serviceareas": "Obszary usług",
     "serviceAreaHint": "Określ miasta i województwa, w których świadczysz swoje usługi.",
     "addservicearea": "Dodaj obszar usług",

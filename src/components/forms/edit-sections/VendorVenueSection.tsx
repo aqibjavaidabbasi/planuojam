@@ -516,15 +516,37 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
 
           <div>
             <div className="flex justify-between items-center mb-2">
-              <h4 className="font-medium">{t("amenities")}</h4>
+              <div className="flex items-center gap-2">
+                <h4 className="font-medium">{t("amenities.title")}</h4>
+                <div className="group relative">
+                  <div className="absolute -right-6 -top-1 w-5 h-5 flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full bg-gray-200 flex items-center justify-center cursor-help">
+                      <span className="text-xs">ℹ️</span>
+                    </div>
+                  </div>
+                  <div className="invisible group-hover:visible absolute z-10 w-64 p-3 mt-8 bg-white border border-gray-200 rounded-lg shadow-lg">
+                    <div className="text-sm text-gray-600">{t("amenities.tooltip")}</div>
+                  </div>
+                </div>
+              </div>
               <Button type="button" style="secondary" disabled={submitting} onClick={() => appendAmenity({ text: "" })}>
-                {t("adamenity")}
+                {t("amenities.add")}
               </Button>
             </div>
+            {t("amenities.description") && (
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-700">{t("amenities.description")}</p>
+              </div>
+            )}
+            {t("amenities.helperText") && (
+              <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                <p className="text-sm text-gray-600">{t("amenities.helperText")}</p>
+              </div>
+            )}
             {amenities.map((field, idx) => (
               <div key={field.id} className="flex gap-2 items-end mb-2">
                 <div className="flex-1">
-                  <Input type="text" label={t("amenityLabel", { index: idx + 1 })} disabled={submitting} {...venueRegister(`amneties.${idx}.text` as const)} />
+                  <Input type="text" label={t("amenities.itemLabel")} disabled={submitting} {...venueRegister(`amneties.${idx}.text` as const)} />
                 </div>
                 <Button type="button" style="ghost" disabled={submitting} onClick={() => removeAmenity(idx)} extraStyles="text-red-600 hover:text-red-700">
                   {t("remove")}
