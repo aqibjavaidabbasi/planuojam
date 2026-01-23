@@ -402,7 +402,6 @@ export async function fetchSortedListingsWithMeta(
     const baseFilters: Record<string, unknown> = {
         filters: {
             type: { $eq: serviceType },
-            listingStatus: { $eq: 'published' },
             ...appliedFilters,
         },
     };
@@ -415,6 +414,6 @@ export async function fetchSortedListingsWithMeta(
     if (pagination) additional.pagination = pagination;
 
     const query = createQuery(populate, additional);
-    const res = await fetchAPIWithMeta('listings', query, baseFilters);
+    const res = await fetchAPIWithMeta('listings/promoted', query, baseFilters);
     return res as { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } };
 }

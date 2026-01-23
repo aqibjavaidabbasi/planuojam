@@ -86,7 +86,7 @@ export async function fetchListings(type: 'venue' | 'vendor', appliedFilters = {
         }
     }
     const query = createQuery(populate, locale ? { locale } : undefined);
-    const res = await fetchAPI('listings', query, filters);
+    const res = await fetchAPI('listings/promoted', query, filters);
     return res;
 }
 
@@ -172,6 +172,6 @@ export async function fetchHotDealListings(filter = {}) {
         }
     }
     const query = createQuery(populate);
-    const res = await fetchAPI('listings', query, filters);
+    const res = await fetchAPI('listings/promoted', query, filters);
     return res;
 }
