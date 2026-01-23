@@ -308,7 +308,7 @@
       },
       "noLocation": "Location not available",
       "messageVendor": "Message vendor",
-      "previewBanner": "This is a preview of your listing. It will not be visible to other users until it is published.",
+      "previewBanner": "This is a preview of your listing. Other users won't see it until the listing is published.",
       "recommended": "Recommended listings"
     },
     "Hero": {
@@ -574,6 +574,7 @@
       },
       "buttons": {
         "upload": "Upload {count} file(s)",
+        "uploading": "Uploading...",
         "cancel": "Cancel"
       },
       "cropping": "Cropping..."
@@ -822,7 +823,7 @@
         },
         "bookingDuration": {
           "label": "Booking Duration",
-          "placeholder": "e.g. 4"
+          "placeholder": "e.g. 8"
         },
         "minimumDuration": {
           "label": "Minimum Duration Hours",
@@ -918,7 +919,7 @@
       "amenities": {
         "title": "Amenities",
         "description": "Amenities – additional features or benefits offered by this venue or service.",
-        "helperText": "Here you can specify what amenities or features are available to customers. For example: parking, Wi-Fi, air conditioning, terrace, kids area, live music, projector, etc.",
+        "helperText": "Here you can specify what amenities or features are available to customers. For example: pool, jacuzzi, terrace, garden, lake view, parking, Wi-Fi, air conditioning, etc.",
         "tooltip": "Enter short, customer-friendly amenities or benefits that help customers make decisions faster.",
         "add": "Add Amenities",
         "itemLabel": "Amenity",
@@ -1312,12 +1313,12 @@
     "about": "About",
     "experienceYears": "Experience Years",
     "city": "City",
-    "state": "State",
+    "state": "County/City",
     "latitude": "Latitude",
     "longitude": " Longitude",
-    "capacity": "Capacity",
-    "bookingdurationtype": "Booking Duration Type",
-    "selectdurationtype": "Select Duration Type",
+    "capacity": "Capacity (people)",
+    "bookingdurationtype": "Booking Duration",
+    "selectdurationtype": "Select Duration",
     "perday": "Per Day",
     "perhour": "Per Hour",
     "bookingduration": "Maximum Booking Duration",
@@ -1339,11 +1340,11 @@
     "fetchcoordinates": "Get Location",
     "picklocation": "Pick location on map",
     "address": "Address",
-    "locationHint": "This information specifies the location of your venue.",
+    "locationHint": "Here is information about your selected location.",
     "remove": "Remove",
     "citylabel": "City ",
-    "statelabel": "State",
-    "selectstate": "Select State",
+    "statelabel": "County / City",
+    "selectstate": "Select County / City",
     "selectcity": "Select City",
     "minimumDuration": {
       "label": "Minimum Duration Hours",
@@ -1351,11 +1352,11 @@
     },
     "errors": {
       "cityRequired": "City is required",
-      "stateRequired": "State is required",
+      "stateRequired": "County / City is required",
       "latitudeRequired": "Latitude is required",
       "longitudeRequired": "Longitude is required",
       "capacityRequired": "Capacity is required",
-      "bookingDurationTypeRequired": "Booking duration type is required",
+      "bookingDurationTypeRequired": "Booking duration is required",
       "bookingDurationRequired": "Maximum Booking duration is required",
       "cityStateRequired": "Each service area needs a city and state"
     },

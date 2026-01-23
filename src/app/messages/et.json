@@ -295,7 +295,7 @@
         "saturday": "Laupäev",
         "sunday": "Pühapäev"
       },
-      "previewBanner": "See on teie kuulutuse eelvaade. See ei ole teistele kasutajatele nähtav enne, kui see on avaldatud.",
+      "previewBanner": "See on teie kuulutuse eelvaade. Teised kasutajad ei näe seda, kuni kuulutus on avaldatud.",
       "recommended": "Soovitatud kuulutused"
     },
     "Hero": {
@@ -583,6 +583,7 @@
       },
       "buttons": {
         "upload": "Laadi üles {count} fail(i)",
+        "uploading": "Üleslaadimine...",
         "cancel": "Tühista"
       },
       "cropping": "Lõikamine..."
@@ -832,7 +833,7 @@
         },
         "bookingDuration": {
           "label": "Broneeringu kestus tundides",
-          "placeholder": "nt 4"
+          "placeholder": "nt 8"
         },
         "minimumDuration": {
           "label": "Minimaalne kestus",
@@ -935,7 +936,7 @@
       "amenities": {
         "title": "Mugavused",
         "description": "Mugavused – lisafunktsioonid või eelised, mida pakub see koht või teenus.",
-        "helperText": "Siin saate määrata, millised mugavused või funktsioonid on kliendile kättesaadavad. Näiteks: parkimine, Wi-Fi, konditsioneer, terrass, lastenurk, live muusika, projektor jne.",
+        "helperText": "Siin saate määrata, millised mugavused või funktsioonid on kliendile kättesaadavad. Näiteks: bassein, džakussi, terrass, aed, vaade järvele, parkimine, Wi-Fi, konditsioneer jne.",
         "tooltip": "Sisestage lühikesed, kliendile sõbralikud mugavused või eelised, mis aitavad klientidel kiiremini otsustada.",
         "add": "Lisa mugavus",
         "itemLabel": "Mugavus",
@@ -1294,19 +1295,19 @@
     "about": "Teave",
     "experienceYears": "Aastad kogemust",
     "city": "Linn",
-    "state": "Olek",
+    "state": "Maakond / Linn",
     "latitude": "Laiuskraad",
     "longitude": "Pikkuskraad",
-    "capacity": "Mahutavus",
-    "bookingdurationtype": "Broneerimise kestuse tüüp",
-    "selectdurationtype": "Vali kestuse tüüp",
+    "capacity": "Mahutavus (inimest)",
+    "bookingdurationtype": "Broneerimise kestus",
+    "selectdurationtype": "Vali kestus",
     "perday": "Päeva kohta",
     "perhour": "Tunni kohta",
     "bookingduration": "Maksimaalne broneeringu kestus",
     "amenities": {
       "title": "Mugavused",
       "description": "Mugavused – lisafunktsioonid või eelised, mida pakub see koht või teenus.",
-      "helperText": "Siin saate määrata, millised mugavused või funktsioonid on kliendile kättesaadavad. Näiteks: parkimine, Wi-Fi, konditsioneer, terrass, lastenurk, live muusika, projektor jne.",
+      "helperText": "Siin saate määrata, millised mugavused või funktsioonid on kliendile kättesaadavad. Näiteks: bassein, džakussi, terrass, aed, vaade järvelele, parkimine, Wi-Fi, konditsioneer jne.",
       "tooltip": "Sisestage lühikesed, kliendile sõbralikud mugavused või eelised, mis aitavad klientidel kiiremini otsustada.",
       "add": "Lisa mugavus",
       "itemLabel": "Mugavus",
@@ -1321,11 +1322,11 @@
     "picklocation": "Vali asukoht kaardilt",
     "adamenity": "Lisage mugavus",
     "address": "Aadress",
-    "locationHint": "See teave määrab teie koha asukoha.",
+    "locationHint": "Siin on teave teie valitud asukohta.",
     "remove": "Eemalda",
     "citylabel": "Linna märk",
-    "statelabel": "Riigi märgis",
-    "selectstate": "Vali olek",
+    "statelabel": "Maakond / Linn",
+    "selectstate": "Vali maakond või linn",
     "selectcity": "Vali linn",
     "minimumDuration": {
       "label": "Minimaalne kestus",
@@ -1336,11 +1337,11 @@
       "invalidLatitude": "Laiuskraad peab olema vahemikus -90 kuni 90",
       "invalidLongitude": "Pikkuskraad peab olema vahemikus -180 kuni 180",
       "cityRequired": "Linn on nõutav",
-      "stateRequired": "Maakond on nõutav",
+      "stateRequired": "Maakond / Linn on nõutud",
       "latitudeRequired": "Laiuskraad on nõutav",
       "longitudeRequired": "Pikkuskraad on nõutav",
       "capacityRequired": "Mahutavus on nõutav",
-      "bookingDurationTypeRequired": "Broneerimise kestuse tüüp on nõutav",
+      "bookingDurationTypeRequired": "Broneerimise kestus on nõutav",
       "bookingDurationRequired": "Maksimaalne broneeringu kestus on nõutav"
     },
     "toasts": {

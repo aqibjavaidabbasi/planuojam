@@ -269,7 +269,7 @@
       },
       "noLocation": "Vieta nepasiekiama",
       "messageVendor": "Rašyti tiekėjui",
-      "previewBanner": "Tai jūsų skelbimo peržiūra. Jis nebus matomas kitiems vartotojams, kol nebus paskelbtas.",
+      "previewBanner": "Tai jūsų skelbimo peržiūra. Kiti vartotojai jo nematys, kol skelbimas nebus paskelbtas.",
       "recommended": "Rekomenduojami skelbimai"
     },
     "Hero": {
@@ -577,7 +577,7 @@
         },
         "bookingDuration": {
           "label": "Užsakymo trukmė",
-          "placeholder": "pvz. 4"
+          "placeholder": "pvz. 8"
         },
         "minimumDuration": {
           "label": "Minimali trukmės valandos",
@@ -680,7 +680,7 @@
       "amenities": {
         "title": "Patogumai",
         "description": "Patogumai – papildomos savybės ar privalumai, kuriuos siūlo ši vieta ar paslauga.",
-        "helperText": "Čia galite nurodyti, kokie patogumai ar ypatybės yra prieinami klientams. Pavyzdžiui: automobilių stovėjimo aikštelė, Wi-Fi, kondicionavimas, terasa, vaikų zona, gyva muzika, projektorius ir pan.",
+        "helperText": "Čia galite nurodyti, kokie patogumai ar ypatybės yra prieinami klientams. Pavyzdžiui: pirtis, jacuzzi, terasa, židinys, vaizdas į ežerą, automobilių stovėjimo aikštelė, Wi-Fi, kondicionavimas ir pan.",
         "tooltip": "Įrašykite trumpus, klientui aiškius patogumus arba privalumus, kurie padeda greičiau apsispręsti.",
         "add": "Pridėti patogumą",
         "itemLabel": "Patogumas",
@@ -1072,7 +1072,8 @@
         "uploadFailed": "Įkėlimas nepavyko. Bandykite dar kartą."
       },
       "buttons": {
-        "upload": "Įkelti {count} failą(-us)",
+        "upload": "Įkelti {count} failą(us)",
+        "uploading": "Įkeliama...",
         "cancel": "Atšaukti"
       },
       "cropping": "Apkarpomas..."
@@ -1296,51 +1297,51 @@
     }
   },
   "vendorvenueSection": {
-    "details": "Detalės",
-    "vendor": "Tiekėjas",
-    "venue": "Vieta",
+    "details": "Informacija",
+    "vendor": "Tiekėjo",
+    "venue": "Vietos",
     "about": "Apie",
     "experienceYears": "Patirtis metais",
     "city": "Miestas",
-    "state": "Valstybė",
+    "state": "Apskritis / miestas",
     "latitude": "Platuma",
     "longitude": "Ilguma",
-    "capacity": "Talpa",
-    "bookingdurationtype": "Užsakymo trukmės tipas",
-    "selectdurationtype": "Pasirinkite trukmės tipą",
+    "capacity": "Talpa (žmonių skaičius)",
+    "bookingdurationtype": "Užsakymo trukmė",
+    "selectdurationtype": "Pasirinkite trukmę",
     "perday": "Per dieną",
     "perhour": "Per valandą",
     "bookingduration": "Maksimali užsakymo trukmė",
     "amenities": {
       "title": "Patogumai",
       "description": "Patogumai – papildomos savybės ar privalumai, kuriuos siūlo ši vieta ar paslauga.",
-      "helperText": "Čia galite nurodyti, kokie patogumai ar ypatybės yra prieinami klientams. Pavyzdžiui: automobilių stovėjimo aikštelė, Wi-Fi, kondicionavimas, terasa, vaikų zona, gyva muzika, projektorius ir pan.",
+      "helperText": "Čia galite nurodyti, kokie patogumai ar ypatybės yra prieinami klientams. Pavyzdžiui: pirtis, jacuzzi, terasa, židinys, vaizdas į ežerą, automobilių stovėjimo aikštelė, Wi-Fi, kondicionavimas ir pan.",
       "tooltip": "Įrašykite trumpus, klientui aiškius patogumus arba privalumus, kurie padeda greičiau apsispręsti.",
       "add": "Pridėti patogumą",
       "itemLabel": "Patogumas",
       "itemPlaceholder": "pvz. Nemokamas parkingas, Wi-Fi, Terasa, Kondicionavimas"
     },
     "address": "Adresas",
-    "locationHint": "Ši informacija nurodo jūsų vietos vietą.",
+    "locationHint": "Čia pateikiama informacija apie jūsų pasirinktą vietą.",
     "remove": "Pašalinti",
     "citylabel": "Miesto ženklas",
-    "statelabel": "Valstybės etiketė",
-    "selectstate": "Pasirinkite būseną",
+    "statelabel": "Apskritis / miestas",
+    "selectstate": "Pasirinkite apskritį / miestą",
     "selectcity": "Pasirinkite miestą",
     "minimumDuration": {
       "label": "minimalios trukmės valandos",
-      "placeholder": "pvz 2"
+      "placeholder": "pvz. 2"
     },
     "errors": {
       "cityStateRequired": "Kiekvienai aptarnavimo sričiai reikia miesto ir valstijos",
       "invalidLatitude": "Platuma turi būti tarp -90 ir 90",
       "invalidLongitude": "Ilguma turi būti tarp -180 ir 180",
       "cityRequired": "Privalomas miestas",
-      "stateRequired": "Privalomas valstybė",
+      "stateRequired": "Privaloma apskritis / miestas",
       "latitudeRequired": "Privalomas platuma",
       "longitudeRequired": "Privalomas ilguma",
-      "capacityRequired": "Privalomas talpa",
-      "bookingDurationTypeRequired": "Privalomas užsakymo trukmės tipas",
+      "capacityRequired": "Privaloma talpa",
+      "bookingDurationTypeRequired": "Privaloma užsakymo trukmė",
       "bookingDurationRequired": "Privalomas maksimali užsakymo trukmė"
     },
     "toasts": {

@@ -296,7 +296,7 @@
       },
       "noLocation": "Lokalizacja niedostępna",
       "messageVendor": "Napisz do dostawcy",
-      "previewBanner": "To jest podgląd Twojego ogłoszenia. Nie będzie widoczne dla innych użytkowników, dopóki nie zostanie opublikowane.",
+      "previewBanner": "To jest podgląd Twojego ogłoszenia. Inni użytkownicy nie zobaczą go, dopóki ogłoszenie nie zostanie opublikowane.",
       "recommended": "Polecane ogłoszenia"
     },
     "Hero": {
@@ -585,6 +585,7 @@
       },
       "buttons": {
         "upload": "Prześlij {count} plik(ów)",
+        "uploading": "Przesyłanie...",
         "cancel": "Anuluj"
       },
       "cropping": "Przycinanie..."
@@ -816,8 +817,8 @@
           "placeholder": "Wybierz miasto"
         },
         "state": {
-          "label": "Województwo",
-          "placeholder": "Wybierz województwo"
+          "label": "Województwo / Miasto",
+          "selectstate": "Wybierz województwo / miasto"
         },
         "latitude": {
           "label": "Szerokość geograficzna",
@@ -841,7 +842,7 @@
         },
         "bookingDuration": {
           "label": "Czas trwania rezerwacji",
-          "placeholder": "np. 4"
+          "placeholder": "np. 8"
         },
         "minimumDuration": {
           "label": "Minimalny czas trwania w godzinach",
@@ -944,7 +945,7 @@
       "amenities": {
         "title": "Udogodnienia",
         "description": "Udogodnienia – dodatkowe funkcje lub korzyści oferowane przez to miejsce lub usługę.",
-        "helperText": "Tutaj możesz określić, jakie udogodnienia lub funkcje są dostępne dla klientów. Na przykład: parking, Wi-Fi, klimatyzacja, taras, strefa dla dzieci, muzyka na żywo, projektor itp.",
+        "helperText": "Tutaj możesz określić, jakie udogodnienia lub funkcje są dostępne dla klientów. Na przykład: basen, jacuzzi, taras, ogród, widok na jezioro, parking, Wi-Fi, klimatyzacja itp.",
         "tooltip": "Wpisz krótkie, przyjazne dla klienta udogodnienia lub korzyści, które pomagają w szybszym podjęciu decyzji.",
         "add": "Dodaj udogodnienie",
         "itemLabel": "Udogodnienie",
@@ -1310,19 +1311,19 @@
     "about": "O mnie",
     "experienceYears": "Lata doświadczenia",
     "city": "Miasto",
-    "state": "Państwo",
+    "state": "Województwo / Miasto",
     "latitude": "Szerokość",
     "longitude": "Długość geograficzna",
-    "capacity": "Pojemność",
-    "bookingdurationtype": "Typ trwania rezerwacji",
-    "selectdurationtype": "Wybierz rodzaj rezerwacji",
+    "capacity": "Pojemność (osób)",
+    "bookingdurationtype": "Czas trwania rezerwacji",
+    "selectdurationtype": "Wybierz czas trwania",
     "perday": "Za dzień",
     "perhour": "Za godzinę",
     "bookingduration": "Maksymalny czas trwania rezerwacji",
     "amenities": {
       "title": "Udogodnienia",
       "description": "Udogodnienia – dodatkowe funkcje lub korzyści oferowane przez to miejsce lub usługę.",
-      "helperText": "Tutaj możesz określić, jakie udogodnienia lub funkcje są dostępne dla klientów. Na przykład: parking, Wi-Fi, klimatyzacja, taras, strefa dla dzieci, muzyka na żywo, projektor itp.",
+      "helperText": "Tutaj możesz określić, jakie udogodnienia lub funkcje są dostępne dla klientów. Na przykład: basen, jacuzzi, taras, ogród, widok na jezioro, parking, Wi-Fi, klimatyzacja itp.",
       "tooltip": "Wpisz krótkie, przyjazne dla klienta udogodnienia lub korzyści, które pomagają w szybszym podjęciu decyzji.",
       "add": "Dodaj udogodnienie",
       "itemLabel": "Udogodnienie",
@@ -1337,12 +1338,10 @@
     "picklocation": "Wybierz lokalizację na mapie",
     "adamenity": "Dodaj udogodnienie",
     "address": "Adres",
-    "locationHint": "Ta informacja określa lokalizację Twojej sali.",
+    "locationHint": "Tutaj znajdują się informacje o wybranym przez Ciebie miejscu.",
     "remove": "Usuń",
     "citylabel": "Etykieta miasta",
-    "statelabel": "Etykieta stanu",
-    "selectstate": "Wybierz stan",
-    "selectcity": "Wybierz miasto",
+    "statelabel": "Województwo / Miasto",
     "minimumDuration": {
       "label": "Minimalny czas trwania w godzinach",
       "placeholder": "np. 2"
@@ -1352,11 +1351,11 @@
       "invalidLatitude": "Szerokość geograficzna musi wynosić między -90 a 90",
       "invalidLongitude": "Długość geograficzna musi wynosić między -180 a 180",
       "cityRequired": "Potrzebne jest miasto",
-      "stateRequired": "Potrzebny jest stan",
+      "stateRequired": "Województwo / Miasto jest wymagane",
       "latitudeRequired": "Potrzebna jest szerokość geograficzna",
       "longitudeRequired": "Potrzebna jest długość geograficzna",
-      "capacityRequired": "Potrzebna jest pojemność",
-      "bookingDurationTypeRequired": "Potrzebny jest typ trwania rezerwacji",
+      "capacityRequired": "Pojemność jest wymagana",
+      "bookingDurationTypeRequired": "Czas trwania rezerwacji jest wymagany",
       "bookingDurationRequired": "Potrzebny jest maksymalny czas trwania rezerwacji"
     },
     "toasts": {
