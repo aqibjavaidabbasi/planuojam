@@ -270,7 +270,19 @@
       "noLocation": "Vieta nepasiekiama",
       "messageVendor": "Rašyti tiekėjui",
       "previewBanner": "Tai jūsų skelbimo peržiūra. Kiti vartotojai jo nematys, kol skelbimas nebus paskelbtas.",
-      "recommended": "Rekomenduojami skelbimai"
+      "recommended": "Rekomenduojami skelbimai",
+      "status": {
+        "notFound": "Skelbimas Nerastas",
+        "notFoundDescription": "Skelbimas, kurio ieškote, neegzistuoja arba buvo pašalintas.",
+        "unavailable": "Šis skelbimas nebeprieinamas",
+        "draft": "Šis skelbimas šiuo metu peržiūrimas ir dar neprieinamas",
+        "draftDescription": "Šis skelbimas šiuo metu peržiūrimas ir bus prieinamas, kai bus patvirtintas.",
+        "archived": "Šis skelbimas buvo archyvuotas savininko",
+        "archivedDescription": "Savininkas laikinai pašalino šį skelbimą iš viešojo peržiūrėjimo.",
+        "unavailableDescription": "Šis skelbimas šiuo metu neprieinamas peržiūrai.",
+        "goHome": "Eiti į pagrindinį puslapį",
+        "browseListings": "Peržiūrėti kitus skelbimus"
+      }
     },
     "Hero": {
       "by": "autorius ",

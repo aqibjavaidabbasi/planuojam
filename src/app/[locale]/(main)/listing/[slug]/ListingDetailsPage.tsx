@@ -94,16 +94,15 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
 
   if (!initialListing) notFound();
 
-  const isDraft = initialListing.listingStatus !== 'published';
-  const isOwner = user?.documentId === initialListing.user?.documentId;
-  const showPreviewBanner = isDraft && isOwner;
-
+  // Note: Status checking is now handled by ListingStatusHandler at the page level
+  // This component only renders for published listings or draft listings viewed by owners
+  
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 pt-10">
       <div className="max-w-[1400px] mx-auto">
 
         {/* Preview Banner */}
-        {showPreviewBanner && (
+        {initialListing.listingStatus === 'draft' && user?.documentId === initialListing.user?.documentId && (
           <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-r-lg">
             <div className="flex">
               <div className="shrink-0">

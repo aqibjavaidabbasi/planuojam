@@ -159,7 +159,9 @@ export async function POST(req: Request) {
                 if (bodyModal.includes('event-type')) {
                     //root page
                     targets.push('/')
-                     //event type pages
+                    //just refresh home page, it should revalidate all single types
+                    targets.push(`/${locale}`)
+                    //event type pages
                     eventTypes.forEach((et: { eventType: { slug: string; }; }) => {
                         targets.push(`/${locale}/event-types/${et.eventType.slug}`)
                     })

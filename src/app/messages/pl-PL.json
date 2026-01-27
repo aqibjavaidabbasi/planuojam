@@ -297,7 +297,19 @@
       "noLocation": "Lokalizacja niedostępna",
       "messageVendor": "Napisz do dostawcy",
       "previewBanner": "To jest podgląd Twojego ogłoszenia. Inni użytkownicy nie zobaczą go, dopóki ogłoszenie nie zostanie opublikowane.",
-      "recommended": "Polecane ogłoszenia"
+      "recommended": "Polecane ogłoszenia",
+      "status": {
+        "notFound": "Ogłoszenie Nie Znalezione",
+        "notFoundDescription": "Ogłoszenie, którego szukasz, nie istnieje lub zostało usunięte.",
+        "unavailable": "To ogłoszenie nie jest już dostępne",
+        "draft": "To ogłoszenie jest obecnie weryfikowane i nie jest jeszcze dostępne",
+        "draftDescription": "To ogłoszenie jest obecnie weryfikowane i będzie dostępne po zatwierdzeniu.",
+        "archived": "To ogłoszenie zostało zarchiwizowane przez właściciela",
+        "archivedDescription": "Właściciel tymczasowo usunął to ogłoszenie z publicznego widoku.",
+        "unavailableDescription": "To ogłoszenie jest obecnie niedostępne do obejrzenia.",
+        "goHome": "Przejdź na stronę główną",
+        "browseListings": "Przeglądaj inne ogłoszenia"
+      }
     },
     "Hero": {
       "by": "przez ",

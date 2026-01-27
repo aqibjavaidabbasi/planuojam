@@ -296,7 +296,19 @@
         "sunday": "Pühapäev"
       },
       "previewBanner": "See on teie kuulutuse eelvaade. Teised kasutajad ei näe seda, kuni kuulutus on avaldatud.",
-      "recommended": "Soovitatud kuulutused"
+      "recommended": "Soovitatud kuulutused",
+      "status": {
+        "notFound": "Kuulutust Ei Leitud",
+        "notFoundDescription": "Kuulutust, mida otsite, ei eksisteeri või on see eemaldatud.",
+        "unavailable": "See kuulutus ei ole enam saadaval",
+        "draft": "See kuulutus on hetkel üleväeatusel ja ei ole veel saadaval",
+        "draftDescription": "See kuulutus on hetkel üleväeatusel ja saadaval pärast kinnitamist.",
+        "archived": "Selle kuulutuse on arhiveerinud omanik",
+        "archivedDescription": "Omanik on ajutiselt eemaldanud selle kuulutuse avalikust vaatamisest.",
+        "unavailableDescription": "See kuulutus on hetkel vaatamiseks kättesaamatu.",
+        "goHome": "Mine avalehele",
+        "browseListings": "Sirvi teisi kuulutusi"
+      }
     },
     "Hero": {
       "by": "autor",

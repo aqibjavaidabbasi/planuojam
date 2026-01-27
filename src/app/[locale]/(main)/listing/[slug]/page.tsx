@@ -1,5 +1,6 @@
 import React from 'react'
 import ListingDetailsPage from './ListingDetailsPage'
+import ListingStatusHandler from './ListingStatusHandler'
 import type { Metadata } from 'next'
 import { getSeoMetadata } from '@/lib/getSeoMetadata'
 import { fetchFallbackSeo, resolveSeoForListing } from '@/services/seoApi'
@@ -8,7 +9,12 @@ import { fetchListingBySlug } from '@/services/listing'
 async function ListingDetailPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
   const listing = await fetchListingBySlug(slug, locale);
-  return <ListingDetailsPage initialListing={listing} locale={locale} />;
+  
+  return (
+    <ListingStatusHandler listing={listing} locale={locale}>
+      <ListingDetailsPage initialListing={listing} locale={locale} />
+    </ListingStatusHandler>
+  );
 }
 
 export default ListingDetailPage

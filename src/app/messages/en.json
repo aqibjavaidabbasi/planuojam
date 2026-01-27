@@ -309,7 +309,19 @@
       "noLocation": "Location not available",
       "messageVendor": "Message vendor",
       "previewBanner": "This is a preview of your listing. Other users won't see it until the listing is published.",
-      "recommended": "Recommended listings"
+      "recommended": "Recommended listings",
+      "status": {
+        "notFound": "Listing Not Found",
+        "notFoundDescription": "The listing you're looking for doesn't exist or has been removed.",
+        "unavailable": "This listing is no longer available",
+        "draft": "This listing is currently being reviewed and is not yet available",
+        "draftDescription": "This listing is currently being reviewed and will be available once it's approved.",
+        "archived": "This listing has been archived by the owner",
+        "archivedDescription": "The owner has temporarily removed this listing from public view.",
+        "unavailableDescription": "This listing is currently not available for viewing.",
+        "goHome": "Go to Homepage",
+        "browseListings": "Browse Other Listings"
+      }
     },
     "Hero": {
       "by": "by ",
