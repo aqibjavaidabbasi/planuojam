@@ -32,12 +32,12 @@ function Footer({ footerData }: { footerData: footer }) {
             <div className='flex justify-start md:justify-between flex-col md:flex-row max-w-screen lg:max-w-[1700px] mx-auto'>
                 {footerData?.footerlinkSection.map(section => (
                     <div key={section.id} className='py-3'>
-                        <p className='text-white font-semibold mb-2 capitalize'>{section.title}</p>
+                        <p className='text-white font-semibold mb-2'>{section.title}</p>
                         {/* categories */}
                         {section.linksType.toLowerCase() === 'categories' && <div className='flex flex-col gap-1'>
                             {section.categories.map(item => (
                                 <Link 
-                                    className='hover:underline capitalize'
+                                    className='hover:underline'
                                     href={getServiceUrl(item)} key={item.id}>
                                     {item.name}
                                 </Link>
@@ -48,7 +48,7 @@ function Footer({ footerData }: { footerData: footer }) {
                         {section.linksType.toLowerCase() === 'events' && <div className='flex flex-col gap-1'>
                             {section.event_types.map(item => (
                                 <Link 
-                                    className='hover:underline capitalize'
+                                    className='hover:underline'
                                     href={getEventTypeUrl(item)} key={item.id}>
                                     {item.eventName}
                                 </Link>
@@ -58,10 +58,10 @@ function Footer({ footerData }: { footerData: footer }) {
 
                         {/* page */}
                         {section.linksType.toLowerCase() === 'page' && <div className='flex flex-col gap-1'>
-                            {section.pages.map(item => (<Link className='hover:underline capitalize' href={item.documentId === IMP_IDS.privacy ? '/privacy-policy' : item.documentId === IMP_IDS.tos ? '/terms-of-service' : item.documentId === IMP_IDS.about ? '/about-us' : '/'} key={item.documentId}>
+                            {section.pages.map(item => (<Link className='hover:underline' href={item.documentId === IMP_IDS.privacy ? '/privacy-policy' : item.documentId === IMP_IDS.tos ? '/terms-of-service' : item.documentId === IMP_IDS.about ? '/about-us' : '/'} key={item.documentId}>
                                 {item.title}
                             </Link>))}
-                            <Link className='hover:underline capitalize' href={'/contact-us'} >{t('contact')}</Link>
+                            <Link className='hover:underline' href={'/contact-us'} >{t('contact')}</Link>
                         </div>}
                     </div>))}
             </div>
@@ -70,7 +70,7 @@ function Footer({ footerData }: { footerData: footer }) {
                     {footerData?.extraLinks.pages.map((link, idx, arr) => (
                         <span key={link.documentId} className='flex items-center gap-2'>
                             <Link
-                                className='hover:underline capitalize'
+                                className='hover:underline'
                                 href={link.documentId === IMP_IDS.privacy ? '/privacy-policy' : link.documentId === IMP_IDS.tos ? '/terms-of-service' : link.documentId === IMP_IDS.about ? '/about-us' : '/'}>
                                 {link.title}
                             </Link>

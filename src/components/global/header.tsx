@@ -224,7 +224,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                   <Link
                     key={navItem.id}
                     href={href}
-                    className={`cursor-pointer px-3 py-2 rounded-sm transition-colors text-sm md:text-base capitalize ${isActive
+                    className={`cursor-pointer px-3 py-2 rounded-sm transition-colors text-sm md:text-base ${isActive
                       ? "bg-primary text-white"
                       : "text-primary bg-white hover:bg-primary hover:text-white"
                       }`}
@@ -297,7 +297,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                             //close mobile menu
                             setMobileNavOpen(false)
                           }}
-                          className={`cursor-pointer px-2.5 py-1.5 rounded-sm transition-colors text-primary capitalize bg-white hover:bg-primary hover:text-white ${isActive
+                          className={`cursor-pointer px-2.5 py-1.5 rounded-sm transition-colors text-primary bg-white hover:bg-primary hover:text-white ${isActive
                             ? "bg-primary"
                             : ""
                             }`}
@@ -395,7 +395,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
       {Array.isArray(headerData?.eventTypes) &&
         headerData.eventTypes.length > 0 && (
           <div className="hidden md:block w-full bg-gray-50 border-t border-b border-border px-2.5 md:px-4 py-2 z-20 overflow-x-auto">
-            <div className="max-w-screen lg:max-w-[1700px] mx-auto flex flex-wrap items-center gap-1 md:gap-2 capitalize">
+            <div className="max-w-screen lg:max-w-[1700px] mx-auto flex flex-wrap items-center gap-1 md:gap-2">
               {headerData.eventTypes.map(({ id, eventType }) => {
                 const isActive = isEventTypeActive(eventType.documentId);
                 return (
