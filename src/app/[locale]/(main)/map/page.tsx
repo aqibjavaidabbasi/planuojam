@@ -7,7 +7,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const t = await getTranslations({ locale, namespace: 'Map' });
   
   return {
-    title: t('title', { default: 'Interactive Map' }),
+    title: 'Planuojam',
     description: t('description', { default: 'Explore venues and services on our interactive map' }),
     robots: {
       index: true,
