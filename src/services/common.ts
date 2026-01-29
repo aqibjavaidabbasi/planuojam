@@ -7,29 +7,30 @@ async function fetchWithLocaleFallback(
     resource: string,
     populate: Record<string, unknown>,
     filters?: Record<string, unknown>,
-    locale?: string
+    locale?: string,
+    additionalParams?: Record<string, unknown>
 ) {
     // 1) Try the requested locale
     if (locale) {
-        const queryWithLocale = createQuery(populate, { locale });
+        const queryWithLocale = createQuery(populate, { locale, ...additionalParams });
         const resLocale = await fetchAPI(resource, queryWithLocale, filters);
         if (Array.isArray(resLocale) ? resLocale.length : !!resLocale) return resLocale;
     }
 
     // 2) Fallback to DEFAULT_LOCALE (if different from requested)
     if (!locale || locale !== DEFAULT_LOCALE) {
-        const queryDefault = createQuery(populate, { locale: DEFAULT_LOCALE });
+        const queryDefault = createQuery(populate, { locale: DEFAULT_LOCALE, ...additionalParams });
         const resDefault = await fetchAPI(resource, queryDefault, filters);
         if (Array.isArray(resDefault) ? resDefault.length : !!resDefault) return resDefault;
     }
 
     // 3) Final fallback: no locale constraint
-    const queryBase = createQuery(populate);
+    const queryBase = createQuery(populate, additionalParams);
     const resBase = await fetchAPI(resource, queryBase, filters);
     return resBase;
 }
 
-export async function fetchChildCategories(docId: string, locale?: string) {
+export async function fetchChildCategories(docId: string, locale?: string, pageSize: number = 100) {
     const filter = {
         filters: {
             parentCategory: {
@@ -45,7 +46,14 @@ export async function fetchChildCategories(docId: string, locale?: string) {
             populate: '*'
         }
     }
-    return await fetchWithLocaleFallback('categories', populate, filter, locale);
+    
+    // Add pagination to fetch all child categories (bypass 25-item limit)
+    const additionalParams = {
+        'pagination[page]': 1,
+        'pagination[pageSize]': pageSize, // Configurable limit to get more categories
+    }
+    
+    return await fetchWithLocaleFallback('categories', populate, filter, locale, additionalParams);
 }
 export async function fetchParentCategories(locale?: string) {
     const filter = {
