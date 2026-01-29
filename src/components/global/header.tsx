@@ -69,8 +69,8 @@ function Header({ headerData }: { headerData: HeaderType }) {
 
     // Check if we already have liked listings and they were fetched recently (within 5 minutes)
     const hasRecentData = likedListings.items.length > 0 &&
-                         likedListings.lastFetched &&
-                         (Date.now() - likedListings.lastFetched) < 300000; // 5 minutes
+      likedListings.lastFetched &&
+      (Date.now() - likedListings.lastFetched) < 300000; // 5 minutes
 
     // Only fetch if we don't have recent data
     if (!hasRecentData) {
@@ -160,34 +160,34 @@ function Header({ headerData }: { headerData: HeaderType }) {
   };
 
   function getServiceUrl(docId: string) {
-    const category = headerData?.nav.categories.find((cat) => cat.documentId === docId);
+    const category = headerData?.nav.categories?.filter(Boolean)?.find((cat) => cat.documentId === docId);
     if (!category) return;
     if (category.locale === 'en') return `/service/${category.slug}`;
     if (category.locale !== 'en') {
-      const enEntry = category.localizations.find(loc => loc.locale === 'en');
+      const enEntry = category.localizations?.filter(Boolean)?.find(loc => loc.locale === 'en');
       return enEntry ? `/service/${enEntry.slug}` : `/service/${category.slug}`;
     }
   }
 
 
   function getEventTypeUrl(docId: string) {
-    const eventType = headerData?.eventTypes.find((et) => et.eventType.documentId === docId);
+    const eventType = headerData?.eventTypes?.filter(({ eventType }) => Boolean(eventType))?.find((et) => et.eventType.documentId === docId);
     if (!eventType) return;
     if (eventType.eventType.locale === 'en') return `/event-types/${eventType.eventType.slug}`;
     if (eventType.eventType.locale !== 'en') {
-      const enEntry = eventType.eventType.localizations.find(loc => loc.locale === 'en');
+      const enEntry = eventType.eventType.localizations?.filter(Boolean)?.find(loc => loc.locale === 'en');
       return enEntry ? `/event-types/${enEntry.slug}` : `/event-types/${eventType.eventType.slug}`;
     }
   }
 
   const isEventTypeActive = (docId: string) => {
     let active = false;
-    const eventType = headerData?.eventTypes.find((et) => et.eventType.documentId === docId);
+    const eventType = headerData?.eventTypes?.filter(({ eventType }) => Boolean(eventType))?.find((et) => et.eventType.documentId === docId);
     if (!eventType) return false;
     // Active when on the event type landing page
     if (eventType.eventType.locale === 'en') active = pathname.endsWith(`/event-types/${eventType.eventType.slug}`);
     if (eventType.eventType.locale !== 'en') {
-      const enEntry = eventType.eventType.localizations.find(loc => loc.locale === 'en');
+      const enEntry = eventType.eventType.localizations?.filter(Boolean)?.find(loc => loc.locale === 'en');
       if (enEntry ? pathname.endsWith(`/event-types/${enEntry.slug}`) : pathname.endsWith(`/event-types/${eventType.eventType.slug}`)) active = true;
     }
 
@@ -195,7 +195,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
     if (eventTypeQuery && pathname.includes('/service/')) {
       const q = decodeURIComponent(eventTypeQuery);
       const nameLocal = eventType.eventType.eventName;
-      const enLoc = eventType.eventType.locale === 'en' ? eventType.eventType : eventType.eventType.localizations.find(l => l.locale === 'en');
+      const enLoc = eventType.eventType.locale === 'en' ? eventType.eventType : eventType.eventType.localizations?.filter(Boolean)?.find(l => l.locale === 'en');
       const nameEn = enLoc?.eventName || "";
       if (q && (q === nameLocal || q === nameEn || nameLocal.includes(q) || nameEn.includes(q))) active = true;
     }
@@ -216,7 +216,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-3 md:ml-10">
-              {headerData?.nav.categories.map((navItem) => {
+              {headerData?.nav.categories?.filter(Boolean).map((navItem) => {
                 const href = getServiceUrl(navItem.documentId) as string;
                 const isActive = pathname.endsWith(href);
 
@@ -287,7 +287,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
                 <div className="flex-1 overflow-y-auto p-4 md:p-5 pt-0">
                   <nav className="flex flex-col gap-1">
                     {/* Main Navigation */}
-                    {headerData?.nav.categories.map((navItem) => {
+                    {headerData?.nav.categories?.filter(Boolean).map((navItem) => {
                       const href = getServiceUrl(navItem.documentId) as string;
                       const isActive = pathname.endsWith(href);
                       return (
@@ -310,13 +310,13 @@ function Header({ headerData }: { headerData: HeaderType }) {
 
                     {/* Event Types Section */}
                     {Array.isArray(headerData?.eventTypes) &&
-                      headerData.eventTypes.length > 0 && (
+                      headerData.eventTypes?.filter(({ eventType }) => Boolean(eventType)).length > 0 && (
                         <>
                           <hr className="my-3 border-gray-300" />
                           <p className="text-xs text-gray-500 uppercase font-semibold tracking-wide mb-1">
                             {tHeader('eventTypes')}
                           </p>
-                          {headerData.eventTypes.map(({ id, eventType }) => {
+                          {headerData.eventTypes?.filter(({ eventType }) => Boolean(eventType)).map(({ id, eventType }) => {
                             const isActive = isEventTypeActive(eventType.documentId);
                             return (
                               <Link
@@ -393,10 +393,10 @@ function Header({ headerData }: { headerData: HeaderType }) {
       </div>
       {/* Subnav Bar: Desktop only */}
       {Array.isArray(headerData?.eventTypes) &&
-        headerData.eventTypes.length > 0 && (
+        headerData.eventTypes?.filter(({ eventType }) => Boolean(eventType)).length > 0 && (
           <div className="hidden md:block w-full bg-gray-50 border-t border-b border-border px-2.5 md:px-4 py-2 z-20 overflow-x-auto">
             <div className="max-w-screen lg:max-w-[1700px] mx-auto flex flex-wrap items-center gap-1 md:gap-2">
-              {headerData.eventTypes.map(({ id, eventType }) => {
+              {headerData.eventTypes?.filter(({ eventType }) => Boolean(eventType)).map(({ id, eventType }) => {
                 const isActive = isEventTypeActive(eventType.documentId);
                 return (
                   <Link
