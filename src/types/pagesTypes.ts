@@ -395,12 +395,14 @@ export interface category {
   name: string;
   parentCategory: category;
   slug: string;
+  serviceType?: 'vendor' | 'venue';
   localizations: {
     id: number;
     locale: string;
     name: string;
     documentId: string;
     slug: string;
+    serviceType?: 'vendor' | 'venue';
   }[]
 }
 

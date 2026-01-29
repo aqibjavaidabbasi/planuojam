@@ -29,17 +29,20 @@ export default async function ServicePage({ params, searchParams }: { params: Pr
     appliedFilters.eventTypes = { eventName: { $eq: eventTypeFromUrl } };
   }
 
+  // Fetch parent categories early to find the matching service type
+  const parents = await fetchParentCategories('en');
+  const parent = Array.isArray(parents) ? parents.find((p: category) => p?.slug === service) : undefined;
+  const serviceType = parent?.serviceType || 'vendor'; // Fallback to vendor
+
   const [initialResp, initialCategoryNames] = await Promise.all([
     fetchSortedListingsWithMeta(
-      service as 'vendor' | 'venue',
+      serviceType,
       appliedFilters,
       locale,
       { page: 1, pageSize: 12 }
     ),
     (async () => {
       try {
-        const parents = await fetchParentCategories('en');
-        const parent = Array.isArray(parents) ? parents.find((p: category) => p?.slug === service) : undefined;
         if (!parent?.documentId) return [] as string[];
         const cats = await fetchChildCategories(parent.documentId, locale);
         return Array.isArray(cats) ? (cats as Array<Pick<category, 'name'>>).map((c) => c.name).filter(Boolean) as string[] : [];
@@ -52,6 +55,7 @@ export default async function ServicePage({ params, searchParams }: { params: Pr
   return (
     <ClientListingWrapper
       service={service}
+      serviceType={serviceType}
       initialList={initialResp?.data || []}
       initialFilters={initialFilters}
       initialCategoryNames={initialCategoryNames}

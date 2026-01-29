@@ -14,7 +14,8 @@ function CategoryCard({category}: {category: category}) {
      const cat = getServiceCategoryByDocId(category.parentCategory.documentId);
      function getUrlPath(){
         if(!cat) return '/';
-        return `/service/${encodeURIComponent(cat.name.trim())}?cat=${encodeURIComponent(category.name.trim())}`;
+        // Use slug instead of name for more robust URL generation
+        return `/service/${encodeURIComponent(cat.slug)}?cat=${encodeURIComponent(category.slug.trim())}`;
      }
   return (
     <div

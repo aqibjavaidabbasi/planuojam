@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState, useCallback } from "react"
 import dynamic from "next/dynamic";
 import { useFieldArray, useForm } from "react-hook-form"
 import Input from "../../custom/Input"
@@ -37,7 +37,19 @@ export type VenueForm = {
 }
 
 export default function VendorVenueSection({ listing, onSaved }: { listing: ListingItem; onSaved?: () => void }) {
-  const isVendor = useMemo(() => (listing.type || "vendor").toLowerCase() === "vendor", [listing.type])
+  // Use a more robust service type detection
+  // First try to get from category serviceType, fallback to listing type
+  const getServiceType = useCallback((): 'vendor' | 'venue' => {
+    // Try to get serviceType from the listing's category
+    if (listing.category?.serviceType) {
+      return listing.category.serviceType as 'vendor' | 'venue';
+    }
+    // Fallback to listing.type with validation
+    const type = (listing.type || "vendor").toLowerCase().trim();
+    return type === 'venue' ? 'venue' : 'vendor';
+  }, [listing.type, listing.category?.serviceType]);
+  
+  const isVendor = useMemo(() => getServiceType() === 'vendor', [getServiceType])
   const [submitting, setSubmitting] = useState(false)
   const { cities } = useCities()
   const { states } = useStates()

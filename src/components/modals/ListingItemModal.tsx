@@ -216,7 +216,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
   // Derive service type from the authenticated user; keep both raw and normalized forms
   const serviceTypeRaw = user?.serviceType || ''
   const serviceType = (serviceTypeRaw || 'vendor').toLowerCase() as 'vendor' | 'venue'
-  const serviceDocumentId = parentCategories.find((category) => category.name.trim() === serviceTypeRaw)?.documentId
+  const serviceDocumentId = parentCategories.find((category) => category.serviceType === serviceType)?.documentId
 
   // Map picker modal states
   const [vendorPickerIndex, setVendorPickerIndex] = useState<number | null>(null)

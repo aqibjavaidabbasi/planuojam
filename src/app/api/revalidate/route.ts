@@ -179,6 +179,9 @@ export async function POST(req: Request) {
                     })
                     //for hot deal page
                     targets.push(`/${locale}/hot-deal`)
+
+                    //for map page
+                    targets.push(`/${locale}/map`)
                 }
                 if (bodyModal.includes('city') || bodyModal.includes('country') || bodyModal.includes('state')) {
                     //root page

@@ -14,15 +14,9 @@ interface ParentCategoriesContextProps {
   parentBySlug: Record<string, category | undefined>;
   getServiceTypeFromParentId: (documentId: string) => ServiceType | undefined;
   getServiceTypeFromSlug: (slug: string) => ServiceType | undefined;
-  VENUE_DOC_ID: string;
-  VENDOR_DOC_ID: string;
   getServiceCategoryBySlug: (slug: string) => category | undefined;
   getServiceCategoryByDocId: (docId: string) => category | undefined;
 }
-
-const VENUE_DOC_ID = "cvf586kao1521ew8lb1vl540";
-const VENDOR_DOC_ID = "no20d9ryuyfvtu6dhsqxfej7";
-
 
 const ParentCategoriesContext = createContext<ParentCategoriesContextProps | undefined>(undefined);
 
@@ -31,12 +25,6 @@ const ParentCategoriesProvider: React.FC<React.PropsWithChildren<object>> = ({ c
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const locale = useLocale();
-
-  // Provided by user: stable document IDs across locales
-  const SERVICE_TYPE_BY_PARENT_ID: Record<string, ServiceType> = {
-    VENUE_DOC_ID: 'venue',
-    VENDOR_DOC_ID: 'vendor',
-  };
 
   useEffect(() => {
     const fetchParentCategoriesAsync = async () => {
@@ -62,13 +50,13 @@ const ParentCategoriesProvider: React.FC<React.PropsWithChildren<object>> = ({ c
   );
 
   const getServiceTypeFromParentId = (documentId: string): ServiceType | undefined =>{
-   return documentId === VENUE_DOC_ID ? 'venue' : documentId === VENDOR_DOC_ID ? 'vendor' : undefined;
+    const category = parentCategories.find(cat => cat.documentId === documentId);
+    return category?.serviceType as ServiceType | undefined;
   }
 
   const getServiceTypeFromSlug = (slug: string): ServiceType | undefined => {
     const parent = parentBySlug[slug];
-    if (!parent?.documentId) return undefined;
-    return SERVICE_TYPE_BY_PARENT_ID[parent.documentId];
+    return parent?.serviceType as ServiceType | undefined;
   };
 
   const getServiceCategoryBySlug = (slug: string) : category | undefined =>{
@@ -87,8 +75,6 @@ const ParentCategoriesProvider: React.FC<React.PropsWithChildren<object>> = ({ c
       parentBySlug, 
       getServiceTypeFromParentId, 
       getServiceTypeFromSlug, 
-      VENUE_DOC_ID, 
-      VENDOR_DOC_ID, 
       getServiceCategoryBySlug, 
       getServiceCategoryByDocId 
     }}>

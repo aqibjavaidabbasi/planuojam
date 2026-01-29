@@ -12,21 +12,25 @@ import { useLocale, useTranslations } from "next-intl";
 import { createLocationFromListing } from "@/utils/locationFactory";
 import { fetchSortedListingsWithMeta } from "@/services/listing";
 import LoadMoreButton from "@/components/custom/LoadMoreButton";
+import { useParentCategories } from "@/context/ParentCategoriesContext";
 
 export type ListingWrapperProps = {
   service: string;
+  serviceType: 'vendor' | 'venue';
   initialList?: ListingItem[];
   initialFilters?: Record<string, string>;
   initialCategoryNames?: string[];
   initialPagination?: { page: number; pageSize: number; pageCount: number; total: number };
 };
 
-function ClientListingWrapper({ service, initialList, initialFilters: initialFiltersFromServer, initialCategoryNames, initialPagination }: ListingWrapperProps) {
+function ClientListingWrapper({ service, serviceType, initialList, initialFilters: initialFiltersFromServer, initialCategoryNames, initialPagination }: ListingWrapperProps) {
   const [list, setList] = useState<ListingItem[]>(initialList || []);
   const { localizedEventTypes } = useEventTypes();
+  const { parentCategories } = useParentCategories(); // Get parent categories for robust filtering
   const searchParams = useSearchParams();
   const locale = useLocale();
   const categoryNames = useMemo(() => initialCategoryNames || [], [initialCategoryNames]);
+  
   // Get translations based on service type
   const vendorsT = useTranslations("Vendors");
   const venuesT = useTranslations("Venues");
@@ -62,15 +66,15 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
 
   // Helper function to get the correct translation based on service type
   const getTranslation = useCallback((key: string) => {
-    return service === "vendor" ? vendorsT(key) : venuesT(key);
-  }, [service, vendorsT, venuesT]);
+    return serviceType === "vendor" ? vendorsT(key) : venuesT(key);
+  }, [serviceType, vendorsT, venuesT]);
 
   const placeholders = useMemo(() => ({
-    chooseCategory: service === "vendor" ? "filters.chooseVendor" : "filters.chooseVenue",
+    chooseCategory: serviceType === "vendor" ? "filters.chooseVendor" : "filters.chooseVenue",
     selectPricing: "filters.selectPricing",
-    chooseEventType: service === "vendor" ? "filters.pickEventType" : "filters.chooseEventType",
-    emptyList: service === "vendor" ? "noVendorsFound" : "noVenuesFound",
-  }), [service]);
+    chooseEventType: serviceType === "vendor" ? "filters.pickEventType" : "filters.chooseEventType",
+    emptyList: serviceType === "vendor" ? "noVendorsFound" : "noVenuesFound",
+  }), [serviceType]);
 
   // Small wrapper to animate items when they are newly appended
   const AnimatedListItem: React.FC<{ isNew: boolean; children: React.ReactNode }> = ({ isNew, children }) => {
@@ -95,7 +99,7 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
       const usedPage = filtersChanged ? 1 : page;
       const usedPageSize = pageSize;
       const resp: PaginatedResp = await fetchSortedListingsWithMeta(
-        service as 'vendor' | 'venue',
+        serviceType,
         appliedFilters,
         locale,
         { page: usedPage, pageSize: usedPageSize }
@@ -111,7 +115,7 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
       currentFiltersRef.current = nextFilters;
       return Array.isArray(resp.data) ? resp.data : [];
     },
-    [service, locale, page, pageSize]
+    [serviceType, locale, page, pageSize]
   );
 
   const translatedPricingFilters = useMemo(
@@ -157,11 +161,25 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
       const filters = {} as Record<string, unknown>;
       async function fetchItems() {
         if (categoryFromUrl) {
-          filters.category = {
-            name: {
-              $eq: categoryFromUrl,
-            },
-          };
+          // Find the category by name or slug, then filter by documentId for robustness
+          const targetCategory = parentCategories.find(cat => 
+            cat.name === categoryFromUrl || cat.slug === categoryFromUrl
+          );
+          
+          if (targetCategory) {
+            filters.category = {
+              documentId: {
+                $eq: targetCategory.documentId,
+              },
+            };
+          } else {
+            // Fallback to name filtering if category not found in parent categories
+            filters.category = {
+              name: {
+                $eq: categoryFromUrl,
+              },
+            };
+          }
         }
         if (eventTypeFromUrl) {
           filters.eventTypes = {
@@ -179,7 +197,7 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
       }
       fetchItems();
     },
-    [service, categoryFromUrl, eventTypeFromUrl, fetcher, locale, initialList, initialFiltersFromServer, initialPagination]
+    [service, categoryFromUrl, eventTypeFromUrl, fetcher, locale, initialList, initialFiltersFromServer, initialPagination, parentCategories]
   );
 
   // Derive locations from current list using the factory
@@ -213,7 +231,7 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
     <div className="py-2">
       <FiltersAndMap
         filters={filters}
-        type={service as 'vendor' | 'venue'}
+        type={serviceType}
         setList={setList}
         initialFilterValues={initialFilters}
         locations={locations}
@@ -239,7 +257,7 @@ function ClientListingWrapper({ service, initialList, initialFilters: initialFil
               try {
                 const nextPage = (Number.isFinite(page as number) ? page : 1) + 1;
                 const resp = await fetchSortedListingsWithMeta(
-                  service as 'vendor' | 'venue',
+                  serviceType,
                   currentFilters,
                   locale,
                   { page: nextPage, pageSize }
