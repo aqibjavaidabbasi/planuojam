@@ -10,6 +10,26 @@ import { ListingItem } from '@/types/pagesTypes';
 import { useTranslations } from 'next-intl';
 import Input from '../custom/Input';
 
+type FilterValue = {
+    $eq?: string | number;
+    $gt?: number;
+    $containsi?: string;
+    $null?: boolean;
+};
+
+type NestedFilter = {
+    [key: string]: FilterValue | NestedFilter;
+};
+
+type FilterObject = {
+    [key: string]: FilterValue | NestedFilter | NestedFilter[] | undefined;
+    category?: NestedFilter;
+    eventTypes?: NestedFilter;
+    price?: FilterValue;
+    $or?: NestedFilter[];
+    $and?: NestedFilter[];
+};
+
 
 type FilterConfig = {
     name: string;
@@ -28,14 +48,14 @@ interface FiltersAndMapProps {
 
 const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, initialFilterValues, locations, fetcher }) => {
     const [tempFilterValues, setTempFilterValues] = useState<Record<string, string>>({});
-    const [appliedFilters, setAppliedFilters] = useState({});
+    const [appliedFilters, setAppliedFilters] = useState<FilterObject>({});
     const [isLoading, setIsLoading] = useState(false);
     const [keyword, setKeyword] = useState<string>('');
     const [isPending, startTransition] = useTransition();
 
     // Normalize simple initial filter values into Strapi filter object shape
-    const normalizeInitialFilters = (vals: Record<string, string>): Record<string, unknown> => {
-        const out: Record<string, unknown> = {};
+    const normalizeInitialFilters = (vals: Record<string, string>): FilterObject => {
+        const out: FilterObject = {};
         Object.entries(vals).forEach(([name, value]) => {
             const key = name.toLowerCase();
             if (key.includes('category')) {
@@ -51,7 +71,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
                 }
             } else {
                 // Fallback: pass as-is (string equality)
-                out[name] = { $eq: value } as unknown;
+                out[name] = { $eq: value } as NestedFilter;
             }
         });
         return out;
@@ -67,23 +87,50 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
     }, [initialFilterValues]);
 
     const handleFilterChange = (name: string, value: string) => {
+        // Remove leading/trailing whitespace and check if empty
+        const trimmedValue = value.trim();
+        
+        // If value is empty, remove the filter entirely
+        if (!trimmedValue) {
+            setAppliedFilters(prev => {
+                const newFilters = { ...prev };
+                // Remove the appropriate filter based on the field name
+                if (name.toLowerCase().includes('category')) {
+                    delete newFilters.category;
+                } else if (name.toLowerCase().includes('eventtype')) {
+                    delete newFilters.eventTypes;
+                } else if (name.toLowerCase().includes('price')) {
+                    delete newFilters.price;
+                    delete newFilters.$or; // Remove price-related $or filter as well
+                }
+                return newFilters;
+            });
+            
+            setTempFilterValues((prev) => ({ ...prev, [name]: '' }));
+            return;
+        }
 
         // pricing filter setup
         if (name.toLowerCase().includes('price')) {
-            if (value.toLowerCase().includes('without')) {
-                setAppliedFilters({
+            if (trimmedValue.toLowerCase().includes('without')) {
+                setAppliedFilters(prev => ({
+                    ...prev,
                     $or: [
                         { price: { $eq: 0 } },
                         { price: { $null: true } }
                     ]
-                });
-            } else {
-                setAppliedFilters(prev => ({
-                    ...prev,
-                    price: {
-                        $gt: 0
-                    }
                 }));
+            } else {
+                setAppliedFilters(prev => {
+                    const newFilters = { ...prev };
+                    delete newFilters.$or; // Remove any existing $or filter
+                    return {
+                        ...newFilters,
+                        price: {
+                            $gt: 0
+                        }
+                    };
+                });
             }
         }
         //category filter setup
@@ -92,7 +139,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
                 ...prev,
                 category: {
                     name: {
-                        $eq: value,
+                        $eq: trimmedValue,
                     },
                 }
             }))
@@ -103,7 +150,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
                 ...prev,
                 eventTypes: {
                     eventName: {
-                        $eq: value,
+                        $eq: trimmedValue,
                     },
                 }
             }))
@@ -139,7 +186,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
         if (initialFilterValues) {
             setTempFilterValues(initialFilterValues);
             const normalized = normalizeInitialFilters(initialFilterValues);
-            setAppliedFilters(normalized as Record<string, unknown>);
+            setAppliedFilters(normalized);
             res = fetcher ? await fetcher(normalized) : await fetchListings(type, normalized);
         } else {
             setTempFilterValues({});
