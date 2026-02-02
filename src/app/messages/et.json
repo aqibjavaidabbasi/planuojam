@@ -601,6 +601,7 @@
       "cropping": "Lõikamine..."
     },
     "NoDataCard": {
+      "noDataFound": "Andmeid ei leitud",
       "expandSearchHint": "Proovi laiendada otsinguraadiust või vali teine asukoht."
     },
     "VendorCard": {
@@ -639,6 +640,7 @@
       "et": "Eesti"
     },
     "Header": {
+      "allServices": "Kõik teenused",
       "eventTypes": "Ürituse tüübid",
       "openNav": "Ava navigeerimismenüü",
       "closeNav": "Sule navigeerimismenüü"
@@ -714,7 +716,8 @@
         "noImage": "Palun laadige üles vähemalt üks pilt",
         "invalidServiceType": "Teil pole selle kuulutuse loomiseks õigusi",
         "addressRequired": "Aadress on kohustuslik kohtade jaoks (venue)",
-        "addressInvalid": "Vale aadressi vorming"
+        "addressInvalid": "Vale aadressi vorming",
+        "categoryRequired": "Kategooria on kohustuslik"
       },
       "toasts": {
         "created": "Kuulutus on edukalt loodud",

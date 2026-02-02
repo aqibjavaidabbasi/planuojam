@@ -433,6 +433,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
     try {
       const payload = getValues()
       
+      // Validate category is selected
+      if (!selectedCategory) {
+        setError(t('errors.categoryRequired'))
+        return
+      }
+      
       // Validate address for venues
       if (!isVendor && (!payload.listingItem?.[0]?.location?.address || payload.listingItem[0].location.address.trim() === '')) {
         setError(t('errors.addressRequired'))
@@ -1369,6 +1375,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCategory(e.target.value)}
               label={t('fields.chooseCategory.label')}
               placeholder={t('fields.chooseCategory.placeholder')}
+              required
             />
             <ErrorMessage error={errors.category} />
           </div>

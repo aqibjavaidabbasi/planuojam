@@ -7,6 +7,7 @@ import LoadMoreButton from "@/components/custom/LoadMoreButton";
 import React, { useCallback, useEffect, useState } from "react";
 import { DynamicBlocks, ListingItem, TitleDescriptionBlock } from "@/types/pagesTypes";
 import { fetchPromotedListingsPerEventsWithMeta } from "@/services/listing";
+import { useTranslations } from "next-intl";
 
 type Props = {
   eventBlocks: DynamicBlocks[];
@@ -31,6 +32,7 @@ function ClientEventTypeWrapper({
   eventTypeId,
   locale
 }: Props) {
+  const t = useTranslations("NoDataCard");
   const eventBlock = Array.isArray(eventBlocks) ? eventBlocks : [];
 
   // derived states for better data management
@@ -180,7 +182,7 @@ function ClientEventTypeWrapper({
               );
             })
           ) : (
-            <NoDataCard>No Data Found</NoDataCard>
+            <NoDataCard>{t("noDataFound")}</NoDataCard>
           )}
         </div>
         {venueListings.length < (venueTotal || 0) && (
@@ -212,7 +214,7 @@ function ClientEventTypeWrapper({
               );
             })
           ) : (
-            <NoDataCard>No Data Found</NoDataCard>
+            <NoDataCard>{t("noDataFound")}</NoDataCard>
           )}
         </div>
         {vendorListings.length < (vendorTotal || 0) && (

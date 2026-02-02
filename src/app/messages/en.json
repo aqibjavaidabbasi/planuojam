@@ -592,6 +592,7 @@
       "cropping": "Cropping..."
     },
     "NoDataCard": {
+      "noDataFound": "No Data Found",
       "expandSearchHint": "Try expanding your search radius or check different locations."
     },
     "VendorCard": {
@@ -630,6 +631,7 @@
       "et": "Estonian"
     },
     "Header": {
+      "allServices": "All Services",
       "eventTypes": "Event Types",
       "openNav": "Open navigation menu",
       "closeNav": "Close navigation menu"
@@ -696,7 +698,8 @@
         "noImage": "Please upload at least one image",
         "invalidServiceType": "You do not have permissions to create this listing",
         "addressRequired": "Address is required for venues",
-        "addressInvalid": "Invalid address format"
+        "addressInvalid": "Invalid address format",
+        "categoryRequired": "Category is required"
       },
       "toasts": {
         "created": "Listing Created Successfully",

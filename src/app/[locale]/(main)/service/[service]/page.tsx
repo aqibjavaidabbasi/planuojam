@@ -5,10 +5,16 @@ import type { Metadata } from 'next'
 import { getSeoMetadata } from '@/lib/getSeoMetadata'
 import { fetchFallbackSeo, fetchPageSeoBySlug, resolveSeoByUrl } from '@/services/seoApi'
 import { fetchSortedListingsWithMeta } from '@/services/listing'
-import { fetchChildCategories, fetchParentCategories } from '@/services/common'
+import { fetchChildCategories, fetchParentCategories, fetchAllChildCategories } from '@/services/common'
 import type { category } from '@/types/pagesTypes'
 
-export default async function ServicePage({ params, searchParams }: { params: Promise<{ locale?: string; service: string }>, searchParams?: Promise<Record<string, string | string[]>> }) {
+export default async function ServicePage({ 
+  params, 
+  searchParams 
+}: { 
+  params: Promise<{ locale?: string; service: string }>, 
+  searchParams?: Promise<Record<string, string | string[]>> 
+}) {
   const { service, locale } = await params;
   const sp = (await searchParams) as Record<string, string | string[]> | undefined;
 
@@ -32,7 +38,11 @@ export default async function ServicePage({ params, searchParams }: { params: Pr
   // Fetch parent categories early to find the matching service type
   const parents = await fetchParentCategories('en');
   const parent = Array.isArray(parents) ? parents.find((p: category) => p?.slug === service) : undefined;
-  const serviceType = parent?.serviceType || 'vendor'; // Fallback to vendor
+  let serviceType = parent?.serviceType;
+
+  if (service === 'all') {
+    serviceType = undefined;
+  }
 
   const [initialResp, initialCategoryNames] = await Promise.all([
     fetchSortedListingsWithMeta(
@@ -43,9 +53,17 @@ export default async function ServicePage({ params, searchParams }: { params: Pr
     ),
     (async () => {
       try {
-        if (!parent?.documentId) return [] as string[];
-        const cats = await fetchChildCategories(parent.documentId, locale);
-        return Array.isArray(cats) ? (cats as Array<Pick<category, 'name'>>).map((c) => c.name).filter(Boolean) as string[] : [];
+        if (service === 'all') {
+          // Fetch all child categories when service is 'all'
+          const cats = await fetchAllChildCategories(locale);
+          return Array.isArray(cats) ? (cats as Array<Pick<category, 'name'>>).map((c) => c.name).filter(Boolean) as string[] : [];
+        } else if (!parent?.documentId) {
+          return [] as string[];
+        } else {
+          // Fetch child categories for specific parent category
+          const cats = await fetchChildCategories(parent.documentId, locale);
+          return Array.isArray(cats) ? (cats as Array<Pick<category, 'name'>>).map((c) => c.name).filter(Boolean) as string[] : [];
+        }
       } catch {
         return [] as string[];
       }

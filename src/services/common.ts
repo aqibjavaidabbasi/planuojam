@@ -55,6 +55,30 @@ export async function fetchChildCategories(docId: string, locale?: string, pageS
     
     return await fetchWithLocaleFallback('categories', populate, filter, locale, additionalParams);
 }
+
+export async function fetchAllChildCategories(locale?: string, pageSize: number = 200) {
+    const filter = {
+        filters: {
+            parentCategory: {
+                $null: false, // Only get categories that have a parent
+            },
+        }
+    }
+
+    const populate = {
+        parentCategory: {
+            populate: '*'
+        }
+    }
+    
+    // Add pagination to fetch all child categories
+    const additionalParams = {
+        'pagination[page]': 1,
+        'pagination[pageSize]': pageSize,
+    }
+    
+    return await fetchWithLocaleFallback('categories', populate, filter, locale, additionalParams);
+}
 export async function fetchParentCategories(locale?: string) {
     const filter = {
         filters: {
@@ -85,11 +109,12 @@ export async function fetchEventTypes(locale?: string) {
     return await fetchWithLocaleFallback('event-types', populate, undefined, locale);
 }
 
-export async function fetchListings(type: 'venue' | 'vendor', appliedFilters = {}, locale?: string) {
+export async function fetchListings(type?: 'venue' | 'vendor', appliedFilters = {}, locale?: string) {
     const populate = LISTING_ITEM_POP_STRUCTURE;
     const filters = {
         filters: {
-            type: type,
+            // Only add type filter if provided
+            ...(type && { type }),
             ...appliedFilters
         }
     }
@@ -104,7 +129,10 @@ export async function fetchCities() {
             populate: '*'
         }
     };
-    return await fetchWithLocaleFallback('cities', populate, undefined, 'en');
+    // Use cache busting for cities since they can be updated frequently
+    const timestamp = Date.now();
+    const additionalParams = { _t: timestamp };
+    return await fetchWithLocaleFallback('cities', populate, undefined, 'en', additionalParams);
 }
 
 export async function fetchStates(locale?: string) {
@@ -113,7 +141,10 @@ export async function fetchStates(locale?: string) {
             populate: '*'
         }
      };
-    return await fetchWithLocaleFallback('states', populate, undefined, locale);
+    // Use cache busting for states since they can be updated frequently
+    const timestamp = Date.now();
+    const additionalParams = { _t: timestamp };
+    return await fetchWithLocaleFallback('states', populate, undefined, locale, additionalParams);
 }
 
 // Lightweight suggestions for header search dropdown

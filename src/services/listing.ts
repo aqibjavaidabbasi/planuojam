@@ -393,7 +393,7 @@ export async function fetchListingsByDocumentIds(documentIds: string[], locale?:
 
 // Fetch sorted listings by service type with meta information
 export async function fetchSortedListingsWithMeta(
-    serviceType: 'vendor' | 'venue',
+    serviceType?: 'vendor' | 'venue',
     appliedFilters: Record<string, unknown> = {},
     locale?: string,
     pagination?: { page: number; pageSize: number }
@@ -401,7 +401,8 @@ export async function fetchSortedListingsWithMeta(
     const populate = LISTING_ITEM_POP_STRUCTURE;
     const baseFilters: Record<string, unknown> = {
         filters: {
-            type: { $eq: serviceType },
+            // Only add type filter if serviceType is provided
+            ...(serviceType && { type: { $eq: serviceType } }),
             ...appliedFilters,
         },
     };

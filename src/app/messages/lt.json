@@ -378,6 +378,7 @@
       "et": "Estų"
     },
     "Header": {
+      "allServices": "Visos paslaugos",
       "eventTypes": "Renginių tipai",
       "openNav": "Atidaryti navigacijos meniu",
       "closeNav": "Uždaryti navigacijos meniu"
@@ -449,7 +450,8 @@
         "noImage": "Prašome įkelti bent vieną nuotrauką",
         "invalidServiceType": "Jūs neturite leidimų kurti šio įrašo",
         "addressRequired": "Adresas yra privalomas vietoms (venue)",
-        "addressInvalid": "Neteisingas adreso formatas"
+        "addressInvalid": "Neteisingas adreso formatas",
+        "categoryRequired": "Kategorija yra privaloma"
       },
       "toasts": {
         "created": "Skelbimas sėkmingai sukurtas",
@@ -1091,6 +1093,7 @@
       "cropping": "Apkarpomas..."
     },
     "NoDataCard": {
+      "noDataFound": "Duomenų nerasta",
       "expandSearchHint": "Pabandykite išplėsti paieškos spindulį arba rinkitės kitą vietą."
     },
     "VendorCard": {

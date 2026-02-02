@@ -16,7 +16,7 @@ import { useParentCategories } from "@/context/ParentCategoriesContext";
 
 export type ListingWrapperProps = {
   service: string;
-  serviceType: 'vendor' | 'venue';
+  serviceType?: 'vendor' | 'venue';
   initialList?: ListingItem[];
   initialFilters?: Record<string, string>;
   initialCategoryNames?: string[];
@@ -66,14 +66,17 @@ function ClientListingWrapper({ service, serviceType, initialList, initialFilter
 
   // Helper function to get the correct translation based on service type
   const getTranslation = useCallback((key: string) => {
-    return serviceType === "vendor" ? vendorsT(key) : venuesT(key);
+    if (serviceType === "vendor") return vendorsT(key);
+    if (serviceType === "venue") return venuesT(key);
+    // Default to vendor translations for "All Services"
+    return vendorsT(key);
   }, [serviceType, vendorsT, venuesT]);
 
   const placeholders = useMemo(() => ({
-    chooseCategory: serviceType === "vendor" ? "filters.chooseVendor" : "filters.chooseVenue",
+    chooseCategory: serviceType === "vendor" ? "filters.chooseVendor" : serviceType === "venue" ? "filters.chooseVenue" : "filters.chooseVendor",
     selectPricing: "filters.selectPricing",
-    chooseEventType: serviceType === "vendor" ? "filters.pickEventType" : "filters.chooseEventType",
-    emptyList: serviceType === "vendor" ? "noVendorsFound" : "noVenuesFound",
+    chooseEventType: serviceType === "vendor" ? "filters.pickEventType" : serviceType === "venue" ? "filters.chooseEventType" : "filters.pickEventType",
+    emptyList: serviceType === "vendor" ? "noVendorsFound" : serviceType === "venue" ? "noVenuesFound" : "noVendorsFound",
   }), [serviceType]);
 
   // Small wrapper to animate items when they are newly appended

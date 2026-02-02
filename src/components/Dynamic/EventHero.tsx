@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import Heading from '../custom/heading'
 import Button from '../custom/Button'
@@ -5,13 +7,18 @@ import Image from 'next/image'
 import { HeroBannerBlock } from '@/types/pagesTypes'
 import { getCompleteImageUrl } from '@/utils/helpers'
 import { useRouter } from '@/i18n/navigation'
+import { useEventTypes } from '@/context/EventTypesContext'
+import { useParams } from 'next/navigation'
 
 function EventHero({data}: {data: HeroBannerBlock}) {
     const heroImage = getCompleteImageUrl(data.heroImage.formats.banner?.url || data.heroImage.formats.medium?.url);
     const router = useRouter();
+    const { slug } = useParams();
+    const { getEventTypeBySlug } = useEventTypes();
+    const eventType = getEventTypeBySlug(slug as string);
 
   return (
-    <section className="relative w-screen h-80 md:h-[450px] flex items-center justify-start overflow-hidden max-w-screen">
+    <section className="relative w-screen h-screen md:h-[450px] flex items-center justify-start overflow-hidden max-w-screen">
        <Image
         src={heroImage}
         alt="Hero Image"
@@ -40,7 +47,7 @@ function EventHero({data}: {data: HeroBannerBlock}) {
           <Button
             style={data.callToAction.style}
             size='large'
-            onClick={()=>router.push(data.callToAction.buttonUrl)}
+            onClick={()=>router.push(`/service/all?eventType=${eventType?.eventName}`)}
             >
             {data.callToAction.bodyText}
           </Button>

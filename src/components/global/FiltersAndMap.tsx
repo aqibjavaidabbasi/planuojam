@@ -1,13 +1,15 @@
 'use client';
 import dynamic from "next/dynamic";
 import React, { useEffect, useState, useTransition } from 'react';
-const MapboxMap = dynamic(()=>import('./MapboxMap'),{ssr:false})
+const MapboxMap = dynamic(() => import('./MapboxMap'), { ssr: false })
 import { Location } from './MapboxMap';
 import Select from '../custom/Select';
 import Button from '../custom/Button';
 import { fetchListings } from '@/services/common';
 import { ListingItem } from '@/types/pagesTypes';
 import { useTranslations } from 'next-intl';
+import { useParentCategories } from '@/context/ParentCategoriesContext';
+import { useRouter, usePathname } from '@/i18n/navigation';
 import Input from '../custom/Input';
 
 type FilterValue = {
@@ -39,19 +41,61 @@ type FilterConfig = {
 
 interface FiltersAndMapProps {
     filters: FilterConfig[];
-    type: 'venue' | 'vendor';
+    type?: 'venue' | 'vendor';
     setList: (venues: ListingItem[]) => void;
     initialFilterValues?: Record<string, string>;
     locations: Location[]
     fetcher?: (appliedFilters: Record<string, unknown>) => Promise<ListingItem[]>;
 }
 
-const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, initialFilterValues, locations, fetcher }) => {
+const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
+    filters,
+    type,
+    setList,
+    initialFilterValues,
+    locations,
+    fetcher
+}) => {
     const [tempFilterValues, setTempFilterValues] = useState<Record<string, string>>({});
     const [appliedFilters, setAppliedFilters] = useState<FilterObject>({});
     const [isLoading, setIsLoading] = useState(false);
     const [keyword, setKeyword] = useState<string>('');
     const [isPending, startTransition] = useTransition();
+    const { parentCategories } = useParentCategories();
+    const router = useRouter();
+    const pathname = usePathname();
+    const tHeader = useTranslations('Global.Header');
+
+    // Create service dropdown options
+    const serviceOptions = [
+        { value: 'all', label: tHeader('allServices') },
+        ...parentCategories.map(cat => ({
+            value: cat.slug,
+            label: cat.name
+        }))
+    ];
+
+    // Determine current service based on pathname
+    const getCurrentService = () => {
+        if (pathname.includes('/service/all')) return 'all';
+        const pathParts = pathname.split('/');
+        const serviceIndex = pathParts.indexOf('service');
+        if (serviceIndex !== -1 && pathParts[serviceIndex + 1]) {
+            return pathParts[serviceIndex + 1];
+        }
+        return '';
+    };
+
+    const currentService = getCurrentService();
+
+    // Handle service navigation
+    const handleServiceChange = (value: string) => {
+        // Prevent navigation if same service is selected
+        if (value === currentService) return;
+
+        const targetUrl = value === 'all' ? '/service/all' : `/service/${value}`;
+        router.push(targetUrl);
+    };
 
     // Normalize simple initial filter values into Strapi filter object shape
     const normalizeInitialFilters = (vals: Record<string, string>): FilterObject => {
@@ -89,7 +133,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
     const handleFilterChange = (name: string, value: string) => {
         // Remove leading/trailing whitespace and check if empty
         const trimmedValue = value.trim();
-        
+
         // If value is empty, remove the filter entirely
         if (!trimmedValue) {
             setAppliedFilters(prev => {
@@ -105,7 +149,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
                 }
                 return newFilters;
             });
-            
+
             setTempFilterValues((prev) => ({ ...prev, [name]: '' }));
             return;
         }
@@ -197,19 +241,28 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({ filters, type, setList, i
         setIsLoading(false);
     };
 
-    const t=useTranslations("VenueInfo")
+    const t = useTranslations("VenueInfo")
     const tSearch = useTranslations('Search');
     const tMap = useTranslations('Map');
     return (
         <div className="lg:max-w-[1700px] mx-auto px-4">
             <div className="mb-4 flex flex-col gap-2.5">
-                {/* Keyword search for listings (title/description) */}
-                <div>
-                    <Input
-                        type="search"
-                        placeholder={tSearch('searchListings') || tSearch('search') || 'Search listings'}
-                        value={keyword}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}
+                <div className="grid grid-cols-5 gap-2.5 items-center justify-center">
+                    {/* Keyword search for listings (title/description) */}
+                    <div className="col-span-4">
+                        <Input
+                            type="search"
+                            placeholder={tSearch('searchListings') || tSearch('search') || 'Search listings'}
+                            value={keyword}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKeyword(e.target.value)}
+                        />
+                    </div>
+                    {/* Service/Parent Category Dropdown */}
+                    <Select
+                        value={currentService}
+                        onChange={(e) => handleServiceChange(e.target.value)}
+                        options={serviceOptions}
+                        placeholder={tHeader('allServices')}
                     />
                 </div>
                 <div className='flex gap-2 items-center justify-center flex-col lg:flex-row'>

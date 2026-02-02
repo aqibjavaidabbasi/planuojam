@@ -603,6 +603,7 @@
       "cropping": "Przycinanie..."
     },
     "NoDataCard": {
+      "noDataFound": "Dane nie znaleziono",
       "expandSearchHint": "Spróbuj zwiększyć promień wyszukiwania lub wybierz inną lokalizację."
     },
     "VendorCard": {
@@ -641,6 +642,7 @@
       "et": "Estoński"
     },
     "Header": {
+      "allServices": "Wszystkie usługi",
       "eventTypes": "Typy wydarzeń",
       "openNav": "Otwórz menu nawigacji",
       "closeNav": "Zamknij menu nawigacji"
@@ -716,7 +718,8 @@
         "noImage": "Proszę przesłać co najmniej jedno zdjęcie",
         "invalidServiceType": "Nie masz uprawnień do utworzenia tej oferty",
         "addressRequired": "Adres jest wymagany dla miejsc (venue)",
-        "addressInvalid": "Nieprawidłowy format adresu"
+        "addressInvalid": "Nieprawidłowy format adresu",
+        "categoryRequired": "Kategoria jest wymagana"
       },
       "toasts": {
         "created": "Ogłoszenie zostało pomyślnie utworzone",

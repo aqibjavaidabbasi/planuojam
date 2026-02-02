@@ -216,6 +216,18 @@ function Header({ headerData }: { headerData: HeaderType }) {
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-3 md:ml-10">
+              {/* All Services - hardcoded link */}
+              <Link
+                href="/service/all"
+                className={`cursor-pointer px-3 py-2 rounded-sm transition-colors text-sm md:text-base ${
+                  pathname.endsWith("/service/all")
+                    ? "bg-primary text-white"
+                    : "text-primary bg-white hover:bg-primary hover:text-white"
+                }`}
+              >
+                {tHeader("allServices")}
+              </Link>
+              
               {headerData?.nav.categories?.filter(Boolean).map((navItem) => {
                 const href = getServiceUrl(navItem.documentId) as string;
                 const isActive = pathname.endsWith(href);
@@ -286,6 +298,22 @@ function Header({ headerData }: { headerData: HeaderType }) {
                 </div>
                 <div className="flex-1 overflow-y-auto p-4 md:p-5 pt-0">
                   <nav className="flex flex-col gap-1">
+                    {/* All Services - hardcoded link */}
+                    <Link
+                      href="/service/all"
+                      onClick={() => {
+                        //close mobile menu
+                        setMobileNavOpen(false)
+                      }}
+                      className={`cursor-pointer px-2.5 py-1.5 rounded-sm transition-colors text-primary bg-white hover:bg-primary hover:text-white ${
+                        pathname.endsWith("/service/all")
+                          ? "bg-primary"
+                          : ""
+                      }`}
+                    >
+                      {tHeader("allServices")}
+                    </Link>
+                    
                     {/* Main Navigation */}
                     {headerData?.nav.categories?.filter(Boolean).map((navItem) => {
                       const href = getServiceUrl(navItem.documentId) as string;
