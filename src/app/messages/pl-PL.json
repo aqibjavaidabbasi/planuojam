@@ -1226,35 +1226,20 @@
     "basicDetails": "Podstawowe szczegóły",
     "title": "Tytuł",
     "price": "Cena",
-    "featured": "Wyróżniony",
-    "overview": "Przegląd",
-    "overviewPlaceholder": "Przedstaw przegląd swojego ogłoszenia...",
-    "otherInformation": "Dodatkowe informacje",
-    "otherInformationPlaceholder": "Dodaj dodatkowe szczegóły...",
-    "fields": {
-      "tags": {
-        "label": "Funkcje",
-        "placeholder": "Dodaj funkcję..."
-      }
-    },
     "addTag": "Dodaj funkcję",
     "videos": "Wideo",
     "videoUrlPlaceholder": "URL YouTube...",
     "addVideo": "Dodaj wideo",
     "removeVideo": "Usuń",
     "remove": "Usuń",
+    "tags": "Funkcje",
+    "tagPlaceholder": "Dodaj funkcje...",
     "description": "Opis",
     "websitelink": "Link do strony internetowej",
     "workinghours(perday)": "Godziny pracy (dziennie)",
     "titleDescription": "Tytuł opisu",
     "saving": "Zapisywanie",
     "savechanges": "Zapisz zmiany",
-    "listingStatus": {
-      "draft": "Szkic",
-      "published": "Opublikowane",
-      "pendingReview": "Oczekuje na recenzję",
-      "archived": "Zarchiwizowane"
-    },
     "errors": {
       "titleRequired": "Tytuł jest wymagany",
       "listingStatusRequired": "Wymagany jest status ogłoszenia",
@@ -1341,8 +1326,7 @@
       "helperText": "Tutaj możesz określić, jakie udogodnienia lub funkcje są dostępne dla klientów. Na przykład: basen, jacuzzi, taras, ogród, widok na jezioro, parking, Wi-Fi, klimatyzacja itp.",
       "tooltip": "Wpisz krótkie, przyjazne dla klienta udogodnienia lub korzyści, które pomagają w szybszym podjęciu decyzji.",
       "add": "Dodaj udogodnienie",
-      "itemLabel": "Udogodnienie",
-      "itemPlaceholder": "np. Darmowy parking, Wi-Fi, Taras, Klimatyzacja"
+      "itemLabel": "Udogodnienie"
     },
     "serviceareas": "Obszary usług",
     "serviceAreaHint": "Określ miasta i województwa, w których świadczysz swoje usługi.",
@@ -1351,27 +1335,22 @@
     "savechanges": "Zapisz zmiany",
     "fetchcoordinates": "Pobierz współrzędne",
     "picklocation": "Wybierz lokalizację na mapie",
-    "adamenity": "Dodaj udogodnienie",
     "address": "Adres",
     "locationHint": "Tutaj znajdują się informacje o wybranym przez Ciebie miejscu.",
     "remove": "Usuń",
     "citylabel": "Etykieta miasta",
     "statelabel": "Województwo / Miasto",
+    "selectcity": "Wybierz miasto",
+    "selectstate": "Wybierz województwo / miasto",
+    "service": "Usługa",
     "minimumDuration": {
       "label": "Minimalny czas trwania w godzinach",
       "placeholder": "np. 2"
     },
     "errors": {
       "cityStateRequired": "Każdy obszar usług wymaga miasta i województwa",
-      "invalidLatitude": "Szerokość geograficzna musi wynosić między -90 a 90",
-      "invalidLongitude": "Długość geograficzna musi wynosić między -180 a 180",
-      "cityRequired": "Potrzebne jest miasto",
-      "stateRequired": "Województwo / Miasto jest wymagane",
-      "latitudeRequired": "Potrzebna jest szerokość geograficzna",
-      "longitudeRequired": "Potrzebna jest długość geograficzna",
-      "capacityRequired": "Pojemność jest wymagana",
-      "bookingDurationTypeRequired": "Czas trwania rezerwacji jest wymagany",
-      "bookingDurationRequired": "Potrzebny jest maksymalny czas trwania rezerwacji"
+      "invalidLatitude": "Nieprawidłowa szerokość geograficzna (musi być w zakresie od -90 do 90)",
+      "invalidLongitude": "Długość geograficzna musi wynosić między -180 a 180"
     },
     "toasts": {
       "updated": "Dane sprzedawcy/miejsca zaktualizowane",
@@ -1383,7 +1362,6 @@
     "serviceAreaDescription": "Obszar usług #{index}",
     "venueLocation": "Lokalizacja miejsca",
     "venueLocationDescription": "Twoja lokalizacja miejsca",
-    "service": "Usługa",
     "unknown": "Nieznane"
   },
   "ListingGallery": {

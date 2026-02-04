@@ -101,9 +101,6 @@ export async function fetchEventTypes(locale?: string) {
         },
         page: {
             populate: true
-        },
-        localizations: {
-            populate: '*'
         }
     }
     return await fetchWithLocaleFallback('event-types', populate, undefined, locale);
@@ -123,28 +120,14 @@ export async function fetchListings(type?: 'venue' | 'vendor', appliedFilters = 
     return res;
 }
 
-export async function fetchCities() {
-    const populate = {
-        localizations: {
-            populate: '*'
-        }
-    };
-    // Use cache busting for cities since they can be updated frequently
-    const timestamp = Date.now();
-    const additionalParams = { _t: timestamp };
-    return await fetchWithLocaleFallback('cities', populate, undefined, 'en', additionalParams);
+export async function fetchCities(locale?: string) {
+    const populate = {};
+    return await fetchWithLocaleFallback('cities', populate, undefined, locale);
 }
 
 export async function fetchStates(locale?: string) {
-    const populate = { 
-        localizations: {
-            populate: '*'
-        }
-     };
-    // Use cache busting for states since they can be updated frequently
-    const timestamp = Date.now();
-    const additionalParams = { _t: timestamp };
-    return await fetchWithLocaleFallback('states', populate, undefined, locale, additionalParams);
+    const populate = {};
+    return await fetchWithLocaleFallback('states', populate, undefined, locale);
 }
 
 // Lightweight suggestions for header search dropdown

@@ -1225,18 +1225,11 @@
     "basicDetails": "Basic Details",
     "title": "Title",
     "price": "Price",
-    "featured": "Featured",
-    "overview": "Overview",
-    "overviewPlaceholder": "Provide an overview of your listing...",
-    "otherInformation": "Other Information",
-    "otherInformationPlaceholder": "Add any additional details...",
     "tags": "Features",
     "tagPlaceholder": "Add a features...",
-    "addTag": "Add",
     "videos": "Videos",
     "videoUrlPlaceholder": "YouTube URL...",
     "addVideo": "Add Video",
-    "removeVideo": "Remove",
     "remove": "Remove",
     "description": "Description",
     "websitelink": "Website Link",
@@ -1244,17 +1237,10 @@
     "titleDescription": "Title Description",
     "saving": "Saving",
     "savechanges": "Save  Changes",
-    "listingStatus": {
-      "draft": "Draft",
-      "published": "Published",
-      "pendingReview": "Pending review",
-      "archived": "Archived"
-    },
     "errors": {
       "titleRequired": "Title is required",
       "listingStatusRequired": "Listing status is required",
       "pricePositive": "Price must be positive",
-      "priceRequired": "Price is required",
       "descriptionRequired": "Description is required",
       "invalidWebsiteLink": "Please add a valid website link",
       "priceBelowMin": "Price must be at least {min}",
@@ -1266,7 +1252,6 @@
     },
     "priceRangeHint": "Allowed range: {min} - {max}",
     "loadingPriceRange": "Loading price constraints...",
-    "loadingTags": "Loading features...",
     "toasts": {
       "updated": "Basic details updated",
       "updateFailed": "Failed to update basic details"
@@ -1343,15 +1328,13 @@
       "helperText": "Here you can specify what amenities or features are available to customers. For example: parking, Wi-Fi, air conditioning, terrace, kids area, live music, projector, etc.",
       "tooltip": "Enter short, customer-friendly amenities or benefits that help customers make decisions faster.",
       "add": "Add Amenities",
-      "itemLabel": "Amenity",
-      "itemPlaceholder": "e.g. Free parking, Wi-Fi, Terrace, Air conditioning"
+      "itemLabel": "Amenity"
     },
     "serviceareas": "Service Areas",
     "serviceAreaHint": "Specify the cities and states where you offer your services.",
     "addservicearea": "Add Service Area",
     "saving": "Saving",
     "savechanges": "Save  Changes",
-    "adamenity": "Add amenity",
     "fetchcoordinates": "Get Location",
     "picklocation": "Pick location on map",
     "address": "Address",
@@ -1362,18 +1345,13 @@
     "selectstate": "Select County / City",
     "selectcity": "Select City",
     "minimumDuration": {
-      "label": "Minimum Duration Hours",
-      "placeholder": "e.g. 2"
+      "label": "Minimum Duration Hours"
     },
     "errors": {
       "cityRequired": "City is required",
-      "stateRequired": "County / City is required",
-      "latitudeRequired": "Latitude is required",
-      "longitudeRequired": "Longitude is required",
-      "capacityRequired": "Capacity is required",
-      "bookingDurationTypeRequired": "Booking duration is required",
-      "bookingDurationRequired": "Maximum Booking duration is required",
-      "cityStateRequired": "Each service area needs a city and state"
+      "cityStateRequired": "Each service area needs a city and state",
+      "invalidLatitude": "Invalid latitude value (must be between -90 and 90)",
+      "invalidLongitude": "Invalid longitude value (must be between -180 and 180)"
     },
     "toasts": {
       "updated": "Vendor/Venue details updated",

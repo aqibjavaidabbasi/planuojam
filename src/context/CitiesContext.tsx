@@ -30,7 +30,7 @@ export const CitiesProvider: React.FC<React.PropsWithChildren<object>> = ({ chil
     const run = async () => {
       setIsLoading(true);
       try {
-        const res = await fetchCities();
+        const res = await fetchCities(locale);
         setCities(res);
       } catch (e: unknown) {
         const message = e && typeof e === 'object' && 'message' in e ? String((e as { message?: unknown }).message) : "Failed to load cities";

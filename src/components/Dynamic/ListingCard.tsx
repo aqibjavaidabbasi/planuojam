@@ -25,6 +25,7 @@ import { StripeProductAttributes } from '@/app/api/stripe-products/route'
 import { IoMdSettings } from 'react-icons/io'
 import { getHotDealInfo, getUpcomingHotDealMessage } from '@/utils/hotDealHelper';
 import { getListingEditPath, getListingPath } from '@/utils/routes';
+import { Link } from '@/i18n/navigation'
 
 function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem; highPriority?: boolean; stripeProducts?: StripeProductAttributes[] }) {
   const { siteSettings } = useSiteSettings();
@@ -360,7 +361,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                   >
                     <FaInfoCircle size={16} />
                   </Button>
-                  <a
+                  <Link
                     href={editPath}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -368,8 +369,8 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                     title={t('editListing')}
                   >
                     <IoMdSettings size={16} />
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href={viewPath}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -377,17 +378,17 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                     title={t('viewListing')}
                   >
                     <IoNavigateOutline />
-                  </a>
+                  </Link>
                 </div>
               ) : (
-                <a
+                <Link
                   href={viewPath}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center capitalize justify-center gap-1.5 font-medium rounded-md bg-black text-white hover:bg-primary py-1 px-3 text-sm cursor-pointer"
                 >
                   {t('view')} <IoNavigateOutline />
-                </a>
+                </Link>
               )}
             </div>
           </div>

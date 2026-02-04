@@ -121,11 +121,11 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
       if (priceRange && values.price != null && !isNaN(values.price)) {
         if (values.price < priceRange.min) {
           setSubmitting(false)
-          return toast.error(t("errors.priceBelowMin", { min: priceRange.min, default: `Price must be at least ${priceRange.min}` }))
+          return toast.error(t("errors.priceBelowMin", { min: priceRange.min }))
         }
         if (values.price > priceRange.max) {
           setSubmitting(false)
-          return toast.error(t("errors.priceAboveMax", { max: priceRange.max, default: `Price must not exceed ${priceRange.max}` }))
+          return toast.error(t("errors.priceAboveMax", { max: priceRange.max }))
         }
       }
       // validate workingSchedule
@@ -133,17 +133,17 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
         for (const item of values.workingSchedule) {
           if (!item?.day || !item?.start || !item?.end) {
             setSubmitting(false)
-            return toast.error(tModal("workingSchedule.errors.completeAll", { default: "Please complete all working schedule fields." }))
+            return toast.error(tModal("workingSchedule.errors.completeAll"))
           }
           const s = timeToMinutes(item.start)
           const e = timeToMinutes(item.end)
           if (Number.isNaN(s) || Number.isNaN(e)) {
             setSubmitting(false)
-            return toast.error(tModal("workingSchedule.errors.invalidTime", { default: "Invalid time format in working schedule." }))
+            return toast.error(tModal("workingSchedule.errors.invalidTime"))
           }
           if (s >= e) {
             setSubmitting(false)
-            return toast.error(tModal("workingSchedule.errors.startBeforeEnd", { default: "Start time must be earlier than end time." }))
+            return toast.error(tModal("workingSchedule.errors.startBeforeEnd"))
           }
         }
         // conflict check per day
@@ -161,7 +161,7 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
             const cur = ranges[i]
             if (cur.s < prev.e) {
               setSubmitting(false)
-              return toast.error(tModal("workingSchedule.errors.conflictDay", { default: `Conflicting schedule entries on ${day}.`, day: tModal(`days.${day}`) }))
+              return toast.error(tModal("workingSchedule.errors.conflictDay", { day: tModal(`days.${day}`) }))
             }
           }
         }
@@ -226,7 +226,7 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
             </p>
           )}
           {loadingSubscription && (
-            <p className="text-gray-500 text-xs mt-1">{t("loadingPriceRange", { default: "Loading price constraints..." })}</p>
+            <p className="text-gray-500 text-xs mt-1">{t("loadingPriceRange")}</p>
           )}
         </div>
         <div className="col-span-2">
@@ -262,7 +262,7 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
         
         {/* Videos Section */}
         <div className="col-span-2">
-          <label className="block text-sm font-medium mb-1">{t("videos") || "Videos"}</label>
+          <label className="block text-sm font-medium mb-1">{t("videos")}</label>
           <div className="space-y-2">
             {watch("videos")?.map((video, idx) => (
               <div key={idx} className="flex gap-2">
@@ -305,12 +305,12 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
         {/* Working Schedule Editor */}
         <div className="col-span-2">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="font-medium">{tModal('workingSchedule.title', { default: 'Working schedule' })}</h4>
+            <h4 className="font-medium">{tModal('workingSchedule.title')}</h4>
             <Button type="button" style="secondary" disabled={submitting} onClick={() => {
               const current = getValues('workingSchedule') || []
               setValue('workingSchedule', [...current, { day: '', start: '', end: '' }], { shouldDirty: true })
             }}>
-              {tModal('workingSchedule.add', { default: 'Add entry' })}
+              {tModal('workingSchedule.add')}
             </Button>
           </div>
           {(watch('workingSchedule') || []).map((it, idx) => (
@@ -327,21 +327,21 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
                     setValue('workingSchedule', updated, { shouldDirty: true })
                   }}
                   options={[
-                    { label: tModal('workingSchedule.placeholder', { default: 'Select day' }) as string, value: '' },
-                    { label: tModal('days.monday', { default: 'Monday' }), value: 'monday' },
-                    { label: tModal('days.tuesday', { default: 'Tuesday' }), value: 'tuesday' },
-                    { label: tModal('days.wednesday', { default: 'Wednesday' }), value: 'wednesday' },
-                    { label: tModal('days.thursday', { default: 'Thursday' }), value: 'thursday' },
-                    { label: tModal('days.friday', { default: 'Friday' }), value: 'friday' },
-                    { label: tModal('days.saturday', { default: 'Saturday' }), value: 'saturday' },
-                    { label: tModal('days.sunday', { default: 'Sunday' }), value: 'sunday' },
+                    { label: tModal('workingSchedule.placeholder') as string, value: '' },
+                    { label: tModal('days.monday'), value: 'monday' },
+                    { label: tModal('days.tuesday'), value: 'tuesday' },
+                    { label: tModal('days.wednesday'), value: 'wednesday' },
+                    { label: tModal('days.thursday'), value: 'thursday' },
+                    { label: tModal('days.friday'), value: 'friday' },
+                    { label: tModal('days.saturday'), value: 'saturday' },
+                    { label: tModal('days.sunday'), value: 'sunday' },
                   ]}
                 />
               </div>
               <div className="md:col-span-2">
                 <Input
                   type="time"
-                  label={tModal('workingSchedule.start', { default: 'Start' })}
+                  label={tModal('workingSchedule.start')}
                   disabled={submitting}
                   value={it?.start || ''}
                   onChange={(e) => {
@@ -355,7 +355,7 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
               <div className="md:col-span-2">
                 <Input
                   type="time"
-                  label={tModal('workingSchedule.end', { default: 'End' })}
+                  label={tModal('workingSchedule.end')}
                   disabled={submitting}
                   value={it?.end || ''}
                   onChange={(e) => {
@@ -372,7 +372,7 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
                   const updated = current.filter((_, i) => i !== idx)
                   setValue('workingSchedule', updated, { shouldDirty: true })
                 }}>
-                  {tModal('buttons.remove', { default: 'Remove' })}
+                  {tModal('buttons.remove')}
                 </Button>
               </div>
             </div>

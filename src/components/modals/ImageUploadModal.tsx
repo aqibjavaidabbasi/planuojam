@@ -174,7 +174,7 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({ isOpen, onClose, on
                             </Button>
                             {files.length > 0 && (
                                 <Button extraStyles="!rounded-md" onClick={handleUpload} style="primary" disabled={uploading}>
-                                    {uploading ? tImageUploader('buttons.uploading') : t('buttons.upload', { count: files.length })}
+                                    {uploading ? t('buttons.uploading') : t('buttons.upload', { count: files.length })}
                                 </Button>
                             )}
                         </div>

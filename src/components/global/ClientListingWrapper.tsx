@@ -25,7 +25,7 @@ export type ListingWrapperProps = {
 
 function ClientListingWrapper({ service, serviceType, initialList, initialFilters: initialFiltersFromServer, initialCategoryNames, initialPagination }: ListingWrapperProps) {
   const [list, setList] = useState<ListingItem[]>(initialList || []);
-  const { localizedEventTypes } = useEventTypes();
+  const { eventTypes } = useEventTypes();
   const { parentCategories } = useParentCategories(); // Get parent categories for robust filtering
   const searchParams = useSearchParams();
   const locale = useLocale();
@@ -35,7 +35,7 @@ function ClientListingWrapper({ service, serviceType, initialList, initialFilter
   const vendorsT = useTranslations("Vendors");
   const venuesT = useTranslations("Venues");
 
-  const eventTypeNames: string[] = localizedEventTypes.map((event) => event.eventName);
+  const eventTypeNames: string[] = eventTypes.map((event) => event.eventName);
 
   const categoryFromUrl = searchParams.get("cat");
   const eventTypeFromUrl = searchParams.get("eventType");
@@ -240,7 +240,7 @@ function ClientListingWrapper({ service, serviceType, initialList, initialFilter
         locations={locations}
         fetcher={fetcher}
       />
-      <div className="flex justify-center gap-5 my-10 flex-wrap lg:max-w-[1700px] mx-auto px-4">
+      <div className="flex justify-center gap-5 my-10 flex-wrap lg:max-w-425 mx-auto px-4">
         {list.length === 0 ? (
           <NoDataCard>{getTranslation(placeholders.emptyList)}</NoDataCard>
         ) : (

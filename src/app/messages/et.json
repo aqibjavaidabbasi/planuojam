@@ -1218,11 +1218,6 @@
     "basicDetails": "Põhiandmed",
     "title": "Pealkiri",
     "price": "Hind",
-    "featured": "Esiletõstetud",
-    "overview": "Ülevaade",
-    "overviewPlaceholder": "Esitage oma kuulutuse ülevaate...",
-    "otherInformation": "Lisainfo",
-    "otherInformationPlaceholder": "Lisa lisate detaile...",
     "tags": "Siltid",
     "tagPlaceholder": "Lisa silt...",
     "addTag": "Lisa",
@@ -1237,12 +1232,6 @@
     "titleDescription": "Pealkirja kirjeldus",
     "saving": "Salvestamine",
     "savechanges": "Salvesta muudatused",
-    "listingStatus": {
-      "draft": "Mustand",
-      "published": "Avaldatud",
-      "pendingReview": "Ootab ülevaatust",
-      "archived": "Arhiveeritud"
-    },
     "errors": {
       "titleRequired": "Pealkiri on kohustuslik",
       "listingStatusRequired": "Kuulutuse olek on kohustuslik",
@@ -1325,8 +1314,7 @@
       "helperText": "Siin saate määrata, millised mugavused või funktsioonid on kliendile kättesaadavad. Näiteks: bassein, džakussi, terrass, aed, vaade järvelele, parkimine, Wi-Fi, konditsioneer jne.",
       "tooltip": "Sisestage lühikesed, kliendile sõbralikud mugavused või eelised, mis aitavad klientidel kiiremini otsustada.",
       "add": "Lisa mugavus",
-      "itemLabel": "Mugavus",
-      "itemPlaceholder": "nt. Tasuta parkimine, Wi-Fi, Terrass, Konditsioneer"
+      "itemLabel": "Mugavus"
     },
     "serviceareas": "Teeninduspiirkonnad",
     "serviceAreaHint": "Määrake linnad ja osariigid, kus te oma teenuseid pakute.",
@@ -1335,7 +1323,6 @@
     "savechanges": "Salvesta muudatused",
     "fetchcoordinates": "Too koordinaadid",
     "picklocation": "Vali asukoht kaardilt",
-    "adamenity": "Lisage mugavus",
     "address": "Aadress",
     "locationHint": "Siin on teave teie valitud asukohta.",
     "remove": "Eemalda",
@@ -1349,15 +1336,8 @@
     },
     "errors": {
       "cityStateRequired": "Igas teeninduspiirkonnas peab olema linn ja osariik",
-      "invalidLatitude": "Laiuskraad peab olema vahemikus -90 kuni 90",
-      "invalidLongitude": "Pikkuskraad peab olema vahemikus -180 kuni 180",
-      "cityRequired": "Linn on nõutav",
-      "stateRequired": "Maakond / Linn on nõutud",
-      "latitudeRequired": "Laiuskraad on nõutav",
-      "longitudeRequired": "Pikkuskraad on nõutav",
-      "capacityRequired": "Mahutavus on nõutav",
-      "bookingDurationTypeRequired": "Broneerimise kestus on nõutav",
-      "bookingDurationRequired": "Maksimaalne broneeringu kestus on nõutav"
+      "invalidLatitude": "Vigane laiuskraad (peab olema vahemikus -90 kuni 90)",
+      "invalidLongitude": "Vigane pikkuskraad (peab olema vahemikus -180 kuni 180"
     },
     "toasts": {
       "updated": "Müüja/Koha andmed on uuendatud",

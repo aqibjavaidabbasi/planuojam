@@ -47,6 +47,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { strapiImage } from "@/types/mediaTypes"
+import { RootState } from "@/store"
 
 interface ListingItemModalProps {
   isOpen: boolean
@@ -88,25 +89,20 @@ function SortableMediaItem({
     };
     
     const imagePath = getCompleteImageUrl(media.url);
-    const isVideo = media.mime?.startsWith('video/');
 
     return (
         <div 
             ref={setNodeRef} 
             style={style} 
-            className={`relative group bg-gray-50 rounded-lg overflow-hidden border-2 h-[150px] ${isMain ? 'border-primary' : 'border-transparent'}`}
+            className={`relative group bg-gray-50 rounded-lg overflow-hidden border-2 h-37.5 ${isMain ? 'border-primary' : 'border-transparent'}`}
         >
             <div className="w-full h-full relative">
-                 {isVideo ? (
-                    <video src={imagePath} className="w-full h-full object-cover pointer-events-none" />
-                  ) : (
-                    <Image 
-                        src={imagePath} 
-                        alt={tImage("alt.portfolioMedia")} 
-                        fill
-                        className="object-cover pointer-events-none" 
-                    />
-                  )}
+                <Image 
+                    src={imagePath} 
+                    alt={tImage("alt.portfolioMedia")} 
+                    fill
+                    className="object-cover pointer-events-none" 
+                />
             </div>
             
             {/* Drag Handle */}
@@ -180,30 +176,21 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
   const { eventTypes } = useEventTypes()
   const eventTypeOptions = {
     options: eventTypes.map((e) => {
-      const localized = locale === 'en'
-        ? e.eventName
-        : e.localizations.find((l) => l.locale === locale)?.eventName ?? e.eventName
-      return { label: localized ?? '', value: e.documentId }
+      return { label: e.eventName ?? '', value: e.documentId }
     }),
   }
 
   const { cities } = useCities()
   const cityOptions = {
     options: cities.map(c => {
-      const localized = locale === 'en'
-        ? c.name
-        : c.localizations.find((l) => l.locale === locale)?.name
-      return { label: localized ?? '', value: c.documentId }
+      return { label: c.name ?? '', value: c.documentId }
     })
   }
 
   const { states } = useStates()
   const stateOptions = {
     options: states.map(s => {
-      const localized = locale === 'en'
-        ? s.name
-        : s.localizations.find(s => s.locale === locale)?.name
-      return { label: localized ?? '', value: s.documentId }
+      return { label: s.name ?? '', value: s.documentId }
     })
   }
 
@@ -211,7 +198,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
   const { parentCategories } = useParentCategories()
   const [childCategories, setChildCategories] = useState<category[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string>("")
-  const { user } = useAppSelector((state) => state.auth)
+  const { user } = useAppSelector((state:RootState) => state.auth)
   const [isLoading, setIsLoading] = useState(false);
   // Derive service type from the authenticated user; keep both raw and normalized forms
   const serviceTypeRaw = user?.serviceType || ''
