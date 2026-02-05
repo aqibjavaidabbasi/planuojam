@@ -384,7 +384,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                   required
                   value={vendorRHF.watch(`serviceArea.${idx}.city`) || ""}
                   onChange={(e) => vendorRHF.setValue(`serviceArea.${idx}.city`, e.target.value, { shouldDirty: true })}
-                  options={[{ label: t("selectcity"), value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
+                  options={[{ label: t("selectcity"), value: "" }, ...cities.sort((a, b) => b.priority - a.priority).map((c) => ({ label: c.name, value: c.documentId }))]}
                 />
                 <Select
                   label={t("statelabel")}
@@ -392,7 +392,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                   required
                   value={vendorRHF.watch(`serviceArea.${idx}.state`) || ""}
                   onChange={(e) => vendorRHF.setValue(`serviceArea.${idx}.state`, e.target.value, { shouldDirty: true })}
-                  options={[{ label: t("selectstate"), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
+                  options={[{ label: t("selectstate"), value: "" }, ...states.sort((a, b) => b.priority - a.priority).map((s) => ({ label: s.name, value: s.documentId }))]}
                 />
                 <div className="hidden!">
                   <Input
@@ -457,14 +457,14 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
               disabled={submitting}
               value={venueRHF.watch("location.city") || ""}
               onChange={(e) => venueRHF.setValue("location.city", e.target.value, { shouldDirty: true })}
-              options={[{ label: t("selectcity"), value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
+              options={[{ label: t("selectcity"), value: "" }, ...cities.sort((a, b) => b.priority - a.priority).map((c) => ({ label: c.name, value: c.documentId }))]}
             />
             <Select
               label={t("state")}
               disabled={submitting}
               value={venueRHF.watch("location.state") || ""}
               onChange={(e) => venueRHF.setValue("location.state", e.target.value, { shouldDirty: true })}
-              options={[{ label: t("selectstate"), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
+              options={[{ label: t("selectstate"), value: "" }, ...states.sort((a, b) => b.priority - a.priority).map((s) => ({ label: s.name, value: s.documentId }))]}
             />
           </div>
           <div className="flex gap-3 flex-col">

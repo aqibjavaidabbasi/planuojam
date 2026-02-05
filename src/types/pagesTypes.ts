@@ -396,7 +396,9 @@ export interface category {
   parentCategory: category;
   slug: string;
   serviceType?: 'vendor' | 'venue';
+  priority: number;
   localizations: {
+    priority: number;
     id: number;
     locale: string;
     name: string;

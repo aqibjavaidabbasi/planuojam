@@ -55,14 +55,14 @@ export default async function ServicePage({
       try {
         if (service === 'all') {
           // Fetch all child categories when service is 'all'
-          const cats = await fetchAllChildCategories(locale);
-          return Array.isArray(cats) ? (cats as Array<Pick<category, 'name'>>).map((c) => c.name).filter(Boolean) as string[] : [];
+          const cats:category[] = await fetchAllChildCategories(locale);
+          return Array.isArray(cats) ? cats.sort((c1, c2) => c2.priority - c1.priority).map((c) => c.name).filter(Boolean) as string[] : [];
         } else if (!parent?.documentId) {
           return [] as string[];
         } else {
           // Fetch child categories for specific parent category
-          const cats = await fetchChildCategories(parent.documentId, locale);
-          return Array.isArray(cats) ? (cats as Array<Pick<category, 'name'>>).map((c) => c.name).filter(Boolean) as string[] : [];
+          const cats: category[] = await fetchChildCategories(parent.documentId, locale);
+          return Array.isArray(cats) ? cats.sort((c1, c2) => c2.priority - c1.priority).map((c) => c.name).filter(Boolean) as string[] : [];
         }
       } catch {
         return [] as string[];

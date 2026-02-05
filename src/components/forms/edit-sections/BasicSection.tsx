@@ -10,10 +10,14 @@ import Button from "../../custom/Button"
 import { toast } from "react-hot-toast"
 import { updateListing } from "@/services/listing"
 import { fetchTagsByIds } from "@/services/tags"
-import type { ListingItem } from "@/types/pagesTypes"
+import { fetchChildCategories } from "@/services/common"
+import type { ListingItem, category } from "@/types/pagesTypes"
 import { useTranslations, useLocale } from "use-intl"
 import { StripeProductAttributes } from "@/app/api/stripe-products/route"
 import TagInput from "../../custom/TagInput"
+import MultiSelect from "../../custom/MultiSelect"
+import { useEventTypes } from "@/context/EventTypesContext"
+import { useParentCategories } from "@/context/ParentCategoriesContext"
 
 export type BasicForm = {
   title: string
@@ -22,6 +26,8 @@ export type BasicForm = {
   tagDocumentIds: string[]
   videos: { url: string }[]
   websiteLink?: string
+  category?: string
+  eventTypes?: string[]
   workingSchedule?: { day: "" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday"; start: string; end: string }[]
 }
 
@@ -29,9 +35,19 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
   const [submitting, setSubmitting] = useState(false)
   const [priceRange, setPriceRange] = useState<{ min: number; max: number } | null>(null)
   const [loadingSubscription, setLoadingSubscription] = useState(true)
+  const [childCategories, setChildCategories] = useState<category[]>([])
+  const [eventTypesIds, setEventTypesIds] = useState<string[]>([])
   const t = useTranslations("basicSelectionForm")
+  const tForm = useTranslations("basicSectionForm")
   const tModal = useTranslations("Modals.ListingItem")
   const locale = useLocale()
+  const { eventTypes } = useEventTypes()
+  const { parentCategories } = useParentCategories()
+  
+  // Derive service type from the listing's type field
+  const serviceTypeRaw = listing.type || ''
+  const serviceType = (serviceTypeRaw || 'vendor').toLowerCase().trim() as 'vendor' | 'venue'
+  const serviceDocumentId = parentCategories.find((category) => category.serviceType === serviceType)?.documentId
 
   const { register, handleSubmit, watch, setValue, getValues, formState: { errors } } = useForm<BasicForm>({
     defaultValues: {
@@ -41,6 +57,8 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
       tagDocumentIds: listing.tagDocumentIds || [],
       videos: listing.videos || [],
       websiteLink: listing.websiteLink || "",
+      category: listing.category?.documentId || "",
+      eventTypes: listing.eventTypes?.map(et => et.documentId) || [],
       workingSchedule: listing.workingSchedule || [],
     },
   })
@@ -61,6 +79,37 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
     };
     populateTags();
   }, [listing, locale]);
+
+  // Load child categories for the listing's service type (same as ListingItemModal)
+  useEffect(() => {
+    const controller = new AbortController();
+    
+    async function fetchChildren() {
+      try {
+        const res = await fetchChildCategories(serviceDocumentId || 'vendor', locale)
+        if (!controller.signal.aborted) {
+          setChildCategories(res)
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) {
+          console.error('Error fetching child categories:', error);
+        }
+      }
+    }
+    
+    fetchChildren()
+    
+    return () => {
+      controller.abort();
+    }
+  }, [serviceDocumentId, locale])
+
+  // Initialize event types IDs
+  useEffect(() => {
+    if (listing.eventTypes?.length) {
+      setEventTypesIds(listing.eventTypes.map(et => et.documentId));
+    }
+  }, [listing.eventTypes]);
 
   // Fetch active subscription and price range
   useEffect(() => {
@@ -108,14 +157,34 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
   const onSubmit = async (values: BasicForm) => {
     setSubmitting(true)
     try {
-      const payload = {
-        ...values,
+      const payload: Record<string, unknown> = {
+        title: values.title,
+        description: values.description,
       }
+      
+      if (values.price != null && !isNaN(values.price)) {
+        payload.price = values.price
+      }
+      
       if (values.videos) {
         payload.videos = values.videos.map(({ url }) => ({ url }));
       }
-      if (values.websiteLink === "") delete payload.websiteLink
-      if (values.price == null || isNaN(values.price)) delete payload.price
+      
+      if (values.websiteLink) {
+        payload.websiteLink = values.websiteLink
+      }
+      
+      if (values.tagDocumentIds?.length) {
+        payload.tagDocumentIds = values.tagDocumentIds
+      }
+      
+      if (values.category) {
+        payload.category = { connect: [values.category] }
+      }
+      
+      if (values.eventTypes?.length) {
+        payload.eventTypes = { set: values.eventTypes }
+      }
       
       // Validate price against subscription range
       if (priceRange && values.price != null && !isNaN(values.price)) {
@@ -128,6 +197,7 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
           return toast.error(t("errors.priceAboveMax", { max: priceRange.max }))
         }
       }
+      
       // validate workingSchedule
       if (Array.isArray(values.workingSchedule)) {
         for (const item of values.workingSchedule) {
@@ -186,6 +256,7 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
           end: norm(w.end),
         }))
       }
+      
       await updateListing(listing.documentId, { data: payload }, listing.locale)
       toast.success(t("toasts.updated"))
       onSaved?.()
@@ -302,6 +373,40 @@ export default function BasicSection({ listing, onSaved }: { listing: ListingIte
             )}
           </div>
         </div>
+
+        {/* Category */}
+        <div className="col-span-2">
+          <Select
+            label={tForm("category")}
+            disabled={submitting}
+            value={watch("category") || ""}
+            onChange={(e) => {
+              setValue("category", e.target.value, { shouldDirty: true })
+            }}
+            options={childCategories.sort((a, b) => b.priority - a.priority).map((c) => ({ label: c.name, value: c.documentId }))}
+            placeholder={tForm("categoryPlaceholder")}
+            required
+          />
+        </div>
+
+        {/* Event Types */}
+        <div className="col-span-2">
+          <label className="block text-sm font-medium mb-1">{tForm("eventTypes")}</label>
+          <MultiSelect
+            disabled={submitting}
+            options={eventTypes.map((e) => ({
+              label: e.eventName,
+              value: e.documentId,
+            }))}
+            value={eventTypesIds}
+            onChange={(selected) => {
+              setEventTypesIds(selected)
+              setValue("eventTypes", selected, { shouldDirty: true })
+            }}
+            placeholder={tForm("eventTypesPlaceholder")}
+          />
+        </div>
+        
         {/* Working Schedule Editor */}
         <div className="col-span-2">
           <div className="flex items-center justify-between mb-2">

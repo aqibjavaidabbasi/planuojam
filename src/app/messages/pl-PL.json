@@ -1266,6 +1266,12 @@
       "updateFailed": "Nie udało się zaktualizować podstawowych danych"
     }
   },
+  "basicSectionForm": {
+    "category": "Kategoria",
+    "categoryPlaceholder": "Wybierz kategorię",
+    "eventTypes": "Typy zdarzeń",
+    "eventTypesPlaceholder": "Wybierz typy zdarzeń"
+  },
   "ImageSection": {
     "addImages": "Dodaj zdjęcia",
     "addportfolioimages": "Dodaj zdjęcia do portfolio",

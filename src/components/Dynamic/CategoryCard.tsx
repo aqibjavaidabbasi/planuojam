@@ -15,7 +15,7 @@ function CategoryCard({category}: {category: category}) {
      function getUrlPath(){
         if(!cat) return '/';
         // Use slug instead of name for more robust URL generation
-        return `/service/${encodeURIComponent(cat.slug)}?cat=${encodeURIComponent(category.slug.trim())}`;
+        return `/service/${encodeURIComponent(cat.slug)}?cat=${encodeURIComponent(category.name.trim())}`;
      }
   return (
     <div

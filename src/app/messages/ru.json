@@ -1276,6 +1276,12 @@
       "updateFailed": "Не удалось обновить основные данные"
     }
   },
+  "basicSectionForm": {
+    "category": "Категория",
+    "categoryPlaceholder": "Выберите категорию",
+    "eventTypes": "Типы событий",
+    "eventTypesPlaceholder": "Выберите типы событий"
+  },
   "ImageSection": {
     "addImages": "Добавить изображения",
     "addportfolioimages": "Добавить изображения в портфолио",

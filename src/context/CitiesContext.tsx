@@ -10,6 +10,7 @@ export type City = {
   id: number;
   locale: string;
   localizations: City[]
+  priority: number;
 };
 
 interface CitiesContextProps {

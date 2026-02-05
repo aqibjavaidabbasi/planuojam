@@ -1257,6 +1257,12 @@
       "updateFailed": "Failed to update basic details"
     }
   },
+  "basicSectionForm": {
+    "category": "Category",
+    "categoryPlaceholder": "Choose category",
+    "eventTypes": "Event Types",
+    "eventTypesPlaceholder": "Choose event types"
+  },
   "ContactSection": {
     "toasts": {
       "updated": "Contact updated",

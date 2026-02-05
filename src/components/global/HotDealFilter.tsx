@@ -70,7 +70,7 @@ const HotDealFilter: React.FC<HotDealFilterProps> = ({ setList }) => {
         setSubcategoryOptions({
           name: 'subCategory',
           placeholder: t('selectSubCategory'),
-          options: childCategories.map((cat) => cat.name),
+          options: childCategories.sort((a, b)=> b.priority - a.priority).map((cat) => cat.name),
         });
       }
       fetchChildren();

@@ -182,14 +182,14 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
 
   const { cities } = useCities()
   const cityOptions = {
-    options: cities.map(c => {
+    options: cities.sort((a, b)=> b.priority - a.priority).map(c => {
       return { label: c.name ?? '', value: c.documentId }
     })
   }
 
   const { states } = useStates()
   const stateOptions = {
-    options: states.map(s => {
+    options: states.sort((a, b)=> b.priority - a.priority).map(s => {
       return { label: s.name ?? '', value: s.documentId }
     })
   }
@@ -1065,7 +1065,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       disabled={isWorking}
                       value={form.listingItem?.[0]?.location?.city || ""}
                       onChange={(e) => updateListingItem("location.city", e.target.value)}
-                      options={[{ label: t('fields.city.placeholder'), value: "" }, ...cities.map((c) => ({ label: c.name, value: c.documentId }))]}
+                      options={[{ label: t('fields.city.placeholder'), value: "" }, ...cities.sort((a, b)=> b.priority - a.priority).map((c) => ({ label: c.name, value: c.documentId }))]}
                     />
                   </div>
                   <div className="col-span-2">
@@ -1074,7 +1074,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
                       disabled={isWorking}
                       value={form.listingItem?.[0]?.location?.state || ""}
                       onChange={(e) => updateListingItem("location.state", e.target.value)}
-                      options={[{ label: t('fields.state.placeholder'), value: "" }, ...states.map((s) => ({ label: s.name, value: s.documentId }))]}
+                      options={[{ label: t('fields.state.placeholder'), value: "" }, ...states.sort((a, b)=> b.priority - a.priority).map((s) => ({ label: s.name, value: s.documentId }))]}
                     />
                   </div>
                 </div>
@@ -1356,7 +1356,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({ isOpen, onClose, on
           <div className="border-b-2 border-primary/20 py-4">
             <h3 className="text-lg font-semibold mb-2">{t('sections.category')}</h3>
             <Select
-              options={childCategories.map((c) => ({ label: c.name, value: c.documentId }))}
+              options={childCategories.sort((a, b) => b.priority - a.priority).map((c) => ({ label: c.name, value: c.documentId }))}
               value={selectedCategory}
               disabled={isWorking}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCategory(e.target.value)}

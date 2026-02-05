@@ -566,7 +566,7 @@
           "placeholder": "Pasirinkite miestą"
         },
         "state": {
-          "label": "Regionas",
+          "label": "Rajonas",
           "placeholder": "Pasirinkite regioną"
         },
         "latitude": {
@@ -1253,6 +1253,12 @@
       "updated": "Pagrindinės detalės atnaujintos",
       "updateFailed": "Nepavyko atnaujinti pagrindinių detalių"
     }
+  },
+  "basicSectionForm": {
+    "category": "Kategorija",
+    "categoryPlaceholder": "Pasirinkite kategoriją",
+    "eventTypes": "Renginių tipai",
+    "eventTypesPlaceholder": "Pasirinkite renginių tipus"
   },
   "ImageSection": {
     "addImages": "Pridėti nuotraukas",

@@ -9,7 +9,8 @@ export type StateItem = {
   name: string;
   id: number;
   localizations: StateItem[];
-  locale: string
+  locale: string;
+  priority: number;
 };
 
 interface StatesContextProps {
