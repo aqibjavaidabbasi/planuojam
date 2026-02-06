@@ -122,12 +122,20 @@ export async function fetchListings(type?: 'venue' | 'vendor', appliedFilters = 
 
 export async function fetchCities(locale?: string) {
     const populate = {};
-    return await fetchWithLocaleFallback('cities', populate, undefined, locale);
+    const additionalParams = {
+        'pagination[page]': 1,
+        'pagination[pageSize]': 100,
+    };
+    return await fetchWithLocaleFallback('cities', populate, undefined, locale, additionalParams);
 }
 
 export async function fetchStates(locale?: string) {
     const populate = {};
-    return await fetchWithLocaleFallback('states', populate, undefined, locale);
+    const additionalParams = {
+        'pagination[page]': 1,
+        'pagination[pageSize]': 100,
+    };
+    return await fetchWithLocaleFallback('states', populate, undefined, locale, additionalParams);
 }
 
 // Lightweight suggestions for header search dropdown
