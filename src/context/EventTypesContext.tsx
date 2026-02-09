@@ -33,7 +33,12 @@ export const EventTypesProvider = ({ children }: { children: ReactNode }) => {
   }, [locale]);
 
   const getEventTypeBySlug = (slug: string) =>{
-    return eventTypes.find(type => type.slug === slug);
+    if (locale === 'en') {
+      return eventTypes.find(type => type.slug === slug);
+    }
+    if (locale !== 'en') {
+      return eventTypes.find(type => type.localizations.find(loc => loc.slug === slug));
+    }
   }
 
   const getEventTypeByDocId = (docId: string) => {
