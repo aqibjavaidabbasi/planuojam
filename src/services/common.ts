@@ -38,6 +38,9 @@ export async function fetchChildCategories(docId: string, locale?: string, pageS
                     $eq: docId,
                 },
             },
+            isActive: {
+                $eq: true,
+            }
         }
     }
 
@@ -62,6 +65,9 @@ export async function fetchAllChildCategories(locale?: string, pageSize: number 
             parentCategory: {
                 $null: false, // Only get categories that have a parent
             },
+            isActive: {
+                $eq: true,
+            }
         }
     }
 
@@ -84,6 +90,9 @@ export async function fetchParentCategories(locale?: string) {
         filters: {
             parentCategory: {
                 $null: true,
+            },
+            isActive: {
+                $eq: true,
             }
         }
     }
