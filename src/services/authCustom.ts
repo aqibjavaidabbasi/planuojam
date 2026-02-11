@@ -79,3 +79,22 @@ export function customUpdatePassword(params: { currentPassword: string; newPassw
 export function customSetPasswordFirstTime(params: { newPassword: string }) {
   return authedJson<{ status: "password_set" }>("POST", "/api/social-auth/set-password", params);
 }
+
+export async function deleteAccount() {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  if (!token) throw new Error("Errors.Auth.noToken");
+  
+  const res = await fetch(`${API_URL}/api/auth/custom-delete-account`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error?.message || "Errors.System.deletionFailed");
+  }
+  return data;
+}

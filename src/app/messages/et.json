@@ -397,6 +397,11 @@
           "minLength": "Parool peab olema vähemalt 8 tähemärki",
           "noMatch": "Paroolid ei ühti"
         }
+      },
+      "deleteAccount": {
+        "title": "Kustuta konto",
+        "description": "Kustuta oma konto ja kõik andmed jäädavalt.",
+        "button": "Kustuta konto"
       }
     },
     "promotions": {
@@ -558,6 +563,16 @@
     },
     "noVendorsFound": "Pakkujaid ei leitud"
   },
+  "all": {
+    "filters": {
+      "chooseVendor": "Vali teenusepakkuja/peokoht",
+      "selectPricing": "Vali hind",
+      "pickEventType": "Vali sündmuse tüüp",
+      "withPricingOnly": "Ainult hinnakirjaga",
+      "withoutPricingOnly": "Ainult ilma hinnakirjata"
+    },
+    "noVendorsFound": "Teenusepakkujaid/peokohti ei leitud"
+  },
   "Venues": {
     "filters": {
       "chooseVenue": "Vali koht",
@@ -691,12 +706,22 @@
     },
     "Logout": {
       "title": "Logi välja",
-      "confirmTitle": "Kas soovid kindlasti välja logida?",
-      "confirmDesc": "Sind logitakse kontolt välja ja suunatakse sisselogimise lehele.",
+      "confirmTitle": "Kas olete kindel, et soovite välja logida?",
+      "confirmDesc": "Teid logitakse välja ja suunatakse sisselogimise lehele.",
       "cancel": "Tühista",
       "logoutCta": "Logi välja",
       "toasts": {
-        "loggedOut": "Väljalogimine õnnestus!"
+        "loggedOut": "Olete edukalt välja logitud!"
+      }
+    },
+    "DeleteAccount": {
+      "title": "Kustuta konto",
+      "confirmTitle": "Kas olete kindel, et soovite oma konto kustutada?",
+      "confirmDesc": "Seda tegevust ei saa tagasi võtta. Kõik teie andmed, sealhulgas kuulutused, lemmikud kuulutused, sõnumid, arvustused ja broneeringud, kustutatakse jäädavalt. Kõik aktiivsed tellimused tühistatakse.",
+      "cancel": "Tühista",
+      "deleteCta": "Kustuta konto",
+      "toasts": {
+        "deleted": "Konto edukalt kustutatud"
       }
     },
     "ListingItem": {

@@ -345,6 +345,16 @@
     },
     "noVendorsFound": "Tiekėjų nerasta"
   },
+  "all": {
+    "filters": {
+      "chooseVendor": "Pasirinkite tiekėją/vietą",
+      "selectPricing": "Pasirinkite kainą",
+      "pickEventType": "Pasirinkite renginio tipą",
+      "withPricingOnly": "Rodyti tik su kaina",
+      "withoutPricingOnly": "Rodyti tik be kainos"
+    },
+    "noVendorsFound": "tiekėją/vietą nerasta"
+  },
   "Venues": {
     "filters": {
       "chooseVenue": "Pasirinkite vietą",
@@ -433,6 +443,17 @@
         "loggedOut": "Sėkmingai atsijungėte!"
       }
     },
+    "DeleteAccount": {
+      "title": "Ištrinti paskyrą",
+      "confirmTitle": "Ar tikrai norite ištrinti savo paskyrą?",
+      "confirmDesc": "Šio veiksmo negalima atšaukti. Visi jūsų duomenys, įskaitant skelbimus, pamėgtus skelbimus, žinutes, atsiliepimus ir užsakymus, bus visam laikui ištrinti. Visos aktyvios prenumeratos bus atšauktos.",
+      "cancel": "Atšaukti",
+      "deleteCta": "Ištrinti paskyrą",
+      "toasts": {
+        "deleted": "Paskyra ištrinta sėkmingai"
+      }
+    },
+
     "ListingItem": {
       "subscriptionHint": "Jūsų skelbimas buvo išsaugotas kaip juodraštis, prenumeruokite, kad jį paskelbti",
       "later": "Vėliau",
@@ -1014,6 +1035,11 @@
           "minLength": "Slaptažodis turi būti bent 8 simbolių",
           "noMatch": "Slaptažodžiai nesutampa"
         }
+      },
+      "deleteAccount": {
+        "title": "Ištrinti paskyrą",
+        "description": "Visam laikui ištrinkite savo paskyrą ir visą turinį.",
+        "button": "Ištrinti paskyrą"
       }
     },
     "FavouriteListings": {

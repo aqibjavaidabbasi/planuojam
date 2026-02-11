@@ -245,7 +245,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
     const tSearch = useTranslations('Search');
     const tMap = useTranslations('Map');
     return (
-        <div className="lg:max-w-[1700px] mx-auto px-4">
+        <div className="lg:max-w-425 mx-auto px-4">
             <div className="mb-4 flex flex-col gap-2.5">
                 <div className="grid grid-cols-5 gap-2.5 items-center justify-center">
                     {/* Keyword search for listings (title/description) */}

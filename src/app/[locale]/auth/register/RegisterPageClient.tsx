@@ -291,7 +291,7 @@ export default function RegisterPageClient() {
                 <label htmlFor="serviceType">{t("chooseService")}</label>
                 <Select
                   options={parentCategories.map((cat) => ({
-                    value: cat.name,
+                    value: cat.serviceType as string,
                     label:
                       cat.localizations?.find((loc) => loc.locale === locale)?.name ||
                       cat.name,

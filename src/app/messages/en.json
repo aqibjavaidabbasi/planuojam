@@ -410,6 +410,11 @@
           "minLength": "Password must be at least 8 characters",
           "noMatch": "Passwords do not match"
         }
+      },
+      "deleteAccount": {
+        "title": "Delete Account",
+        "description": "Permanently delete your account and all of your content.",
+        "button": "Delete Account"
       }
     },
     "promotions": {
@@ -548,6 +553,16 @@
       "withoutPricingOnly": "Without pricing only"
     },
     "noVendorsFound": "No vendors found"
+  },
+  "all": {
+    "filters": {
+      "chooseVendor": "Choose a vendor/venue",
+      "selectPricing": "Select pricing",
+      "pickEventType": "Pick event type",
+      "withPricingOnly": "With pricing only",
+      "withoutPricingOnly": "Without pricing only"
+    },
+    "noVendorsFound": "No vendors/venues found"
   },
   "Venues": {
     "filters": {
@@ -688,6 +703,16 @@
       "logoutCta": "Logout",
       "toasts": {
         "loggedOut": "Logged out successfully!"
+      }
+    },
+    "DeleteAccount": {
+      "title": "Delete Account",
+      "confirmTitle": "Are you sure you want to delete your account?",
+      "confirmDesc": "This action cannot be undone. All your data including listings, liked listings, messages, reviews, and bookings will be permanently deleted. All active subscriptions will be cancelled.",
+      "cancel": "Cancel",
+      "deleteCta": "Delete Account",
+      "toasts": {
+        "deleted": "Account deleted successfully"
       }
     },
     "ListingItem": {

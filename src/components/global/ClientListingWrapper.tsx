@@ -60,6 +60,7 @@ function ClientListingWrapper({
   // Get translations based on service type
   const vendorsT = useTranslations('Vendors');
   const venuesT = useTranslations('Venues');
+  const allT = useTranslations('all');
 
   const eventTypeNames: string[] = eventTypes.map((event) => event.eventName);
 
@@ -104,10 +105,9 @@ function ClientListingWrapper({
     (key: string) => {
       if (serviceType === 'vendor') return vendorsT(key);
       if (serviceType === 'venue') return venuesT(key);
-      // Default to vendor translations for "All Services"
-      return vendorsT(key);
+      return allT(key);
     },
-    [serviceType, vendorsT, venuesT],
+    [serviceType, vendorsT, venuesT, allT],
   );
 
   const placeholders = useMemo(

@@ -5,6 +5,7 @@ import Button from "../custom/Button";
 import { User } from "@/types/userTypes";
 import { TbLogout } from "react-icons/tb";
 import LogoutModal from "../modals/LogoutModal";
+import DeleteAccountModal from "../modals/DeleteAccountModal";
 // removed redux dispatch import (no longer used)
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
@@ -31,6 +32,7 @@ type UserWithAuthFlags = User & {
 function ProfileTab({ user }: { user: User | null }) {
   const dispatch = useAppDispatch();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [usernameStatus, setUsernameStatus] = useState<"unchecked" | "checking" | "available" | "taken">("unchecked");
@@ -459,9 +461,28 @@ function ProfileTab({ user }: { user: User | null }) {
             </form>
           </div>
         )}
+
+        
+        {/* Delete Account Section */}
+        <div className="mt-12 pt-8 border-t border-gray-200">
+           <h2 className="text-xl font-semibold text-red-600 mb-2">
+              {t('deleteAccount.title')}
+            </h2>
+            <p className="text-gray-600 mb-4 text-sm">
+              {t('deleteAccount.description')}
+            </p>
+            <Button
+              style="destructive"
+              onClick={() => setIsDeleteAccountModalOpen(true)}
+              disabled={loading}
+            >
+              {t('deleteAccount.button')}
+            </Button>
+        </div>
       </div>
 
       <LogoutModal isOpen={isLogoutModalOpen} onClose={() => setIsLogoutModalOpen(false)} />
+      <DeleteAccountModal isOpen={isDeleteAccountModalOpen} onClose={() => setIsDeleteAccountModalOpen(false)} />
     </div>
   );
 }

@@ -398,6 +398,11 @@
           "minLength": "Hasło musi mieć co najmniej 8 znaków",
           "noMatch": "Hasła nie są zgodne"
         }
+      },
+      "deleteAccount": {
+        "title": "Usuń konto",
+        "description": "Trwale usuń swoje konto i wszystkie dane.",
+        "button": "Usuń konto"
       }
     },
     "promotions": {
@@ -560,6 +565,16 @@
     },
     "noVendorsFound": "Nie znaleziono dostawców"
   },
+  "all": {
+    "filters": {
+      "chooseVendor": "Wybierz dostawcę/obiekt",
+      "selectPricing": "Wybierz cenę",
+      "pickEventType": "Wybierz typ wydarzenia",
+      "withPricingOnly": "Tylko z ceną",
+      "withoutPricingOnly": "Tylko bez ceny"
+    },
+    "noVendorsFound": "Nie znaleziono dostawcę/obiekt"
+  },
   "Venues": {
     "filters": {
       "chooseVenue": "Wybierz miejsce",
@@ -688,17 +703,27 @@
     },
     "LoginNavigate": {
       "title": "Zaloguj się, aby polubić to ogłoszenie",
-      "description": "Po zalogowaniu możesz zapisać to ogłoszenie do ulubionych i otrzymywać aktualizacje o jego dostępności.",
+      "description": "Zaloguj się, aby zapisać to ogłoszenie w ulubionych i otrzymywać aktualizacje o dostępności.",
       "loginCta": "Zaloguj się"
     },
     "Logout": {
       "title": "Wyloguj",
       "confirmTitle": "Czy na pewno chcesz się wylogować?",
-      "confirmDesc": "Zostaniesz wylogowany i przekierowany na stronę logowania.",
-      "cancel": "Anuluj",
+      "confirmDesc": "Zostaniesz wylogowany i nastąpi przekierowanie do strony logowania.",
+      "cancel": "Anulować",
       "logoutCta": "Wyloguj",
       "toasts": {
-        "loggedOut": "Pomyślnie wylogowano!"
+        "loggedOut": "Wylogowano pomyślnie!"
+      }
+    },
+    "DeleteAccount": {
+      "title": "Usuń konto",
+      "confirmTitle": "Czy na pewno chcesz usunąć swoje konto?",
+      "confirmDesc": "Tej operacji nie można cofnąć. Wszystkie Twoje dane, w tym ogłoszenia, polubione ogłoszenia, wiadomości, opinie i rezerwacje, zostaną trwale usunięte. Wszystkie aktywne subskrypcje zostaną anulowane.",
+      "cancel": "Anuluj",
+      "deleteCta": "Usuń konto",
+      "toasts": {
+        "deleted": "Konto usunięte pomyślnie"
       }
     },
     "ListingItem": {
