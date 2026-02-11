@@ -15,10 +15,10 @@ export function filterUniqueCategoriesByParent(data: SelectedCategoriesList) {
       // Keep first occurrence of documentId
       index ===
         self.findIndex(
-          (t) => t.category.documentId === item.category.documentId
+          (t) => t.category?.documentId === item.category?.documentId
         ) &&
       // Match parent category name
-      item.category.parentCategory?.name === data.parentCategory.parent.name
+      item.category?.parentCategory?.name === data.parentCategory.parent.name
   );
 }
 
