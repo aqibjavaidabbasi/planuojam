@@ -89,7 +89,9 @@
     "Social": {
       "orContinue": "Или создайте аккаунт через",
       "google": "Создать аккаунт через Google",
-      "facebook": "Создать аккаунт через Facebook"
+      "facebook": "Создать аккаунт через Facebook",
+      "googleLogin": "Войти через Google",
+      "facebookLogin": "Войти через Facebook"
     },
     "ResetPassword": {
       "title": "Сброс пароля",
@@ -510,7 +512,7 @@
       "customStars": "Звезды (вручную)",
       "customDays": "Дни (вручную)",
       "total": "Итого",
-      "priceHint": "Индивидуальная цена рассчитывается как pricePerStarPerDay × звезды × дни.",
+      "priceHint": "Индивидуальная цена расчитывается как 'Цена за звезду в день' × звезды × дни.",
       "created": "Промо успешно создано",
       "failed": "Не удалось создать акцию",
       "cancel": "Отмена",

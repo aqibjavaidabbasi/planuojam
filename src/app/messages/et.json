@@ -90,7 +90,9 @@
     "Social": {
       "orContinue": "Või loo konto",
       "google": "Loo konto Google'iga",
-      "facebook": "Loo konto Facebookiga"
+      "facebook": "Loo konto Facebookiga",
+      "googleLogin": "Logi sisse Google'iga",
+      "facebookLogin": "Logi sisse Facebookiga"
     },
     "ResetPassword": {
       "title": "Lähtesta parool",
@@ -423,7 +425,7 @@
       "customStars": "Tärnid (kohandatud)",
       "customDays": "Päevad (kohandatud)",
       "total": "Kokku",
-      "priceHint": "Kohandatud hind arvutatakse: pricePerStarPerDay × tärnid × päevad.",
+      "priceHint": "Kohandatud hind arvutatakse: 'Hind täheks tärni kohta päevas' × 'tärnid' × 'päevad'.",      
       "created": "Reklaam on edukalt loodud",
       "failed": "Pakkumise loomine ebaõnnestus",
       "cancel": "Anulować",

@@ -294,7 +294,7 @@ const CreatePromotionForm: React.FC<CreatePromotionFormProps> = ({
                       setIsCustomSelected(false);
                       setValue("packageIndex", idx);
                     }}
-                    className={`text-left rounded-2xl border-2 p-3 cursor-pointer transition-all w-[180px] h-[120px] ${
+                    className={`text-left rounded-2xl border-2 p-3 cursor-pointer transition-all w-45 h-30 ${
                       isSelected
                         ? "border-primary bg-gradient-to-br from-primary to-[#e6a942] text-white shadow-lg -translate-y-0.5"
                         : "border-gray-200 bg-white hover:border-primary hover:shadow-md hover:-translate-y-0.5"
@@ -322,7 +322,7 @@ const CreatePromotionForm: React.FC<CreatePromotionFormProps> = ({
                   setIsCustomSelected(true);
                   setValue("packageIndex", undefined);
                 }}
-                className={`text-left rounded-2xl border-2 p-3 cursor-pointer transition-all w-[180px] h-[120px] ${
+                className={`text-left rounded-2xl border-2 p-3 cursor-pointer transition-all w-45 h-30 ${
                   isCustomSelected
                     ? "border-primary bg-gradient-to-br from-primary to-[#e6a942] text-white shadow-lg -translate-y-0.5"
                     : "border-gray-200 bg-white hover:border-primary hover:shadow-md hover:-translate-y-0.5"

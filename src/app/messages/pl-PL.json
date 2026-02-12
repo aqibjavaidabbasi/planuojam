@@ -91,7 +91,9 @@
     "Social": {
       "orContinue": "Lub załóż konto przez",
       "google": "Załóż konto przez Google",
-      "facebook": "Załóż konto przez Facebook"
+      "facebook": "Załóż konto przez Facebook",
+      "googleLogin": "Zaloguj się przez Google",
+      "facebookLogin": "Zaloguj się przez Facebook"
     },
     "ResetPassword": {
       "title": "Zresetuj hasło",
@@ -425,7 +427,7 @@
       "customStars": "Gwiazdki (własne)",
       "customDays": "Dni (własne)",
       "total": "Razem",
-      "priceHint": "Cena niestandardowa liczona jako pricePerStarPerDay × gwiazdki × dni.",
+      "priceHint": "Cena niestandardowa liczona jako 'Cena za gwiazdkę za dzień' × 'gwiazdki' × 'dni'.",
       "created": "Promocja została utworzona",
       "failed": "Nie udało się utworzyć promocji",
       "cancel": "Anulować",

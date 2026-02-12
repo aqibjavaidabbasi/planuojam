@@ -90,7 +90,9 @@
     "Social": {
       "orContinue": "Or register with",
       "google": "Create account with Google",
-      "facebook": "Create account with Facebook"
+      "facebook": "Create account with Facebook",
+      "googleLogin": "Login with Google",
+      "facebookLogin": "Login with Facebook"
     },
     "ResetPassword": {
       "title": "Reset Password",
@@ -437,7 +439,7 @@
       "customStars": "Stars (custom)",
       "customDays": "Days (custom)",
       "total": "Total",
-      "priceHint": "Custom price is computed as pricePerStarPerDay × stars × days.",
+      "priceHint": "Custom price is computed as 'Price Per Star Per Day' × 'stars' × 'days'.",
       "created": "Promotion created successfully",
       "failed": "Failed to create promotion",
       "cancel": "Cancel",

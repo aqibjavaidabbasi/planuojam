@@ -90,7 +90,9 @@
     "Social": {
       "orContinue": "Arba registruokitės su",
       "google": "Registruotis su Google",
-      "facebook": "Registruotis su Facebook"
+      "facebook": "Registruotis su Facebook",
+      "googleLogin": "Prisijungti su Google",
+      "facebookLogin": "Prisijungti su Facebook"
     },
     "ResetPassword": {
       "title": "Slaptažodžio nustatymas",
@@ -300,7 +302,7 @@
       "month": "Mėnuo",
       "year": "Metai",
       "day": "Diena",
-      "week": "Savaikis",
+      "week": "Savaitė",
       "today": "Dabar",
       "legend": {
         "booked": "Užimta",
@@ -576,7 +578,7 @@
         },
         "about": {
           "label": "Apie",
-          "placeholder": "Aprašykite savo paslaugą"
+          "placeholder": "Apžvalga savo paslaugą"
         },
         "experienceYears": {
           "label": "Patirtis (metais)",
@@ -960,7 +962,7 @@
       "customStars": "Žvaigždės (pasirinktinai)",
       "customDays": "Dienos (pasirinktinai)",
       "total": "Iš viso",
-      "priceHint": "Individuali kaina skaičiuojama: pricePerStarPerDay × žvaigždės × dienos.",
+      "priceHint": "Individuali kaina skaičiuojama: 'kaina už žvaigždę per dieną' × 'žvaigždės' × 'dienos'.",
       "created": "Akcija sėkmingai sukurta",
       "failed": "Nepavyko sukurti reklamos",
       "cancel": "Atšaukti",
@@ -1358,8 +1360,8 @@
     "address": "Adresas",
     "locationHint": "Čia pateikiama informacija apie jūsų pasirinktą vietą.",
     "remove": "Pašalinti",
-    "citylabel": "Miesto ženklas",
-    "statelabel": "Apskritis / miestas",
+    "citylabel": "Mestas",
+    "statelabel": "Apskritis",
     "selectstate": "Pasirinkite apskritį / miestą",
     "selectcity": "Pasirinkite miestą",
     "minimumDuration": {
@@ -1371,7 +1373,7 @@
       "invalidLatitude": "Platuma turi būti tarp -90 ir 90",
       "invalidLongitude": "Ilguma turi būti tarp -180 ir 180",
       "cityRequired": "Privalomas miestas",
-      "stateRequired": "Privaloma apskritis / miestas",
+      "stateRequired": "Privaloma Apskritis",
       "latitudeRequired": "Privalomas platuma",
       "longitudeRequired": "Privalomas ilguma",
       "capacityRequired": "Privaloma talpa",

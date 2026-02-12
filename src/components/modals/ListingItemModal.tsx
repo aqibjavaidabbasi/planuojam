@@ -390,6 +390,113 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
     }
   };
 
+  // Comprehensive validation function before submitting to Strapi
+  const validateBeforeSubmit = (): string | null => {
+    const payload = getValues();
+
+    // 1. Validate basic required fields
+    if (!payload.title || payload.title.trim() === '') {
+      return t('fields.title.required');
+    }
+
+    if (!payload.description || payload.description.trim() === '') {
+      return t('fields.description.required');
+    }
+
+    if (payload.price === undefined || payload.price === null || payload.price < 0) {
+      return t('fields.price.errors.min');
+    }
+
+    if (payload.price > 1000000) {
+      return t('fields.price.errors.max');
+    }
+
+    // 2. Validate contact fields
+    if (!payload.contact?.email || payload.contact.email.trim() === '') {
+      return 'Email is required';
+    }
+
+    if (!payload.contact.phone || payload.contact.phone.trim() === '') {
+      return t('fields.phone.message');
+    }
+
+    // 3. Validate email format
+    const emailRegex = /^\S+@\S+$/i;
+    if (!emailRegex.test(payload.contact.email)) {
+      return t('fields.email.message');
+    }
+
+    // 4. Validate category
+    if (!selectedCategory) {
+      return t('errors.categoryRequired');
+    }
+
+    // 5. Validate images
+    if (mediaItems.length === 0) {
+      return t('errors.noImage');
+    }
+
+    // 6. Validate videos if present
+    if (Array.isArray(payload.videos) && payload.videos.length > 0) {
+      const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/;
+      for (const video of payload.videos) {
+        if (video.url && !youtubeRegex.test(video.url)) {
+          return t('fields.videos.errors.invalid') || 'Invalid YouTube URL';
+        }
+      }
+    }
+
+    // 7. Validate listing items (vendor/venue specific)
+    if (!payload.listingItem || payload.listingItem.length === 0) {
+      return 'Listing details are required';
+    }
+
+    const listingItem = payload.listingItem[0];
+
+    if (isVendor) {
+      // Vendor-specific validation
+      if (!listingItem.about || listingItem.about.trim() === '') {
+        return t('fields.about.label') + ' is required';
+      }
+      if (listingItem.experienceYears === undefined || listingItem.experienceYears === null || listingItem.experienceYears < 0) {
+        return t('fields.experienceYears.label') + ' must be a valid number';
+      }
+    } else {
+      // Venue-specific validation
+      if (!listingItem.location) {
+        return t('errors.addressRequired');
+      }
+
+      if (!listingItem.location.address || listingItem.location.address.trim() === '') {
+        return t('errors.addressRequired');
+      }
+
+      if (listingItem.capacity === undefined || listingItem.capacity === null || listingItem.capacity < 0) {
+        return t('fields.capacity.label') + ' must be a positive number';
+      }
+
+      if (!listingItem.bookingDurationType) {
+        return t('fields.bookingDurationType.label') + ' is required';
+      }
+
+      if (listingItem.bookingDuration === undefined || listingItem.bookingDuration === null || listingItem.bookingDuration <= 0) {
+        return t('fields.bookingDuration.label') + ' must be greater than 0';
+      }
+
+      if (listingItem.minimumDuration === undefined || listingItem.minimumDuration === null || listingItem.minimumDuration < 0) {
+        return t('fields.minimumDuration.label') + ' must be a valid number';
+      }
+    }
+
+    // 8. Validate working schedule if present
+    if (Array.isArray(payload.workingSchedule) && payload.workingSchedule.length > 0) {
+      const wsError = validateWorkingSchedule();
+      if (wsError) return wsError;
+    }
+
+    return null;
+  };
+
   // Working Schedule helpers
   const addWorkingSchedule = () => {
     const current = getValues('workingSchedule') || [];
@@ -460,30 +567,16 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
     setError(null);
     setIsLoading(true);
     try {
+      // Comprehensive validation before submitting to Strapi
+      const validationError = validateBeforeSubmit();
+      if (validationError) {
+        setError(validationError);
+        setSubmitting(false);
+        setIsLoading(false);
+        return;
+      }
+
       const payload = getValues();
-
-      // Validate category is selected
-      if (!selectedCategory) {
-        setError(t('errors.categoryRequired'));
-        return;
-      }
-
-      // Validate address for venues
-      if (
-        !isVendor &&
-        (!payload.listingItem?.[0]?.location?.address ||
-          payload.listingItem[0].location.address.trim() === '')
-      ) {
-        setError(t('errors.addressRequired'));
-        return;
-      }
-
-      // Validate working schedule conflicts
-      const wsError = validateWorkingSchedule();
-      if (wsError) {
-        setError(wsError);
-        return;
-      }
       // Normalize workingSchedule time values to HH:mm:ss.SSS
       if (Array.isArray(payload.workingSchedule)) {
         const pad2 = (n: number) => String(n).padStart(2, '0');
@@ -647,7 +740,32 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
       }
 
       // set slug using title with a short unique suffix to avoid collisions within the same locale
-      payload.slug = `${slugify(payload.title)}-${shortId(6)}`;
+      const slugBasePart = slugify(payload.title);
+      
+      // Ensure slug is never empty (fallback to random ID if slugify returns empty string)
+      if (!slugBasePart || slugBasePart.trim() === '') {
+        setError('Failed to generate URL slug from title');
+        setSubmitting(false);
+        setIsLoading(false);
+        return;
+      }
+
+      payload.slug = `${slugBasePart}-${shortId(6)}`;
+
+      // Ensure contact has email and phone
+      if (!payload?.contact?.email || payload.contact.email.trim() === '') {
+        setError('Email is required in contact section');
+        setSubmitting(false);
+        setIsLoading(false);
+        return;
+      }
+
+      if (!payload.contact.phone || payload.contact.phone.trim() === '') {
+        setError(t('fields.phone.message'));
+        setSubmitting(false);
+        setIsLoading(false);
+        return;
+      }
 
       // set locale from current app locale
       payload.locale = locale;
