@@ -153,7 +153,7 @@ export default function PricingSection({
                       type="number"
                       label={t("labels.price")}
                       disabled={isWorking}
-                      value={p.price ?? ""}
+                      value={p.price > 0 ? p.price : ""}
                       onChange={(e) => {
                         const list = [...(form.getValues("plans") || [])]
                         list[idx] = { ...list[idx], price: Number(e.target.value) }
