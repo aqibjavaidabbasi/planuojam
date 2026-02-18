@@ -810,7 +810,7 @@
         },
         "description": {
           "label": "Description",
-          "placeholder": "Add description about your service",
+          "placeholder": "Explain what you’re offering. Include important details like features, size, materials, or what the buyer will get.",
           "required": "Description is required"
         },
         "websiteLink": {
@@ -829,7 +829,7 @@
         },
         "about": {
           "label": "About",
-          "placeholder": "Tell about your service"
+          "placeholder": "Tell buyers about you or your business. Share your experience and why they can trust you. Keep it short."
         },
         "experienceYears": {
           "label": "Experience Years",
@@ -1164,10 +1164,10 @@
       "removeFromFavorites": "Remove from favorites",
       "editListing": "Edit listing",
       "viewListing": "View listing",
-      "startsToday": "Hot deal starts today!",
-      "startsTomorrow": "Hot deal starts tomorrow!",
-      "startsInDays": "Hot deal in {days} days",
-      "startsOn": "Hot deal {date}",
+      "startsToday": "Special Offer starts today!",
+      "startsTomorrow": "Special Offer starts tomorrow!",
+      "startsInDays": "Special Offer starts in {days} days!",
+      "startsOn": "Special Offer!",
       "videoNotSupported": "Your browser does not support the video tag."
     },
     "SelectedCategories": {

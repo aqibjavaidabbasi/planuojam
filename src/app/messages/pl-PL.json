@@ -831,7 +831,7 @@
         },
         "description": {
           "label": "Opis",
-          "placeholder": "Dodaj opis swojej usługi",
+          "placeholder": "Wyjaśnij, co oferujesz. Dodaj ważne szczegóły, takie jak cechy, rozmiar, materiały lub to, co otrzyma kupujący.",
           "required": "Opis jest wymagany"
         },
         "websiteLink": {
@@ -849,10 +849,12 @@
           }
         },
         "about": {
-          "label": "O mnie"
+          "label": "O mnie",
+          "placeholder": "Opowiedz kupującym o sobie lub swojej firmie. Podziel się swoim doświadczeniem i powodem, dla którego mogą ci zaufać. Pisz krótko."
         },
         "experienceYears": {
-          "label": "Lata doświadczenia"
+          "label": "Lata doświadczenia",
+          "placeholder": "np. 5"
         },
         "city": {
           "label": "Miasto",
@@ -1179,9 +1181,9 @@
       "editListing": "Edytuj ogłoszenie",
       "viewListing": "Zobacz ogłoszenie",
       "startsToday": "Okazja rozpoczyna się dziś!",
-      "startsTomorrow": "Okazja rozpoczyna się jutro!",
-      "startsInDays": "Okazja za {days} dni",
-      "startsOn": "Okazja {date}",
+      "startsTomorrow": "Oferta specjalna zaczyna się jutro!",
+      "startsInDays": "Oferta specjalna zaczyna się za {days} dni!",
+      "startsOn": "Oferta specjalna!",
       "videoNotSupported": "Twoja przeglądarka nie obsługuje znacznika wideo."
     },
     "SelectedCategories": {

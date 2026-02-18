@@ -17,11 +17,17 @@ function VendorCard({ item }: VendorCardProps) {
         <React.Fragment>
           <h3 className="text-lg font-semibold text-primary">{t('title')}</h3>
           <p className="text-secondary">{item.about}</p>
-          <p className="text-secondary">{t('experienceYears', {years: item.experienceYears || 0})}</p>
+          <p className="text-secondary">
+            <b>
+              {t('experienceYears', {years: item.experienceYears || 0})}
+            </b>
+          </p>
           {item.serviceArea && (
             <div>
               <p className="text-secondary">
-                {t('serviceArea')}{" "}
+                <b>
+                  {t('serviceArea')}{" "}
+                </b>
                 {[
                   item.serviceArea.length > 0
                     ? item.serviceArea.map((s) => s?.state?.name).join(", ")

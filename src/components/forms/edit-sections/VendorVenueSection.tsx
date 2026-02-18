@@ -307,6 +307,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
   }, [venueSource, venueLoc.address, venueLoc.city, venueLoc.state, venueLoc.latitude, venueLoc.longitude, bookingType, venueRHF])
 
   const t = useTranslations("vendorvenueSection")
+  const tModal = useTranslations("Modals.ListingItem")
 
   // Get current locations for map display
   const getCurrentLocations = useMemo((): MapLocation[] => {
@@ -365,7 +366,14 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
       <h3 className="text-lg font-semibold mb-4">{`${isVendor ? t("vendor") : t("venue")} ${t("details")}`}</h3>
       {isVendor ? (
         <form onSubmit={submitVendor(onSubmitVendor)} id="vendor-form" className="flex flex-col gap-4">
-          <TextArea label={t("about")} disabled={submitting} {...vendorRegister("about")} />
+          <TextArea
+            label={tModal('fields.about.label')}
+            placeholder={tModal('fields.about.placeholder')}
+            rows={4}
+            disabled={submitting}
+            required
+            {...vendorRegister("about")}
+          />
           <Input type="number" label={t("experienceYears")} disabled={submitting} {...vendorRegister("experienceYears", { valueAsNumber: true })} />
 
           <div>

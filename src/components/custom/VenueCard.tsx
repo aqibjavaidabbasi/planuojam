@@ -46,11 +46,14 @@ function VenueCard({ item }: VenueCardProps) {
             </ul>
           )}
           {item.capacity && (
-            <p className="text-secondary">{t('capacity', {count: item.capacity})}</p>
+            <p className="text-secondary font-medium">{t('capacity', {count: item.capacity})}</p>
           )}
           {item.location && (
             <p className="text-secondary">
-              {t('location')}: {item.location.address}{item.location?.city ? ", " : ""}{getName(item.location?.city)}{" "}
+              <b>
+                {t('location')}: 
+              </b>
+              {item.location.address}{item.location?.city ? ", " : ""}{getName(item.location?.city)}{" "}
               {getName(item.location?.country)}
             </p>
           )}

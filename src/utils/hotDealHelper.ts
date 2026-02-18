@@ -126,16 +126,14 @@ export function getUpcomingHotDealMessage(hotDeal?: HotDeal, t?: (key: string, p
   }
 
   const daysUntil = info.daysUntilStart || 0;
-  const formatDate = (date: Date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  const dateRange = `${formatDate(info.startDate)} - ${info.endDate ? formatDate(info.endDate) : ''}`;
 
   if (daysUntil === 0) {
-    return t?.('startsToday') || `Hot deal starts today!`;
+    return t?.('startsOn') || `Specialus pasiūlymas`;
   } else if (daysUntil === 1) {
-    return t?.('startsTomorrow') || `Hot deal starts tomorrow!`;
+    return t?.('startsTomorrow') || `Specialus pasiūlymas prasideda jau rytoj!`;
   } else if (daysUntil <= 7) {
-    return t?.('startsInDays', { days: daysUntil }) || `Hot deal in ${daysUntil} days`;
+    return t?.('startsInDays', { days: daysUntil }) || `Specialus pasiūlymas startuoja po ${daysUntil} dienų!`;
   } else {
-    return t?.('startsOn', { date: dateRange }) || `Hot deal ${dateRange}`;
+    return t?.('startsOn') || `Specialus pasiūlymas!`;
   }
 }

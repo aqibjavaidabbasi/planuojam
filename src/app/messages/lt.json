@@ -559,7 +559,7 @@
         },
         "description": {
           "label": "Aprašymas",
-          "placeholder": "Pridėkite paslaugos aprašymą",
+          "placeholder": "Paaiškinkite, ką siūlote. Įtraukite svarbią informaciją, pvz., savybes, dydį, medžiagas arba tai, ką gaus pirkėjas.",
           "required": "Aprašymas yra privalomas"
         },
         "websiteLink": {
@@ -578,7 +578,7 @@
         },
         "about": {
           "label": "Apie",
-          "placeholder": "Apžvalga savo paslaugą"
+          "placeholder": "Papasakokite pirkėjams apie save arba savo verslą. Pasidalykite savo patirtimi ir kodėl jie gali jumis pasitikėti. Rašykite trumpai."
         },
         "experienceYears": {
           "label": "Patirtis (metais)",
@@ -1173,9 +1173,9 @@
       "editListing": "Redaguoti skelbimą",
       "viewListing": "Peržiūrėti skelbimą",
       "startsToday": "Sodyba prasideda šiandien!",
-      "startsTomorrow": "Sodyba prasideda rytoj!",
-      "startsInDays": "Sodyba po {days} dien",
-      "startsOn": "Sodyba {date}"
+      "startsTomorrow": "Specialus pasiūlymas prasideda jau rytoj!",
+      "startsInDays": "Specialus pasiūlymas startuoja po {days} dienų!",
+      "startsOn": "Specialus pasiūlymas!"
     },
     "SelectedCategories": {
       "noCategoriesFound": "Kategorijų nerasta"

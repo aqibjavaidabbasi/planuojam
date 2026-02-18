@@ -820,7 +820,7 @@
         },
         "description": {
           "label": "Kirjeldus",
-          "placeholder": "Lisa oma teenuse kirjeldus",
+          "placeholder": "Selgita, mida pakud. Lisa olulist teavet, nagu omadused, suurus, materjalid või see, mida ostja saab.",
           "required": "Kirjeldus on kohustuslik"
         },
         "websiteLink": {
@@ -839,7 +839,7 @@
         },
         "about": {
           "label": "Teave",
-          "placeholder": "Räägi oma teenusest"
+          "placeholder": "Rääkige ostjatele endast või oma ettevõttest. Jagage oma kogemust ja põhjust, miks nad teid usaldada saavad. Hoidke see lühike."
         },
         "experienceYears": {
           "label": "Aastad kogemust",
@@ -1170,9 +1170,9 @@
       "editListing": "Muuda kuulutust",
       "viewListing": "Vaata kuulutust",
       "startsToday": "Soodustus algab täna!",
-      "startsTomorrow": "Soodustus algab homme!",
-      "startsInDays": "Soodustus {days} päeva pärast",
-      "startsOn": "Soodustus {date}",
+      "startsTomorrow": "Eripakkumine algab homme!",
+      "startsInDays": "Eripakkumine algab {days} päeva pärast!",
+      "startsOn": "Eripakkumine!",
       "videoNotSupported": "Teie brauser ei toeta video silti."
     },
     "SelectedCategories": {

@@ -387,13 +387,13 @@ export default function BasicSection({
         </div>
         <div className='col-span-2'>
           <TextArea
-            label={t('description')}
-            placeholder={t('titleDescription')}
+            label={tModal('fields.description.label')}
+            placeholder={tModal('fields.description.placeholder')}
             rows={4}
             disabled={submitting}
             required
             {...register('description', {
-              required: t('errors.descriptionRequired'),
+              required: tModal('fields.description.required'),
             })}
           />
           {errors.description && (
@@ -404,7 +404,8 @@ export default function BasicSection({
         </div>
         <div className='col-span-2'>
           <UrlInput
-            label={t('websitelink')}
+            label={tModal('fields.websiteLink.label')}
+            placeholder={tModal('fields.websiteLink.placeholder')}
             disabled={submitting}
             value={watch('websiteLink') || ''}
             showNormalizedUrl={true}
