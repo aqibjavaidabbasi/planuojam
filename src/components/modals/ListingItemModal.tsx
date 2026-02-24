@@ -635,6 +635,8 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
           set: [...eventTypesIds],
         };
       }
+      //set autotranslate field to true
+      payload.autoTranslateOnUpdate = true;
       if (selectedCategory) {
         // Wrap category relation
         payload.category = selectedCategory;
@@ -1138,9 +1140,9 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                     ? t('sections.vendorDetails')
                     : t('sections.venueDetails')}
                 </h3>
-                <p className='text-gray-500 font-medium text-sm tracking-wide mb-2'>
+                {/* <p className='text-gray-500 font-medium text-sm tracking-wide mb-2'>
                   {t('serviceArea.helpText')}
-                </p>
+                </p> */}
                 {isVendor ? (
                   <div className='flex flex-col gap-4'>
                     <TextArea

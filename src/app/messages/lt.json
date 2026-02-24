@@ -88,7 +88,7 @@
       "passwordTooShort": "Slaptažodis turi būti bent 8 simbolių"
     },
     "Social": {
-      "orContinue": "Arba registruokitės su",
+      "orContinue": "Arba Tęsti su",
       "google": "Registruotis su Google",
       "facebook": "Registruotis su Facebook",
       "googleLogin": "Prisijungti su Google",
@@ -1362,7 +1362,7 @@
     "remove": "Pašalinti",
     "citylabel": "Mestas",
     "statelabel": "Apskritis",
-    "selectstate": "Pasirinkite apskritį / miestą",
+    "selectstate": "Pasirinkite apskritį",
     "selectcity": "Pasirinkite miestą",
     "minimumDuration": {
       "label": "minimalios trukmės valandos",

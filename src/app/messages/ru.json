@@ -87,7 +87,7 @@
       "passwordTooShort": "Пароль должен быть не менее 8 символов"
     },
     "Social": {
-      "orContinue": "Или создайте аккаунт через",
+      "orContinue": "Или продолжить с",
       "google": "Создать аккаунт через Google",
       "facebook": "Создать аккаунт через Facebook",
       "googleLogin": "Войти через Google",
@@ -1387,8 +1387,8 @@
     "locationHint": "Здесь представлена информация о вашем выбранном месте.",
     "remove": "Удалить",
     "citylabel": "Метка города",
-    "statelabel": "Область / Город",
-    "selectstate": "Выбрать область / город",
+    "statelabel": "Область",
+    "selectstate": "Выбрать область",
     "selectcity": "Выбрать город",
     "minimumDuration": {
       "label": "Минимальная продолжительность в часах",

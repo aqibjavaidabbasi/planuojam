@@ -27,6 +27,7 @@ import { notFound } from "next/navigation";
 import { RootState } from "@/store";
 import { createSingleLocationFromListing } from "@/utils/locationFactory";
 import { fetchPromotedListingsWithMeta } from "@/services/listing";
+import { shouldShowHotDeal } from '@/utils/hotDealHelper';
 
 export default function ListingDetailsPage({ initialListing, locale }: { initialListing: ListingItem; locale: string }) {
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
@@ -233,7 +234,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
             </div>
 
             {/* Hot Deal Section */}
-            {initialListing.hotDeal && initialListing.hotDeal.enableHotDeal && (
+            {shouldShowHotDeal(initialListing.hotDeal) && (
               <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
                 <h2 className="text-2xl font-semibold text-primary mb-4">
                   {t("hotDeal")}

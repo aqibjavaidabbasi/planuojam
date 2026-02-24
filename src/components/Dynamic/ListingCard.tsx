@@ -83,21 +83,6 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           '2px 0px 4px rgba(0,0,0,0.1), 0px 2px 4px rgba(0,0,0,0.1), 0px -2px 4px rgba(0,0,0,0.1), -2px 0px 4px rgba(0,0,0,0.1)'
       }}
     >
-      {/* Status Badge - Only visible to owner */}
-      {user?.documentId === item.user?.documentId && item.listingStatus === 'draft' && (
-        <div className="absolute top-2 left-2 z-10">
-          <span className="bg-gray-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
-            {t('draft')}
-          </span>
-        </div>
-      )}
-      {user?.documentId === item.user?.documentId && item.listingStatus === 'archived' && (
-        <div className="absolute top-2 left-2 z-10">
-          <span className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
-            {t('archived')}
-          </span>
-        </div>
-      )}
 
       {/* Upcoming Hot Deal Banner */}
       {hotDealInfo.status === 'upcoming' && (
@@ -246,19 +231,24 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           })}
         </Swiper>
       )}
-      {((item.portfolio?.filter(media => !media.mime?.startsWith('video/')) || [])?.length === 0 && (item.videos?.length || 0) === 0) && (
-        <div className="relative w-full aspect-4/3">
-          <Image
-            src={"/noImage.jpg"}
-            alt={t('placeholderAlt')}
-            fill
-            style={{ objectFit: 'cover', objectPosition: 'center' }}
-            sizes="(max-width: 768px) 100vw, 400px"
-          />
-        </div>)}
 
       {/* Content */}
-      <div className="p-3 space-y-2">
+      <div className="p-3 space-y-2 relative">
+        {/* Status Badge - Only visible to owner */}
+        {user?.documentId === item.user?.documentId && item.listingStatus === 'draft' && (
+          <div className="absolute -top-8 left-2 z-10">
+            <span className="bg-gray-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+              {t('draft')}
+            </span>
+          </div>
+        )}
+        {user?.documentId === item.user?.documentId && item.listingStatus === 'archived' && (
+          <div className="absolute -top-8 left-2 z-10">
+            <span className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+              {t('archived')}
+            </span>
+          </div>
+        )}
         {/* Title and Rating */}
         <div className="flex justify-between items-center gap-2">
           <strong className="text-base md:text-lg truncate max-w-[180px]">{item.title}</strong>

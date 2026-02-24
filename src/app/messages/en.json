@@ -88,7 +88,7 @@
       "passwordTooShort": "Password must be at least 8 characters"
     },
     "Social": {
-      "orContinue": "Or register with",
+      "orContinue": "Or Continue with",
       "google": "Create account with Google",
       "facebook": "Create account with Facebook",
       "googleLogin": "Login with Google",
@@ -1374,8 +1374,8 @@
     "locationHint": "Here is information about your selected location.",
     "remove": "Remove",
     "citylabel": "City ",
-    "statelabel": "County / City",
-    "selectstate": "Select County / City",
+    "statelabel": "County",
+    "selectstate": "Select County",
     "selectcity": "Select City",
     "minimumDuration": {
       "label": "Minimum Duration Hours"

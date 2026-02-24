@@ -9,7 +9,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { getListingPath } from "@/utils/routes";
 import { Link, useRouter } from "@/i18n/navigation";
 import dynamic from "next/dynamic";
-import { fetchListingBySlug } from "@/services/listing";
+import { fetchListingBySlugNoCacheFromApi } from "@/services/listing";
 import ArchiveDeleteSection from "./edit-sections/ArchiveDeleteSection";
 
 const SocialLinksSection = dynamic(() => import("./edit-sections/SocialLinksSection"));
@@ -66,7 +66,7 @@ const EditListingForm: React.FC<EditListingFormProps> = ({ listing }) => {
     // After a successful save from any section, refetch latest listing to update child forms' props
     if (!listingId) return
     try {
-      const data = await fetchListingBySlug(String(listingId), locale)
+      const data = await fetchListingBySlugNoCacheFromApi(String(listingId), locale)
       if (data) setCurrentListing(data as ListingItem)
     } catch (e) {
       // noop: Sections already toast on success/failure; avoid interrupting UX here

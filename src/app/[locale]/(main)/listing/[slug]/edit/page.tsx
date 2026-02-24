@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import { fetchListingBySlug } from "@/services/listing"
+import { fetchListingBySlugNoCacheFromApi } from "@/services/listing"
 import EditListingForm from "@/components/forms/EditListingForm"
 import type { ListingItem } from "@/types/pagesTypes"
 import { notFound } from "next/navigation"
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: EditListingPageProps): Promis
   const t = await getTranslations({ locale, namespace: 'Listing' })
 
   try {
-    const listing = await fetchListingBySlug(slug, locale)
+    const listing = await fetchListingBySlugNoCacheFromApi(slug, locale)
     if (!listing) {
       return {
         title: t('notFound', { default: "Listing Not Found" }),
@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: EditListingPageProps): Promis
 export default async function EditListingPage({ params }: EditListingPageProps) {
   const { slug, locale } = await params
   // Fetch listing data only (user auth handled client-side)
-  const listing = await fetchListingBySlug(slug, locale)
+  const listing = await fetchListingBySlugNoCacheFromApi(slug, locale)
 
   if (!listing) {
     notFound()

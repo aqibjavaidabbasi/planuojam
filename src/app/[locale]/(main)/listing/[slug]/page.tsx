@@ -4,11 +4,11 @@ import ListingStatusHandler from './ListingStatusHandler'
 import type { Metadata } from 'next'
 import { getSeoMetadata } from '@/lib/getSeoMetadata'
 import { fetchFallbackSeo, resolveSeoForListing } from '@/services/seoApi'
-import { fetchListingBySlug } from '@/services/listing'
+import { fetchListingBySlugNoCacheFromApi } from '@/services/listing'
 
 async function ListingDetailPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
-  const listing = await fetchListingBySlug(slug, locale);
+  const listing = await fetchListingBySlugNoCacheFromApi(slug, locale);
   
   return (
     <ListingStatusHandler listing={listing} locale={locale}>

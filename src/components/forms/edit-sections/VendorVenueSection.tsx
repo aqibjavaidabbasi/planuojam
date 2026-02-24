@@ -383,7 +383,7 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
                 {t("addservicearea")}
               </Button>
             </div>
-            <p className="text-sm text-gray-500 mb-2">{t("serviceAreaHint")}</p>
+            {/* <p className="text-sm text-gray-500 mb-2">{t("serviceAreaHint")}</p> */}
             {serviceAreas.map((field, idx) => (
               <div key={field.id} className="flex flex-col gap-3 mb-3">
                 <Select
@@ -458,7 +458,8 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
       ) : (
         <form onSubmit={submitVenue(onSubmitVenue)} id="venue-form" className="flex flex-col gap-4">
           <div className="flex gap-3 flex-col">
-            <p className="text-sm text-gray-500 mt-2">{t("locationHint")}</p>
+            {/* <p className="text-sm text-gray-500 mt-2">{t("locationHint")}</p>
+             */}
             <Input type="text" label={t("address")} disabled={submitting} {...venueRegister("location.address")} />
             <Select
               label={t("city")}

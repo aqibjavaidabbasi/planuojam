@@ -89,7 +89,7 @@
       "passwordTooShort": "Hasło musi mieć co najmniej 8 znaków"
     },
     "Social": {
-      "orContinue": "Lub załóż konto przez",
+      "orContinue": "Lub Kontynuuj za pomocą",
       "google": "Załóż konto przez Google",
       "facebook": "Załóż konto przez Facebook",
       "googleLogin": "Zaloguj się przez Google",
@@ -1374,9 +1374,9 @@
     "locationHint": "Tutaj znajdują się informacje o wybranym przez Ciebie miejscu.",
     "remove": "Usuń",
     "citylabel": "Etykieta miasta",
-    "statelabel": "Województwo / Miasto",
+    "statelabel": "Województwo",
     "selectcity": "Wybierz miasto",
-    "selectstate": "Wybierz województwo / miasto",
+    "selectstate": "Wybierz województwo",
     "service": "Usługa",
     "minimumDuration": {
       "label": "Minimalny czas trwania w godzinach",

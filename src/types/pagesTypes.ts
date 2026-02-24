@@ -307,6 +307,7 @@ export interface ListingItem {
     dealNote: string;
     discount: Discount;
   }
+  autoTranslateOnUpdate: boolean;
   localizations: ListingItem[];
   pricingPackages: {
     sectionTitle: string;

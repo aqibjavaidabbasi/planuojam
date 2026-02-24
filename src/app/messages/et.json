@@ -88,7 +88,7 @@
       "passwordTooShort": "Parool peab olema vähemalt 8 tähemärki"
     },
     "Social": {
-      "orContinue": "Või loo konto",
+      "orContinue": "Või Jätkake",
       "google": "Loo konto Google'iga",
       "facebook": "Loo konto Facebookiga",
       "googleLogin": "Logi sisse Google'iga",
@@ -1360,8 +1360,8 @@
     "locationHint": "Siin on teave teie valitud asukohta.",
     "remove": "Eemalda",
     "citylabel": "Linna märk",
-    "statelabel": "Maakond / Linn",
-    "selectstate": "Vali maakond või linn",
+    "statelabel": "Maakond",
+    "selectstate": "Vali maakond",
     "selectcity": "Vali linn",
     "minimumDuration": {
       "label": "Minimaalne kestus",

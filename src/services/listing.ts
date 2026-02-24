@@ -43,7 +43,61 @@ export async function fetchPromotedListingsPerEventsWithMeta(
     pagination?: { page?: number; pageSize?: number },
     extraFilters: Record<string, unknown> = {}
 ) {
-    const populate = LISTING_ITEM_POP_STRUCTURE;
+    const populate = {
+        category: {
+            populate: '*',
+        },
+        listingItem: {
+            on: {
+                'dynamic-blocks.vendor': {
+                    populate: {
+                        'serviceArea': {
+                            populate: {
+                                'city': {
+                                    populate: true,
+                                },
+                                'state': {
+                                    populate: true,
+                                }
+                            }
+                        }
+                    }
+                },
+                'dynamic-blocks.venue': {
+                    populate: {
+                        location: {
+                            populate: '*'
+                        },
+                        amneties: {
+                            populate: '*'
+                        }
+                    }
+                }
+            }
+        },
+        portfolio: {
+            populate: '*'
+        },
+        videos: {
+            populate: '*'
+        },
+        reviews: {
+            populate: '*'
+        },
+        user: {
+            populate: '*'
+        },
+        eventTypes: {
+            populate: '*'
+        },
+        hotDeal: {
+            populate: {
+                discount: {
+                    populate: '*'
+                }
+            }
+        },
+    } 
     const baseFilters: Record<string, unknown> = {
         filters: {
             eventTypes: { documentId: eventTypeDocId },
@@ -154,6 +208,36 @@ export async function fetchListingBySlug(slug: string, locale?: string) {
     }
     
     return listing;
+}
+
+/**
+ * Fetch listing by slug from Next.js API route (always fresh, no ISR caching)
+ * Use this for edit pages and real-time data needs where caching would cause stale data issues
+ */
+export async function fetchListingBySlugNoCacheFromApi(slug: string, locale?: string) {
+    try {
+        // Build absolute URL for server-side fetch
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+        let url = `${baseUrl}/api/listing/${slug}`;
+        if (locale) {
+            url += `?locale=${encodeURIComponent(locale)}`;
+        }
+        
+        const response = await fetch(url, {
+            cache: 'no-store',
+        });
+        
+        if (!response.ok) {
+            console.error(`Failed to fetch listing: ${response.status}`);
+            return null;
+        }
+        
+        const data = await response.json();
+        return data.data || null;
+    } catch (error) {
+        console.error('Error fetching listing:', error);
+        return null;
+    }
 }
 
 

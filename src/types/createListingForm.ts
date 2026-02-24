@@ -10,6 +10,7 @@ export type CreateListingFormTypes = {
     tagDocumentIds: string[];
     videos: { url: string }[];
     description: string;
+    autoTranslateOnUpdate: boolean;
     mediaOrder?: string; // Added for tracking media item order
     listingItem: {
         __component: "dynamic-blocks.venue" | "dynamic-blocks.vendor";
