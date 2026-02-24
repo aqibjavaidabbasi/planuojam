@@ -95,7 +95,9 @@ export const PAGES_DYNAMIC_ZONE = {
                     'Cities': {
                         populate: {
                             'city': {
-                                populate: true,
+                                populate: {
+                                    localizations: true
+                                },
                             }
                         }
                     }

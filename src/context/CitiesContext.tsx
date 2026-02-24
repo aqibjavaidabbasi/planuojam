@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { fetchCities } from "@/services/common";
-import { useLocale } from "next-intl";
 
 export type City = {
   documentId: string;
@@ -25,13 +24,12 @@ export const CitiesProvider: React.FC<React.PropsWithChildren<object>> = ({ chil
   const [cities, setCities] = useState<City[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const locale = useLocale();
 
   useEffect(() => {
     const run = async () => {
       setIsLoading(true);
       try {
-        const res = await fetchCities(locale);
+        const res = await fetchCities('lt');
         setCities(res);
       } catch (e: unknown) {
         const message = e && typeof e === 'object' && 'message' in e ? String((e as { message?: unknown }).message) : "Failed to load cities";
@@ -41,7 +39,7 @@ export const CitiesProvider: React.FC<React.PropsWithChildren<object>> = ({ chil
       }
     };
     run();
-  }, [locale]);
+  }, []);
 
   return (
     <CitiesContext.Provider value={{ cities, isLoading, error }}>

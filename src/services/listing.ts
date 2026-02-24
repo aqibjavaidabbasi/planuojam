@@ -153,6 +153,45 @@ export async function fetchPromotedListingsPerEvents(eventTypeDocId: string, loc
     return Array.isArray(data) ? (data as ListingItem[]) : [];
 }
 
+/**
+ * Client/server helper: fetch promoted listings per event via our Next.js API route (no cache)
+ * Use this from client components to avoid ISR/cache delays.
+ */
+export async function fetchPromotedListingsPerEventsNoCacheFromApi(
+    eventTypeDocId: string,
+    extraFilters: {
+        category: {
+            parentCategory: {
+                documentId: string
+            }
+        }
+    },
+    locale?: string,
+    pagination?: { page?: number; pageSize?: number },
+) {
+    try {
+        const params = new URLSearchParams();
+        if (locale) params.set('locale', String(locale));
+        if (pagination?.page) params.set('page', String(pagination.page));
+        if (pagination?.pageSize) params.set('pageSize', String(pagination.pageSize));
+        // support passing parentCategory via extraFilters if provided
+        const parentCategory = extraFilters?.category?.parentCategory?.documentId;
+        if (parentCategory) params.set('parentCategory', String(parentCategory));
+
+        const url = `/api/event-listings/${encodeURIComponent(eventTypeDocId)}${params.toString() ? `?${params.toString()}` : ''}`;
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) {
+            console.error('Failed to fetch promoted event listings from API route', { status: res.status });
+            return null;
+        }
+        const data = await res.json();
+        return data as { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } };
+    } catch (error) {
+        console.error('Error fetching promoted event listings (no-cache):', error);
+        return null;
+    }
+}
+
 export async function updateListing(
     listingdocId: string,
     data: Record<string, unknown>,
@@ -237,6 +276,56 @@ export async function fetchListingBySlugNoCacheFromApi(slug: string, locale?: st
     } catch (error) {
         console.error('Error fetching listing:', error);
         return null;
+    }
+}
+
+
+/**
+ * Client helper: fetch user's own listings from Next.js API route (no cache)
+ * Use this from authenticated client components to avoid ISR/cache delays.
+ * Requires Authorization header with token.
+ */
+export async function fetchListingsByUserNoCacheFromApi(
+    userId: string,
+    status?: string,
+    locale?: string,
+    token?: string
+) {
+    try {
+        const params = new URLSearchParams();
+        params.set('userId', userId);
+        if (locale) params.set('locale', locale);
+        if (status) params.set('status', status);
+
+        const authHeader = token ? `Bearer ${token}` : undefined;
+        const headers: Record<string, string> = {
+            'Content-Type': 'application/json',
+        };
+        if (authHeader) {
+            headers['Authorization'] = authHeader;
+        }
+
+        const url = `/api/user-listings?${params.toString()}`;
+        const res = await fetch(url, {
+            cache: 'no-store',
+            headers,
+        });
+
+        if (!res.ok) {
+            // Log 401/403 but don't throw - let caller handle auth errors
+            if (res.status === 401 || res.status === 403) {
+                console.warn('Unauthorized access to user listings');
+                return [];
+            }
+            console.error('Failed to fetch user listings from API route', { status: res.status });
+            return [];
+        }
+
+        const data = await res.json();
+        return Array.isArray(data?.data) ? data.data : [];
+    } catch (error) {
+        console.error('Error fetching user listings (no-cache):', error);
+        return [];
     }
 }
 

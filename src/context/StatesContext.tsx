@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { fetchStates } from "@/services/common";
-import { useLocale } from "next-intl";
 
 export type StateItem = {
   documentId: string;
@@ -25,13 +24,12 @@ export const StatesProvider: React.FC<React.PropsWithChildren<object>> = ({ chil
   const [states, setStates] = useState<StateItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const locale = useLocale();
 
   useEffect(() => {
     const run = async () => {
       setIsLoading(true);
       try {
-        const res = await fetchStates(locale);
+        const res = await fetchStates('lt');
         setStates(res);
       } catch (e: unknown) {
         const message = e && typeof e === 'object' && 'message' in e ? String((e as { message?: unknown }).message) : "Failed to load states";
@@ -41,7 +39,7 @@ export const StatesProvider: React.FC<React.PropsWithChildren<object>> = ({ chil
       }
     };
     run();
-  }, [locale]);
+  }, []);
 
   return (
     <StatesContext.Provider value={{ states, isLoading, error }}>

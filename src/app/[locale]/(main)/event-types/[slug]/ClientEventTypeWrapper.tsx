@@ -6,7 +6,7 @@ import Heading from "@/components/custom/heading";
 import LoadMoreButton from "@/components/custom/LoadMoreButton";
 import React, { useCallback, useEffect, useState } from "react";
 import { DynamicBlocks, ListingItem, TitleDescriptionBlock } from "@/types/pagesTypes";
-import { fetchPromotedListingsPerEventsWithMeta } from "@/services/listing";
+import { fetchPromotedListingsPerEventsNoCacheFromApi } from "@/services/listing";
 import { useTranslations } from "next-intl";
 
 type Props = {
@@ -91,11 +91,11 @@ function ClientEventTypeWrapper({
 
   const loadMoreVenue = useCallback(async () => {
     if (!eventTypeId) return;
-    const resp = await fetchPromotedListingsPerEventsWithMeta(
+    const resp = await fetchPromotedListingsPerEventsNoCacheFromApi(
       eventTypeId,
+      { category: { parentCategory: { documentId: venueParentId } } },
       locale,
       { page: (Number.isFinite(venuePage as number) ? venuePage : 1) + 1, pageSize: venuePageSize },
-      { category: { parentCategory: { documentId: venueParentId } } }
     );
     const meta = resp?.meta?.pagination;
     if (meta && typeof meta.total === 'number') setVenueTotal(meta.total);
@@ -125,11 +125,11 @@ function ClientEventTypeWrapper({
 
   const loadMoreVendor = useCallback(async () => {
     if (!eventTypeId) return;
-    const resp = await fetchPromotedListingsPerEventsWithMeta(
+    const resp = await fetchPromotedListingsPerEventsNoCacheFromApi(
       eventTypeId,
+      { category: { parentCategory: { documentId: vendorParentId } } },
       locale,
-      { page: (Number.isFinite(vendorPage as number) ? vendorPage : 1) + 1, pageSize: vendorPageSize },
-      { category: { parentCategory: { documentId: vendorParentId } } }
+      { page: (Number.isFinite(vendorPage as number) ? vendorPage : 1) + 1, pageSize: vendorPageSize }
     );
     const meta = resp?.meta?.pagination;
     if (meta && typeof meta.total === 'number') setVendorTotal(meta.total);

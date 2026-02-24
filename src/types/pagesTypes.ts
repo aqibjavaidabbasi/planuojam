@@ -171,9 +171,16 @@ export interface CityListBlock {
 export interface city {
   id: number;
   city: {
+    id: number;
     documentId: string;
     locale: string;
     name: string;
+    localizations: {
+      id: number;
+      documentId: string;
+      locale: string;
+      name: string;
+    }[]
   }
 }
 

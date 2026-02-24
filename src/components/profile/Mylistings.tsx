@@ -4,7 +4,7 @@ import Button from "../custom/Button";
 import ListingItemModal from "../modals/ListingItemModal";
 import { useAppSelector } from "@/store/hooks";
 import Select from "../custom/Select";
-import { fetchListingsByUser } from "@/services/listing";
+import { fetchListingsByUserNoCacheFromApi } from "@/services/listing";
 import type { ListingItem } from "@/types/pagesTypes";
 import ListingCard from "@/components/Dynamic/ListingCard";
 import { useLocale, useTranslations } from "next-intl";
@@ -40,7 +40,8 @@ function Mylistings() {
     if (!user?.documentId) return;
     setError(null);
     try {
-      const data = await fetchListingsByUser(user.documentId, statusFilter, locale);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const data = await fetchListingsByUserNoCacheFromApi(user.documentId, statusFilter !== 'all' ? statusFilter : undefined, locale, token || undefined);
       setListings(data);
     } catch (e: unknown) {
       // Handle AbortError specifically
