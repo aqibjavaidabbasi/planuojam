@@ -31,7 +31,8 @@ export function createQuery(
 export async function fetchAPI(
   endpoint: string,
   query: string,
-  filters?: Record<string, unknown>
+  filters?: Record<string, unknown>,
+  tags?: string[]
 ) {
   // This function intentionally does NOT handle tokens to avoid breaking existing usages.
   // If you need token support, use the new fetchAPIWithToken function below.
@@ -47,9 +48,11 @@ export async function fetchAPI(
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
 
+  const fetchConfig = tags ? { ...FETCH_OPTIONS, next: { ...FETCH_OPTIONS.next, tags } } : FETCH_OPTIONS;
+
   try {
     const response = await fetch(url, {
-      ...FETCH_OPTIONS,
+      ...fetchConfig,
       signal: controller.signal,
     });
 
@@ -87,7 +90,8 @@ export async function fetchAPI(
 export async function fetchAPIWithMeta(
   endpoint: string,
   query: string,
-  filters?: Record<string, unknown>
+  filters?: Record<string, unknown>,
+  tags?: string[]
 ) {
   const url = filters
     ? `${API_URL}/api/${endpoint}?${query}&${QueryString.stringify(filters, {
@@ -99,9 +103,11 @@ export async function fetchAPIWithMeta(
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
 
+  const fetchConfig = tags ? { ...FETCH_OPTIONS, next: { ...FETCH_OPTIONS.next, tags } } : FETCH_OPTIONS;
+
   try {
     const response = await fetch(url, {
-      ...FETCH_OPTIONS,
+      ...fetchConfig,
       signal: controller.signal,
     });
 

@@ -32,7 +32,7 @@ export async function fetchPromotedListingsWithMeta(
     if (locale) additional.locale = locale;
     if (pagination) additional.pagination = pagination;
     const query = createQuery(populate, additional);
-    const res = await fetchAPIWithMeta('listings/promoted', query, baseFilters);
+    const res = await fetchAPIWithMeta('listings/promoted', query, baseFilters, ['listings']);
     return res as { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } };
 }
 
@@ -108,7 +108,7 @@ export async function fetchPromotedListingsPerEventsWithMeta(
     if (locale) additional.locale = locale;
     if (pagination) additional.pagination = pagination;
     const query = createQuery(populate, additional);
-    const res = await fetchAPIWithMeta('listings/promoted', query, baseFilters);
+    const res = await fetchAPIWithMeta('listings/promoted', query, baseFilters, ['listings']);
     return res as { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } };
 }
 
@@ -133,7 +133,7 @@ export async function fetchPromotedHotDealsWithMeta(
     if (locale) additional.locale = locale;
     if (pagination) additional.pagination = pagination;
     const query = createQuery(populate, additional);
-    const res = await fetchAPIWithMeta('listings/promoted', query, baseFilters);
+    const res = await fetchAPIWithMeta('listings/promoted', query, baseFilters, ['listings']);
     return res as { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } };
 }
 
@@ -149,7 +149,7 @@ export async function fetchPromotedListingsPerEvents(eventTypeDocId: string, loc
     } as Record<string, unknown>;
 
     const query = createQuery(populate, locale ? { locale } : undefined);
-    const data = await fetchAPI('listings/promoted', query, baseFilters);
+    const data = await fetchAPI('listings/promoted', query, baseFilters, ['listings']);
     return Array.isArray(data) ? (data as ListingItem[]) : [];
 }
 
@@ -224,7 +224,7 @@ export async function fetchListingBySlug(slug: string, locale?: string) {
     // Try requested locale first
     if (locale) {
         const queryWithLocale = createQuery(populate, { locale });
-        const dataLocale = await fetchAPI(`listings`, queryWithLocale, filters);
+        const dataLocale = await fetchAPI(`listings`, queryWithLocale, filters, ['listings']);
         const listing = dataLocale[0];
         
         // Populate tags if they exist
@@ -238,7 +238,7 @@ export async function fetchListingBySlug(slug: string, locale?: string) {
 
     // Final fallback: no locale constraint
     const queryBase = createQuery(populate);
-    const dataBase = await fetchAPI(`listings`, queryBase, filters);
+    const dataBase = await fetchAPI(`listings`, queryBase, filters, ['listings']);
     const listing = dataBase[0];
     
     // Populate tags if they exist
@@ -456,7 +456,7 @@ export async function fetchListingsByUser(documentId: string, status?: string, l
 
     const queryWithLocale = createQuery(populate, { locale });
     try {
-        const dataLocale = await fetchAPI('listings', queryWithLocale, baseFilters);
+        const dataLocale = await fetchAPI('listings', queryWithLocale, baseFilters, ['listings']);
         
         // Ensure we always return an array
         if (!dataLocale) {
@@ -494,13 +494,13 @@ export async function fetchListingsByUserLeastPopulated(documentId: string, stat
     // Try requested locale first
     if (locale) {
         const queryWithLocale = createQuery(populate, { locale });
-        const dataLocale = await fetchAPI('listings', queryWithLocale, baseFilters);
+        const dataLocale = await fetchAPI('listings', queryWithLocale, baseFilters, ['listings']);
         if (Array.isArray(dataLocale) && dataLocale.length) return dataLocale as ListingItem[];
     }
 
     // Final fallback: no locale constraint
     const queryBase = createQuery(populate);
-    const dataBase = await fetchAPI('listings', queryBase, baseFilters);
+    const dataBase = await fetchAPI('listings', queryBase, baseFilters, ['listings']);
     return Array.isArray(dataBase) ? (dataBase as ListingItem[]) : [];
 }
 
@@ -526,7 +526,7 @@ export async function fetchListingsByDocumentIds(documentIds: string[], locale?:
             const url = `${API_URL}/api/listings?${query}&${QueryString.stringify(filters, { encodeValuesOnly: true })}`;
             const response = await fetch(url, {
                 signal: activeSignal,
-                next: { revalidate: 3600 }
+                next: { revalidate: 3600, tags: ['listings'] }
             });
 
             clearTimeout(timeoutId);
@@ -588,6 +588,6 @@ export async function fetchSortedListingsWithMeta(
     if (pagination) additional.pagination = pagination;
 
     const query = createQuery(populate, additional);
-    const res = await fetchAPIWithMeta('listings/promoted', query, baseFilters);
+    const res = await fetchAPIWithMeta('listings/promoted', query, baseFilters, ['listings']);
     return res as { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } };
 }

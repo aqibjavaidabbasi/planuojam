@@ -204,6 +204,12 @@
       "documentId": "Dokumento ID",
       "back": "Grįžti į skelbimus",
       "status": "Būsena",
+      "statuses": {
+        "draft": "Juodraštis",
+        "pending review": "Laukiama peržiūros",
+        "published": "Paskelbta",
+        "archived": "Archyvuota"
+      },
       "tabs": {
         "basic": "Pagrindinė informacija",
         "vv": "Tiekėjo/Vietos informacija",
@@ -474,7 +480,16 @@
         "invalidServiceType": "Jūs neturite leidimų kurti šio įrašo",
         "addressRequired": "Adresas yra privalomas vietoms (venue)",
         "addressInvalid": "Neteisingas adreso formatas",
-        "categoryRequired": "Kategorija yra privaloma"
+        "categoryRequired": "Kategorija yra privaloma",
+        "emailRequired": "El. paštas yra privalomas",
+        "listingDetailsRequired": "Skelbimo detalės yra privalomos",
+        "aboutRequired": "Skiltis \"Apie\" yra privaloma",
+        "experienceYearsInvalid": "Patirtis (metais) turi būti teigiamas skaičius",
+        "capacityInvalid": "Talpa turi būti teigiamas skaičius",
+        "bookingDurationTypeRequired": "Užsakymo trukmės tipas yra privalomas",
+        "bookingDurationInvalid": "Užsakymo trukmė turi būti didesnė nei 0",
+        "minimumDurationInvalid": "Minimali trukmė turi būti teigiamas skaičius",
+        "slugGenerationFailed": "Nepavyko sugeneruoti URL iš pavadinimo"
       },
       "toasts": {
         "created": "Skelbimas sėkmingai sukurtas",
@@ -707,7 +722,8 @@
         "title": "Paslaugų zona",
         "add": "Pridėti paslaugų zoną",
         "errors": {
-          "cityStateRequired": "Kiekvienai aptarnavimo sričiai reikia miesto ir valstijos"
+          "cityStateRequired": "Kiekvienai aptarnavimo sričiai reikia miesto ir valstijos",
+          "locationRequired": "Paslaugų zona {index} neturi žemėlapio vietos. Spustelėkite \"Pasirinkti vietą žemėlapyje\", kad nustatytumėte koordinates."
         },
         "toasts": {
           "updated": "Tiekėjo/Vietos informacija atnaujinta",

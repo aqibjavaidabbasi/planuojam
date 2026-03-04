@@ -1,4 +1,4 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 import { SUPPORTED_LOCALES } from "../../../config/i18n";
 
@@ -114,31 +114,12 @@ export async function POST(req: Request) {
 
         if (bodyLocale && typeof bodyLocale === 'string' && SUPPORTED_LOCALES.includes(bodyLocale)) {
             slugToValidate = body?.slug ?? body?.entry?.slug;
-            for (const locale of SUPPORTED_LOCALES) {
-                if (bodyModal.includes('listing')) {
-                    //root page
-                    targets.push('/')
-                    //for home page
-                    targets.push(`/${locale}`)
-                    //for listing details page
-                    targets.push(`/${locale}/listing/${slugToValidate}`);
-                    //for hot deal page
-                    targets.push(`/${locale}/hot-deal`)
 
-                    //services pages
-                    nav.categories.forEach((category: { slug: string; }) => {
-                        targets.push(`/${locale}/service/${category.slug}`)
-                    })
-                    //for profile page
-                    targets.push(`/${locale}/profile`)
-                    //edit listing page
-                    targets.push(`/${locale}/listing/${slugToValidate}/edit`)
-                    
-                    //event type pages
-                    eventTypes.forEach((et: { eventType: { slug: string; }; }) => {
-                        targets.push(`/${locale}/event-types/${et.eventType.slug}`)
-                    })
-                }
+            if (bodyModal.includes('listing')) {
+                revalidateTag('listings');
+            }
+
+            for (const locale of SUPPORTED_LOCALES) {
                 if (bodyModal.includes('page')) {
                     //root page
                     targets.push('/')

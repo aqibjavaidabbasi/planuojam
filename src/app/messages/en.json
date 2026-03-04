@@ -242,6 +242,12 @@
       "listingFallback": "Listing",
       "documentId": "Document ID",
       "status": "Status",
+      "statuses": {
+        "draft": "Draft",
+        "pending review": "Pending Review",
+        "published": "Published",
+        "archived": "Archived"
+      },
       "back": "Back to Listings",
       "tabs": {
         "basic": "Basic Details",
@@ -726,7 +732,16 @@
         "invalidServiceType": "You do not have permissions to create this listing",
         "addressRequired": "Address is required for venues",
         "addressInvalid": "Invalid address format",
-        "categoryRequired": "Category is required"
+        "categoryRequired": "Category is required",
+        "emailRequired": "Email is required",
+        "listingDetailsRequired": "Listing details are required",
+        "aboutRequired": "About section is required",
+        "experienceYearsInvalid": "Experience years must be a valid positive number",
+        "capacityInvalid": "Capacity must be a positive number",
+        "bookingDurationTypeRequired": "Booking duration type is required",
+        "bookingDurationInvalid": "Booking duration must be greater than 0",
+        "minimumDurationInvalid": "Minimum duration must be a valid number",
+        "slugGenerationFailed": "Failed to generate URL slug from title"
       },
       "toasts": {
         "created": "Listing Created Successfully",
@@ -956,7 +971,10 @@
       "serviceArea": {
         "helpText": "Choose a city or state or add manually",
         "title": "Service Area",
-        "add": "Add Service area"
+        "add": "Add Service area",
+        "errors": {
+          "locationRequired": "Service area {index} is missing a map location. Please click \"Pick on Map\" to set the coordinates."
+        }
       },
       "amenities": {
         "title": "Amenities",

@@ -7,7 +7,7 @@ import Select from '../custom/Select';
 import Button from '../custom/Button';
 import { fetchListings } from '@/services/common';
 import { ListingItem } from '@/types/pagesTypes';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useParentCategories } from '@/context/ParentCategoriesContext';
 import { useRouter, usePathname } from '@/i18n/navigation';
 import Input from '../custom/Input';
@@ -65,13 +65,16 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
     const router = useRouter();
     const pathname = usePathname();
     const tHeader = useTranslations('Global.Header');
+    const locale = useLocale();
+
+    const cats = locale === 'en' ? parentCategories : parentCategories.map(cat => cat.localizations.find(loc => loc.locale === locale))
 
     // Create service dropdown options
     const serviceOptions = [
         { value: 'all', label: tHeader('allServices') },
-        ...parentCategories.map(cat => ({
-            value: cat.slug,
-            label: cat.name
+        ...cats.map(cat => ({
+            value: cat?.slug ?? '',
+            label: cat?.name ?? ''
         }))
     ];
 
@@ -261,8 +264,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
                     <Select
                         value={currentService}
                         onChange={(e) => handleServiceChange(e.target.value)}
-                        options={serviceOptions}
-                        placeholder={tHeader('allServices')}
+                        options={serviceOptions ?? []}
                     />
                 </div>
                 <div className='flex gap-2 items-center justify-center flex-col lg:flex-row'>

@@ -413,7 +413,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
 
     // 2. Validate contact fields
     if (!payload.contact?.email || payload.contact.email.trim() === '') {
-      return 'Email is required';
+      return t('errors.emailRequired');
     }
 
     if (!payload.contact.phone || payload.contact.phone.trim() === '') {
@@ -441,14 +441,14 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
       const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/;
       for (const video of payload.videos) {
         if (video.url && !youtubeRegex.test(video.url)) {
-          return t('fields.videos.errors.invalid') || 'Invalid YouTube URL';
+          return t('fields.videos.errors.invalid');
         }
       }
     }
 
     // 7. Validate listing items (vendor/venue specific)
     if (!payload.listingItem || payload.listingItem.length === 0) {
-      return 'Listing details are required';
+      return t('errors.listingDetailsRequired');
     }
 
     const listingItem = payload.listingItem[0];
@@ -456,10 +456,21 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
     if (isVendor) {
       // Vendor-specific validation
       if (!listingItem.about || listingItem.about.trim() === '') {
-        return t('fields.about.label') + ' is required';
+        return t('errors.aboutRequired');
       }
       if (listingItem.experienceYears === undefined || listingItem.experienceYears === null || listingItem.experienceYears < 0) {
-        return t('fields.experienceYears.label') + ' must be a valid number';
+        return t('errors.experienceYearsInvalid');
+      }
+      // Validate that each service area has coordinates set via the map picker
+      if (Array.isArray(listingItem.serviceArea) && listingItem.serviceArea.length > 0) {
+        for (let i = 0; i < listingItem.serviceArea.length; i++) {
+          const sa = listingItem.serviceArea[i];
+          const hasLat = sa.latitude !== undefined && sa.latitude !== null && sa.latitude !== '';
+          const hasLng = sa.longitude !== undefined && sa.longitude !== null && sa.longitude !== '';
+          if (!hasLat || !hasLng) {
+            return t('serviceArea.errors.locationRequired', { index: i + 1 });
+          }
+        }
       }
     } else {
       // Venue-specific validation
@@ -472,19 +483,19 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
       }
 
       if (listingItem.capacity === undefined || listingItem.capacity === null || listingItem.capacity < 0) {
-        return t('fields.capacity.label') + ' must be a positive number';
+        return t('errors.capacityInvalid');
       }
 
       if (!listingItem.bookingDurationType) {
-        return t('fields.bookingDurationType.label') + ' is required';
+        return t('errors.bookingDurationTypeRequired');
       }
 
       if (listingItem.bookingDuration === undefined || listingItem.bookingDuration === null || listingItem.bookingDuration <= 0) {
-        return t('fields.bookingDuration.label') + ' must be greater than 0';
+        return t('errors.bookingDurationInvalid');
       }
 
       if (listingItem.minimumDuration === undefined || listingItem.minimumDuration === null || listingItem.minimumDuration < 0) {
-        return t('fields.minimumDuration.label') + ' must be a valid number';
+        return t('errors.minimumDurationInvalid');
       }
     }
 
@@ -744,9 +755,8 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
       // set slug using title with a short unique suffix to avoid collisions within the same locale
       const slugBasePart = slugify(payload.title);
       
-      // Ensure slug is never empty (fallback to random ID if slugify returns empty string)
       if (!slugBasePart || slugBasePart.trim() === '') {
-        setError('Failed to generate URL slug from title');
+        setError(t('errors.slugGenerationFailed'));
         setSubmitting(false);
         setIsLoading(false);
         return;
@@ -756,7 +766,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
 
       // Ensure contact has email and phone
       if (!payload?.contact?.email || payload.contact.email.trim() === '') {
-        setError('Email is required in contact section');
+        setError(t('errors.emailRequired'));
         setSubmitting(false);
         setIsLoading(false);
         return;
@@ -847,7 +857,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
         }
       >
         {error && (
-          <div className='mb-4 p-3 rounded bg-red-50 text-red-700 border border-red-200'>
+          <div className='p-3 mt-10 rounded bg-red-50 text-red-700 border border-red-200'>
             {error}
           </div>
         )}

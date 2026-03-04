@@ -230,6 +230,12 @@
       "documentId": "Dokumendi ID",
       "back": "Tagasi kuulutustele",
       "status": "Olek",
+      "statuses": {
+        "draft": "Mustand",
+        "pending review": "Läbivaatamisel",
+        "published": "Avaldatud",
+        "archived": "Arhiveeritud"
+      },
       "tabs": {
         "basic": "Põhiandmed",
         "vv": "Teenusepakkuja/Koha andmed",
@@ -744,7 +750,16 @@
         "invalidServiceType": "Teil pole selle kuulutuse loomiseks õigusi",
         "addressRequired": "Aadress on kohustuslik kohtade jaoks (venue)",
         "addressInvalid": "Vale aadressi vorming",
-        "categoryRequired": "Kategooria on kohustuslik"
+        "categoryRequired": "Kategooria on kohustuslik",
+        "emailRequired": "E-post on kohustuslik",
+        "listingDetailsRequired": "Kuulutuse üksikasjad on kohustuslikud",
+        "aboutRequired": "Tähtis on osa \"Teave\"",
+        "experienceYearsInvalid": "Kogemusaastad peavad olema positiivne arv",
+        "capacityInvalid": "Mahutavus peab olema positiivne arv",
+        "bookingDurationTypeRequired": "Nõutav on broneeringu kestuse tüüp",
+        "bookingDurationInvalid": "Broneeringu kestus peab olema suurem kui 0",
+        "minimumDurationInvalid": "Minimaalne kestus peab olema arv",
+        "slugGenerationFailed": "URL-i genereerimine pealkirjast ebaõnnestus"
       },
       "toasts": {
         "created": "Kuulutus on edukalt loodud",
@@ -968,7 +983,8 @@
         "title": "Teeninduspiirkond",
         "add": "Lisa teeninduspiirkond",
         "errors": {
-          "cityStateRequired": "Igas teeninduspiirkonnas peab olema linn ja osariik"
+          "cityStateRequired": "Igas teeninduspiirkonnas peab olema linn ja osariik",
+          "locationRequired": "Teeninduspiirkonnal {index} puudub kaardi asukoht. Koordinaatide määramiseks klõpsake valikut „Vali kaardilt”."
         },
         "toasts": {
           "updated": "Müüja/Koha andmed on uuendatud",
@@ -1238,8 +1254,8 @@
   },
   "VenueInfo": {
     "searchPlace": "Otsige kohta",
-    "apply": "kohaldada",
-    "clear": "selge"
+    "apply": "Kohalda",
+    "clear": "Selge"
   },
   "basicSelectionForm": {
     "basicDetails": "Põhiandmed",

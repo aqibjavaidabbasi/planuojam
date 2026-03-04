@@ -231,6 +231,12 @@
       "documentId": "ID dokumentu",
       "back": "Powrót do ogłoszeń",
       "status": "Status",
+      "statuses": {
+        "draft": "Szkic",
+        "pending review": "Oczekuje na weryfikację",
+        "published": "Opublikowane",
+        "archived": "Zarchiwizowane"
+      },
       "tabs": {
         "basic": "Podstawowe informacje",
         "vv": "Dane dostawcy/miejsca",
@@ -746,7 +752,16 @@
         "invalidServiceType": "Nie masz uprawnień do utworzenia tej oferty",
         "addressRequired": "Adres jest wymagany dla miejsc (venue)",
         "addressInvalid": "Nieprawidłowy format adresu",
-        "categoryRequired": "Kategoria jest wymagana"
+        "categoryRequired": "Kategoria jest wymagana",
+        "emailRequired": "Adres e-mail jest wymagany",
+        "listingDetailsRequired": "Szczegóły oferty są wymagane",
+        "aboutRequired": "Sekcja \"O mnie\" jest wymagana",
+        "experienceYearsInvalid": "Lata doświadczenia muszą być liczbą dodatnią",
+        "capacityInvalid": "Pojemność musi być liczbą dodatnią",
+        "bookingDurationTypeRequired": "Typ czasu rezerwacji jest wymagany",
+        "bookingDurationInvalid": "Czas trwania rezerwacji musi być większy niż 0",
+        "minimumDurationInvalid": "Minimalny czas trwania musi być liczbą",
+        "slugGenerationFailed": "Nie udało się wygenerować adresu URL z tytułu"
       },
       "toasts": {
         "created": "Ogłoszenie zostało pomyślnie utworzone",
@@ -979,7 +994,8 @@
         "title": "Obszar usług",
         "add": "Dodaj obszar usług",
         "errors": {
-          "cityStateRequired": "Każdy obszar usług wymaga miasta i województwa"
+          "cityStateRequired": "Każdy obszar usług wymaga miasta i województwa",
+          "locationRequired": "Obszar usług {index} nie ma lokalizacji na mapie. Kliknij „Wybierz na mapie”, aby ustawić współrzędne."
         },
         "toasts": {
           "updated": "Dane sprzedawcy/miejsca zaktualizowane",
@@ -1248,8 +1264,8 @@
   },
   "VenueInfo": {
     "searchPlace": "Wyszukaj miejsce",
-    "apply": "stosować",
-    "clear": "jasne"
+    "apply": "Stosować",
+    "clear": "Jasne"
   },
   "basicSelectionForm": {
     "basicDetails": "Podstawowe szczegóły",

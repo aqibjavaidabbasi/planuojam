@@ -113,7 +113,7 @@ const EditListingForm: React.FC<EditListingFormProps> = ({ listing }) => {
             <span
               className={`inline-flex items-center px-2 py-1 rounded-full text-xs capitalize font-medium ${getStatusBadgeClass(currentListing?.listingStatus)}`}
             >
-              {currentListing?.listingStatus}
+              {currentListing?.listingStatus ? t(`statuses.${currentListing.listingStatus}`) : ""}
             </span>
           </p>
         </div>

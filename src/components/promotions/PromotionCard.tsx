@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Promotion } from "@/types/promotion";
 
 interface PromotionCardProps {
@@ -9,11 +9,11 @@ interface PromotionCardProps {
   onUpdated?: () => void; // kept for compatibility, unused
 }
 
-function formatDayLabel(date?: string | null) {
+function formatDayLabel(date: string | null | undefined, locale: string) {
   if (!date) return "-";
   try {
     const d = new Date(date);
-    return new Intl.DateTimeFormat(undefined, { month: "short", day: "2-digit" }).format(d);
+    return new Intl.DateTimeFormat(locale, { month: "long", day: "2-digit" }).format(d);
   } catch {
     return date;
   }
@@ -21,12 +21,13 @@ function formatDayLabel(date?: string | null) {
 
 export default function PromotionCard({ promotion }: PromotionCardProps) {
   const t = useTranslations("Profile.promotions.card");
+  const locale = useLocale();
   const status = (promotion.promotionStatus || "ongoing").toUpperCase();
 
   const listingTitle = promotion.listingTitle;
 
-  const startLabel = formatDayLabel(promotion.startDate);
-  const endLabel = formatDayLabel(promotion.endDate);
+  const startLabel = formatDayLabel(promotion.startDate, locale);
+  const endLabel = formatDayLabel(promotion.endDate, locale);
 
   const starsLimit = promotion.maxStarsLimit ?? 0;
   const statusKey = (promotion.promotionStatus || 'ongoing').toString().toLowerCase();
@@ -59,20 +60,18 @@ export default function PromotionCard({ promotion }: PromotionCardProps) {
         <div className="font-semibold text-gray-900">{listingTitle}</div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4" >
-
-        {/* Start / End */}
-        <div className="flex items-center gap-1 order-2">
-            <p className="font-semibold text-gray-800">{startLabel} {"-"}</p>
-            <p className="font-semibold text-gray-800">{endLabel}</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+        
+        {/* Stars purchased */}
+        <div className="flex gap-2.5 items-center">
+          <span className="text-gray-600">{t("starsLimit")}</span>
+          <span className="font-bold text-gray-800">{starsLimit.toLocaleString()}</span>
         </div>
 
-        {/* Stars purchased */}
-        <div className="space-y-2 order-1 px-2 flex flex-col items-center">
-          <div className="flex gap-2.5 items-center w-full">
-            <span className="text-gray-600">{t("starsLimit")}</span>
-            <span className="font-bold text-gray-800">{starsLimit.toLocaleString()}</span>
-          </div>
+        {/* Start / End */}
+        <div className="flex items-center gap-1">
+            <p className="font-semibold text-gray-800 whitespace-nowrap">{startLabel} {"-"}</p>
+            <p className="font-semibold text-gray-800 whitespace-nowrap">{endLabel}</p>
         </div>
 
       </div>
