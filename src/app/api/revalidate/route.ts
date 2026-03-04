@@ -159,8 +159,10 @@ export async function POST(req: Request) {
                     console.log("+++++++++++++++++++++++")
                     console.log("+++++++++++++++++++++++")
                     console.log("+++++++++++++++++++++++")
-                    eventTypes.forEach((et: { eventType: { slug: string; }; }) => {
-                        targets.push(`/${locale}/event-types/${et.eventType.slug}`)
+                    eventTypes.forEach((et: { eventType?: { slug: string; }; }) => {
+                        if (et && et.eventType && et.eventType.slug) {
+                            targets.push(`/${locale}/event-types/${et.eventType.slug}`)
+                        }
                     })
                     //for hot deal page
                     targets.push(`/${locale}/hot-deal`)
@@ -171,8 +173,10 @@ export async function POST(req: Request) {
                     //for home page
                     targets.push(`/${locale}`)
                      //services pages
-                    nav.categories.forEach((category: { slug: string; }) => {
-                        targets.push(`/${locale}/service/${category.slug}`)
+                    nav.categories.forEach((category: { slug?: string; }) => {
+                        if (category && category.slug) {
+                            targets.push(`/${locale}/service/${category.slug}`)
+                        }
                     })
                     //for hot deal page
                     targets.push(`/${locale}/hot-deal`)
