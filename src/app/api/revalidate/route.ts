@@ -124,6 +124,7 @@ export async function POST(req: Request) {
             slugToValidate = body?.slug ?? body?.entry?.slug;
 
             if (bodyModal.includes('listing')) {
+                console.log("validating listing tag", bodyModal)
                 revalidateTag('listings');
             }
 
