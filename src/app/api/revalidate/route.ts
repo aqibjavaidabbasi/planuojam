@@ -111,6 +111,14 @@ export async function POST(req: Request) {
             global.revalidationCache = new Map();
         }
         global.revalidationCache.set(deduplicationKey, now);
+        console.log("=====================")
+        console.log("=====================")
+        console.log("=====================")
+        console.log(body, 'body')
+        console.log("=====================")
+        console.log("=====================")
+        console.log("=====================")
+        console.log("=====================")
 
         if (bodyLocale && typeof bodyLocale === 'string' && SUPPORTED_LOCALES.includes(bodyLocale)) {
             slugToValidate = body?.slug ?? body?.entry?.slug;
