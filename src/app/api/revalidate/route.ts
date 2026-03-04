@@ -111,20 +111,11 @@ export async function POST(req: Request) {
             global.revalidationCache = new Map();
         }
         global.revalidationCache.set(deduplicationKey, now);
-        console.log("=====================")
-        console.log("=====================")
-        console.log("=====================")
-        console.log(body, 'body')
-        console.log("=====================")
-        console.log("=====================")
-        console.log("=====================")
-        console.log("=====================")
 
         if (bodyLocale && typeof bodyLocale === 'string' && SUPPORTED_LOCALES.includes(bodyLocale)) {
             slugToValidate = body?.slug ?? body?.entry?.slug;
 
             if (bodyModal.includes('listing')) {
-                console.log("validating listing tag", bodyModal)
                 revalidateTag('listings');
             }
 
@@ -152,14 +143,6 @@ export async function POST(req: Request) {
                     //just refresh home page, it should revalidate all single types
                     targets.push(`/${locale}`)
                     //event type pages
-                    console.log("+++++++++++++++++++++++")
-                    console.log("+++++++++++++++++++++++")
-                    console.log("+++++++++++++++++++++++")
-                    console.log(eventTypes, 'eventTypes')
-                    console.log("+++++++++++++++++++++++")
-                    console.log("+++++++++++++++++++++++")
-                    console.log("+++++++++++++++++++++++")
-                    console.log("+++++++++++++++++++++++")
                     eventTypes.forEach((et: { eventType?: { slug: string; }; }) => {
                         if (et && et.eventType && et.eventType.slug) {
                             targets.push(`/${locale}/event-types/${et.eventType.slug}`)
