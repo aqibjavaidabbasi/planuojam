@@ -151,6 +151,14 @@ export async function POST(req: Request) {
                     //just refresh home page, it should revalidate all single types
                     targets.push(`/${locale}`)
                     //event type pages
+                    console.log("+++++++++++++++++++++++")
+                    console.log("+++++++++++++++++++++++")
+                    console.log("+++++++++++++++++++++++")
+                    console.log(eventTypes, 'eventTypes')
+                    console.log("+++++++++++++++++++++++")
+                    console.log("+++++++++++++++++++++++")
+                    console.log("+++++++++++++++++++++++")
+                    console.log("+++++++++++++++++++++++")
                     eventTypes.forEach((et: { eventType: { slug: string; }; }) => {
                         targets.push(`/${locale}/event-types/${et.eventType.slug}`)
                     })
