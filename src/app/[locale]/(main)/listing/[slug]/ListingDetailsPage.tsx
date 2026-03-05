@@ -330,7 +330,6 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
                 <PricingPlans
                   key={index}
                   plan={plan}
-                  optionalAddons={initialListing.pricingPackages?.optionalAddons}
                   planIndex={index}
                   onSelectPlan={(i) => {
                     setPreselectPlanIndex(i);
@@ -406,8 +405,12 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
           bookingDurationType={venueBlock?.bookingDurationType as ("Per Day" | "Per Hour") | undefined}
           bookingDuration={venueBlock?.bookingDuration}
           workingSchedule={initialListing.workingSchedule || []}
-          availablePlans={(initialListing.pricingPackages?.plans || []).map(p => ({ name: p.name, price: p.price, features: (p.featuresList || []).map(f => f.statement) }))}
-          availableAddons={initialListing.pricingPackages?.optionalAddons || []}
+          availablePlans={(initialListing.pricingPackages?.plans || []).map(p => ({
+            name: p.name,
+            price: p.price,
+            features: (p.featuresList || []).map(f => f.statement),
+            optionalAddons: p.optionalAddons || []
+          }))}
           basePrice={initialListing.price}
           defaultPlanIndex={preselectPlanIndex}
         />

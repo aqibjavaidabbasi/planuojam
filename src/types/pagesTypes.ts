@@ -327,13 +327,13 @@ export interface ListingItem {
         id: number;
         statement: string;
       }[];
+      optionalAddons: {
+        id: number;
+        statement: string;
+        price: number;
+      }[];
       isPopular: boolean;
       cta: CallToActionComponentBlock;
-    }[];
-    optionalAddons: {
-      id: number;
-      statement: string;
-      price: number;
     }[];
   };
 }
@@ -443,8 +443,14 @@ export interface Plans {
   isPopular: boolean;
   cta: CallToActionComponentBlock;
   featuresList: {
+    id: number;
     statement: string;
-  }[]
+  }[];
+  optionalAddons: {
+    id: number;
+    statement: string;
+    price: number;
+  }[];
 }
 export interface FAQ {
   id: number;

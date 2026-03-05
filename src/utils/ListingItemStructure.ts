@@ -52,11 +52,11 @@ export const LISTING_ITEM_POP_STRUCTURE = {
                     },
                     featuresList: {
                         populate: '*'
+                    },
+                    optionalAddons: {
+                        populate: '*'
                     }
                 }
-            },
-            optionalAddons: {
-                populate: '*'
             }
         }
     },
@@ -140,11 +140,11 @@ export const LISTING_ITEM_POP_STRUCTURE = {
                             },
                             featuresList: {
                                 populate: '*'
+                            },
+                            optionalAddons: {
+                                populate: '*'
                             }
                         }
-                    },
-                    optionalAddons: {
-                        populate: '*'
                     }
                 }
             },

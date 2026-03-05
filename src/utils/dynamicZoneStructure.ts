@@ -46,11 +46,11 @@ export const PAGES_DYNAMIC_ZONE = {
                             },
                             'featuresList': {
                                 populate: '*'
+                            },
+                            'optionalAddons': {
+                                populate: '*'
                             }
                         }
-                    },
-                    'optionalAddons': {
-                        populate: '*'
                     }
                 }
             },

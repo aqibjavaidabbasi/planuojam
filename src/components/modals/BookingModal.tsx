@@ -26,8 +26,8 @@ interface BookingModalProps {
     name: string;
     price: number;
     features?: string[];
+    optionalAddons?: Array<{ statement: string; price: number }>;
   }>;
-  availableAddons?: Array<{ statement: string; price: number }>;
   basePrice?: number;
   // When provided, the dropdown will default to this plan index when the modal opens
   defaultPlanIndex?: number | null;
@@ -50,7 +50,6 @@ const BookingModal: React.FC<BookingModalProps> = ({
   minimumDuration,
   workingSchedule = [],
   availablePlans = [],
-  availableAddons = [],
   basePrice,
   defaultPlanIndex,
 }) => {
@@ -64,6 +63,14 @@ const BookingModal: React.FC<BookingModalProps> = ({
   const tErrors = useTranslations('Errors');
   const [selectedPlanIndex, setSelectedPlanIndex] = useState<number | null>(null);
   const [selectedAddonIdxSet, setSelectedAddonIdxSet] = useState<Set<number>>(new Set());
+
+  // Derived available addons based on selected plan
+  const availableAddons = useMemo(() => {
+    if (selectedPlanIndex !== null && availablePlans[selectedPlanIndex]) {
+      return availablePlans[selectedPlanIndex].optionalAddons || [];
+    }
+    return [];
+  }, [selectedPlanIndex, availablePlans]);
 
   // When modal opens, set default plan selection if provided. Reset when it closes.
   useEffect(() => {

@@ -27,7 +27,15 @@ export async function getListingBookingsPublic(
   locale?: string
 ): Promise<BookingItem[]> {
   try {
-    const populate = { listing: { populate: "*" } };
+    const populate = { 
+      listing: { populate: "*" },
+      selectedPlan: { 
+        populate: {
+          features: { populate: "*" }
+        }
+      },
+      selectedAddons: { populate: "*" }
+    };
     let filters: Record<string, unknown> = {
       filters: {
         listing: { documentId: { $eq: listingDocumentId } },
@@ -94,6 +102,12 @@ export async function getProviderBookingsWithUsers(
       listing: {
         populate: LISTING_ITEM_POP_STRUCTURE
       },
+      selectedPlan: { 
+        populate: {
+          features: { populate: "*" }
+        }
+      },
+      selectedAddons: { populate: "*" }
     };
     const baseFilters: Record<string, unknown> = {
       filters: { listing: { user: { documentId: { $eq: providerDocumentId } } } },
@@ -139,6 +153,12 @@ export async function createBooking(data: BookingPayload, locale?: string) {
   // Send body with data wrapper; populate listing only
   const populate = {
     listing: { populate: "*" },
+    selectedPlan: { 
+      populate: {
+        features: { populate: "*" }
+      }
+    },
+    selectedAddons: { populate: "*" }
   };
   // Important: Strapi uses query param ?locale=xx for localized creation
   const query = createQuery(populate, locale ? { locale } : {});
@@ -163,7 +183,15 @@ export async function getListingBookings(
     const jwt = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (!jwt) throw new Error("No authentication token found. Please log in.")
 
-    const populate = { listing: { populate: "*" } };
+    const populate = { 
+      listing: { populate: "*" },
+      selectedPlan: { 
+        populate: {
+          features: { populate: "*" }
+        }
+      },
+      selectedAddons: { populate: "*" }
+    };
     // Base filters
     let filters: Record<string, unknown> = {
       filters: {
@@ -205,6 +233,12 @@ export async function getBookings(
 
     const populate = {
       listing: { populate: "*" },
+      selectedPlan: { 
+        populate: {
+          features: { populate: "*" }
+        }
+      },
+      selectedAddons: { populate: "*" }
     }
     const baseFilters: Record<string, unknown> = {};
     if (userDocumentId) {
