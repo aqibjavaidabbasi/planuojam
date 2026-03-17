@@ -14,6 +14,7 @@ import { RootState } from "@/store";
 import { useRouter } from "@/i18n/navigation";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
 import BookingCard from "./BookingCard";
+import { translateError } from "@/utils/translateError";
 
 function toLocalInputValue(iso: string) {
   const d = new Date(iso);
@@ -25,6 +26,7 @@ function toLocalInputValue(iso: string) {
 const MyBookings: React.FC = () => {
   const user = useAppSelector((s: RootState) => s.auth.user);
   const t = useTranslations("Booking.MyBookings");
+  const tErrors = useTranslations("Errors");
   const tCommon = useTranslations('Common');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,14 +59,7 @@ const MyBookings: React.FC = () => {
         const res = await getBookings(user.documentId, locale, statusFilter);
         setItems(res || []);
       } catch (err: unknown) {
-        let msg: string;
-        if (typeof err === "string") {
-          msg = err;
-        } else if (err && typeof err === "object" && "message" in err) {
-          msg = String((err).message);
-        } else {
-          msg = t("toasts.failedCreate", { default: "Failed to create booking." });
-        }
+        const msg = translateError(t, tErrors, err);
         setError(msg);
         toast.error(msg);
       } finally {
@@ -72,7 +67,7 @@ const MyBookings: React.FC = () => {
       }
     }   
     load();
-  }, [user?.documentId, statusFilter,t,locale]);
+  }, [user?.documentId, statusFilter, t, locale, tErrors]);
 
   const startEdit = (b: BookingItem) => {
     if (b.bookingStatus === 'cancelled') return; // cannot reschedule cancelled booking
@@ -134,23 +129,13 @@ const MyBookings: React.FC = () => {
         {
           loading: t("toasts.updating", { default: "Updating booking..." }),
           success: t("toasts.updated", { default: "Booking updated." }),
-          error: (err) =>
-            (typeof err === "string"
-              ? err
-              : err?.message || t("toasts.updateFailed", { default: "Failed to update booking." })),
+          error: (err) => translateError(t, tErrors, err),
         }
       );
       // Optimistically update to cancelled
       setItems((prev) => prev.map((it) => it.documentId === id ? { ...it, bookingStatus: "cancelled" } : it));
     } catch (err: unknown) {
-      let msg: string;
-      if (typeof err === "string") {
-        msg = err;
-      } else if (err && typeof err === "object" && "message" in err) {
-        msg = String((err).message);
-      } else {
-        msg = t("toasts.failedCreate", { default: "Failed to create booking." });
-      }
+      const msg = translateError(t, tErrors, err);
       setError(msg);
     } finally {
       setConfirmModal({ open: false });
@@ -265,7 +250,7 @@ const MyBookings: React.FC = () => {
                                   {
                                     loading: t("toasts.updating", { default: "Updating booking..." }),
                                     success: t("toasts.updated", { default: "Booking marked as completed." }),
-                                    error: (err) => (typeof err === "string" ? err : err?.message || t("toasts.updateFailed", { default: "Failed to update booking." })),
+                                    error: (err) => translateError(t, tErrors, err),
                                   }
                                 );
                                 setItems((prev) => prev.map((it) => (it.documentId === b.documentId ? { ...it, bookingStatus: "completed" } : it)));

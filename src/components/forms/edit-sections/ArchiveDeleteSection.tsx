@@ -183,7 +183,7 @@ const ArchiveDeleteSection: React.FC<ArchiveDeleteSectionProps> = ({ listing, on
               style="ghost"
               disabled={isArchiving}
             >
-              Cancel
+              {t("cancelButton")}
             </Button>
             <Button
               onClick={handleArchive}
@@ -215,7 +215,7 @@ const ArchiveDeleteSection: React.FC<ArchiveDeleteSectionProps> = ({ listing, on
               style="ghost"
               disabled={isDeleting}
             >
-              Cancel
+              {t("cancelButton")}
             </Button>
             <Button
               onClick={handleDelete}
@@ -247,7 +247,7 @@ const ArchiveDeleteSection: React.FC<ArchiveDeleteSectionProps> = ({ listing, on
               style="ghost"
               disabled={isArchiving}
             >
-              Cancel
+              {t("cancelButton")}
             </Button>
             <Button
               onClick={handleUnarchive}

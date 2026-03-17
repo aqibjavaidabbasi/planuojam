@@ -224,6 +224,7 @@
       "archive": {
         "title": "Archyvuoti/Trinti skelbimą",
         "description": "Valdykite savo skelbimo būseną",
+        "cancelButton": "Atšaukti",
         "archiveSection": {
           "title": "Archyvuoti skelbimą",
           "description": "Archyvuojant, jūsų skelbimas bus paslėptas nuo viešosios peržiūros. Jį galėsite vėliau atkurti.",
@@ -574,7 +575,7 @@
         },
         "description": {
           "label": "Aprašymas",
-          "placeholder": "Paaiškinkite, ką siūlote. Įtraukite svarbią informaciją, pvz., savybes, dydį, medžiagas arba tai, ką gaus pirkėjas.",
+          "placeholder": "Aprašykite savo paslaugą: kas įeina į kainą, kokiems renginiams tinka jūsų pasiūlymas. Pateikite svarbiausias detales, kurios padės klientui apsispręsti",
           "required": "Aprašymas yra privalomas"
         },
         "websiteLink": {
@@ -922,7 +923,7 @@
       "bookings": "Užsakymai",
       "manageBookings": "Tvarkyti užsakymus",
       "calendar": "Kalendorius",
-      "promotions": "Akcijos"
+      "promotions": "Skelbimo iškėlimas"
     },
     "promoteHint": "Padidinkite savo skelbimo matomumą reklamuodami jį.",
     "promoteCta": "Reklamuoti skelbimą",
@@ -959,7 +960,7 @@
       }
     },
     "promotions": {
-      "title": "Akcijos",
+      "title": "Skelbimo iškėlimas",
       "selectListing": "Pasirinkti įrašą",
       "choose": "Pasirinkti...",
       "starsToSpend": "Žvaigždutės išleidimui",
@@ -1240,6 +1241,15 @@
       "missingToken": "Patikrinkite interneto ryšį ir bandykite dar kartą",
       "registerNoResponse": "Registracija nepavyko — serveris neatsakė",
       "userIdRequired": "Norint atnaujinti duomenis, būtinas vartotojo ID"
+    },
+    "Booking": {
+      "noAuth": "Nerastas autentifikavimo raktas. Prašome prisijungti.",
+      "loadProviderFailed": "Nepavyko įkelti teikėjo užsakymų. Bandykite dar kartą vėliau.",
+      "createFailed": "Nepavyko sukurti užsakymo. Bandykite dar kartą vėliau.",
+      "loadListingFailed": "Nepavyko įkelti skelbimo užsakymų. Bandykite dar kartą vėliau.",
+      "loadFailed": "Nepavyko įkelti užsakymų. Bandykite dar kartą vėliau.",
+      "updateFailed": "Nepavyko atnaujinti užsakymo. Bandykite dar kartą vėliau.",
+      "deleteFailed": "Nepavyko pašalinti užsakymo. Bandykite dar kartą vėliau."
     }
   },
   "Search": {
@@ -1307,7 +1317,7 @@
   "ImageSection": {
     "addImages": "Pridėti nuotraukas",
     "addportfolioimages": "Įkelti nuotraukas",
-    "saving": "Taupymas",
+    "saving": "Išsaugoma...",
     "savingEllipsis": "Taupomas...",
     "saveImages": "Išsaugoti failus",
     "uploadHint": "Maksimalus failo dydis: {size} (Nuotraukos)",
@@ -1419,7 +1429,7 @@
     "email": "El. paštas",
     "phone": "Telefonas",
     "address": "Adresas",
-    "saving": "Taupymas",
+    "saving": "Išsaugoma...",
     "savechanges": "Išsaugoti pakeitimus",
     "errors": {
       "emailRequired": "El. paštas yra privalomas",
@@ -1437,7 +1447,7 @@
     "link": "Nuoroda",
     "visible": "Matomas",
     "+addsociallink": "+ Pridėti socialinę nuorodą",
-    "saving": "Taupymas",
+    "saving": "Išsaugoma...",
     "savechanges": "Išsaugoti pakeitimus",
     "title": "Socialiniai tinklai",
     "platformLabel": "Platforma",
@@ -1471,7 +1481,7 @@
     "+addoptionaladdon": "+ Pridėti pasirenkamą priedą",
     "+addplan": "+ Pridėti planą",
     "+addfeature": "+ Pridėti funkciją",
-    "saving": "Taupymas",
+    "saving": "Išsaugoma...",
     "savechanges": "Išsaugoti pakeitimus",
     "sectiontitle": "Skyriaus pavadinimas",
     "optionaladdons": "Pasirenkami priedai",

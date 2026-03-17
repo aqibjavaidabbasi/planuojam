@@ -11,6 +11,7 @@ import Modal from "@/components/custom/Modal";
 import BookingDetailsModal, { BookingDetails } from "@/components/modals/BookingDetailsModal";
 import { useRouter } from "@/i18n/navigation";
 import BookingCard from "./BookingCard";
+import { translateError } from "@/utils/translateError";
 
 function toLocal(dt: string) {
   try {
@@ -24,6 +25,7 @@ function toLocal(dt: string) {
 const ManageBookings: React.FC = () => {
   const user = useAppSelector((s) => s.auth.user);
   const t = useTranslations("Booking.MyBookings");
+  const tErrors = useTranslations("Errors");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [items, setItems] = useState<EnrichedBooking[]>([]);
@@ -56,14 +58,7 @@ const ManageBookings: React.FC = () => {
         const data = await getProviderBookingsWithUsers(user.documentId, 'en', statusFilter);
         setItems(data || []);
       } catch (err: unknown) {
-        let msg: string;
-        if (typeof err === "string") {
-          msg = err;
-        } else if (err && typeof err === "object" && "message" in err) {
-          msg = String((err).message);
-        } else {
-          msg = t("toasts.failedCreate", { default: "Failed to create booking." });
-        }
+        const msg = translateError(t, tErrors, err);
         setError(msg);
         toast.error(msg);
       } finally {
@@ -71,7 +66,7 @@ const ManageBookings: React.FC = () => {
       }
     }
     load();
-  }, [user?.documentId, statusFilter, t]);
+  }, [user?.documentId, statusFilter, t, tErrors]);
 
   const onAccept = (b: EnrichedBooking) => {
     setConfirmModal({ open: true, id: b.documentId, action: "confirm" });
@@ -90,7 +85,7 @@ const ManageBookings: React.FC = () => {
         {
           loading: t("toasts.updating", { default: "Updating booking..." }),
           success: t("toasts.updated", { default: "Booking updated." }),
-          error: (err) => (typeof err === "string" ? err : err?.message || t("toasts.updateFailed", { default: "Failed to update booking." })),
+          error: (err) => translateError(t, tErrors, err),
         }
       );
       setItems((prev) => prev.map((it) => (it.documentId === id ? { ...it, bookingStatus: "rejected" } as EnrichedBooking : it)));
@@ -109,7 +104,7 @@ const ManageBookings: React.FC = () => {
         {
           loading: t("toasts.updating", { default: "Updating booking..." }),
           success: t("toasts.updated", { default: "Booking updated." }),
-          error: (err) => (typeof err === "string" ? err : err?.message || t("toasts.updateFailed", { default: "Failed to update booking." })),
+          error: (err) => translateError(t, tErrors, err),
         }
       );
       setItems((prev) => prev.map((it) => (it.documentId === id ? { ...it, bookingStatus: "confirmed" } as EnrichedBooking : it)));
@@ -234,7 +229,7 @@ const ManageBookings: React.FC = () => {
                                 {
                                   loading: t("toasts.updating", { default: "Updating booking..." }),
                                   success: t("toasts.updated", { default: "Booking marked as completed." }),
-                                  error: (err) => (typeof err === "string" ? err : err?.message || t("toasts.updateFailed", { default: "Failed to update booking." })),
+                                  error: (err) => translateError(t, tErrors, err),
                                 }
                               );
                               setItems((prev) => prev.map((it) => (it.documentId === b.documentId ? { ...it, bookingStatus: "completed" } : it)));

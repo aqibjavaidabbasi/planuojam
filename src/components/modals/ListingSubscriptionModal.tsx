@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import { StripeProductAttributes } from "@/app/api/stripe-products/route"
 import Modal from "../custom/Modal"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import Button from "../custom/Button"
 import { FaStar } from "react-icons/fa"
 import Input from "../custom/Input"
@@ -16,8 +16,10 @@ const ListingSubscriptionModal: React.FC<{
     listingTitle?: string;
     listingPrice?: number;
     userId: string;
-}> = ({ isOpen, onClose, stripeProducts, listingDocId, listingTitle, listingPrice, userId }) => {
+    listingSlug?: string;
+}> = ({ isOpen, onClose, stripeProducts, listingDocId, listingTitle, listingPrice, userId, listingSlug }) => {
     const t = useTranslations('Modals.ListingSubscription')
+    const locale = useLocale()
     const [selectedProduct, setSelectedProduct] = useState<StripeProductAttributes | null>(null)
     const [isProcessing, setIsProcessing] = useState(false)
     const [promoCode, setPromoCode] = useState('')
@@ -98,7 +100,9 @@ const [promoData, setPromoData] = useState<PromoData | null>(null)
                     stripePriceId: product.stripePriceId,
                     listingDocId,
                     listingTitle,
-                    successUrl: `${window.location.origin}/profile?tab=my-listings`,
+                    successUrl: listingSlug 
+                        ? `${window.location.origin}/${locale}/listing/${listingSlug}/edit`
+                        : `${window.location.origin}/profile?tab=my-listings`,
                     cancelUrl: `${window.location.origin}/profile?tab=my-listings`,
                     promoCode: promoCode.trim() || undefined,
                 }),

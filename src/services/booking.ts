@@ -95,7 +95,7 @@ export async function getProviderBookingsWithUsers(
 ): Promise<EnrichedBooking[]> {
   try {
     const jwt = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    if (!jwt) throw new Error("No authentication token found. Please log in.");
+    if (!jwt) throw new Error("Errors.Booking.noAuth");
 
     // Populate listing (which includes its user relation); filter by listing.user.documentId
     const populate = {
@@ -144,7 +144,7 @@ export async function getProviderBookingsWithUsers(
     return enriched;
   } catch (err) {
     console.error(err);
-    throw new Error("Failed to load provider bookings. Please try again later.");
+    throw new Error("Errors.Booking.loadProviderFailed");
   }
 }
 
@@ -168,7 +168,7 @@ export async function createBooking(data: BookingPayload, locale?: string) {
     return res;
   } catch (err) {
     console.error(err);
-    throw new Error("Failed to create booking. Please try again later.");
+    throw new Error("Errors.Booking.createFailed");
   }
 }
 
@@ -181,7 +181,7 @@ export async function getListingBookings(
 ): Promise<BookingItem[]> {
   try {
     const jwt = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    if (!jwt) throw new Error("No authentication token found. Please log in.")
+    if (!jwt) throw new Error("Errors.Booking.noAuth");
 
     const populate = { 
       listing: { populate: "*" },
@@ -217,7 +217,7 @@ export async function getListingBookings(
     return Array.isArray(res?.data) ? (res.data as BookingItem[]) : [];
   } catch (err) {
     console.error(err);
-    throw new Error("Failed to load listing bookings. Please try again later.");
+    throw new Error("Errors.Booking.loadListingFailed");
   }
 }
 
@@ -229,7 +229,7 @@ export async function getBookings(
 ): Promise<BookingItem[]> {
   try {
     const jwt = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    if (!jwt) throw new Error("No authentication token found. Please log in.");
+    if (!jwt) throw new Error("Errors.Booking.noAuth");
 
     const populate = {
       listing: { populate: "*" },
@@ -254,7 +254,7 @@ export async function getBookings(
     return Array.isArray(res?.data) ? (res.data as BookingItem[]) : [];
   } catch (err) {
     console.error(err);
-    throw new Error("Failed to load bookings. Please try again later.");
+    throw new Error("Errors.Booking.loadFailed");
   }
 }
 
@@ -267,7 +267,7 @@ export async function updateBooking(id: string, data: Partial<BookingPayload>) {
     return res;
   } catch (err) {
     console.error(err);
-    throw new Error("Failed to update booking. Please try again later.");
+    throw new Error("Errors.Booking.updateFailed");
   }
 }
 
@@ -278,7 +278,7 @@ export async function deleteBooking(id: string) {
     return res;
   } catch (err) {
     console.error(err);
-    throw new Error("Failed to delete booking. Please try again later.");
+    throw new Error("Errors.Booking.deleteFailed");
   }
 }
 

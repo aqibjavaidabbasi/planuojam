@@ -404,6 +404,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           listingPrice={item.price}
           userId={user?.documentId || ''}
           stripeProducts={stripeProducts}
+          listingSlug={item.slug}
         />
       }
     </div>

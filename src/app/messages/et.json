@@ -250,6 +250,7 @@
       "archive": {
         "title": "Arhiveeri/Kustuta kuulutus",
         "description": "Halda oma kuulutuse staatust",
+        "cancelButton": "Tühista",
         "archiveSection": {
           "title": "Arhiveeri kuulutus",
           "description": "Arhiveerimine peidab teie kuulutuse avalikust vaatest. Te saate selle hiljem taastada.",
@@ -1239,6 +1240,15 @@
       "registerNoResponse": "Registreerimine ebaõnnestus — serverilt ei saadud vastust",
       "userIdRequired": "Kasutaja andmete uuendamiseks on vajalik kasutaja ID",
       "updateUserFailed": "Kasutaja uuendamine ebaõnnestus, palun proovi hiljem uuesti"
+    },
+    "Booking": {
+      "noAuth": "Autentimismärki ei leitud. Palun logi sisse.",
+      "loadProviderFailed": "Teenusepakkuja broneeringute laadimine ebaõnnestus. Palun proovi hiljem uuesti.",
+      "createFailed": "Broneeringu loomine ebaõnnestus. Palun proovi hiljem uuesti.",
+      "loadListingFailed": "Kuulutuse broneeringute laadimine ebaõnnestus. Palun proovi hiljem uuesti.",
+      "loadFailed": "Broneeringute laadimine ebaõnnestus. Palun proovi hiljem uuesti.",
+      "updateFailed": "Broneeringu uuendamine ebaõnnestus. Palun proovi hiljem uuesti.",
+      "deleteFailed": "Broneeringu kustutamine ebaõnnestus. Palun proovi hiljem uuesti."
     }
   },
   "Search": {

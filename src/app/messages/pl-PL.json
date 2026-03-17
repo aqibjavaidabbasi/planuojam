@@ -251,6 +251,7 @@
       "archive": {
         "title": "Archiwum/Usuń ogłoszenie",
         "description": "Zarządzaj statusem ogłoszenia",
+        "cancelButton": "Anuluj",
         "archiveSection": {
           "title": "Archiwum ogłoszenia",
           "description": "Archiwizacja ukryje Twoje ogłoszenie przed publicznym widokiem. Możesz je później przywrócić.",
@@ -1249,6 +1250,15 @@
       "missingToken": "Sprawdź połączenie z Internetem i spróbuj ponownie",
       "registerNoResponse": "Rejestracja nie powiodła się — brak odpowiedzi z serwera",
       "userIdRequired": "Wymagany jest identyfikator użytkownika, aby zaktualizować dane"
+    },
+    "Booking": {
+      "noAuth": "Nie znaleziono tokenu uwierzytelniającego. Zaloguj się.",
+      "loadProviderFailed": "Nie udało się załadować rezerwacji dostawcy. Spróbuj ponownie później.",
+      "createFailed": "Nie udało się utworzyć rezerwacji. Spróbuj ponownie później.",
+      "loadListingFailed": "Nie udało się załadować rezerwacji ogłoszenia. Spróbuj ponownie później.",
+      "loadFailed": "Nie udało się załadować rezerwacji. Spróbuj ponownie później.",
+      "updateFailed": "Nie udało się zaktualizować rezerwacji. Spróbuj ponownie później.",
+      "deleteFailed": "Nie udało się usunąć rezerwacji. Spróbuj ponownie później."
     }
   },
   "Search": {

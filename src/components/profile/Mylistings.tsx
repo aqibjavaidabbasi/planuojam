@@ -145,6 +145,7 @@ function Mylistings() {
           listingTitle={selectedListingForSubscription.title}
           listingPrice={selectedListingForSubscription.price}
           userId={user?.documentId || ''}
+          listingSlug={selectedListingForSubscription.slug}
         />
       )}
     </div>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import Modal from "../custom/Modal"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import Button from "../custom/Button"
 import { FaSpinner, FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa"
 
@@ -35,7 +35,8 @@ const SubscriptionManagementModal: React.FC<SubscriptionManagementModalProps> = 
   const [loading, setLoading] = useState(true)
   const [subscription, setSubscription] = useState<SubscriptionData | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [actionLoading, setActionLoading] = useState(false)
+  const [actionLoading, setActionLoading] = useState(false);
+  const locale = useLocale();
 
   const loadSubscription = React.useCallback(async () => {
     setLoading(true)
@@ -185,7 +186,7 @@ const SubscriptionManagementModal: React.FC<SubscriptionManagementModalProps> = 
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(undefined, {
+    return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
