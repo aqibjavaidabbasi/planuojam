@@ -207,7 +207,9 @@
       "notFound": "Not found"
     },
     "loading": "Loading...",
-    "saving": "Saving..."
+    "saving": "Saving...",
+    "readMore": "Read More",
+    "readLess": "Read Less"
   },
   "Map": {
     "title": "Interactive Map",

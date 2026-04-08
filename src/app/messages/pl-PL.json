@@ -192,7 +192,9 @@
       "notFound": "Nie znaleziono"
     },
     "loading": "Wczytywanie...",
-    "saving": "Zapisywanie..."
+    "saving": "Zapisywanie...",
+    "readMore": "Czytaj więcej",
+    "readLess": "Pokaż mniej"
   },
   "Map": {
     "title": "Mapa interaktywna",

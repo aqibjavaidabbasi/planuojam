@@ -22,6 +22,7 @@ import "swiper/css/pagination";
 import { ListingItem, Venue } from "@/types/pagesTypes";
 import { useAppSelector } from "@/store/hooks";
 import { useTranslations } from "next-intl";
+import { ExpandableText } from "@/components/custom/ExpandableText";
 import { Location as MapLocation } from "@/components/global/MapboxMap";
 import { notFound } from "next/navigation";
 import { RootState } from "@/store";
@@ -159,9 +160,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
               <h2 className="text-2xl font-semibold text-primary mb-4">
                 {t("overview")}
               </h2>
-              <p className="text-secondary my-4 whitespace-pre-wrap wrap-break-word">
-                {initialListing.description}
-              </p>
+              <ExpandableText text={initialListing.description || ""} maxChars={1000} />
 
               {/* tags */}
               {initialListing.tags && initialListing.tags.length > 0 && (

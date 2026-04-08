@@ -191,7 +191,9 @@
       "notFound": "Ei leitud"
     },
     "loading": "Laadimine...",
-    "saving": "Salvestamine..."
+    "saving": "Salvestamine...",
+    "readMore": "Loe edasi",
+    "readLess": "Loe vähem"
   },
   "Map": {
     "title": "Interaktiivne kaart",

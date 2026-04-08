@@ -32,7 +32,8 @@ const ArchiveDeleteSection: React.FC<ArchiveDeleteSectionProps> = ({ listing, on
     try {
       await updateListing(listing.documentId, { 
         data: {
-          listingStatus: "archived"
+          listingStatus: "archived",
+          statusBeforeArchive: listing.listingStatus
         }
       }, locale)
       
@@ -59,7 +60,7 @@ const ArchiveDeleteSection: React.FC<ArchiveDeleteSectionProps> = ({ listing, on
     try {
       await updateListing(listing.documentId, { 
         data: {
-          listingStatus: "published"
+          listingStatus: listing.statusBeforeArchive || "published"
         }
       }, locale)
       

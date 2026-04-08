@@ -191,7 +191,9 @@
       "notFound": "Nerasta"
     },
     "loading": "Kraunama...",
-    "saving": "Saugoma..."
+    "saving": "Saugoma...",
+    "readMore": "Skaityti daugiau",
+    "readLess": "Rodyti mažiau"
   },
   "Listing": {
     "editTitle": "Redaguoti {title}",

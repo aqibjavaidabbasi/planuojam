@@ -2,7 +2,7 @@
 import { Vendor } from "@/types/pagesTypes";
 import React from "react";
 import { useTranslations } from "next-intl";
-
+import { ExpandableText } from "./ExpandableText";
 
 
 interface VendorCardProps {
@@ -16,7 +16,12 @@ function VendorCard({ item }: VendorCardProps) {
       {(item.about || item.experienceYears || item.serviceArea) && (
         <React.Fragment>
           <h3 className="text-lg font-semibold text-primary">{t('title')}</h3>
-          <p className="text-secondary">{item.about}</p>
+          {item.about && (
+            <>
+              <h3 className="font-semibold">{t("about")}</h3>
+              <ExpandableText text={item.about || ""} maxChars={300} />
+            </>
+          )}
           <p className="text-secondary">
             <b>
               {t('experienceYears', {years: item.experienceYears || 0})}

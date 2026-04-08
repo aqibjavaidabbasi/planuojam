@@ -103,7 +103,9 @@ const [promoData, setPromoData] = useState<PromoData | null>(null)
                     successUrl: listingSlug 
                         ? `${window.location.origin}/${locale}/listing/${listingSlug}/edit`
                         : `${window.location.origin}/profile?tab=my-listings`,
-                    cancelUrl: `${window.location.origin}/profile?tab=my-listings`,
+                    cancelUrl: listingSlug 
+                        ? `${window.location.origin}/${locale}/listing/${listingSlug}/edit`
+                        : `${window.location.origin}/profile?tab=my-listings`,
                     promoCode: promoCode.trim() || undefined,
                 }),
             })
