@@ -38,16 +38,17 @@ export type VenueForm = {
 
 export default function VendorVenueSection({ listing, onSaved }: { listing: ListingItem; onSaved?: () => void }) {
   // Use a more robust service type detection
-  // First try to get from category serviceType, fallback to listing type
+  // First try to get from categories serviceType, fallback to listing type
   const getServiceType = useCallback((): 'vendor' | 'venue' => {
-    // Try to get serviceType from the listing's category
-    if (listing.category?.serviceType) {
-      return listing.category.serviceType as 'vendor' | 'venue';
+    // Try to get serviceType from listing's categories
+    if (listing.categories && listing.categories.length > 0 && listing.categories[0]?.serviceType) {
+      return listing.categories[0].serviceType as 'vendor' | 'venue';
     }
     // Fallback to listing.type with validation
     const type = (listing.type || "vendor").toLowerCase().trim();
     return type === 'venue' ? 'venue' : 'vendor';
-  }, [listing.type, listing.category?.serviceType]);
+  }, [listing.type, listing.categories]);
+
   
   const isVendor = useMemo(() => getServiceType() === 'vendor', [getServiceType])
   const [submitting, setSubmitting] = useState(false)

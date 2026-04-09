@@ -88,7 +88,19 @@ function extractVendorData(listing: ListingItem): VendorData[] {
 function getPrimaryImage(listing: ListingItem): strapiImage {
   return (listing.portfolio && listing.portfolio.length > 0)
     ? listing.portfolio[0]
-    : listing.category?.image || { url: '/noImage.jpg', mime: 'image/jpeg' };
+    : (listing.categories && listing.categories.length > 0 ? listing.categories[0]?.image : null) || { 
+        id: 0,
+        url: '/noImage.jpg', 
+        width: 0,
+        mime: 'image/jpeg',
+        ext: 'jpg',
+        formats: {
+          small: { url: '/noImage.jpg', width: 0 },
+          medium: { url: '/noImage.jpg', width: 0 },
+          thumbnail: { url: '/noImage.jpg', width: 0 },
+          banner: { url: '/noImage.jpg', width: 0 }
+        }
+      };
 }
 
 /**
@@ -108,7 +120,7 @@ export function createLocationFromListing(options: CreateLocationOptions): Locat
     username: listing.user?.username || 'Unknown',
     description: overrides?.description || listing.description || '',
     category: {
-      name: listing.category?.name || 'Uncategorized',
+      name: (listing.categories && listing.categories.length > 0 ? listing.categories[0]?.name : 'Uncategorized'),
       type: listing.type as 'vendor' | 'venue' | string,
     },
     image: primaryImage,

@@ -214,7 +214,7 @@
     },
     "infoWindow": {
       "user": "Kasutaja",
-      "category": "Kategooria",
+      "category": "Kategooriad",
       "location": "Asukoht",
       "view": "Vaata",
       "hot": "KUUM",
@@ -753,7 +753,7 @@
         "invalidServiceType": "Teil pole selle kuulutuse loomiseks õigusi",
         "addressRequired": "Aadress on kohustuslik kohtade jaoks (venue)",
         "addressInvalid": "Vale aadressi vorming",
-        "categoryRequired": "Kategooria on kohustuslik",
+        "categoryRequired": "Kategooriad on kohustuslikud",
         "emailRequired": "E-post on kohustuslik",
         "listingDetailsRequired": "Kuulutuse üksikasjad on kohustuslikud",
         "aboutRequired": "Tähtis on osa \"Teave\"",
@@ -785,7 +785,7 @@
         "basicDetails": "Põhiandmed",
         "vendorDetails": "Teenusepakkuja andmed",
         "venueDetails": "Koha andmed",
-        "category": "Kategooria"
+        "category": "Kategooriad"
       },
       "fields": {
         "title": {
@@ -947,8 +947,8 @@
           "label": "Vali ürituse tüüp"
         },
         "chooseCategory": {
-          "label": "Vali kategooria",
-          "placeholder": "Vali kategooria"
+          "label": "Vali kategooriad",
+          "placeholder": "Vali kategooriad"
         },
         "name": {
           "label": "Nimi"
@@ -1310,8 +1310,8 @@
     }
   },
   "basicSectionForm": {
-    "category": "Kategooria",
-    "categoryPlaceholder": "Valige kategooria",
+    "category": "Kategooriad",
+    "categoryPlaceholder": "Valige kategooriad",
     "eventTypes": "Sündmuse tüübid",
     "eventTypesPlaceholder": "Valige sündmuse tüübid"
   },

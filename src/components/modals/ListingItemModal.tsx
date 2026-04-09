@@ -211,7 +211,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
   const [eventTypesIds, setEventTypesIds] = useState<string[]>([]);
   const { parentCategories } = useParentCategories();
   const [childCategories, setChildCategories] = useState<category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const { user } = useAppSelector((state: RootState) => state.auth);
   const [isLoading, setIsLoading] = useState(false);
   // Derive service type from the authenticated user; keep both raw and normalized forms
@@ -426,8 +426,8 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
       return t('fields.email.message');
     }
 
-    // 4. Validate category
-    if (!selectedCategory) {
+    // 4. Validate categories
+    if (selectedCategories.length === 0) {
       return t('errors.categoryRequired');
     }
 
@@ -648,9 +648,11 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
       }
       //set autotranslate field to true
       payload.autoTranslateOnUpdate = true;
-      if (selectedCategory) {
-        // Wrap category relation
-        payload.category = selectedCategory;
+      if (selectedCategories.length > 0) {
+        // Wrap categories relation
+        payload.categories = {
+          set: [...selectedCategories]
+        };
       }
       // workingHours removed in favor of workingSchedule (handled above)
       // ensure listingItem component type matches the enforced type
@@ -795,7 +797,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
       setCreatedListingData(createdListing.data);
       setShowSubscriptionHint(true);
       reset();
-      setSelectedCategory('');
+      setSelectedCategories([]);
       setEventTypesIds([]);
       setError(null);
       setMediaItems([]);
@@ -1816,20 +1818,16 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                 <h3 className='text-lg font-semibold mb-2'>
                   {t('sections.category')}
                 </h3>
-                <Select
+                <MultiSelect
                   options={childCategories
                     .sort((a, b) => b.priority - a.priority)
                     .map((c) => ({ label: c.name, value: c.documentId }))}
-                  value={selectedCategory}
-                  disabled={isWorking}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                    setSelectedCategory(e.target.value)
-                  }
-                  label={t('fields.chooseCategory.label')}
+                  value={selectedCategories}
+                  onChange={setSelectedCategories}
                   placeholder={t('fields.chooseCategory.placeholder')}
-                  required
+                  disabled={isWorking}
                 />
-                <ErrorMessage error={errors.category} />
+                <ErrorMessage error={errors.categories} />
               </div>
             </div>
           </form>

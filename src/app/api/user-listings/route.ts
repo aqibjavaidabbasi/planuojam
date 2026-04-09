@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     }
 
         const populate = {
-        category: {
+        categories: {
             populate: '*',
         },
         listingItem: {

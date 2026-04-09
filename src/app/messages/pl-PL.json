@@ -215,7 +215,7 @@
     },
     "infoWindow": {
       "user": "Użytkownik",
-      "category": "Kategoria",
+      "category": "Kategorie",
       "location": "Lokalizacja",
       "view": "Zobacz",
       "hot": "GORĄCY",
@@ -755,7 +755,7 @@
         "invalidServiceType": "Nie masz uprawnień do utworzenia tej oferty",
         "addressRequired": "Adres jest wymagany dla miejsc (venue)",
         "addressInvalid": "Nieprawidłowy format adresu",
-        "categoryRequired": "Kategoria jest wymagana",
+        "categoryRequired": "Kategorie są wymagane",
         "emailRequired": "Adres e-mail jest wymagany",
         "listingDetailsRequired": "Szczegóły oferty są wymagane",
         "aboutRequired": "Sekcja \"O mnie\" jest wymagana",
@@ -787,7 +787,7 @@
         "basicDetails": "Podstawowe informacje",
         "vendorDetails": "Informacje o dostawcy",
         "venueDetails": "Informacje o miejscu",
-        "category": "Kategoria"
+        "category": "Kategorie"
       },
       "fields": {
         "title": {
@@ -958,8 +958,8 @@
           "label": "Wybierz typ wydarzenia"
         },
         "chooseCategory": {
-          "label": "Wybierz kategorię",
-          "placeholder": "Wybierz kategorię"
+          "label": "Wybierz kategorie",
+          "placeholder": "Wybierz kategorie"
         },
         "name": {
           "label": "Imię"
@@ -1324,8 +1324,8 @@
     }
   },
   "basicSectionForm": {
-    "category": "Kategoria",
-    "categoryPlaceholder": "Wybierz kategorię",
+    "category": "Kategorie",
+    "categoryPlaceholder": "Wybierz kategorie",
     "eventTypes": "Typy zdarzeń",
     "eventTypesPlaceholder": "Wybierz typy zdarzeń"
   },

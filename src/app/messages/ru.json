@@ -366,7 +366,7 @@
     },
     "infoWindow": {
       "user": "Пользователь",
-      "category": "Категория",
+      "category": "Категории",
       "location": "Местоположение",
       "view": "Просмотр",
       "hot": "ГОРЯЧИЙ",
@@ -729,7 +729,7 @@
         "invalidServiceType": "У вас нет прав на создание этого листинга",
         "addressRequired": "Адрес обязателен для площадок (venue)",
         "addressInvalid": "Неверный формат адреса",
-        "categoryRequired": "Категория является обязательной",
+        "categoryRequired": "Категории являются обязательными",
         "emailRequired": "Требуется email",
         "listingDetailsRequired": "Сведения об объявлении обязательны",
         "aboutRequired": "Раздел \"О себе\" обязателен",
@@ -761,7 +761,7 @@
         "basicDetails": "Основные сведения",
         "vendorDetails": "Данные поставщика",
         "venueDetails": "Данные о месте",
-        "category": "Категория"
+        "category": "Категории"
       },
       "fields": {
         "title": {
@@ -940,8 +940,8 @@
           "label": "Выберите тип события"
         },
         "chooseCategory": {
-          "label": "Выберите категорию",
-          "placeholder": "Выберите категорию"
+          "label": "Выберите категории",
+          "placeholder": "Выберите категории"
         },
         "name": {
           "label": "Имя"
@@ -1336,8 +1336,8 @@
     }
   },
   "basicSectionForm": {
-    "category": "Категория",
-    "categoryPlaceholder": "Выберите категорию",
+    "category": "Категории",
+    "categoryPlaceholder": "Выберите категории",
     "eventTypes": "Типы событий",
     "eventTypesPlaceholder": "Выберите типы событий"
   },

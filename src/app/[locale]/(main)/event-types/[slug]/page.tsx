@@ -40,13 +40,13 @@ export default async function EventTypesPage({ params }: { params: Promise<{ loc
         eventTypeId,
         locale,
         { page: 1, pageSize: 10 },
-        { category: { parentCategory: { documentId: VENUE_DOC_ID } } }
+        { categories: { parentCategory: { documentId: VENUE_DOC_ID } } }
       ),
       fetchPromotedListingsPerEventsWithMeta(
         eventTypeId,
         locale,
         { page: 1, pageSize: 10 },
-        { category: { parentCategory: { documentId: VENDOR_DOC_ID } } }
+        { categories: { parentCategory: { documentId: VENDOR_DOC_ID } } }
       ),
     ]);
   }

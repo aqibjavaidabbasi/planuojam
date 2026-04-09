@@ -29,7 +29,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Build populate structure similar to client/service usage
     const populate = {
-      category: { populate: '*' },
+      categories: { populate: '*' },
       listingItem: {
         on: {
           'dynamic-blocks.vendor': {
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     };
 
     if (parentCategory) {
-      (baseFilters.filters as Record<string, unknown>).category = { parentCategory: { documentId: parentCategory } };
+      (baseFilters.filters as Record<string, unknown>).categories = { parentCategory: { documentId: parentCategory } };
     }
 
     const additional: Record<string, unknown> = {};

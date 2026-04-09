@@ -1,5 +1,5 @@
 export const LISTING_ITEM_POP_STRUCTURE = {
-    category: {
+    categories: {
         populate: '*'
     },
     listingItem: {
@@ -87,7 +87,7 @@ export const LISTING_ITEM_POP_STRUCTURE = {
     },
     localizations: {
         populate: {
-            category: {
+            categories: {
                 populate: '*'
             },
             listingItem: {

@@ -26,7 +26,8 @@ export type BasicForm = {
   tagDocumentIds: string[];
   videos: { url: string }[];
   websiteLink?: string;
-  category?: string;
+  category?: string[];
+  categories?: string[];
   eventTypes?: string[];
   workingSchedule?: {
     day:
@@ -89,7 +90,7 @@ export default function BasicSection({
       tagDocumentIds: listing.tagDocumentIds || [],
       videos: listing.videos || [],
       websiteLink: listing.websiteLink || '',
-      category: listing.category?.documentId || '',
+      category: listing.categories?.map((c) => c.documentId) || [],
       eventTypes: listing.eventTypes?.map((et) => et.documentId) || [],
       workingSchedule: listing.workingSchedule || [],
     },
@@ -226,8 +227,8 @@ export default function BasicSection({
         payload.tagDocumentIds = values.tagDocumentIds;
       }
 
-      if (values.category) {
-        payload.category = { connect: [values.category] };
+      if (values.category && values.category.length > 0) {
+        payload.categories = { set: values.category };
       }
 
       if (values.eventTypes?.length) {
@@ -481,20 +482,21 @@ export default function BasicSection({
           </div>
         </div>
 
-        {/* Category */}
+        {/* Categories */}
         <div className='col-span-2'>
-          <Select
-            label={tForm('category')}
+          <label className='block text-sm font-medium mb-1'>
+            {tForm('category')}
+          </label>
+          <MultiSelect
             disabled={submitting}
-            value={watch('category') || ''}
-            onChange={(e) => {
-              setValue('category', e.target.value, { shouldDirty: true });
-            }}
             options={childCategories
               .sort((a, b) => b.priority - a.priority)
               .map((c) => ({ label: c.name, value: c.documentId }))}
+            value={watch('category') || []}
+            onChange={(selected) => {
+              setValue('category', selected, { shouldDirty: true });
+            }}
             placeholder={tForm('categoryPlaceholder')}
-            required
           />
         </div>
 

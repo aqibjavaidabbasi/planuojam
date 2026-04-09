@@ -5,7 +5,7 @@ export type CreateListingFormTypes = {
     price: number;
     type: string;
     listingStatus: "draft" | "pending review" | "published" | "archived";
-    category: string;
+    categories: { set: string[]; };
     mainImageId: string;
     tagDocumentIds: string[];
     videos: { url: string }[];

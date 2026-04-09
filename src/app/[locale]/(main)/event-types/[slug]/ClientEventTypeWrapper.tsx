@@ -32,7 +32,7 @@ function ClientEventTypeWrapper({
   eventTypeId,
   locale
 }: Props) {
-  const t = useTranslations("NoDataCard");
+  const t = useTranslations("Custom.NoDataCard");
   const eventBlock = Array.isArray(eventBlocks) ? eventBlocks : [];
 
   // derived states for better data management
@@ -93,7 +93,7 @@ function ClientEventTypeWrapper({
     if (!eventTypeId) return;
     const resp = await fetchPromotedListingsPerEventsNoCacheFromApi(
       eventTypeId,
-      { category: { parentCategory: { documentId: venueParentId } } },
+      { categories: { parentCategory: { documentId: venueParentId } } },
       locale,
       { page: (Number.isFinite(venuePage as number) ? venuePage : 1) + 1, pageSize: venuePageSize },
     );
@@ -127,7 +127,7 @@ function ClientEventTypeWrapper({
     if (!eventTypeId) return;
     const resp = await fetchPromotedListingsPerEventsNoCacheFromApi(
       eventTypeId,
-      { category: { parentCategory: { documentId: vendorParentId } } },
+      { categories: { parentCategory: { documentId: vendorParentId } } },
       locale,
       { page: (Number.isFinite(vendorPage as number) ? vendorPage : 1) + 1, pageSize: vendorPageSize }
     );

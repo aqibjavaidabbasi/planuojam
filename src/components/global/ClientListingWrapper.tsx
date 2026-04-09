@@ -29,8 +29,8 @@ export type ListingWrapperProps = {
   service: string;
   serviceType?: 'vendor' | 'venue';
   initialList?: ListingItem[];
-  initialFilters?: Record<string, string>;
-  initialCategoryNames?: string[];
+  initialFilters?: Record<string, string | string[]>;
+  initialCategories?: { name: string; documentId: string }[];
   initialPagination?: {
     page: number;
     pageSize: number;
@@ -44,7 +44,7 @@ function ClientListingWrapper({
   serviceType,
   initialList,
   initialFilters: initialFiltersFromServer,
-  initialCategoryNames,
+  initialCategories,
   initialPagination,
 }: ListingWrapperProps) {
   const [list, setList] = useState<ListingItem[]>(initialList || []);
@@ -52,9 +52,9 @@ function ClientListingWrapper({
   const { parentCategories } = useParentCategories(); // Get parent categories for robust filtering
   const searchParams = useSearchParams();
   const locale = useLocale();
-  const categoryNames = useMemo(
-    () => initialCategoryNames || [],
-    [initialCategoryNames],
+  const categories = useMemo(
+    () => initialCategories || [],
+    [initialCategories],
   );
 
   // Get translations based on service type
@@ -64,7 +64,7 @@ function ClientListingWrapper({
 
   const eventTypeNames: string[] = eventTypes.map((event) => event.eventName);
 
-  const categoryFromUrl = searchParams.get('cat');
+  const categoryFromUrl = searchParams.get('cats'); // Support multiple categories
   const eventTypeFromUrl = searchParams.get('eventType');
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(12);
@@ -94,11 +94,20 @@ function ClientListingWrapper({
       Object.keys(initialFiltersFromServer).length
     )
       return initialFiltersFromServer;
-    const obj: Record<string, string> = {};
-    if (categoryFromUrl) obj.category = categoryFromUrl;
-    if (eventTypeFromUrl) obj.eventType = eventTypeFromUrl;
+    const obj: Record<string, string[]> = {};
+    if (categoryFromUrl) {
+      const catNames = categoryFromUrl.split(',').map(c => c.trim().toLowerCase()).filter(c => c);
+      if (catNames.length > 0) {
+        const resolvedIds = categories
+          .filter(c => catNames.includes(c.name.trim().toLowerCase()))
+          .map(c => c.documentId);
+        // Use resolved IDs for the filter value, fall back to names if somehow not found
+        obj.categories = resolvedIds.length > 0 ? resolvedIds : catNames;
+      }
+    }
+    if (eventTypeFromUrl) obj.eventType = [eventTypeFromUrl];
     return obj;
-  }, [categoryFromUrl, eventTypeFromUrl, initialFiltersFromServer]);
+  }, [categoryFromUrl, eventTypeFromUrl, initialFiltersFromServer, categories]);
 
   // Helper function to get the correct translation based on service type
   const getTranslation = useCallback(
@@ -205,23 +214,23 @@ function ClientListingWrapper({
   const filters = useMemo(
     () => [
       {
-        name: 'category',
-        options: categoryNames,
+        name: 'categories',
+        options: categories.map(c => ({ label: c.name, value: c.documentId })),
         placeholder: getTranslation(placeholders.chooseCategory),
       },
       {
         name: 'price',
-        options: translatedPricingFilters,
+        options: translatedPricingFilters.map(opt => ({ label: opt, value: opt })),
         placeholder: getTranslation(placeholders.selectPricing),
       },
       {
         name: 'eventType',
-        options: eventTypeNames,
+        options: eventTypeNames.map(opt => ({ label: opt, value: opt })),
         placeholder: getTranslation(placeholders.chooseEventType),
       },
     ],
     [
-      categoryNames,
+      categories,
       eventTypeNames,
       translatedPricingFilters,
       getTranslation,
@@ -237,7 +246,7 @@ function ClientListingWrapper({
       // On first render, if server provided initial list and current URL matches initialFilters, skip client fetch
       const urlMatchesInitial =
         (!initialFiltersFromServer?.category ||
-          initialFiltersFromServer.category === categoryFromUrl) &&
+          JSON.stringify(initialFiltersFromServer.category) === JSON.stringify(categoryFromUrl ? categoryFromUrl.split(',') : [])) &&
         (!initialFiltersFromServer?.eventType ||
           initialFiltersFromServer.eventType === eventTypeFromUrl);
       const shouldSkip = hasServerList && urlMatchesInitial;
@@ -245,23 +254,22 @@ function ClientListingWrapper({
       const filters = {} as Record<string, unknown>;
       async function fetchItems() {
         if (categoryFromUrl) {
-          // Find the category by name or slug, then filter by documentId for robustness
-          const targetCategory = parentCategories.find(
-            (cat) =>
-              cat.name === categoryFromUrl || cat.slug === categoryFromUrl,
-          );
+          const catNames = categoryFromUrl.split(',').map(c => c.trim().toLowerCase()).filter(c => c);
+          const resolvedIds = categories
+            .filter(c => catNames.includes(c.name.trim().toLowerCase()))
+            .map(c => c.documentId);
 
-          if (targetCategory) {
-            filters.category = {
+          if (resolvedIds.length > 0) {
+            filters.categories = {
               documentId: {
-                $eq: targetCategory.documentId,
+                $in: resolvedIds,
               },
             };
           } else {
-            // Fallback to name filtering if category not found in parent categories
-            filters.category = {
+            // Fallback for names if mapping fails
+            filters.categories = {
               name: {
-                $eq: categoryFromUrl,
+                $in: categoryFromUrl.split(',').map(c => c.trim()).filter(c => c),
               },
             };
           }
@@ -292,6 +300,7 @@ function ClientListingWrapper({
       initialFiltersFromServer,
       initialPagination,
       parentCategories,
+      categories
     ],
   );
 

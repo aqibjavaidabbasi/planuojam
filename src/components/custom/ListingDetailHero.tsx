@@ -1,6 +1,6 @@
 "use client";
 import { useSiteSettings } from "@/context/SiteSettingsContext";
-import { Discount } from "@/types/pagesTypes";
+import { category, Discount } from "@/types/pagesTypes";
 import React, { useState } from "react";
 import { MdOutlineEmail, MdOutlineLocalPhone } from "react-icons/md";
 import Button from "../custom/Button";
@@ -13,7 +13,7 @@ import { formatPhoneDisplay, getTelHref } from "@/utils/phone";
 import { HotDeal, isHotDealActive } from '@/utils/hotDealHelper';
 
 interface ListingDetailHeroProps {
-  category: string;
+  categories?: category[];
   title: string;
   username: string;
   vendorUserId?: string;
@@ -35,7 +35,7 @@ interface ListingDetailHeroProps {
 }
 
 function ListingDetailHero({
-  category,
+  categories,
   title,
   username,
   vendorUserId,
@@ -58,11 +58,14 @@ function ListingDetailHero({
       <div className="absolute inset-0 bg-black/20"></div>
       <div className="relative z-10 p-2.5 md:p-4 text-white">
         <div className="flex flex-col gap-2">
-          {category && <div className="flex items-center mb-2">
-            <span className="bg-white bg-opacity-20 text-black px-3 py-1 rounded-full text-sm font-medium">
-              {category}
-            </span>
-          </div>}
+          {categories &&
+            <div className="flex items-center mb-2">{
+              categories.map(cat =>
+                <span key={cat.documentId} className="bg-white bg-opacity-20 text-black px-3 py-1 rounded-full text-sm font-medium">
+                  {cat.name}
+                </span>
+              )}
+            </div>}
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2">{title}</h1>
           <div className="flex-1">
             <p className="text-base sm:text-lg text-white text-opacity-80 mb-3">
@@ -132,7 +135,7 @@ function ListingDetailHero({
                     params.set('withUser', vendorUserId);
                     if (username) params.set('username', username);
                     if (listingDocumentId) params.set('listing', listingDocumentId);
-                    
+
                     const url = `/profile?${params.toString()}`;
                     router.push(url);
                   }}

@@ -227,7 +227,7 @@
     },
     "infoWindow": {
       "user": "User",
-      "category": "Category",
+      "category": "Categories",
       "location": "Location",
       "view": "View",
       "hot": "HOT",
@@ -735,7 +735,7 @@
         "invalidServiceType": "You do not have permissions to create this listing",
         "addressRequired": "Address is required for venues",
         "addressInvalid": "Invalid address format",
-        "categoryRequired": "Category is required",
+        "categoryRequired": "Categories are required",
         "emailRequired": "Email is required",
         "listingDetailsRequired": "Listing details are required",
         "aboutRequired": "About section is required",
@@ -767,7 +767,7 @@
         "basicDetails": "Basic Details",
         "vendorDetails": "Vendor Details",
         "venueDetails": "Venue Details",
-        "category": "Category"
+        "category": "Categories"
       },
       "fields": {
         "title": {
@@ -937,8 +937,8 @@
           "label": "Choose event types"
         },
         "chooseCategory": {
-          "label": "Choose category",
-          "placeholder": "Choose category"
+          "label": "Choose categories",
+          "placeholder": "Choose categories"
         },
         "name": {
           "label": "Name"
@@ -1315,8 +1315,8 @@
     }
   },
   "basicSectionForm": {
-    "category": "Category",
-    "categoryPlaceholder": "Choose category",
+    "category": "Categories",
+    "categoryPlaceholder": "Choose categories",
     "eventTypes": "Event Types",
     "eventTypesPlaceholder": "Choose event types"
   },

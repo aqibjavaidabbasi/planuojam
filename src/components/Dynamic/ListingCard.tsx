@@ -292,9 +292,9 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                 </span>
               </li>
             )}
-            {item.category?.name && (
+            {item.categories && item.categories.length > 0 && (
               <li className="flex items-start ml-3">
-                <span className="truncate block max-w-[210px]">{item.category.name}</span>
+                <span className="truncate block max-w-[210px]">{item.categories[0]?.name}</span>
               </li>
             )}
           </ul>

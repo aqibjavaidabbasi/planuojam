@@ -18,20 +18,15 @@ export default async function ServicePage({
   const { service, locale } = await params;
   const sp = (await searchParams) as Record<string, string | string[]> | undefined;
 
-  const rawCat = sp?.["cat"];
+  const rawCat = sp?.["cats"];
   const rawEventType = sp?.["eventType"];
-  const categoryFromUrl = typeof rawCat === 'string' ? rawCat : Array.isArray(rawCat) ? rawCat[0] : undefined;
-  const eventTypeFromUrl = typeof rawEventType === 'string' ? rawEventType : Array.isArray(rawEventType) ? rawEventType[0] : undefined;
-
-  const initialFilters: Record<string, string> = {};
-  if (categoryFromUrl) initialFilters.category = categoryFromUrl;
-  if (eventTypeFromUrl) initialFilters.eventType = eventTypeFromUrl;
+  const categoryFromUrl = typeof rawCat === 'string' ? rawCat : Array.isArray(rawCat) ? rawCat : undefined;
+  const eventTypeFromUrl = typeof rawEventType === 'string' ? rawEventType : Array.isArray(rawEventType) ? rawEventType : undefined;
 
   const appliedFilters: Record<string, unknown> = {};
-  if (categoryFromUrl) {
-    appliedFilters.category = { name: { $eq: categoryFromUrl } };
-  }
+  const initialFilters: Record<string, string | string[]> = {};
   if (eventTypeFromUrl) {
+    initialFilters.eventType = eventTypeFromUrl;
     appliedFilters.eventTypes = { eventName: { $eq: eventTypeFromUrl } };
   }
 
@@ -44,40 +39,58 @@ export default async function ServicePage({
     serviceType = undefined;
   }
 
-  const [initialResp, initialCategoryNames] = await Promise.all([
-    fetchSortedListingsWithMeta(
-      serviceType,
-      appliedFilters,
-      locale,
-      { page: 1, pageSize: 12 }
-    ),
+  const [initialCategories] = await Promise.all([
     (async () => {
       try {
+        let cats: category[] = [];
         if (service === 'all') {
-          // Fetch all child categories when service is 'all'
-          const cats:category[] = await fetchAllChildCategories(locale);
-          return Array.isArray(cats) ? cats.sort((c1, c2) => c2.priority - c1.priority).map((c) => c.name).filter(Boolean) as string[] : [];
-        } else if (!parent?.documentId) {
-          return [] as string[];
-        } else {
-          // Fetch child categories for specific parent category
-          const cats: category[] = await fetchChildCategories(parent.documentId, locale);
-          return Array.isArray(cats) ? cats.sort((c1, c2) => c2.priority - c1.priority).map((c) => c.name).filter(Boolean) as string[] : [];
+          cats = await fetchAllChildCategories(locale);
+        } else if (parent?.documentId) {
+          cats = await fetchChildCategories(parent.documentId, locale);
         }
+        return Array.isArray(cats) 
+          ? cats.sort((c1, c2) => c2.priority - c1.priority)
+                .map((c) => ({ name: c.name, documentId: c.documentId }))
+                .filter(c => !!c.name && !!c.documentId)
+          : [];
       } catch {
-        return [] as string[];
+        return [];
       }
-    })()
+    })(),
   ]);
+
+  if (categoryFromUrl) {
+    const names = (Array.isArray(categoryFromUrl) ? categoryFromUrl : [categoryFromUrl])
+      .map(n => n.toLowerCase().trim());
+    
+    const categoryIds = initialCategories
+      .filter(c => names.includes(c.name.toLowerCase().trim()))
+      .map(c => c.documentId);
+    
+    if (categoryIds.length > 0) {
+      appliedFilters.categories = { documentId: { $in: categoryIds } };
+      initialFilters.categories = categoryIds;
+    } else {
+      // Fallback: Use names if resolution fails
+      initialFilters.categories = Array.isArray(categoryFromUrl) ? categoryFromUrl : [categoryFromUrl];
+    }
+  }
+
+  const finalInitialResp = await fetchSortedListingsWithMeta(
+    serviceType,
+    appliedFilters,
+    locale,
+    { page: 1, pageSize: 12 }
+  );
 
   return (
     <ClientListingWrapper
       service={service}
       serviceType={serviceType}
-      initialList={initialResp?.data || []}
+      initialList={finalInitialResp?.data || []}
       initialFilters={initialFilters}
-      initialCategoryNames={initialCategoryNames}
-      initialPagination={initialResp?.meta?.pagination}
+      initialCategories={initialCategories}
+      initialPagination={finalInitialResp?.meta?.pagination}
     />
   );
 }

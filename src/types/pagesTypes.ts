@@ -282,7 +282,7 @@ export interface ListingItem {
   listingItem: (Venue | Vendor)[];
   averageRating: number;
   ratingsCount: number;
-  category: category;
+  categories?: category[];
   contact: Contact;
   socialLinks: {
     optionalSectionTitle: string;

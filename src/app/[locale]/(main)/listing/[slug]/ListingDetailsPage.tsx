@@ -140,7 +140,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
             {/* hero section moved to right */}
             <section className="">
               <ListingDetailHero
-                category={initialListing.category?.name}
+                categories={initialListing.categories}
                 title={initialListing.title}
                 username={initialListing.user?.username}
                 vendorUserId={initialListing?.user?.documentId}

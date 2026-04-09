@@ -339,7 +339,7 @@
     },
     "infoWindow": {
       "user": "Vartotojas",
-      "category": "Kategorija",
+      "category": "Kategorijos",
       "location": "Vieta",
       "view": "Peržiūrėti",
       "hot": "KARŠTAS",
@@ -483,7 +483,7 @@
         "invalidServiceType": "Jūs neturite leidimų kurti šio įrašo",
         "addressRequired": "Adresas yra privalomas vietoms (venue)",
         "addressInvalid": "Neteisingas adreso formatas",
-        "categoryRequired": "Kategorija yra privaloma",
+        "categoryRequired": "Kategorijos yra privalomos",
         "emailRequired": "El. paštas yra privalomas",
         "listingDetailsRequired": "Skelbimo detalės yra privalomos",
         "aboutRequired": "Skiltis \"Apie\" yra privaloma",
@@ -515,7 +515,7 @@
         "basicDetails": "Pagrindinė informacija",
         "vendorDetails": "Tiekėjo informacija",
         "venueDetails": "Vietos informacija",
-        "category": "Kategorija"
+        "category": "Kategorijos"
       },
       "fields": {
         "title": {
@@ -686,8 +686,8 @@
           "label": "Pasirinkite renginio tipą"
         },
         "chooseCategory": {
-          "label": "Pasirinkite kategoriją",
-          "placeholder": "Pasirinkite pagrindinę kategoriją"
+          "label": "Pasirinkite kategorijas",
+          "placeholder": "Pasirinkite pagrindines kategorijas"
         },
         "name": {
           "label": "Vardas"
@@ -1311,8 +1311,8 @@
     }
   },
   "basicSectionForm": {
-    "category": "Kategorija",
-    "categoryPlaceholder": "Pasirinkite kategoriją",
+    "category": "Kategorijos",
+    "categoryPlaceholder": "Pasirinkite kategorijas",
     "eventTypes": "Renginių tipai",
     "eventTypesPlaceholder": "Pasirinkite renginių tipus"
   },

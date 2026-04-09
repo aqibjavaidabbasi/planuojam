@@ -44,7 +44,7 @@ export async function fetchPromotedListingsPerEventsWithMeta(
     extraFilters: Record<string, unknown> = {}
 ) {
     const populate = {
-        category: {
+        categories: {
             populate: '*',
         },
         listingItem: {
@@ -160,7 +160,7 @@ export async function fetchPromotedListingsPerEvents(eventTypeDocId: string, loc
 export async function fetchPromotedListingsPerEventsNoCacheFromApi(
     eventTypeDocId: string,
     extraFilters: {
-        category: {
+        categories: {
             parentCategory: {
                 documentId: string
             }
@@ -175,7 +175,7 @@ export async function fetchPromotedListingsPerEventsNoCacheFromApi(
         if (pagination?.page) params.set('page', String(pagination.page));
         if (pagination?.pageSize) params.set('pageSize', String(pagination.pageSize));
         // support passing parentCategory via extraFilters if provided
-        const parentCategory = extraFilters?.category?.parentCategory?.documentId;
+        const parentCategory = extraFilters?.categories?.parentCategory?.documentId;
         if (parentCategory) params.set('parentCategory', String(parentCategory));
 
         const url = `/api/event-listings/${encodeURIComponent(eventTypeDocId)}${params.toString() ? `?${params.toString()}` : ''}`;
@@ -333,7 +333,7 @@ export async function fetchListingsByUserNoCacheFromApi(
 // Fetch all listings created by a user, optionally filtered by listingStatus
 export async function fetchListingsByUser(documentId: string, status?: string, locale?: string) {
     const populate = {
-        category: {
+        categories: {
             populate: '*',
         },
         listingItem: {
@@ -388,7 +388,7 @@ export async function fetchListingsByUser(documentId: string, status?: string, l
         },
         localizations: {
             populate: {
-                category: {
+                categories: {
                     populate: '*'
                 },
                 listingItem: {

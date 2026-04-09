@@ -18,14 +18,26 @@ async function geocodeLocations(listings: ListingItem[], locale?: string): Promi
       username: listing.user?.username || 'Unknown',
       description: listing.description || '',
       category: {
-        name: listing.category?.name || 'Uncategorized',
+        name: (listing.categories && listing.categories.length > 0 ? listing.categories[0]?.name : 'Uncategorized'),
         type: 'vendor' as const,
       },
     };
 
     const primaryImage = (listing.portfolio && listing.portfolio.length > 0)
       ? listing.portfolio[0]
-      : listing.category?.image;
+      : (listing.categories && listing.categories.length > 0 ? listing.categories[0]?.image : null) || {
+        id: 0,
+        url: '/noImage.jpg',
+        width: 0,
+        mime: 'image/jpeg',
+        ext: 'jpg',
+        formats: {
+          small: { url: '/noImage.jpg', width: 0 },
+          medium: { url: '/noImage.jpg', width: 0 },
+          thumbnail: { url: '/noImage.jpg', width: 0 },
+          banner: { url: '/noImage.jpg', width: 0 }
+        }
+      };
 
     // Build listing path using centralized helper and current locale
     const path = getListingPath(listing.slug, locale);
