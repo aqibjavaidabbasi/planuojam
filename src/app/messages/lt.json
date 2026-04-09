@@ -1282,12 +1282,17 @@
     "addVideo": "Pridėti vaizdo įrašą",
     "removeVideo": "Pašalinti",
     "remove": "Pašalinti",
+    "showAvailabilityCalendar": "Rodyti užimtumo kalendorių",
     "description": "Aprašymas",
     "websitelink": "Tinklalapio nuoroda",
     "workinghours(perday)": "Darbo valandos (per dieną)",
     "titleDescription": "Pavadinimas Aprašymas",
     "saving": "Išsaugoma...",
     "savechanges": "Išsaugoti pakeitimus",
+    "toggles": {
+      "yes": "TAIP",
+      "no": "NE"
+    },
     "errors": {
       "titleRequired": "Reikalingas pavadinimas",
       "pricePositive": "Kaina turi būti teigiama",

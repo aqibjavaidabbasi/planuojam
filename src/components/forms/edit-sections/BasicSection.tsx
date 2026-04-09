@@ -6,6 +6,7 @@ import Input from '../../custom/Input';
 import UrlInput from '../../custom/UrlInput';
 import TextArea from '../../custom/TextArea';
 import Select from '../../custom/Select';
+import ToggleButton from '../../custom/ToggleButton';
 import Button from '../../custom/Button';
 import { toast } from 'react-hot-toast';
 import { updateListing } from '@/services/listing';
@@ -29,16 +30,17 @@ export type BasicForm = {
   category?: string[];
   categories?: string[];
   eventTypes?: string[];
+  showAvailabilityCalendar: boolean;
   workingSchedule?: {
     day:
-      | ''
-      | 'monday'
-      | 'tuesday'
-      | 'wednesday'
-      | 'thursday'
-      | 'friday'
-      | 'saturday'
-      | 'sunday';
+    | ''
+    | 'monday'
+    | 'tuesday'
+    | 'wednesday'
+    | 'thursday'
+    | 'friday'
+    | 'saturday'
+    | 'sunday';
     start: string;
     end: string;
   }[];
@@ -92,6 +94,7 @@ export default function BasicSection({
       websiteLink: listing.websiteLink || '',
       category: listing.categories?.map((c) => c.documentId) || [],
       eventTypes: listing.eventTypes?.map((et) => et.documentId) || [],
+      showAvailabilityCalendar: listing.showAvailabilityCalendar !== false,
       workingSchedule: listing.workingSchedule || [],
     },
   });
@@ -209,6 +212,7 @@ export default function BasicSection({
       const payload: Record<string, unknown> = {
         title: values.title,
         description: values.description,
+        showAvailabilityCalendar: values.showAvailabilityCalendar,
       };
 
       if (values.price != null && !isNaN(values.price)) {
@@ -360,11 +364,11 @@ export default function BasicSection({
               max:
                 priceRange && priceRange.max !== Infinity
                   ? {
-                      value: priceRange.max,
-                      message: t('errors.priceAboveMax', {
-                        max: priceRange.max,
-                      }),
-                    }
+                    value: priceRange.max,
+                    message: t('errors.priceAboveMax', {
+                      max: priceRange.max,
+                    }),
+                  }
                   : undefined,
             })}
           />
@@ -517,6 +521,21 @@ export default function BasicSection({
               setValue('eventTypes', selected, { shouldDirty: true });
             }}
             placeholder={tForm('eventTypesPlaceholder')}
+          />
+        </div>
+
+        <div className="flex items-center justify-between gap-2 my-4">
+          <label className='block text-sm font-medium mb-1'>
+            {t('showAvailabilityCalendar')}
+          </label>
+          <ToggleButton
+            onLabel={t('toggles.yes') || 'YES'}
+            offLabel={t('toggles.no') || 'NO'}
+            disabled={submitting}
+            defaultOn={watch('showAvailabilityCalendar')}
+            onToggle={(state) =>
+              setValue('showAvailabilityCalendar', state, { shouldDirty: true })
+            }
           />
         </div>
 

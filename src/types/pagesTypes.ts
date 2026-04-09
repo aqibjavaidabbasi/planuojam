@@ -279,6 +279,7 @@ export interface ListingItem {
   slug: string;
   title: string;
   type: string;
+  showAvailabilityCalendar?: boolean;
   listingItem: (Venue | Vendor)[];
   averageRating: number;
   ratingsCount: number;

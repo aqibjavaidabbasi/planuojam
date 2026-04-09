@@ -32,6 +32,7 @@ interface ListingDetailHeroProps {
     discount: Discount;
   };
   onOpenBooking: (defaultPlanIndex?: number | null) => void;
+  showAvailabilityCalendar?: boolean;
 }
 
 function ListingDetailHero({
@@ -45,6 +46,7 @@ function ListingDetailHero({
   hotDeal,
   websiteLink,
   onOpenBooking,
+  showAvailabilityCalendar = true,
 }: ListingDetailHeroProps) {
   const { siteSettings } = useSiteSettings();
   const t = useTranslations('Listing.Hero');
@@ -111,15 +113,17 @@ function ListingDetailHero({
               )}
 
               {/* View Available Slots -> scroll to calendar */}
-              <div
-                className="rounded-xl w-full px-6 py-2 text-center cursor-pointer transition-all duration-200 flex items-center justify-center bg-white/10 border border-white/30 hover:bg-white/30 backdrop-blur"
-                onClick={() => {
-                  const el = document.getElementById('availability');
-                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }}
-              >
-                <span className="text-white">{t('viewAvailableSlots', { default: 'View available slots' })}</span>
-              </div>
+              {showAvailabilityCalendar && (
+                <div
+                  className="rounded-xl w-full px-6 py-2 text-center cursor-pointer transition-all duration-200 flex items-center justify-center bg-white/10 border border-white/30 hover:bg-white/30 backdrop-blur"
+                  onClick={() => {
+                    const el = document.getElementById('availability');
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}
+                >
+                  <span className="text-white">{t('viewAvailableSlots', { default: 'View available slots' })}</span>
+                </div>
+              )}
 
               {typeof vendorUserId === 'string' && user?.documentId !== vendorUserId && (
                 <div

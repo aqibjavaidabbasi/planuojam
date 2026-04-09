@@ -1288,12 +1288,17 @@
     "videoUrlPlaceholder": "YouTube URL...",
     "addVideo": "Add Video",
     "remove": "Remove",
+    "showAvailabilityCalendar": "Show Availability Calendar",
     "description": "Description",
     "websitelink": "Website Link",
     "workinghours(perday)": "Working Hour (Per Day)",
     "titleDescription": "Title Description",
     "saving": "Saving",
     "savechanges": "Save  Changes",
+    "toggles": {
+      "yes": "YES",
+      "no": "NO"
+    },
     "errors": {
       "titleRequired": "Title is required",
       "listingStatusRequired": "Listing status is required",

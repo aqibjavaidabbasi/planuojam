@@ -18,7 +18,6 @@ function VendorCard({ item }: VendorCardProps) {
           <h3 className="text-lg font-semibold text-primary">{t('title')}</h3>
           {item.about && (
             <>
-              <h3 className="font-semibold">{t("about")}</h3>
               <ExpandableText text={item.about || ""} maxChars={300} />
             </>
           )}

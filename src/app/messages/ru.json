@@ -1307,12 +1307,17 @@
     "addVideo": "Добавить видео",
     "removeVideo": "Удалить",
     "remove": "Удалить",
+    "showAvailabilityCalendar": "Показать календарь доступности",
     "description": "Описание",
     "websitelink": "Ссылка на сайт",
     "workinghours(perday)": "Рабочие часы (в день)",
     "titleDescription": "Описание заголовка",
     "saving": "Сохранение",
     "savechanges": "Сохранить изменения",
+    "toggles": {
+      "yes": "ДА",
+      "no": "НЕТ"
+    },
     "errors": {
       "titleRequired": "Требуется заголовок",
       "listingStatusRequired": "Требуется статус объявления",

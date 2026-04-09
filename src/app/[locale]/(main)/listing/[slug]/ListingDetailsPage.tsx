@@ -149,10 +149,11 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
                 websiteLink={initialListing.websiteLink}
                 price={initialListing.price}
                 hotDeal={initialListing.hotDeal}
-                onOpenBooking={(idx) => {
-                  setPreselectPlanIndex(typeof idx === 'number' ? idx : null);
+                onOpenBooking={(planIndex) => {
+                  setPreselectPlanIndex(planIndex ?? null);
                   setShowBookingModal(true);
                 }}
+                showAvailabilityCalendar={initialListing.showAvailabilityCalendar !== false}
               />
             </section>
             {/* overview aka description */}
@@ -313,10 +314,12 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
           </div>
         </div>
 
-        <div id="availability" className="mt-6">
-          {/* availability calendar */}
-          <ListingCalendar listingDocumentId={initialListing.documentId} workingSchedule={initialListing.workingSchedule || []} />
-        </div>
+        {initialListing.showAvailabilityCalendar !== false || initialListing.workingSchedule.length > 0 && (
+          <div id="availability" className="mt-6">
+            {/* availability calendar */}
+            <ListingCalendar listingDocumentId={initialListing.documentId} workingSchedule={initialListing.workingSchedule || []} />
+          </div>
+        )}
 
         {/* Pricing Section */}
         {initialListing.pricingPackages && (
