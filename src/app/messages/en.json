@@ -386,6 +386,8 @@
       "logout": "Logout",
       "usernameLabel": "Username",
       "usernamePlaceholder": "Username",
+      "languageLabel": "Preferred Language",
+      "saveProfile": "Save Profile",
       "saveUsername": "Save Username",
       "checkAvailability": "Check availability",
       "usernameAvailable": "Username is available",
@@ -401,7 +403,10 @@
       "toasts": {
         "updatingUsername": "Updating username...",
         "usernameUpdated": "Username updated successfully",
-        "usernameUpdateFailed": "Failed to update username",
+        "usernameUpdateFailed": "Username update failed",
+        "updatingProfile": "Updating profile...",
+        "profileUpdated": "Profile updated successfully",
+        "profileUpdateFailed": "Profile update failed",
         "updatingPassword": "Updating password...",
         "passwordUpdated": "Password updated successfully",
         "passwordUpdateFailed": "Invalid credentials, Please try again later!"
@@ -682,6 +687,7 @@
       "title": "Find venues and cities"
     },
     "Locales": {
+      "title": "Preferred Language",
       "en": "English",
       "lt": "Lithuanian",
       "ru": "Russian",

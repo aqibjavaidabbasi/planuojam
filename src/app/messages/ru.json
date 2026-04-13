@@ -419,6 +419,7 @@
       "title": "Найдите площадки и города"
     },
     "Locales": {
+      "title": "Предпочитаемый язык",
       "en": "Английский",
       "lt": "Литовский",
       "ru": "Русский",
@@ -459,6 +460,8 @@
       "logout": "Выйти",
       "usernameLabel": "Имя пользователя",
       "usernamePlaceholder": "Имя пользователя",
+      "languageLabel": "Предпочитаемый язык",
+      "saveProfile": "Сохранить профиль",
       "saveUsername": "Сохранить имя",
       "checkAvailability": "Проверить доступность",
       "usernameAvailable": "Имя пользователя доступно",
@@ -475,6 +478,9 @@
         "updatingUsername": "Обновление имени пользователя...",
         "usernameUpdated": "Имя пользователя успешно обновлено",
         "usernameUpdateFailed": "Не удалось обновить имя пользователя",
+        "updatingProfile": "Обновление профиля...",
+        "profileUpdated": "Профиль успешно обновлен",
+        "profileUpdateFailed": "Не удалось обновить профиль",
         "updatingPassword": "Обновление пароля...",
         "passwordUpdated": "Пароль успешно обновлён",
         "passwordUpdateFailed": "Неверные учетные данные. Повторите попытку позже!"

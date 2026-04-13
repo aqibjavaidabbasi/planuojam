@@ -1,4 +1,4 @@
-﻿{
+{
   "TagInput": {
     "placeholder": "Lisa funktsioon...",
     "maxTagsReached": "Maksimaalselt {max} funktsiooni",
@@ -373,6 +373,8 @@
       "logout": "Logi välja",
       "usernameLabel": "Kasutajanimi",
       "usernamePlaceholder": "Kasutajanimi",
+      "languageLabel": "Eelistatud keel",
+      "saveProfile": "Salvesta profiil",
       "saveUsername": "Salvesta nimi",
       "checkAvailability": "Check availability",
       "usernameAvailable": "Kasutajanimi on saadaval",
@@ -389,6 +391,9 @@
         "updatingUsername": "Kasutajanime uuendamine...",
         "usernameUpdated": "Kasutajanimi on uuendatud",
         "usernameUpdateFailed": "Kasutajanime uuendamine ebaõnnestus",
+        "updatingProfile": "Profiili uuendamine...",
+        "profileUpdated": "Profiil on edukalt uuendatud",
+        "profileUpdateFailed": "Profiili uuendamine ebaõnnestus",
         "updatingPassword": "Parooli uuendamine...",
         "passwordUpdated": "Parool uuendatud",
         "passwordUpdateFailed": "Kehtetud volitused, palun proovige hiljem uuesti!"
@@ -691,6 +696,7 @@
       "title": "Leia kohad ja linnad"
     },
     "Locales": {
+      "title": "Eelistatud keel",
       "en": "Inglise",
       "lt": "Leedu",
       "ru": "Vene",

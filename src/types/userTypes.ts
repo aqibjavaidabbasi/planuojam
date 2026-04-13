@@ -8,4 +8,5 @@ export interface User{
     serviceType: string | null;
     totalStars?: number;
     stripeCustomerId?: string;
+    preferredLanguage?: string;
 }

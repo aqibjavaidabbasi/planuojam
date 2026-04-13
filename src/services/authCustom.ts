@@ -68,7 +68,7 @@ export function customLogin(params: { email: string; password: string }) {
 }
 
 // Custom authenticated updates
-export function customUpdateProfile(params: { username?: string; serviceType?: string | null }) {
+export function customUpdateProfile(params: { username?: string; serviceType?: string | null; preferredLanguage?: string }) {
   return authedJson<{ user: unknown }>("PUT", "/api/auth/custom-update-profile", params);
 }
 

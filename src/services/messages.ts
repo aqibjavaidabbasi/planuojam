@@ -1,4 +1,5 @@
 import { createQuery, fetchAPIWithToken, postAPIWithToken, putAPI } from "./api";
+import { triggerNotificationEmail } from "@/utils/emailTrigger";
 import QueryString from "qs";
 
 export type UserLite = {
@@ -118,16 +119,26 @@ export async function sendMessage(senderId: number, receiverId: number, body: st
   }
   const populate = {
     sender: {
-      populate: true
+      fields: ["username", "email"]
     },
     receiver: {
-      populate: true
+      fields: ["username", "email"]
     },
     attachments: true
   }
   const query = createQuery(populate)
   const res = await postAPIWithToken("messages", { data }, {}, query);
-  // res should contain data
+  
+  // Send Email Notification
+  const created = res?.data;
+  if (created && created.receiver?.email) {
+    triggerNotificationEmail('message', created.receiver.email, {
+      senderName: created.sender?.username || "Someone",
+      recipientName: created.receiver?.username || "there",
+      messageSnippet: body.slice(0, 100) + (body.length > 100 ? "..." : ""),
+    }, `New message from ${created.sender?.username || "Planuojam user"}`, created.receiver?.preferredLanguage || 'en');
+  }
+
   if (res?.data) return res.data;
   return res;
 }

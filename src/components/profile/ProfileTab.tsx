@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect, useMemo, useState } from "react";
 import Input from "../custom/Input";
+import Select from "../custom/Select";
 import Button from "../custom/Button";
 import { User } from "@/types/userTypes";
 import { TbLogout } from "react-icons/tb";
@@ -37,8 +38,10 @@ function ProfileTab({ user }: { user: User | null }) {
   const [loading, setLoading] = useState(false);
   const [usernameStatus, setUsernameStatus] = useState<"unchecked" | "checking" | "available" | "taken">("unchecked");
   const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
+  const [preferredLanguage, setPreferredLanguage] = useState<string>("en");
   const { register, handleSubmit, watch, formState: { errors }, reset } = useForm<PasswordForm>()
   const t = useTranslations('Profile.ProfileTab');
+  const tGlobal = useTranslations('Global');
   const u = user as UserWithAuthFlags | null;
   const authProvider = u?.authProvider;
   const hasOwnPassword = Boolean(u?.hasOwnPassword || u?.hasPasswordSet);
@@ -56,36 +59,50 @@ function ProfileTab({ user }: { user: User | null }) {
 
   useEffect(function () {
     setUsername(user?.username ?? "");
+    setPreferredLanguage(user?.preferredLanguage ?? "en");
     setUsernameStatus("unchecked");
     setUsernameSuggestions([]);
   }, [user]);
 
-  async function updateUsername(e?: React.FormEvent) {
+  async function updateProfile(e?: React.FormEvent) {
     if (e) e.preventDefault();
     if (!user) return;
-    if (!username?.trim()) {
-      toast.error(t('errors.usernameEmpty'));
-      return;
+    
+    const payload: { username?: string; preferredLanguage?: string } = {};
+    
+    // Check if username changed and is available
+    if (username !== user?.username) {
+        if (!username?.trim()) {
+            toast.error(t('errors.usernameEmpty'));
+            return;
+        }
+        if (usernameStatus !== 'available') {
+            toast.error(t('errors.usernameNotAvailable', { default: 'Please confirm username availability' }));
+            return;
+        }
+        payload.username = username;
     }
-    if (username === user?.username) {
-      return;
+
+    // Check if language changed
+    if (preferredLanguage !== user?.preferredLanguage) {
+        payload.preferredLanguage = preferredLanguage;
     }
-    if (usernameStatus !== 'available') {
-      toast.error(t('errors.usernameNotAvailable', { default: 'Please confirm username availability' }));
-      return;
+
+    if (Object.keys(payload).length === 0) {
+        return;
     }
 
     setLoading(true);
     try {
       const resp = await toast.promise(
-        customUpdateProfile({ username }),
+        customUpdateProfile(payload),
         {
-          loading: t('toasts.updatingUsername'),
-          success: t('toasts.usernameUpdated'),
+          loading: t('toasts.updatingProfile'),
+          success: t('toasts.profileUpdated'),
           error: (err: unknown) =>
             err && typeof err === "object" && "message" in err
               ? String((err as { message?: unknown }).message)
-              : t('toasts.usernameUpdateFailed'),
+              : t('toasts.profileUpdateFailed'),
         }
       );
       if (resp && typeof resp === 'object' && 'user' in resp) {
@@ -210,51 +227,72 @@ function ProfileTab({ user }: { user: User | null }) {
       </div>
 
       <div className="max-w-2xl">
-        <form className="flex flex-col md:flex-row gap-7 md:gap-3 items-end w-full" id="usernameForm" onSubmit={updateUsername}>
-          <div className="w-full relative">
-            <Input
-              type="text"
-              placeholder={t('usernamePlaceholder')}
-              label={t('usernameLabel')}
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-                onUsernameChangeReset();
-              }}
-              disabled={loading}
-            />
-            <div className="absolute -bottom-5 left-2 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={handleCheckUsername}
-                className="text-xs text-primary hover:underline disabled:opacity-50 cursor-pointer"
-                disabled={loading || !username}
-              >
-                {usernameStatus === 'checking' ? t('toasts.updatingUsername') : t('checkAvailability')}
-              </button>
-              {usernameStatus === 'available' && (
-                <span className="flex items-center text-green-600 text-xs ml-3">
-                  <AiOutlineCheckCircle className="mr-1" /> {t('usernameAvailable')}
-                </span>
-              )}
-              {usernameStatus === 'taken' && (
-                <span className="flex items-center text-red-600 text-xs ml-3">
-                  <AiOutlineCloseCircle className="mr-1" /> {t('usernameTaken')}
-                </span>
-              )}
+        <form className="flex flex-col gap-6 w-full" id="profileForm" onSubmit={updateProfile}>
+          <div className="flex flex-col md:flex-row gap-7 md:gap-3 items-end w-full">
+            <div className="w-full relative">
+              <Input
+                type="text"
+                placeholder={t('usernamePlaceholder')}
+                label={t('usernameLabel')}
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  onUsernameChangeReset();
+                }}
+                disabled={loading}
+              />
+              <div className="absolute -bottom-5 left-2 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={handleCheckUsername}
+                  className="text-xs text-primary hover:underline disabled:opacity-50 cursor-pointer"
+                  disabled={loading || !username}
+                >
+                  {usernameStatus === 'checking' ? t('toasts.updatingUsername') : t('checkAvailability')}
+                </button>
+                {usernameStatus === 'available' && (
+                  <span className="flex items-center text-green-600 text-xs ml-3">
+                    <AiOutlineCheckCircle className="mr-1" /> {t('usernameAvailable')}
+                  </span>
+                )}
+                {usernameStatus === 'taken' && (
+                  <span className="flex items-center text-red-600 text-xs ml-3">
+                    <AiOutlineCloseCircle className="mr-1" /> {t('usernameTaken')}
+                  </span>
+                )}
+              </div>
+            </div>
+            
+            <div className="w-full">
+               <label className="text-sm font-medium text-gray-700 mb-2 block">
+                  {t('languageLabel')}
+                </label>
+                <Select
+                  options={[
+                    { value: "en", label: tGlobal("Locales.en") },
+                    { value: "lt", label: tGlobal("Locales.lt") },
+                    { value: "ru", label: tGlobal("Locales.ru") },
+                    { value: "pl", label: tGlobal("Locales.pl-PL") },
+                    { value: "et", label: tGlobal("Locales.et") },
+                  ]}
+                  value={preferredLanguage}
+                  onChange={(e) => setPreferredLanguage(e.target.value)}
+                  disabled={loading}
+                />
             </div>
           </div>
+
           <div className="w-full flex items-center">
-          <Button
-            style="primary"
-            type='submit'
-            form="usernameForm"
-            extraStyles="!rounded-md !whitespace-nowrap !w-full"
-            disabled={loading || usernameStatus !== 'available'}
+            <Button
+              style="primary"
+              type='submit'
+              form="profileForm"
+              extraStyles="!rounded-md !whitespace-nowrap !w-full"
+              disabled={loading || (username !== user?.username && usernameStatus !== 'available')}
             >
-            {t('saveUsername')}
-          </Button>
-            </div>
+              {t('saveProfile')}
+            </Button>
+          </div>
         </form>
         {usernameStatus === 'taken' && usernameSuggestions.length > 0 && (
           <div className="text-xs text-gray-600 flex flex-wrap gap-2 mt-10">

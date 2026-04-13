@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
+import ContactEmail from '@/emails/ContactEmail';
 
+const resend = new Resend(process.env.RESEND_API_KEY);
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337';
+
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +16,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // 1) Persist to Strapi (public create permission required on contact-message)
+    // 1) Persist to Strapi
     try {
       const res = await fetch(`${API_URL}/api/contact-messages`, {
         method: 'POST',
@@ -28,42 +31,39 @@ export async function POST(req: Request) {
       }
     } catch (e) {
       console.warn('Failed to persist contact-message to Strapi', e);
-      // continue; we still try to send email
     }
 
-    // 2) Send email via Nodemailer from Next.js server route
-    const host = process.env.SMTP_HOST;
-    const port = Number(process.env.SMTP_PORT || 587);
-    const user = process.env.SMTP_USERNAME;
-    const pass = process.env.SMTP_PASSWORD;
-    const from = process.env.SMTP_FROM_EMAIL;
+    // 2) Send email via Resend
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const from = process.env.SMTP_FROM_EMAIL || 'onboarding@resend.dev';
     const to = process.env.CONTACT_TO_EMAIL || from;
 
-    if (!host || !user || !pass || !from || !to) {
-      return NextResponse.json({ error: 'Email not configured' }, { status: 500 });
+    if (!resendApiKey) {
+      console.error('RESEND_API_KEY is missing');
+      return NextResponse.json({ error: 'Email service unconfigured' }, { status: 500 });
     }
 
-    const transporter = nodemailer.createTransport({
-      host,
-      port,
-      secure: port === 465,
-      auth: { user, pass },
+    const { data, error } = await resend.emails.send({
+      from: `Planuojam <${from}>`,
+      to: [to],
+      subject: `New contact message from ${firstName} ${lastName || ''}`.trim(),
+      replyTo: email,
+      react: ContactEmail({
+        firstName,
+        lastName,
+        email,
+        phone,
+        country,
+        message,
+      }),
     });
 
-    const subject = `New contact message from ${firstName} ${lastName || ''}`.trim();
-    const html = `
-      <h2>New Contact Message</h2>
-      <p><strong>Name:</strong> ${firstName} ${lastName || ''}</p>
-      <p><strong>Email:</strong> ${email}</p>
-      <p><strong>Country:</strong> ${country || '-'}</p>
-      <p><strong>Phone:</strong> ${phone || '-'}</p>
-      <p><strong>Message:</strong></p>
-      <p>${(message || '').replace(/\n/g, '<br/>')}</p>
-    `;
+    if (error) {
+      console.error('Resend error:', error);
+      return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
+    }
 
-    await transporter.sendMail({ from, to, subject, html, replyTo: email });
-
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, id: data?.id });
   } catch (err) {
     console.error('Contact send error', err);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

@@ -25,6 +25,7 @@ export interface MinimalUserInfo {
   documentId: string;
   username: string;
   email: string;
+  preferredLanguage: string;
 }
 
 export async function getUsersByDocumentIds(documentIds: string[]): Promise<MinimalUserInfo[]> {

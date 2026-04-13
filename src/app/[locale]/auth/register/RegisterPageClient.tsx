@@ -42,9 +42,11 @@ type FormValues = {
   confirmPassword: string;
   agreement: boolean;
   phone?: string;
+  preferredLanguage: string;
 };
 
 export default function RegisterPageClient() {
+  const locale = useLocale();
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -52,14 +54,17 @@ export default function RegisterPageClient() {
     watch,
     setValue,
     control,
-  } = useForm<FormValues>();
+  } = useForm<FormValues>({
+    defaultValues: {
+      preferredLanguage: locale,
+    }
+  });
   const { parentCategories } = useParentCategories();
   const dispatch = useAppDispatch();
   const router = useRouter();
   const t = useTranslations("Auth.Register");
   const tGlobal = useTranslations();
   const [isChecked, setIsChecked] = useState(false);
-  const locale = useLocale();
   const [usernameStatus, setUsernameStatus] = useState<"unchecked" | "checking" | "available" | "taken">("unchecked");
   const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
   const params = useSearchParams();
@@ -172,6 +177,7 @@ export default function RegisterPageClient() {
       username: data.username,
       email: data.email,
       password: data.password,
+      preferredLanguage: data.preferredLanguage,
       phone: watch('role') === 'provider' ? (data.phone || '').trim() : undefined,
     };
     await toast.promise(
@@ -392,6 +398,22 @@ export default function RegisterPageClient() {
               {errors.email && (
                 <p className="text-red-500">{errors?.email?.message}</p>
               )}
+              <div className="flex flex-col gap-2.5">
+                <label className="text-sm font-medium text-gray-700">
+                  {tGlobal("Global.Locales.title", { default: "Preferred Language" })}
+                </label>
+                <Select
+                  options={[
+                    { value: "en", label: tGlobal("Global.Locales.en") },
+                    { value: "lt", label: tGlobal("Global.Locales.lt") },
+                    { value: "ru", label: tGlobal("Global.Locales.ru") },
+                    { value: "pl", label: tGlobal("Global.Locales.pl-PL") },
+                    { value: "et", label: tGlobal("Global.Locales.et") },
+                  ]}
+                  disabled={isSubmitting}
+                  {...register("preferredLanguage", { required: true })}
+                />
+              </div>
               <Input
                 type="password"
                 placeholder={t("passwordPlaceholder")}

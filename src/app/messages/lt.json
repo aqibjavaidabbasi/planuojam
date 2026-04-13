@@ -392,6 +392,7 @@
       "title": "Raskite vietas ir miestus"
     },
     "Locales": {
+      "title": "Pageidaujama kalba",
       "en": "Anglų",
       "lt": "Lietuvių",
       "ru": "Rusų",
@@ -1021,6 +1022,8 @@
       "logout": "Atsijungti",
       "usernameLabel": "Vartotojo vardas",
       "usernamePlaceholder": "Vartotojo vardas",
+      "languageLabel": "Pageidaujama kalba",
+      "saveProfile": "Išsaugoti profilį",
       "saveUsername": "Išsaugoti vardą",
       "checkAvailability": "Patikrinti prieinamumą",
       "usernameAvailable": "Vartotojo vardas galimas",
@@ -1037,6 +1040,9 @@
         "updatingUsername": "Atnaujinamas vartotojo vardas...",
         "usernameUpdated": "Vartotojo vardas sėkmingai atnaujintas",
         "usernameUpdateFailed": "Nepavyko atnaujinti vartotojo vardo",
+        "updatingProfile": "Atnaujinamas profilis...",
+        "profileUpdated": "Profilis sėkmingai atnaujintas",
+        "profileUpdateFailed": "Nepavyko atnaujinti profilio",
         "updatingPassword": "Atnaujinamas slaptažodis...",
         "passwordUpdated": "Slaptažodis sėkmingai atnaujintas",
         "passwordUpdateFailed": "Neteisingi prisijungimo duomenys, bandykite dar kartą vėliau!"

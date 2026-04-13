@@ -1,6 +1,7 @@
 import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
 import { createQuery, deleteAPI, fetchAPI, fetchAPIWithToken, postAPIWithToken, putAPI } from "./api";
 import { getUsersByDocumentIds, MinimalUserInfo } from "./auth";
+import { triggerNotificationEmail } from "@/utils/emailTrigger";
 import { ListingItem } from "@/types/pagesTypes";
 
 // Types for booking entities kept minimal to avoid tight coupling
@@ -165,6 +166,22 @@ export async function createBooking(data: BookingPayload, locale?: string) {
   try {
     const body: Record<string, unknown> = { data };
     const res = await postAPIWithToken("bookings", body, {}, query);
+
+    // TRIGGER EMAIL NOTIFICATIONS
+    const created = res?.data;
+    if (created && created.listing) {
+      const listingTitle = created.listing.title || "Your Listing";
+      const providerEmail = created.listing.user?.email;
+
+      if (providerEmail) {
+        triggerNotificationEmail('booking_provider', providerEmail, {
+          username: created.listing.user?.username || "Service Provider",
+          listingTitle,
+          bookingDate: new Date(data.startDateTime).toLocaleString(),
+        }, `New Booking Received: ${listingTitle}`, created.listing.user?.preferredLanguage || 'en');
+      }
+    }
+
     return res;
   } catch (err) {
     console.error(err);

@@ -374,6 +374,8 @@
       "logout": "Wyloguj",
       "usernameLabel": "Nazwa użytkownika",
       "usernamePlaceholder": "Nazwa użytkownika",
+      "languageLabel": "Preferowany język",
+      "saveProfile": "Zapisz profil",
       "saveUsername": "Zapisz nazwę",
       "checkAvailability": "Sprawdź dostępność",
       "usernameAvailable": "Nazwa użytkownika jest dostępna",
@@ -390,6 +392,9 @@
         "updatingUsername": "Aktualizowanie nazwy użytkownika...",
         "usernameUpdated": "Nazwa użytkownika zaktualizowana",
         "usernameUpdateFailed": "Nie udało się zaktualizować nazwy użytkownika",
+        "updatingProfile": "Aktualizowanie profilu...",
+        "profileUpdated": "Profil zaktualizowany pomyślnie",
+        "profileUpdateFailed": "Nie udało się zaktualizować profilu",
         "updatingPassword": "Aktualizowanie hasła...",
         "passwordUpdated": "Hasło zaktualizowane",
         "passwordUpdateFailed": "Nieprawidłowe dane uwierzytelniające. Spróbuj ponownie później!"
@@ -693,6 +698,7 @@
       "title": "Znajdź miejsca i miasta"
     },
     "Locales": {
+      "title": "Preferowany język",
       "en": "Angielski",
       "lt": "Litewski",
       "ru": "Rosyjski",

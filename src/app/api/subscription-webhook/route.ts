@@ -244,6 +244,36 @@ export async function POST(req: NextRequest) {
               stripeEventId: event.id,
               rawMeta: { subscriptionId, strapiResponse: responseData },
             });
+
+            // SEND EMAIL NOTIFICATION
+            try {
+              const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`, {
+                headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+              });
+              const user = await userRes.json();
+              
+              if (user && user.email) {
+                const listingTitle = responseData?.data?.title || "Your Listing";
+                const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://planuojam.lt';
+                
+                await fetch(`${appUrl}/api/email/notification`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    type: 'subscription',
+                    to: user.email,
+                    subject: 'Your listing is now active!',
+                    locale: user.preferredLanguage || 'en',
+                    data: {
+                      username: user.username || user.email,
+                      listingTitle,
+                    }
+                  })
+                });
+              }
+            } catch (emailErr) {
+              console.error("Subscription email trigger failed:", emailErr);
+            }
           }
         } catch (e) {
           console.error("Error publishing listing:", e);

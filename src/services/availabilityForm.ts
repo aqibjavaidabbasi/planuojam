@@ -1,4 +1,6 @@
 import { createQuery, fetchAPIWithToken, postAPI, putAPI } from "./api";
+import { triggerNotificationEmail } from "@/utils/emailTrigger";
+import { getUsersByDocumentIds } from "./auth";
 
 export interface AvailabilityInquiryPayload {
   name: string;
@@ -31,6 +33,34 @@ export async function createAvailabilityInquiry(data: AvailabilityInquiryPayload
     // But usually, we use postAPI or postAPIWithToken. 
     // If it's a public form, postAPI is better.
     const res = await postAPI("availability-forms", body);
+
+    // TRIGGER EMAIL NOTIFICATION
+    try {
+      const providerDocId = data.serviceProvider;
+      const listingDocId = data.listingDocumentId;
+
+      // Parallel fetch for speed
+      const [providerUsers, listingRes] = await Promise.all([
+        getUsersByDocumentIds([providerDocId]),
+        listingDocId ? fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`).then(r => r.json()) : Promise.resolve(null)
+      ]);
+
+      const provider = providerUsers[0];
+      const listingTitle = listingRes?.data?.title || "Your Listing";
+
+      if (provider && provider.email) {
+        triggerNotificationEmail('inquiry', provider.email, {
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          message: data.message,
+          listingTitle,
+        }, `New Availability Inquiry: ${listingTitle}`, provider.preferredLanguage || 'en');
+      }
+    } catch (triggerErr) {
+      console.error("Failed to trigger inquiry email:", triggerErr);
+    }
+
     return res;
   } catch (err) {
     console.error("Error creating availability inquiry:", err);
