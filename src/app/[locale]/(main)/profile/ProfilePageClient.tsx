@@ -10,6 +10,7 @@ const MyBookings = dynamic(() => import("@/components/profile/MyBookings"), { ss
 const FavouriteListings = dynamic(() => import("@/components/profile/FavouriteListings"), { ssr: false });
 const Messages = dynamic(() => import("@/components/profile/Messages"), { ssr: false, loading: () => <div /> });
 const ReviewsTab = dynamic(() => import("@/components/profile/ReviewsTab"), { ssr: false });
+const AvailabilityInquiries = dynamic(() => import("@/components/profile/AvailabilityInquiries"), { ssr: false });
 
 import Button from "@/components/custom/Button";
 import { useAppSelector } from "@/store/hooks";
@@ -17,7 +18,7 @@ import React, { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
 import { FaArrowCircleDown, FaList, FaCalendarAlt, FaCalendarCheck, FaBullhorn } from "react-icons/fa";
 import { LuMessageSquareText } from "react-icons/lu";
-import { MdEditCalendar, MdOutlineFavorite, MdStarBorderPurple500 } from "react-icons/md";
+import { MdEditCalendar, MdOutlineFavorite, MdStarBorderPurple500, MdOutlineAssignmentTurnedIn } from "react-icons/md";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -294,6 +295,19 @@ export default function ProfilePageClient() {
                 </button>
               )}
 
+              {user?.serviceType !== null && (
+                <button
+                  onClick={() => showTab("availability-inquiries")}
+                  className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${activeTab === "availability-inquiries"
+                      ? "text-white bg-primary"
+                      : "text-gray-600 hover:text-primary hover:bg-gray-50"
+                    }`}
+                >
+                  <MdOutlineAssignmentTurnedIn size={20} className="mr-3" />
+                  {t("tabs.availabilityInquiries", { default: "Availability Inquiries" })}
+                </button>
+              )}
+
               <button
                 onClick={() => showTab("bookings")}
                 className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${activeTab === "bookings"
@@ -404,6 +418,7 @@ export default function ProfilePageClient() {
                 onUnreadChange={(total) => setUnreadCount(total)}
               />
             )}
+            {activeTab === "availability-inquiries" && <AvailabilityInquiries />}
             {activeTab === "reviews" && <ReviewsTab />}
           </div>
         </div>

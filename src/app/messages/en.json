@@ -373,7 +373,8 @@
       "bookings": "Bookings",
       "manageBookings": "Manage Bookings",
       "calendar": "Calendar",
-      "promotions": "Promotions"
+      "promotions": "Promotions",
+      "availabilityInquiries": "Availability Inquiries"
     },
     "promoteHint": "Boost visibility by promoting your listing.",
     "promoteCta": "Promote listing",
@@ -552,6 +553,37 @@
         "creating": "Creating booking...",
         "created": "Blocked slot added",
         "failed": "Failed to create"
+      }
+    },
+    "AvailabilityInquiries": {
+      "title": "Availability Inquiries",
+      "subtitle": "Manage direct inquiries from potential customers.",
+      "noInquiries": "No inquiries received yet.",
+      "filters": {
+        "status": "Filter by status",
+        "all": "All statuses"
+      },
+      "stats": {
+        "total": "Total Inquiries",
+        "isNew": "New",
+        "underDiscussion": "Under Discussion",
+        "completed": "Completed",
+        "rejected": "Rejected"
+      },
+      "status": {
+        "new": "New",
+        "underDiscussion": "Under Discussion",
+        "completed": "Completed",
+        "rejected": "Rejected"
+      },
+      "actions": {
+        "markUnderDiscussion": "Mark as Under Discussion",
+        "markCompleted": "Mark as Completed",
+        "markRejected": "Mark as Rejected"
+      },
+      "toasts": {
+        "updating": "Updating inquiry...",
+        "updated": "Inquiry status updated."
       }
     }
   },
@@ -1757,5 +1789,29 @@
   },
   "Pagination": {
     "loadMore": "Load More"
+  },
+  "contactForAvailabilityBlock": {
+    "formTitle": "Contact for Availability",
+    "formPurpose": "Interested in booking this service? Fill out the form below to request availability. Once submitted, the service provider will be notified of your inquiry and will get in touch with you via email or phone to confirm availability and discuss the details.",
+    "name": "Full Name",
+    "namePlaceholder": "Enter your full name",
+    "email": "Email Address",
+    "emailPlaceholder": "Enter your email address",
+    "phone": "Phone Number",
+    "phonePlaceholder": "Enter your phone number",
+    "message": "Message",
+    "messagePlaceholder": "Tell us about your event, preferred dates, and any specific requirements...",
+    "submit": "Request Availability",
+    "submitting": "Sending...",
+    "errors": {
+      "nameRequired": "Full name is required",
+      "emailRequired": "Email address is required",
+      "phoneRequired": "Phone number is required",
+      "messageRequired": "Please describe your needs"
+    },
+    "messages": {
+      "success": "Inquiry sent successfully. The service provider will contact you shortly.",
+      "error": "Failed to send inquiry. Please try again later."
+    }
   }
 }

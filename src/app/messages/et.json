@@ -1,4 +1,4 @@
-{
+﻿{
   "TagInput": {
     "placeholder": "Lisa funktsioon...",
     "maxTagsReached": "Maksimaalselt {max} funktsiooni",
@@ -360,7 +360,8 @@
       "bookings": "Broneeringud",
       "manageBookings": "Halda broneeringuid",
       "calendar": "Kalender",
-      "promotions": "Kampaaniad"
+      "promotions": "Kampaaniad",
+      "availabilityInquiries": "Saadavuse päringud"
     },
     "promoteHint": "Suurenda nähtavust, edendades oma kuulutust.",
     "promoteCta": "Reklaami kuulutust",
@@ -538,6 +539,37 @@
         "creating": "Broneeringu loomine...",
         "created": "Blokeeritud aeg lisatud",
         "failed": "Loomine ebaõnnestus"
+      }
+    },
+    "AvailabilityInquiries": {
+      "title": "Saadavuse päringud",
+      "subtitle": "Halda potentsiaalsete klientide otseseid päringuid.",
+      "noInquiries": "Päringuid pole veel laekunud.",
+      "filters": {
+        "status": "Filtreeri oleku järgi",
+        "all": "Kõik olekud"
+      },
+      "stats": {
+        "total": "Päringuid kokku",
+        "isNew": "Uus",
+        "underDiscussion": "Arutlusel",
+        "completed": "Lõpetatud",
+        "rejected": "Tagasi lükatud"
+      },
+      "status": {
+        "new": "Uus",
+        "underDiscussion": "Arutlusel",
+        "completed": "Lõpetatud",
+        "rejected": "Tagasi lükatud"
+      },
+      "actions": {
+        "markUnderDiscussion": "Märgi arutlusel olevaks",
+        "markCompleted": "Märgi lõpetatuks",
+        "markRejected": "Märgi tagasi lükatuks"
+      },
+      "toasts": {
+        "updating": "Päringu uuendamine...",
+        "updated": "Päringu staatus on uuendatud."
       }
     }
   },
@@ -1707,6 +1739,30 @@
       "maliciousUrl": "See URL näib olevat ebaturvaline. Palun sisestage kehtiv veebiaadress",
       "invalidProtocol": "Lubatud on ainult http:// ja https:// lingid",
       "invalidFormat": "Palun sisestage kehtiv veebilehe aadress (nt jusu-tinklalapis.lt või https://jusu-tinklalapis.lt)"
+    }
+  },
+  "contactForAvailabilityBlock": {
+    "formTitle": "Päri saadavust",
+    "formPurpose": "Kas soovid seda teenust broneerida? Täida allolev vorm, et päärida saadavust. Pärast esitamist teavitatakse teenusepakkujat sinu päringust ning ta võtab sinuga ühendust e-posti või telefoni teel, et kinnitada saadavust ja arutada üksikasju.",
+    "name": "Täisnimi",
+    "namePlaceholder": "Sisesta oma täisnimi",
+    "email": "E-posti aadress",
+    "emailPlaceholder": "Sisesta oma e-posti aadress",
+    "phone": "Telefoninumber",
+    "phonePlaceholder": "Sisesta oma telefoninumber",
+    "message": "Sõnum",
+    "messagePlaceholder": "Räägi meile oma üritusest, eelistatud kuupäevadest ja erinõuetest...",
+    "submit": "Päri saadavust",
+    "submitting": "Saatmine...",
+    "errors": {
+      "nameRequired": "Täisnimi on kohustuslik",
+      "emailRequired": "E-posti aadress on kohustuslik",
+      "phoneRequired": "Telefoninumber on kohustuslik",
+      "messageRequired": "Palun kirjelda oma vajadusi"
+    },
+    "messages": {
+      "success": "Päring on edukalt saadetud. Teenusepakkuja võtab teiega peagi ühendust.",
+      "error": "Päringu saatmine ebaõnnestus. Palun proovige hiljem uuesti."
     }
   }
 }

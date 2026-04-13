@@ -925,7 +925,8 @@
       "bookings": "Užsakymai",
       "manageBookings": "Tvarkyti užsakymus",
       "calendar": "Kalendorius",
-      "promotions": "Skelbimo iškėlimas"
+      "promotions": "Skelbimo iškėlimas",
+      "availabilityInquiries": "Užklausos dėl užimtumo"
     },
     "promoteHint": "Padidinkite savo skelbimo matomumą reklamuodami jį.",
     "promoteCta": "Reklamuoti skelbimą",
@@ -1103,8 +1104,38 @@
       "noImage": "Nėra vaizdo",
       "deletedUser": "Ištrintas naudotojas",
       "isTyping": "{username} rašo...",
-      "file": "failas",
-      "view": "Peržiūrėti"
+      "file": "failas"
+    },
+    "AvailabilityInquiries": {
+      "title": "Užklausos dėl užimtumo",
+      "subtitle": "Valdykite tiesiogines potencialių klientų užklausas.",
+      "noInquiries": "Užklausų dar negauta.",
+      "filters": {
+        "status": "Filtruoti pagal būseną",
+        "all": "Visos būsenos"
+      },
+      "stats": {
+        "total": "Iš viso užklausų",
+        "isNew": "Nauja",
+        "underDiscussion": "Svarstoma",
+        "completed": "Baigta",
+        "rejected": "Atmesta"
+      },
+      "status": {
+        "new": "Nauja",
+        "underDiscussion": "Svarstoma",
+        "completed": "Baigta",
+        "rejected": "Atmesta"
+      },
+      "actions": {
+        "markUnderDiscussion": "Pažymėti kaip svarstomą",
+        "markCompleted": "Pažymėti kaip baigtą",
+        "markRejected": "Pažymėti kaip atmestą"
+      },
+      "toasts": {
+        "updating": "Atnaujinama užklausa...",
+        "updated": "Užklausos būsena atnaujinta."
+      }
     }
   },
   "Custom": {
@@ -1719,6 +1750,30 @@
       "maliciousUrl": "Šis URL atrodo nesaugus. Prašome įvesti galiojantį interneto adresą",
       "invalidProtocol": "Leidžiamos tik http:// ir https:// nuorodos",
       "invalidFormat": "Prašome įvesti galiojantį svetainės adresą (pvz., jusu-tinklalapis.lt arba https://jusu-tinklalapis.lt)"
+    }
+  },
+  "contactForAvailabilityBlock": {
+    "formTitle": "Pateikite užklausą dėl prieinamumo",
+    "formPurpose": "Norite užsakyti šią paslaugą? Užpildykite žemiau esančią formą, kad pasiteirautumėte apie prieinamumą. Pateikus užklausą, paslaugų teikėjas bus apie tai informuotas ir susisieks su jumis el. paštu arba telefonu, kad patvirtintų prieinamumą ir aptartų detales.",
+    "name": "Vardas ir pavardė",
+    "namePlaceholder": "Įveskite vardą ir pavardę",
+    "email": "El. pašto adresas",
+    "emailPlaceholder": "Įveskite savo el. pašto adresą",
+    "phone": "Telefono numeris",
+    "phonePlaceholder": "Įveskite savo telefono numerį",
+    "message": "Žinutė",
+    "messagePlaceholder": "Papasakokite apie savo renginį, pageidaujamas datas ir konkrečius poreikius...",
+    "submit": "Užklausti dėl prieinamumo",
+    "submitting": "Siunčiama...",
+    "errors": {
+      "nameRequired": "Vardas ir pavardė yra privalomi",
+      "emailRequired": "El. pašto adresas yra privalomas",
+      "phoneRequired": "Telefono numeris yra privalomas",
+      "messageRequired": "Prašome aprašyti savo poreikius"
+    },
+    "messages": {
+      "success": "Užklausa sėkmingai išsiųsta. Paslaugų teikėjas netrukus su jumis susisieks.",
+      "error": "Nepavyko išsiųsti užklausos. Bandykite dar kartą vėliau."
     }
   }
 }

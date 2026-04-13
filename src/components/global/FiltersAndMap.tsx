@@ -290,7 +290,6 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
                     {filters.map(({ name, options, placeholder }) => {
                         const isPricing = name === 'price';
                         const commonProps = {
-                            key: name,
                             value: isPricing ? (tempFilterValues[name]?.[0] || '') : (tempFilterValues[name] || []),
                             onChange: (selected: string | string[]) => handleFilterChange(name, Array.isArray(selected) ? selected : [selected]),
                             options: Array.isArray(options) && typeof options[0] === 'object' 
@@ -302,12 +301,15 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
 
                         return isPricing ? (
                             <Select 
+                                key={name}
                                 {...commonProps} 
                                 value={commonProps.value as string} 
                                 onChange={(e) => handleFilterChange(name, [e.target.value])} 
                             />
                         ) : (
-                            <MultiSelect {...commonProps} value={commonProps.value as string[]} />
+                            <MultiSelect
+                                key={name}
+                                {...commonProps} value={commonProps.value as string[]} />
                         );
                     })}
                     <div className="flex gap-2">

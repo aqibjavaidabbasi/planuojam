@@ -63,7 +63,7 @@ function ListingDetailHero({
           {categories &&
             <div className="flex items-center mb-2">{
               categories.map(cat =>
-                <span key={cat.documentId} className="bg-white bg-opacity-20 text-black px-3 py-1 rounded-full text-sm font-medium">
+                <span key={cat.documentId} className="bg-white bg-opacity-20 text-black px-3 py-1 rounded-full text-sm font-medium mr-2">
                   {cat.name}
                 </span>
               )}
@@ -193,8 +193,13 @@ function ListingDetailHero({
                 <Button
                   style="secondary"
                   onClick={() => {
-                    if (!user) setShowLoginModal(true);
-                    else onOpenBooking(null);
+                    if (showAvailabilityCalendar) {
+                      if (!user) setShowLoginModal(true);
+                      else onOpenBooking(null);
+                    } else {
+                      const el = document.getElementById('contactBlock');
+                      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                   }}
                 >
                   {t('getTicketCta')}

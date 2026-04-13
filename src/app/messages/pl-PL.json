@@ -361,7 +361,8 @@
       "bookings": "Rezerwacje",
       "manageBookings": "Zarządzaj rezerwacjami",
       "calendar": "Kalendarz",
-      "promotions": "Promocje"
+      "promotions": "Promocje",
+      "availabilityInquiries": "Zapytania o dostępność"
     },
     "promoteHint": "Zwiększ widoczność, promując swoje ogłoszenie.",
     "promoteCta": "Promuj ogłoszenie",
@@ -540,6 +541,37 @@
         "creating": "Tworzenie rezerwacji...",
         "created": "Dodano zablokowany termin",
         "failed": "Nie udało się utworzyć"
+      }
+    },
+    "AvailabilityInquiries": {
+      "title": "Zapytania o dostępność",
+      "subtitle": "Zarządzaj bezpośrednimi zapytaniami od potencjalnych klientów.",
+      "noInquiries": "Nie otrzymano jeszcze żadnych zapytań.",
+      "filters": {
+        "status": "Filtruj według statusu",
+        "all": "Wszystkie statusy"
+      },
+      "stats": {
+        "total": "Wszystkie zapytania",
+        "isNew": "Nowe",
+        "underDiscussion": "W trakcie rozmowy",
+        "completed": "Zakończone",
+        "rejected": "Odrzucone"
+      },
+      "status": {
+        "new": "Nowe",
+        "underDiscussion": "W trakcie rozmowy",
+        "completed": "Zakończone",
+        "rejected": "Odrzucone"
+      },
+      "actions": {
+        "markUnderDiscussion": "Oznacz jako w trakcie rozmowy",
+        "markCompleted": "Oznacz jako zakończone",
+        "markRejected": "Oznacz jako odrzucone"
+      },
+      "toasts": {
+        "updating": "Aktualizowanie zapytania...",
+        "updated": "Status zapytania został zaktualizowany."
       }
     }
   },
@@ -1725,6 +1757,30 @@
       "maliciousUrl": "Ten adres URL wydaje się niebezpieczny. Proszę wprowadzić prawidłowy adres internetowy",
       "invalidProtocol": "Dozwolone są tylko linki http:// i https://",
       "invalidFormat": "Proszę wprowadzić prawidłowy adres strony internetowej (np. jusu-tinklalapis.lt lub https://jusu-tinklalapis.lt)"
+    }
+  },
+  "contactForAvailabilityBlock": {
+    "formTitle": "Zapytaj o dostępność",
+    "formPurpose": "Chcesz zarezerwować tę usługę? Wypełnij poniższy formularz, aby zapytać o dostępność. Po przesłaniu dostawca zostanie powiadomiony o Twoim zapytaniu i skontaktuje się z Tobą telefonicznie lub e-mailem, aby potwierdzić dostępność i omówić szczegóły.",
+    "name": "Imię i nazwisko",
+    "namePlaceholder": "Wprowadź swoje imię i nazwisko",
+    "email": "Adres e-mail",
+    "emailPlaceholder": "Wprowadź swój adres e-mail",
+    "phone": "Numer telefonu",
+    "phonePlaceholder": "Wprowadź swój numer telefonu",
+    "message": "Wiadomość",
+    "messagePlaceholder": "Opisz nam swoje wydarzenie, preferowane daty i specjalne wymagania...",
+    "submit": "Zapytaj o dostępność",
+    "submitting": "Wysyłanie...",
+    "errors": {
+      "nameRequired": "Imię i nazwisko jest wymagane",
+      "emailRequired": "Adres e-mail jest wymagany",
+      "phoneRequired": "Numer telefonu jest wymagany",
+      "messageRequired": "Proszę opisać swoje potrzeby"
+    },
+    "messages": {
+      "success": "Zapytanie wysłane pomyślnie. Dostawca skontaktuje się z Tobą wkrótce.",
+      "error": "Nie udało się wysłać zapytania. Spróbuj ponownie później."
     }
   }
 }

@@ -29,6 +29,7 @@ import { RootState } from "@/store";
 import { createSingleLocationFromListing } from "@/utils/locationFactory";
 import { fetchPromotedListingsWithMeta } from "@/services/listing";
 import { shouldShowHotDeal } from '@/utils/hotDealHelper';
+import ContactForAvailabilityBlock from "@/components/forms/ContactForAvailabilityBlock";
 
 export default function ListingDetailsPage({ initialListing, locale }: { initialListing: ListingItem; locale: string }) {
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
@@ -153,7 +154,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
                   setPreselectPlanIndex(planIndex ?? null);
                   setShowBookingModal(true);
                 }}
-                showAvailabilityCalendar={initialListing.showAvailabilityCalendar !== false}
+                showAvailabilityCalendar={initialListing.showAvailabilityCalendar !== false || initialListing.workingSchedule.length > 0}
               />
             </section>
             {/* overview aka description */}
@@ -314,10 +315,17 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
           </div>
         </div>
 
-        {initialListing.showAvailabilityCalendar !== false || initialListing.workingSchedule.length > 0 && (
+        {initialListing.showAvailabilityCalendar !== false || initialListing.workingSchedule.length > 0 ? (
           <div id="availability" className="mt-6">
             {/* availability calendar */}
             <ListingCalendar listingDocumentId={initialListing.documentId} workingSchedule={initialListing.workingSchedule || []} />
+          </div>
+        ) : (
+          <div className="mt-6" id="contactBlock">
+            <ContactForAvailabilityBlock
+              listingDocumentId={initialListing.documentId}
+              serviceProviderDocumentId={initialListing.user?.documentId || ""}
+            />
           </div>
         )}
 
