@@ -37,6 +37,8 @@ export async function POST(req: NextRequest) {
   // Extract PaymentIntent
   const intent = event.data.object as Stripe.PaymentIntent;
 
+  console.log("event type --->", event.type);
+
   try {
     switch (event.type) {
       case "payment_intent.succeeded": {
