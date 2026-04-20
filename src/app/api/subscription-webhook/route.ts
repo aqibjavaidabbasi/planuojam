@@ -49,14 +49,12 @@ function extractSubscriptionId(invoice: WebhookInvoice): string | null {
   const invoiceWithParent = invoice as InvoiceWithParent;
   const parentSub = invoiceWithParent.parent?.subscription_details?.subscription;
 
-  console.log(`[extractSubscriptionId] Checking parent subscription items...`, invoiceWithParent.parent?.subscription_details);
   if (typeof parentSub === "string") {
     console.log(`[extractSubscriptionId] Found parent details subscription: ${parentSub}`);
     return parentSub;
   }
 
   // 3. Fallback: line items
-  console.log(`[extractSubscriptionId] Checking line items...`);
   const line = invoice.lines?.data?.[0] as (InvoiceLineWithParent & { subscription?: string | { id: string } }) | undefined;
 
   if (!line) {
@@ -131,7 +129,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  console.log("event type:::::::::::::::::::::::::::::::::::::::::::", event.type, event.data)
   try {
     switch (event.type) {
       case "checkout.session.completed": {
@@ -651,7 +648,6 @@ export async function POST(req: NextRequest) {
               currency: invoice.currency,
               invoiceStatus: invoice.status || "open",
               hostedUrl: invoice.hosted_invoice_url || null,
-              pdfUrl: invoice.invoice_pdf || null,
               periodStart: new Date(invoice.period_start * 1000).toISOString(),
               periodEnd: new Date(invoice.period_end * 1000).toISOString(),
             },
@@ -745,7 +741,6 @@ export async function POST(req: NextRequest) {
                   rawData: {
                     invoiceNumber: invoice.number,
                     hostedInvoiceUrl: invoice.hosted_invoice_url,
-                    pdfUrl: invoice.invoice_pdf,
                   },
                 },
               }),

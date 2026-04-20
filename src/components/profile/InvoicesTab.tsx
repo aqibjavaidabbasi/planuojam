@@ -5,7 +5,7 @@ import Button from "@/components/custom/Button";
 import { useTranslations } from "next-intl";
 import { useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store";
-import { FaDownload, FaExternalLinkAlt } from "react-icons/fa";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 interface InvoiceData {
   documentId: string;
@@ -16,7 +16,6 @@ interface InvoiceData {
   currency?: string;
   invoiceStatus?: string;
   hostedUrl?: string;
-  pdfUrl?: string;
   periodStart?: string;
   periodEnd?: string;
 }
@@ -161,11 +160,6 @@ export default function InvoicesTab() {
                     {invoice.hostedUrl && (
                       <Button style="ghost" onClick={() => window.open(invoice.hostedUrl, "_blank")} tooltip={t("invoiceTable.view", { default: "View" })}>
                         <FaExternalLinkAlt className="text-gray-500 hover:text-primary" />
-                      </Button>
-                    )}
-                    {invoice.pdfUrl && (
-                      <Button style="ghost" onClick={() => window.open(invoice.pdfUrl, "_blank")}  tooltip={t("invoiceTable.download", { default: "Download PDF" })}>
-                        <FaDownload className="text-gray-500 hover:text-primary" />
                       </Button>
                     )}
                   </td>
