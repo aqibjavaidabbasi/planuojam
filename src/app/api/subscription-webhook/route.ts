@@ -11,6 +11,84 @@ type WebhookInvoice = Stripe.Invoice & {
   subscription?: string | null | { id: string };
 };
 
+type InvoiceWithParent = Stripe.Invoice & {
+  parent?: {
+    subscription_details?: {
+      subscription?: string | null;
+    };
+  };
+};
+
+type InvoiceLineWithParent = Stripe.InvoiceLineItem & {
+  parent?: {
+    subscription_item_details?: {
+      subscription?: string | null;
+    };
+  };
+};
+
+function extractSubscriptionId(invoice: WebhookInvoice): string | null {
+  console.log(`[extractSubscriptionId] Extracting for invoice: ${invoice.id}`);
+  
+  // 1. Direct field (best case)
+  if (typeof invoice.subscription === "string") {
+    console.log(`[extractSubscriptionId] Found direct string subscription: ${invoice.subscription}`);
+    return invoice.subscription;
+  }
+
+  if (
+    invoice.subscription &&
+    typeof invoice.subscription === "object" &&
+    "id" in invoice.subscription
+  ) {
+    console.log(`[extractSubscriptionId] Found object subscription with id: ${invoice.subscription.id}`);
+    return invoice.subscription.id;
+  }
+
+  // 2. New Stripe structure (typed safely)
+  const invoiceWithParent = invoice as InvoiceWithParent;
+  const parentSub = invoiceWithParent.parent?.subscription_details?.subscription;
+
+  console.log(`[extractSubscriptionId] Checking parent subscription items...`, invoiceWithParent.parent?.subscription_details);
+  if (typeof parentSub === "string") {
+    console.log(`[extractSubscriptionId] Found parent details subscription: ${parentSub}`);
+    return parentSub;
+  }
+
+  // 3. Fallback: line items
+  console.log(`[extractSubscriptionId] Checking line items...`);
+  const line = invoice.lines?.data?.[0] as (InvoiceLineWithParent & { subscription?: string | { id: string } }) | undefined;
+
+  if (!line) {
+    console.log(`[extractSubscriptionId] No line items found.`);
+    return null;
+  }
+
+  if (typeof line.subscription === "string") {
+    console.log(`[extractSubscriptionId] Found line item subscription string: ${line.subscription}`);
+    return line.subscription;
+  }
+
+  if (
+    line.subscription &&
+    typeof line.subscription === "object" &&
+    "id" in line.subscription
+  ) {
+    console.log(`[extractSubscriptionId] Found line item subscription object id: ${line.subscription.id}`);
+    return line.subscription.id;
+  }
+
+  const nestedLineSub = line.parent?.subscription_item_details?.subscription;
+
+  if (typeof nestedLineSub === "string") {
+    console.log(`[extractSubscriptionId] Found nested line parent subscription: ${nestedLineSub}`);
+    return nestedLineSub;
+  }
+
+  console.log(`[extractSubscriptionId] Could not find subscription ID anywhere in invoice.`);
+  return null;
+}
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export const runtime = "nodejs";
@@ -518,15 +596,7 @@ export async function POST(req: NextRequest) {
 
       case "invoice.finalized": {
         const invoice = event.data.object as WebhookInvoice;
-        
-        let subscriptionIdStr = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription?.id || null);
-        console.log("invoioce lines dataaaaaaaaaaaaa", invoice.lines?.data)
-        if (!subscriptionIdStr && invoice.lines?.data?.[0]) {
-          const firstLineSub = (invoice.lines.data[0]).subscription;
-          if (typeof firstLineSub === 'string') subscriptionIdStr = firstLineSub;
-          else if (firstLineSub?.id) subscriptionIdStr = firstLineSub.id;
-        }
-        const subscriptionId = subscriptionIdStr;
+        const subscriptionId = extractSubscriptionId(invoice);
 
         await logWebhookEvent("webhook_received", `Received invoice.finalized webhook`, {
           severity: "info",
@@ -603,16 +673,7 @@ export async function POST(req: NextRequest) {
 
       case "invoice.paid": {
         const invoice = event.data.object as WebhookInvoice;        
-        
-        // Extract subscription ID - it can be a string or null for non-subscription invoices
-        let subscriptionIdStr = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription?.id || null);
-        console.log("invoice lines data -->", invoice.lines?.data)
-        if (!subscriptionIdStr && invoice.lines?.data?.[0]) {
-          const firstLineSub = (invoice.lines.data[0]).subscription;
-          if (typeof firstLineSub === 'string') subscriptionIdStr = firstLineSub;
-          else if (firstLineSub?.id) subscriptionIdStr = firstLineSub.id;
-        }
-        const subscriptionId = subscriptionIdStr;
+        const subscriptionId = extractSubscriptionId(invoice);
         const billingReason = invoice.billing_reason;
 
         // Log webhook received
@@ -778,15 +839,7 @@ export async function POST(req: NextRequest) {
 
       case "invoice.payment_failed": {
         const invoice = event.data.object as WebhookInvoice;
-        
-        let subscriptionIdStr = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription?.id || null);
-        console.log("inovice lines data ???", invoice.lines?.data)
-        if (!subscriptionIdStr && invoice.lines?.data?.[0]) {
-          const firstLineSub = (invoice.lines.data[0]).subscription;
-          if (typeof firstLineSub === 'string') subscriptionIdStr = firstLineSub;
-          else if (firstLineSub?.id) subscriptionIdStr = firstLineSub.id;
-        }
-        const subscriptionId = subscriptionIdStr;
+        const subscriptionId = extractSubscriptionId(invoice);
 
         // Log webhook received
         await logWebhookEvent("webhook_received", `Received invoice.payment_failed webhook`, {
