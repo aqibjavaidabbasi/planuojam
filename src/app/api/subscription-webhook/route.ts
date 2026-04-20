@@ -512,8 +512,21 @@ export async function POST(req: NextRequest) {
       }
 
       case "invoice.payment_succeeded": {
+        console.log("Ignored invoice.payment_succeeded (handled by invoice.paid)");
+        break;
+      }
+
+      case "invoice.finalized": {
         const invoice = event.data.object as WebhookInvoice;
-        const subscriptionId = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription?.id || null);
+        
+        let subscriptionIdStr = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription?.id || null);
+        console.log("invoioce lines dataaaaaaaaaaaaa", invoice.lines?.data)
+        if (!subscriptionIdStr && invoice.lines?.data?.[0]) {
+          const firstLineSub = (invoice.lines.data[0]).subscription;
+          if (typeof firstLineSub === 'string') subscriptionIdStr = firstLineSub;
+          else if (firstLineSub?.id) subscriptionIdStr = firstLineSub.id;
+        }
+        const subscriptionId = subscriptionIdStr;
 
         await logWebhookEvent("webhook_received", `Received invoice.finalized webhook`, {
           severity: "info",
@@ -566,7 +579,7 @@ export async function POST(req: NextRequest) {
               subscriptions: [subscriptionDocId],
               amount: parseFloat((invoice.total / 100).toFixed(2)),
               currency: invoice.currency,
-              invoiceStatus: "open",
+              invoiceStatus: invoice.status || "open",
               hostedUrl: invoice.hosted_invoice_url || null,
               pdfUrl: invoice.invoice_pdf || null,
               periodStart: new Date(invoice.period_start * 1000).toISOString(),
@@ -590,8 +603,16 @@ export async function POST(req: NextRequest) {
 
       case "invoice.paid": {
         const invoice = event.data.object as WebhookInvoice;        
+        
         // Extract subscription ID - it can be a string or null for non-subscription invoices
-        const subscriptionId = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription?.id || null);
+        let subscriptionIdStr = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription?.id || null);
+        console.log("invoice lines data -->", invoice.lines?.data)
+        if (!subscriptionIdStr && invoice.lines?.data?.[0]) {
+          const firstLineSub = (invoice.lines.data[0]).subscription;
+          if (typeof firstLineSub === 'string') subscriptionIdStr = firstLineSub;
+          else if (firstLineSub?.id) subscriptionIdStr = firstLineSub.id;
+        }
+        const subscriptionId = subscriptionIdStr;
         const billingReason = invoice.billing_reason;
 
         // Log webhook received
@@ -605,26 +626,6 @@ export async function POST(req: NextRequest) {
           break;
         }
         
-        // Skip initial subscription creation invoices - those are handled by checkout.session.completed
-        if (billingReason === 'subscription_create') {
-          break;
-        }
-
-        // Check if transaction already exists (idempotency)
-        try {
-          const checkUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/subscription-transactions?filters[invoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
-          const checkRes = await fetch(checkUrl, {
-            headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
-          });
-          const checkJson = await checkRes.json().catch(() => ({}));
-          if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
-            console.warn("Transaction already recorded:", invoice.id);
-            return NextResponse.json({ received: true });
-          }
-        } catch (e) {
-          console.warn("Transaction idempotency check failed:", e);
-        }
-
         // Find subscription in Strapi
         const findUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
         const findRes = await fetch(findUrl, {
@@ -639,65 +640,123 @@ export async function POST(req: NextRequest) {
 
         const subscription = findJson.data[0];
         const subscriptionDocId = subscription.documentId;
+        const userId = subscription.users_permissions_user?.id || subscription.users_permissions_user;
+        const listingDocId = subscription.listingDocId;
 
-        // Create transaction record
-        const transactionRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/subscription-transactions`,
-          {
-            method: "POST",
+        // Skip initial subscription creation invoices for transaction - those are handled by checkout.session.completed
+        let shouldCreateTransaction = billingReason !== 'subscription_create';
+
+        if (shouldCreateTransaction) {
+          // Check if transaction already exists (idempotency)
+          try {
+            const checkUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/subscription-transactions?filters[invoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
+            const checkRes = await fetch(checkUrl, {
+              headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+            });
+            const checkJson = await checkRes.json().catch(() => ({}));
+            if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
+              console.warn("Transaction already recorded:", invoice.id);
+              shouldCreateTransaction = false; // Transaction already exists
+            }
+          } catch (e) {
+            console.warn("Transaction idempotency check failed:", e);
+          }
+        }
+
+        if (shouldCreateTransaction) {
+          // Create transaction record
+          const transactionRes = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/subscription-transactions`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+              },
+              body: JSON.stringify({
+                data: {
+                  subscription: subscriptionDocId,
+                  invoiceId: invoice.id,
+                  amount: (invoice.amount_paid / 100).toFixed(2),
+                  currency: invoice.currency,
+                  transactionStatus: "paid",
+                  invoiceDate: new Date(invoice.created * 1000).toISOString(),
+                  rawData: {
+                    invoiceNumber: invoice.number,
+                    hostedInvoiceUrl: invoice.hosted_invoice_url,
+                    pdfUrl: invoice.invoice_pdf,
+                  },
+                },
+              }),
+            }
+          );
+
+          if (!transactionRes.ok) {
+            const errorData = await transactionRes.json().catch(() => ({}));
+            console.error("Failed to create subscription transaction:", errorData);
+            await logWebhookEvent("error", `Failed to create transaction for invoice: ${invoice.id}`, {
+              severity: "error",
+              stripeEventId: event.id,
+              rawMeta: { invoiceId: invoice.id, subscriptionId, errorData },
+            });
+          } else {
+            console.log("Subscription transaction created:", invoice.id);
+            await logWebhookEvent("payment_succeeded", `Payment succeeded for invoice: ${invoice.id}`, {
+              severity: "info",
+              userId,
+              listingDocId,
+              stripeEventId: event.id,
+              rawMeta: { 
+                invoiceId: invoice.id,
+                subscriptionId,
+                amount: (invoice.amount_paid / 100).toFixed(2),
+                currency: invoice.currency,
+              },
+            });
+          }
+        }
+
+        // Always ensure listing stays published (important for reactivations) and Invoice is marked paid
+        try {
+          const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
+          const publishRes = await fetch(listingUrl, {
+            method: "PUT",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
             },
             body: JSON.stringify({
               data: {
-                subscription: subscriptionDocId,
-                invoiceId: invoice.id,
-                amount: (invoice.amount_paid / 100).toFixed(2),
-                currency: invoice.currency,
-                transactionStatus: "paid",
-                invoiceDate: new Date(invoice.created * 1000).toISOString(),
-                rawData: {
-                  invoiceNumber: invoice.number,
-                  hostedInvoiceUrl: invoice.hosted_invoice_url,
-                  pdfUrl: invoice.invoice_pdf,
-                },
+                listingStatus: "published",
               },
             }),
-          }
-        );
+          });
 
-        if (!transactionRes.ok) {
-          const errorData = await transactionRes.json().catch(() => ({}));
-          console.error("Failed to create subscription transaction:", errorData);
-          await logWebhookEvent("error", `Failed to create transaction for invoice: ${invoice.id}`, {
-            severity: "error",
-            stripeEventId: event.id,
-            rawMeta: { invoiceId: invoice.id, subscriptionId, errorData },
+          if (publishRes.ok) {
+            console.log("Listing kept published after successful payment:", listingDocId);
+            await logWebhookEvent("listing_published", `Listing kept published after successful payment: ${listingDocId}`, {
+              severity: "info",
+              userId,
+              listingDocId,
+              stripeEventId: event.id,
+              rawMeta: { subscriptionId, invoiceId: invoice.id },
+            });
+          }
+        } catch (e) {
+          console.error("Error keeping listing published:", e);
+        }
+
+        // In addition to transaction, update the actual Invoice status to paid
+        try {
+          const checkUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/invoices?filters[stripeInvoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
+          const checkRes = await fetch(checkUrl, {
+            headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
           });
-        } else {
-          console.log("Subscription transaction created:", invoice.id);
+          const checkJson = await checkRes.json().catch(() => ({}));
           
-          const userId = subscription.users_permissions_user?.id || subscription.users_permissions_user;
-          const listingDocId = subscription.listingDocId;
-          
-          await logWebhookEvent("payment_succeeded", `Payment succeeded for invoice: ${invoice.id}`, {
-            severity: "info",
-            userId,
-            listingDocId,
-            stripeEventId: event.id,
-            rawMeta: { 
-              invoiceId: invoice.id,
-              subscriptionId,
-              amount: (invoice.amount_paid / 100).toFixed(2),
-              currency: invoice.currency,
-            },
-          });
-          
-          // Ensure listing stays published on successful renewal
-          try {
-            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
-            const publishRes = await fetch(listingUrl, {
+          if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
+            const invoiceDocId = checkJson.data[0].documentId;
+            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/invoices/${invoiceDocId}`, {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
@@ -705,51 +764,13 @@ export async function POST(req: NextRequest) {
               },
               body: JSON.stringify({
                 data: {
-                  listingStatus: "published",
+                  invoiceStatus: "paid",
                 },
               }),
             });
-
-            if (publishRes.ok) {
-              console.log("Listing kept published after renewal:", listingDocId);
-              await logWebhookEvent("listing_published", `Listing kept published after renewal: ${listingDocId}`, {
-                severity: "info",
-                userId,
-                listingDocId,
-                stripeEventId: event.id,
-                rawMeta: { subscriptionId, invoiceId: invoice.id },
-              });
-            }
-          } catch (e) {
-            console.error("Error keeping listing published:", e);
           }
-
-          // In addition to transaction, update the actual Invoice status to paid
-          try {
-            const checkUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/invoices?filters[stripeInvoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
-            const checkRes = await fetch(checkUrl, {
-              headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
-            });
-            const checkJson = await checkRes.json().catch(() => ({}));
-            
-            if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
-              const invoiceDocId = checkJson.data[0].documentId;
-              await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/invoices/${invoiceDocId}`, {
-                method: "PUT",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
-                },
-                body: JSON.stringify({
-                  data: {
-                    invoiceStatus: "paid",
-                  },
-                }),
-              });
-            }
-          } catch (e) {
-            console.error("Error updating invoice status to paid:", e);
-          }
+        } catch (e) {
+          console.error("Error updating invoice status to paid:", e);
         }
 
         break;
@@ -757,7 +778,15 @@ export async function POST(req: NextRequest) {
 
       case "invoice.payment_failed": {
         const invoice = event.data.object as WebhookInvoice;
-        const subscriptionId = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription?.id || null);
+        
+        let subscriptionIdStr = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription?.id || null);
+        console.log("inovice lines data ???", invoice.lines?.data)
+        if (!subscriptionIdStr && invoice.lines?.data?.[0]) {
+          const firstLineSub = (invoice.lines.data[0]).subscription;
+          if (typeof firstLineSub === 'string') subscriptionIdStr = firstLineSub;
+          else if (firstLineSub?.id) subscriptionIdStr = firstLineSub.id;
+        }
+        const subscriptionId = subscriptionIdStr;
 
         // Log webhook received
         await logWebhookEvent("webhook_received", `Received invoice.payment_failed webhook`, {
