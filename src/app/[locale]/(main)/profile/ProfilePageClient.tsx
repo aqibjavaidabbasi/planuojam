@@ -11,12 +11,13 @@ const FavouriteListings = dynamic(() => import("@/components/profile/FavouriteLi
 const Messages = dynamic(() => import("@/components/profile/Messages"), { ssr: false, loading: () => <div /> });
 const ReviewsTab = dynamic(() => import("@/components/profile/ReviewsTab"), { ssr: false });
 const AvailabilityInquiries = dynamic(() => import("@/components/profile/AvailabilityInquiries"), { ssr: false });
+const InvoicesTab = dynamic(() => import("@/components/profile/InvoicesTab"), { ssr: false });
 
 import Button from "@/components/custom/Button";
 import { useAppSelector } from "@/store/hooks";
 import React, { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
-import { FaArrowCircleDown, FaList, FaCalendarAlt, FaCalendarCheck, FaBullhorn } from "react-icons/fa";
+import { FaArrowCircleDown, FaList, FaCalendarAlt, FaCalendarCheck, FaBullhorn, FaFileInvoiceDollar } from "react-icons/fa";
 import { LuMessageSquareText } from "react-icons/lu";
 import { MdEditCalendar, MdOutlineFavorite, MdStarBorderPurple500, MdOutlineAssignmentTurnedIn } from "react-icons/md";
 import { usePathname, useRouter } from "@/i18n/navigation";
@@ -320,6 +321,17 @@ export default function ProfilePageClient() {
               </button>
 
               <button
+                onClick={() => showTab("invoices")}
+                className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${activeTab === "invoices"
+                    ? "text-white bg-primary"
+                    : "text-gray-600 hover:text-primary hover:bg-gray-50"
+                  }`}
+              >
+                <FaFileInvoiceDollar size={20} className="mr-3" />
+                {t("tabs.invoices", { default: "Invoices" })}
+              </button>
+
+              <button
                 onClick={() => showTab("favourite-listings")}
                 className={`w-full flex items-center px-4 py-3 text-left rounded-lg font-medium transition-colors cursor-pointer ${activeTab === "favourite-listings"
                     ? "text-white bg-primary"
@@ -420,6 +432,7 @@ export default function ProfilePageClient() {
             )}
             {activeTab === "availability-inquiries" && <AvailabilityInquiries />}
             {activeTab === "reviews" && <ReviewsTab />}
+            {activeTab === "invoices" && <InvoicesTab />}
           </div>
         </div>
       </div>

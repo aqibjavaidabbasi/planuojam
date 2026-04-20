@@ -348,6 +348,7 @@
     }
   },
   "Profile": {
+    "loading": "Wczytywanie...",
     "loginPrompt": "Zaloguj się, aby zobaczyć swój profil. Przekierowywanie...",
     "creditStars": "Gwiazdy kredytowe",
     "vendor": "Dostawca",
@@ -362,12 +363,25 @@
       "manageBookings": "Zarządzaj rezerwacjami",
       "calendar": "Kalendarz",
       "promotions": "Promocje",
-      "availabilityInquiries": "Zapytania o dostępność"
+      "availabilityInquiries": "Zapytania o dostępność",
+      "invoices": "Faktury"
     },
     "promoteHint": "Zwiększ widoczność, promując swoje ogłoszenie.",
     "promoteCta": "Promuj ogłoszenie",
     "promoteLater": "Później",
     "promoteHintWithTitle": "Zwiększ widoczność, promując \"{title}\".",
+    "invoicesDesc": "Przeglądaj i pobieraj historię płatności.",
+    "noInvoicesTitle": "Brak faktur",
+    "noInvoicesDesc": "Gdy będziesz mieć aktywne subskrypcje lub zdarzenia rozliczeniowe, Twoje faktury pojawią się tutaj.",
+    "invoiceTable": {
+      "number": "Numer faktury",
+      "date": "Data",
+      "amount": "Kwota",
+      "status": "Status",
+      "actions": "Akcje",
+      "view": "Zobacz",
+      "download": "Pobierz PDF"
+    },
     "ProfileTab": {
       "title": "Ustawienia profilu",
       "subtitle": "Zarządzaj swoimi danymi osobowymi i hasłem.",

@@ -360,6 +360,7 @@
     }
   },
   "Profile": {
+    "loading": "Loading...",
     "loginPrompt": "Please login to view your profile. Redirecting...",
     "creditStars": "Credit Stars",
     "vendor": "Vendor",
@@ -374,12 +375,25 @@
       "manageBookings": "Manage Bookings",
       "calendar": "Calendar",
       "promotions": "Promotions",
-      "availabilityInquiries": "Availability Inquiries"
+      "availabilityInquiries": "Availability Inquiries",
+      "invoices": "Invoices"
     },
     "promoteHint": "Boost visibility by promoting your listing.",
     "promoteCta": "Promote listing",
     "promoteLater": "Later",
     "promoteHintWithTitle": "Boost visibility by promoting \"{title}\".",
+    "invoicesDesc": "View and download your billing history.",
+    "noInvoicesTitle": "No invoices yet",
+    "noInvoicesDesc": "When you have active subscriptions or billing events, your invoices will appear here.",
+    "invoiceTable": {
+      "number": "Invoice Number",
+      "date": "Date",
+      "amount": "Amount",
+      "status": "Status",
+      "actions": "Actions",
+      "view": "View",
+      "download": "Download PDF"
+    },
     "ProfileTab": {
       "title": "Profile Settings",
       "subtitle": "Manage your personal information and password.",

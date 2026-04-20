@@ -347,6 +347,7 @@
     }
   },
   "Profile": {
+    "loading": "Laadimine...",
     "loginPrompt": "Palun logi sisse, et vaadata oma profiili. Suunamine...",
     "creditStars": "Krediiditähed",
     "vendor": "Teenusepakkuja",
@@ -361,12 +362,25 @@
       "manageBookings": "Halda broneeringuid",
       "calendar": "Kalender",
       "promotions": "Kampaaniad",
-      "availabilityInquiries": "Saadavuse päringud"
+      "availabilityInquiries": "Saadavuse päringud",
+      "invoices": "Arved"
     },
     "promoteHint": "Suurenda nähtavust, edendades oma kuulutust.",
     "promoteCta": "Reklaami kuulutust",
     "promoteLater": "Hiljem",
     "promoteHintWithTitle": "Suurenda nähtavust, edendades \"{title}\".",
+    "invoicesDesc": "Vaata ja laadi alla oma arvete ajalugu.",
+    "noInvoicesTitle": "Arveid pole veel",
+    "noInvoicesDesc": "Kui teil on aktiivseid tellimusi või arveldamisüritusi, kuvatakse siin teie arved.",
+    "invoiceTable": {
+      "number": "Arve number",
+      "date": "Kuupäev",
+      "amount": "Summa",
+      "status": "Staatus",
+      "actions": "Tegevused",
+      "view": "Vaata",
+      "download": "Laadi alla PDF"
+    },
     "ProfileTab": {
       "title": "Profiili seaded",
       "subtitle": "Halda oma isikuandmeid ja parooli.",

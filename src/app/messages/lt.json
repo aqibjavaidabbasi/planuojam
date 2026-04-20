@@ -913,6 +913,7 @@
     }
   },
   "Profile": {
+    "loading": "Kraunama...",
     "loginPrompt": "Norėdami peržiūrėti savo profilį, prisijunkite. Peradresuojama...",
     "creditStars": "Kredito žvaigždės",
     "vendor": "Tiekėjas",
@@ -927,12 +928,25 @@
       "manageBookings": "Tvarkyti užsakymus",
       "calendar": "Kalendorius",
       "promotions": "Skelbimo iškėlimas",
-      "availabilityInquiries": "Užklausos dėl užimtumo"
+      "availabilityInquiries": "Užklausos dėl užimtumo",
+      "invoices": "Sąskaitos"
     },
     "promoteHint": "Padidinkite savo skelbimo matomumą reklamuodami jį.",
     "promoteCta": "Reklamuoti skelbimą",
     "promoteLater": "Vėliau",
     "promoteHintWithTitle": "Padidinkite matomumą reklamuodami \"{title}\".",
+    "invoicesDesc": "Peržiūrėkite ir atsisiųskite savo atsiskaitymų istoriją.",
+    "noInvoicesTitle": "Dar nėra sąskaitų",
+    "noInvoicesDesc": "Kai turėsite aktyvių prenumeratų ar atsiskaitymų, jūsų sąskaitos-faktūros bus rodomos čia.",
+    "invoiceTable": {
+      "number": "Sąskaitos numeris",
+      "date": "Data",
+      "amount": "Suma",
+      "status": "Būsena",
+      "actions": "Veiksmai",
+      "view": "Peržiūrėti",
+      "download": "Atsisiųsti PDF"
+    },
     "ReviewsTab": {
       "title": "Atsiliepimai",
       "subtitle": "Peržiūrėkite ir tvarkykite savo turto atsiliepimus.",
