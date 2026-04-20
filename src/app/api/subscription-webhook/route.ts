@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
   try {
     switch (event.type) {
       case "checkout.session.completed": {
-        console.log('case object:::', event.object)
+        console.log('case object:::', event.data)
 
         const session = event.data.object as Stripe.Checkout.Session;
         
@@ -294,7 +294,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "customer.subscription.updated": {
-        console.log('case object:::', event.object)
+        console.log('case object:::', event.data)
         const subscription = event.data.object as WebhookSubscription;
         const subscriptionId = subscription.id;
 
@@ -408,7 +408,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "customer.subscription.deleted": {
-        console.log('case object:::', event.object)
+        console.log('case object:::', event.data)
         const subscription = event.data.object as WebhookSubscription;
         const subscriptionId = subscription.id;
 
@@ -515,7 +515,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "invoice.payment_succeeded": {
-        console.log('case object:::', event.object)
+        console.log('case object:::', event.data)
         const invoice = event.data.object as WebhookInvoice;
         const subscriptionId = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription?.id || null);
 
@@ -593,7 +593,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "invoice.paid": {
-        console.log('case object:::', event.object)
+        console.log('case object:::', event.data)
         const invoice = event.data.object as WebhookInvoice;        
         // Extract subscription ID - it can be a string or null for non-subscription invoices
         const subscriptionId = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription?.id || null);
@@ -761,7 +761,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "invoice.payment_failed": {
-        console.log('case object:::', event.object)
+        console.log('case object:::', event.data)
         const invoice = event.data.object as WebhookInvoice;
         const subscriptionId = typeof invoice.subscription === 'string' ? invoice.subscription : (invoice.subscription?.id || null);
 
