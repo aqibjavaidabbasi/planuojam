@@ -523,11 +523,11 @@ export default function VendorVenueSection({ listing, onSaved }: { listing: List
             <Input type="number" label={t("capacity")} disabled={submitting} {...venueRegister("capacity", { valueAsNumber: true })} />
             <Select
               label={t("bookingdurationtype")}
+              placeholder={t("selectdurationtype")}
               disabled={submitting}
               value={venueRHF.watch("bookingDurationType") || ""}
               onChange={(e) => venueRHF.setValue("bookingDurationType", e.target.value as VenueForm["bookingDurationType"], { shouldDirty: true })}
               options={[
-                { label: t("selectdurationtype"), value: "" },
                 { label: t("perday"), value: "Per Day" },
                 { label: t("perhour"), value: "Per Hour" }
               ]}

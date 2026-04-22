@@ -2,6 +2,7 @@
 
 import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Modal from '../custom/Modal';
 import Input from '../custom/Input';
 import UrlInput from '../custom/UrlInput';
@@ -24,7 +25,6 @@ import { createListing } from '@/services/listing';
 import { useAppSelector } from '@/store/hooks';
 import { slugify, shortId } from '@/utils/helpers';
 import { useLocale, useTranslations } from 'next-intl';
-import MapPickerModal from './MapPickerModal';
 import Image from 'next/image';
 import { getCompleteImageUrl } from '@/utils/helpers';
 import { FaTrash, FaGripVertical } from 'react-icons/fa6';
@@ -48,6 +48,10 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { strapiImage } from '@/types/mediaTypes';
 import { RootState } from '@/store';
+
+const MapPickerModal = dynamic(() => import('./MapPickerModal'), {
+  ssr: false,
+});
 
 interface ListingItemModalProps {
   isOpen: boolean;
@@ -403,7 +407,11 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
       return t('fields.description.required');
     }
 
-    if (payload.price === undefined || payload.price === null || payload.price < 0) {
+    if (
+      payload.price === undefined ||
+      payload.price === null ||
+      payload.price < 0
+    ) {
       return t('fields.price.errors.min');
     }
 
@@ -438,7 +446,8 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
 
     // 6. Validate videos if present
     if (Array.isArray(payload.videos) && payload.videos.length > 0) {
-      const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/;
+      const youtubeRegex =
+        /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/;
       for (const video of payload.videos) {
         if (video.url && !youtubeRegex.test(video.url)) {
           return t('fields.videos.errors.invalid');
@@ -458,15 +467,28 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
       if (!listingItem.about || listingItem.about.trim() === '') {
         return t('errors.aboutRequired');
       }
-      if (listingItem.experienceYears === undefined || listingItem.experienceYears === null || listingItem.experienceYears < 0) {
+      if (
+        listingItem.experienceYears === undefined ||
+        listingItem.experienceYears === null ||
+        listingItem.experienceYears < 0
+      ) {
         return t('errors.experienceYearsInvalid');
       }
       // Validate that each service area has coordinates set via the map picker
-      if (Array.isArray(listingItem.serviceArea) && listingItem.serviceArea.length > 0) {
+      if (
+        Array.isArray(listingItem.serviceArea) &&
+        listingItem.serviceArea.length > 0
+      ) {
         for (let i = 0; i < listingItem.serviceArea.length; i++) {
           const sa = listingItem.serviceArea[i];
-          const hasLat = sa.latitude !== undefined && sa.latitude !== null && sa.latitude !== '';
-          const hasLng = sa.longitude !== undefined && sa.longitude !== null && sa.longitude !== '';
+          const hasLat =
+            sa.latitude !== undefined &&
+            sa.latitude !== null &&
+            sa.latitude !== '';
+          const hasLng =
+            sa.longitude !== undefined &&
+            sa.longitude !== null &&
+            sa.longitude !== '';
           if (!hasLat || !hasLng) {
             return t('serviceArea.errors.locationRequired', { index: i + 1 });
           }
@@ -478,11 +500,18 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
         return t('errors.addressRequired');
       }
 
-      if (!listingItem.location.address || listingItem.location.address.trim() === '') {
+      if (
+        !listingItem.location.address ||
+        listingItem.location.address.trim() === ''
+      ) {
         return t('errors.addressRequired');
       }
 
-      if (listingItem.capacity === undefined || listingItem.capacity === null || listingItem.capacity < 0) {
+      if (
+        listingItem.capacity === undefined ||
+        listingItem.capacity === null ||
+        listingItem.capacity < 0
+      ) {
         return t('errors.capacityInvalid');
       }
 
@@ -490,17 +519,28 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
         return t('errors.bookingDurationTypeRequired');
       }
 
-      if (listingItem.bookingDuration === undefined || listingItem.bookingDuration === null || listingItem.bookingDuration <= 0) {
+      if (
+        listingItem.bookingDuration === undefined ||
+        listingItem.bookingDuration === null ||
+        listingItem.bookingDuration <= 0
+      ) {
         return t('errors.bookingDurationInvalid');
       }
 
-      if (listingItem.minimumDuration === undefined || listingItem.minimumDuration === null || listingItem.minimumDuration < 0) {
+      if (
+        listingItem.minimumDuration === undefined ||
+        listingItem.minimumDuration === null ||
+        listingItem.minimumDuration < 0
+      ) {
         return t('errors.minimumDurationInvalid');
       }
     }
 
     // 8. Validate working schedule if present
-    if (Array.isArray(payload.workingSchedule) && payload.workingSchedule.length > 0) {
+    if (
+      Array.isArray(payload.workingSchedule) &&
+      payload.workingSchedule.length > 0
+    ) {
       const wsError = validateWorkingSchedule();
       if (wsError) return wsError;
     }
@@ -651,7 +691,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
       if (selectedCategories.length > 0) {
         // Wrap categories relation
         payload.categories = {
-          set: [...selectedCategories]
+          set: [...selectedCategories],
         };
       }
       // workingHours removed in favor of workingSchedule (handled above)
@@ -756,7 +796,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
 
       // set slug using title with a short unique suffix to avoid collisions within the same locale
       const slugBasePart = slugify(payload.title);
-      
+
       if (!slugBasePart || slugBasePart.trim() === '') {
         setError(t('errors.slugGenerationFailed'));
         setSubmitting(false);
@@ -840,8 +880,13 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
         title={t('title')}
         footer={
           !showSubscriptionHint && (
-            <div className='flex gap-3 justify-between flex-wrap'>
-              <div className='ml-auto flex gap-2'>
+            <div className='flex gap-3 justify-between flex-wrap items-baseline'>
+              {error && (
+                <div className='p-3 mt-10 rounded bg-red-50 text-red-700 border border-red-200'>
+                  {error}
+                </div>
+              )}
+              <div className='ml-auto flex gap-2 w-fit'>
                 <Button style='ghost' onClick={onClose} disabled={isWorking}>
                   {t('buttons.cancel')}
                 </Button>
@@ -858,12 +903,6 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
           )
         }
       >
-        {error && (
-          <div className='p-3 mt-10 rounded bg-red-50 text-red-700 border border-red-200'>
-            {error}
-          </div>
-        )}
-
         {!showSubscriptionHint && (
           <form
             id='listingForm'
@@ -1557,15 +1596,18 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                       <div className='col-span-2'>
                         <Select
                           label={t('fields.bookingDurationType.label')}
+                          placeholder={t(
+                            'fields.bookingDurationType.placeholder',
+                          )}
                           disabled={isWorking}
                           value={
                             form.listingItem?.[0]?.bookingDurationType || ''
                           }
-                          onChange={(e) =>
+                          onChange={(e) =>{
                             updateListingItem(
                               'bookingDurationType',
                               e.target.value,
-                            )
+                            )}
                           }
                           options={[
                             {
@@ -1833,60 +1875,58 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
           </form>
         )}
         {/* Vendor map picker (serviceArea by index) */}
-        {vendorPickerIndex !== null && (
-          <MapPickerModal
-            isOpen={vendorPickerIndex !== null}
-            onClose={() => setVendorPickerIndex(null)}
-            initial={(() => {
-              const sa =
-                form.listingItem?.[0]?.serviceArea?.[vendorPickerIndex!];
-              const lat =
-                sa?.latitude && !isNaN(Number(sa.latitude))
-                  ? Number(sa.latitude)
-                  : undefined;
-              const lng =
-                sa?.longitude && !isNaN(Number(sa.longitude))
-                  ? Number(sa.longitude)
-                  : undefined;
-              return { lat, lng };
-            })()}
-            onSelect={(lat, lng) => {
-              const currentItems = getValues('listingItem') || [];
-              const updatedItems = [...currentItems];
-              if (updatedItems[0]?.serviceArea && vendorPickerIndex !== null) {
-                const idx = vendorPickerIndex;
-                updatedItems[0].serviceArea[idx] = {
-                  ...updatedItems[0].serviceArea[idx],
-                  latitude: String(lat),
-                  longitude: String(lng),
-                };
-                setValue('listingItem', updatedItems, { shouldDirty: true });
-              }
-              setVendorPickerIndex(null);
-            }}
-          />
-        )}
+        <MapPickerModal
+          isOpen={vendorPickerIndex !== null}
+          onClose={() => setVendorPickerIndex(null)}
+          initial={(() => {
+            const sa =
+              vendorPickerIndex !== null
+                ? form.listingItem?.[0]?.serviceArea?.[vendorPickerIndex]
+                : undefined;
+            const lat =
+              sa?.latitude && !isNaN(Number(sa.latitude))
+                ? Number(sa.latitude)
+                : undefined;
+            const lng =
+              sa?.longitude && !isNaN(Number(sa.longitude))
+                ? Number(sa.longitude)
+                : undefined;
+            return { lat, lng };
+          })()}
+          onSelect={(lat, lng) => {
+            const currentItems = getValues('listingItem') || [];
+            const updatedItems = [...currentItems];
+            if (updatedItems[0]?.serviceArea && vendorPickerIndex !== null) {
+              const idx = vendorPickerIndex;
+              updatedItems[0].serviceArea[idx] = {
+                ...updatedItems[0].serviceArea[idx],
+                latitude: String(lat),
+                longitude: String(lng),
+              };
+              setValue('listingItem', updatedItems, { shouldDirty: true });
+            }
+            setVendorPickerIndex(null);
+          }}
+        />
 
         {/* Venue map picker (single location) */}
-        {venuePickerOpen && (
-          <MapPickerModal
-            isOpen={venuePickerOpen}
-            onClose={() => setVenuePickerOpen(false)}
-            initial={(() => {
-              const lat = form.listingItem?.[0]?.location?.latitude;
-              const lng = form.listingItem?.[0]?.location?.longitude;
-              return {
-                lat: lat && !isNaN(Number(lat)) ? Number(lat) : undefined,
-                lng: lng && !isNaN(Number(lng)) ? Number(lng) : undefined,
-              };
-            })()}
-            onSelect={(lat, lng) => {
-              updateListingItem('location.latitude', String(lat));
-              updateListingItem('location.longitude', String(lng));
-              setVenuePickerOpen(false);
-            }}
-          />
-        )}
+        <MapPickerModal
+          isOpen={venuePickerOpen}
+          onClose={() => setVenuePickerOpen(false)}
+          initial={(() => {
+            const lat = form.listingItem?.[0]?.location?.latitude;
+            const lng = form.listingItem?.[0]?.location?.longitude;
+            return {
+              lat: lat && !isNaN(Number(lat)) ? Number(lat) : undefined,
+              lng: lng && !isNaN(Number(lng)) ? Number(lng) : undefined,
+            };
+          })()}
+          onSelect={(lat, lng) => {
+            updateListingItem('location.latitude', String(lat));
+            updateListingItem('location.longitude', String(lng));
+            setVenuePickerOpen(false);
+          }}
+        />
 
         {showSubscriptionHint && (
           <div className='w-full flex items-center justify-center flex-col gap-2 py-4'>

@@ -22,10 +22,12 @@ const MapPickerModal: React.FC<MapPickerModalProps> = ({ isOpen, onClose, onSele
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
+  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [coords, setCoords] = useState<{ lat: number; lng: number }>({
     lat: initial?.lat ?? DEFAULT_LAT,
     lng: initial?.lng ?? DEFAULT_LNG,
   });
+  const [mapError, setMapError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -33,24 +35,56 @@ const MapPickerModal: React.FC<MapPickerModalProps> = ({ isOpen, onClose, onSele
     if (!token) {
       // If no token, keep modal but disable map rendering
       console.error("Mapbox token missing");
+      setMapError("missing-token");
       return;
     }
+    setMapError(null);
     mapboxgl.accessToken = token;
 
     if (!mapContainer.current) return;
+    const containerEl = mapContainer.current;
 
-    // Initialize map
-    mapRef.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: "mapbox://styles/mapbox/streets-v12",
-      center: [coords.lng, coords.lat],
-      zoom: 12,
-      attributionControl: false,
-      cooperativeGestures: true,
-    });
+    try {
+      while (containerEl.firstChild) {
+        containerEl.removeChild(containerEl.firstChild);
+      }
+    } catch {
+      // Ignore container cleanup failures and let Mapbox attempt initialization.
+    }
+
+    try {
+      // Initialize map after the modal content has mounted in the portal.
+      mapRef.current = new mapboxgl.Map({
+        container: containerEl,
+        style: "mapbox://styles/mapbox/streets-v12",
+        center: [coords.lng, coords.lat],
+        zoom: 12,
+        attributionControl: false,
+        cooperativeGestures: true,
+      });
+    } catch (error) {
+      console.error("Failed to initialize Mapbox picker:", error);
+      setMapError("init-failed");
+      return;
+    }
 
     // Controls
     mapRef.current.addControl(new mapboxgl.NavigationControl(), "top-right");
+
+    const scheduleResize = () => {
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+      resizeTimeoutRef.current = setTimeout(() => {
+        try {
+          mapRef.current?.resize();
+        } catch (error) {
+          console.error("Failed to resize Mapbox picker:", error);
+        }
+      }, 150);
+    };
+    mapRef.current.once("load", scheduleResize);
+    scheduleResize();
 
     // Draggable marker
     const marker = new mapboxgl.Marker({ draggable: true, anchor: "bottom" })
@@ -77,6 +111,10 @@ const MapPickerModal: React.FC<MapPickerModalProps> = ({ isOpen, onClose, onSele
     markerRef.current = marker;
 
     return () => {
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+        resizeTimeoutRef.current = null;
+      }
       if (mapRef.current) {
         mapRef.current.off('click', handleMapClick);
       }
@@ -87,6 +125,13 @@ const MapPickerModal: React.FC<MapPickerModalProps> = ({ isOpen, onClose, onSele
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
+      }
+      try {
+        while (containerEl.firstChild) {
+          containerEl.removeChild(containerEl.firstChild);
+        }
+      } catch {
+        // Ignore container cleanup failures during unmount.
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,7 +186,20 @@ const MapPickerModal: React.FC<MapPickerModalProps> = ({ isOpen, onClose, onSele
       <div className="flex flex-col gap-3 p-5">
         <MapboxSearch onPlaceSelect={handlePlaceSelect} />
         <div className="w-full h-[60vh] border rounded-lg overflow-hidden">
-          <div ref={mapContainer} className="w-full h-full" />
+          {mapError ? (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-600 p-6 text-center">
+              <div>
+                <p className="text-lg font-semibold">Map unavailable</p>
+                <p className="text-sm mt-2">
+                  {mapError === "missing-token"
+                    ? "Mapbox configuration is missing."
+                    : "The map could not be loaded in this modal. Please try reopening it."}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div ref={mapContainer} className="w-full h-full" />
+          )}
         </div>
       </div>
     </Modal>
