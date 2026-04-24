@@ -433,6 +433,36 @@
       "closeNav": "Закрыть меню навигации"
     }
   },
+  "InvoicePublic": {
+    "metadata": {
+      "title": "Загрузка счета",
+      "description": "Скачайте PDF вашего счета."
+    },
+    "eyebrow": "Публичный доступ к счету",
+    "title": "Счет {invoiceNumber}",
+    "description": "Эта страница оставляет ссылку на счет публичной, но трудной для угадывания. Выберите нужный язык и скачайте PDF напрямую.",
+    "fields": {
+      "amount": "Сумма",
+      "status": "Статус",
+      "billingPeriod": "Период оплаты",
+      "listing": "Объявление"
+    },
+    "actions": {
+      "downloadEnglish": "Скачать PDF (английский)",
+      "downloadLithuanian": "Скачать PDF (литовский)",
+      "generatingEnglish": "Создается PDF на английском...",
+      "generatingLithuanian": "Создается PDF на литовском..."
+    },
+    "errors": {
+      "downloadFailed": "Сейчас не удается создать PDF. Пожалуйста, попробуйте еще раз."
+    },
+    "status": {
+      "paid": "Оплачен",
+      "open": "Открыт",
+      "failed": "Ошибка",
+      "void": "Аннулирован"
+    }
+  },
   "Profile": {
     "loading": "Загрузка...",
     "loginPrompt": "Пожалуйста, войдите, чтобы просмотреть профиль. Перенаправление...",

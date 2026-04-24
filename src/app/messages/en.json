@@ -359,6 +359,36 @@
       }
     }
   },
+  "InvoicePublic": {
+    "metadata": {
+      "title": "Invoice Download",
+      "description": "Download your invoice PDF."
+    },
+    "eyebrow": "Public Invoice Access",
+    "title": "Invoice {invoiceNumber}",
+    "description": "This page keeps the invoice link public but hard to guess. Choose the language you need and download the PDF directly.",
+    "fields": {
+      "amount": "Amount",
+      "status": "Status",
+      "billingPeriod": "Billing Period",
+      "listing": "Listing"
+    },
+    "actions": {
+      "downloadEnglish": "Download PDF (English)",
+      "downloadLithuanian": "Download PDF (Lithuanian)",
+      "generatingEnglish": "Generating English PDF...",
+      "generatingLithuanian": "Generating Lithuanian PDF..."
+    },
+    "errors": {
+      "downloadFailed": "Unable to generate the PDF right now. Please try again."
+    },
+    "status": {
+      "paid": "Paid",
+      "open": "Open",
+      "failed": "Failed",
+      "void": "Void"
+    }
+  },
   "Profile": {
     "loading": "Loading...",
     "loginPrompt": "Please login to view your profile. Redirecting...",

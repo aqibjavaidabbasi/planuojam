@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import Button from "@/components/custom/Button";
 import InvoicePdfTemplate from "@/components/invoice/InvoicePdfTemplate";
 import { downloadEnglishInvoicePdf, getEnglishInvoicePdfLabels } from "@/lib/invoice-pdf/englishInvoicePdf";
@@ -14,27 +15,65 @@ interface PublicInvoicePageClientProps {
   invoice: PublicInvoiceData;
 }
 
-function formatDisplayDate(value?: string | null) {
+function formatDisplayDate(value: string | null | undefined, locale: string) {
   if (!value) return "-";
 
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "-";
 
-  return date.toLocaleDateString("en-GB", {
+  return date.toLocaleDateString(locale, {
     year: "numeric",
     month: "short",
     day: "numeric",
   });
 }
 
-function formatDisplayAmount(amount?: number | null, currency?: string | null) {
+function formatDisplayAmount(
+  amount: number | null | undefined,
+  currency: string | null | undefined,
+  locale: string
+) {
   if (typeof amount !== "number") return "-";
-  return `${amount.toFixed(2)} ${(currency || "").toUpperCase()}`.trim();
+
+  const normalizedCurrency = currency?.toUpperCase();
+
+  if (normalizedCurrency) {
+    try {
+      return new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency: normalizedCurrency,
+      }).format(amount);
+    } catch {
+      // Fall back to a plain amount if the currency code is invalid.
+    }
+  }
+
+  return amount.toFixed(2);
+}
+
+function getStatusLabel(
+  status: string | null | undefined,
+  t: (key: string) => string
+) {
+  switch (status) {
+    case "paid":
+      return t("status.paid");
+    case "open":
+      return t("status.open");
+    case "failed":
+      return t("status.failed");
+    case "void":
+      return t("status.void");
+    default:
+      return status || "-";
+  }
 }
 
 export default function PublicInvoicePageClient({
   invoice,
 }: PublicInvoicePageClientProps) {
+  const t = useTranslations("InvoicePublic");
+  const locale = useLocale();
   const englishTemplateRef = useRef<HTMLDivElement>(null);
   const lithuanianTemplateRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState<"en" | "lt" | null>(null);
@@ -52,7 +91,7 @@ export default function PublicInvoicePageClient({
       }
     } catch (downloadError) {
       console.error("Failed to generate invoice PDF:", downloadError);
-      setError("Unable to generate the PDF right now. Please try again.");
+      setError(t("errors.downloadFailed"));
     } finally {
       setDownloading(null);
     }
@@ -63,37 +102,36 @@ export default function PublicInvoicePageClient({
       <div className="min-h-screen bg-[linear-gradient(180deg,#f8fafc_0%,#eef2ff_100%)] px-4 py-12">
         <div className="mx-auto max-w-2xl rounded-4xl border border-slate-200 bg-white p-8 shadow-[0_24px_80px_rgba(15,23,42,0.10)] sm:p-10">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
-            Public Invoice Access
+            {t("eyebrow")}
           </p>
           <h1 className="text-3xl font-semibold text-slate-900">
-            Invoice {invoice.invoiceNumber || invoice.documentId}
+            {t("title", { invoiceNumber: invoice.invoiceNumber || invoice.documentId })}
           </h1>
           <p className="mt-3 text-sm leading-6 text-slate-600">
-            This page keeps the invoice link public but hard to guess. Choose the language you need
-            and download the PDF directly.
+            {t("description")}
           </p>
 
           <div className="mt-8 grid gap-4 rounded-[28px] bg-slate-50 p-5 text-sm text-slate-700 sm:grid-cols-2">
             <div>
-              <p className="text-slate-500">Amount</p>
+              <p className="text-slate-500">{t("fields.amount")}</p>
               <p className="mt-1 font-medium text-slate-900">
-                {formatDisplayAmount(invoice.amount, invoice.currency)}
+                {formatDisplayAmount(invoice.amount, invoice.currency, locale)}
               </p>
             </div>
             <div>
-              <p className="text-slate-500">Status</p>
+              <p className="text-slate-500">{t("fields.status")}</p>
               <p className="mt-1 font-medium capitalize text-slate-900">
-                {invoice.invoiceStatus || "-"}
+                {getStatusLabel(invoice.invoiceStatus, t)}
               </p>
             </div>
             <div>
-              <p className="text-slate-500">Billing Period</p>
+              <p className="text-slate-500">{t("fields.billingPeriod")}</p>
               <p className="mt-1 font-medium text-slate-900">
-                {formatDisplayDate(invoice.periodStart)} - {formatDisplayDate(invoice.periodEnd)}
+                {formatDisplayDate(invoice.periodStart, locale)} - {formatDisplayDate(invoice.periodEnd, locale)}
               </p>
             </div>
             <div>
-              <p className="text-slate-500">Listing</p>
+              <p className="text-slate-500">{t("fields.listing")}</p>
               <p className="mt-1 font-medium text-slate-900">
                 {invoice.listingTitle || invoice.SubscriptionTitle || "-"}
               </p>
@@ -113,7 +151,7 @@ export default function PublicInvoicePageClient({
               onClick={() => handleDownload("en")}
               disabled={downloading !== null}
             >
-              {downloading === "en" ? "Generating English PDF..." : "Download PDF (English)"}
+              {downloading === "en" ? t("actions.generatingEnglish") : t("actions.downloadEnglish")}
             </Button>
             <Button
               style="secondary"
@@ -122,8 +160,8 @@ export default function PublicInvoicePageClient({
               disabled={downloading !== null}
             >
               {downloading === "lt"
-                ? "Generating Lithuanian PDF..."
-                : "Download PDF (Lithuanian)"}
+                ? t("actions.generatingLithuanian")
+                : t("actions.downloadLithuanian")}
             </Button>
           </div>
         </div>

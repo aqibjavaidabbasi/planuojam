@@ -347,6 +347,36 @@
       }
     }
   },
+  "InvoicePublic": {
+    "metadata": {
+      "title": "Pobieranie faktury",
+      "description": "Pobierz PDF swojej faktury."
+    },
+    "eyebrow": "Publiczny dostęp do faktury",
+    "title": "Faktura {invoiceNumber}",
+    "description": "Ta strona utrzymuje link do faktury jako publiczny, ale trudny do odgadnięcia. Wybierz potrzebny język i pobierz PDF bezpośrednio.",
+    "fields": {
+      "amount": "Kwota",
+      "status": "Status",
+      "billingPeriod": "Okres rozliczeniowy",
+      "listing": "Ogłoszenie"
+    },
+    "actions": {
+      "downloadEnglish": "Pobierz PDF (angielski)",
+      "downloadLithuanian": "Pobierz PDF (litewski)",
+      "generatingEnglish": "Tworzenie angielskiego PDF...",
+      "generatingLithuanian": "Tworzenie litewskiego PDF..."
+    },
+    "errors": {
+      "downloadFailed": "Nie można teraz wygenerować pliku PDF. Spróbuj ponownie."
+    },
+    "status": {
+      "paid": "Opłacona",
+      "open": "Otwarte",
+      "failed": "Niepowodzenie",
+      "void": "Unieważniona"
+    }
+  },
   "Profile": {
     "loading": "Wczytywanie...",
     "loginPrompt": "Zaloguj się, aby zobaczyć swój profil. Przekierowywanie...",

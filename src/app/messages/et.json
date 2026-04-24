@@ -346,6 +346,36 @@
       }
     }
   },
+  "InvoicePublic": {
+    "metadata": {
+      "title": "Arve allalaadimine",
+      "description": "Laadi alla oma arve PDF."
+    },
+    "eyebrow": "Avalik juurdepääs arvele",
+    "title": "Arve {invoiceNumber}",
+    "description": "See leht hoiab arve lingi avalikuna, kuid raskesti äraarvatavana. Vali vajalik keel ja laadi PDF otse alla.",
+    "fields": {
+      "amount": "Summa",
+      "status": "Staatus",
+      "billingPeriod": "Arveldusperiood",
+      "listing": "Kuulutus"
+    },
+    "actions": {
+      "downloadEnglish": "Laadi PDF alla (inglise)",
+      "downloadLithuanian": "Laadi PDF alla (leedu)",
+      "generatingEnglish": "Ingliskeelse PDF-i loomine...",
+      "generatingLithuanian": "Leedukeelse PDF-i loomine..."
+    },
+    "errors": {
+      "downloadFailed": "PDF-i ei saa praegu genereerida. Palun proovi uuesti."
+    },
+    "status": {
+      "paid": "Makstud",
+      "open": "Avatud",
+      "failed": "Nurjus",
+      "void": "Tühistatud"
+    }
+  },
   "Profile": {
     "loading": "Laadimine...",
     "loginPrompt": "Palun logi sisse, et vaadata oma profiili. Suunamine...",

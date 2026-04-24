@@ -912,6 +912,36 @@
       }
     }
   },
+  "InvoicePublic": {
+    "metadata": {
+      "title": "Sąskaitos atsisiuntimas",
+      "description": "Atsisiųskite savo sąskaitos PDF."
+    },
+    "eyebrow": "Vieša prieiga prie sąskaitos",
+    "title": "Sąskaita {invoiceNumber}",
+    "description": "Šis puslapis leidžia išlaikyti sąskaitos nuorodą viešą, bet sunkiai atspėjamą. Pasirinkite reikiamą kalbą ir atsisiųskite PDF tiesiogiai.",
+    "fields": {
+      "amount": "Suma",
+      "status": "Būsena",
+      "billingPeriod": "Atsiskaitymo laikotarpis",
+      "listing": "Skelbimas"
+    },
+    "actions": {
+      "downloadEnglish": "Atsisiųsti PDF (anglų)",
+      "downloadLithuanian": "Atsisiųsti PDF (lietuvių)",
+      "generatingEnglish": "Generuojamas angliškas PDF...",
+      "generatingLithuanian": "Generuojamas lietuviškas PDF..."
+    },
+    "errors": {
+      "downloadFailed": "Šiuo metu PDF sugeneruoti nepavyksta. Pabandykite dar kartą."
+    },
+    "status": {
+      "paid": "Apmokėta",
+      "open": "Atidaryta",
+      "failed": "Nepavyko",
+      "void": "Anuliuota"
+    }
+  },
   "Profile": {
     "loading": "Kraunama...",
     "loginPrompt": "Norėdami peržiūrėti savo profilį, prisijunkite. Peradresuojama...",
