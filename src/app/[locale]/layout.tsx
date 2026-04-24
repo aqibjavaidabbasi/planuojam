@@ -37,13 +37,14 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>;
 }>) {
   const { locale } = await params;
-  setRequestLocale(locale);
-  // Rely on next-intl request config to provide messages
-  const messages = await getMessages();
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
+
+  setRequestLocale(locale);
+  // Rely on next-intl request config to provide messages
+  const messages = await getMessages();
 
   return (
     <html className={montserrat.className}>
