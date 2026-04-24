@@ -28,6 +28,7 @@ export default function InvoicePdfTemplate({
   labels,
 }: InvoicePdfTemplateProps) {
   const description = invoice.SubscriptionTitle || invoice.listingTitle || labels.subscriptionLabel;
+  const amountSummaryLabel = labels.amountPaid || labels.amountDue || "-";
 
   return (
     <div
@@ -76,7 +77,7 @@ export default function InvoicePdfTemplate({
               <span className="font-medium">{formatDisplayDate(invoice.periodStart)}</span>
             </div>
             <div className="flex justify-between gap-4">
-              <span style={{ color: "#64748b" }}>{labels.amountDue}</span>
+              <span style={{ color: "#64748b" }}>{amountSummaryLabel}</span>
               <span className="font-medium">
                 {formatDisplayAmount(invoice.amount, invoice.currency)}
               </span>
@@ -143,7 +144,7 @@ export default function InvoicePdfTemplate({
           style={{ backgroundColor: "#0f172a", color: "#ffffff" }}
         >
           <div className="flex items-center justify-between gap-4">
-            <span className="text-sm" style={{ color: "#cbd5e1" }}>{labels.amountDue}</span>
+            <span className="text-sm" style={{ color: "#cbd5e1" }}>{amountSummaryLabel}</span>
             <span className="text-lg font-semibold">
               {formatDisplayAmount(invoice.amount, invoice.currency)}
             </span>

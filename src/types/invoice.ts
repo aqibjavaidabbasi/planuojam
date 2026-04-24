@@ -30,7 +30,8 @@ export interface InvoicePdfLabels {
   seller: string;
   description: string;
   total: string;
-  amountDue: string;
+  amountPaid?: string;
+  amountDue?: string;
   buyerEmail: string;
   buyerAddress: string;
   companyId: string;

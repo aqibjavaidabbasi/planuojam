@@ -11,7 +11,7 @@ export function getLithuanianInvoicePdfLabels(): InvoicePdfLabels {
     seller: "Pardavėjas",
     description: "Aprašymas",
     total: "Iš viso",
-    amountDue: "Mokėtina suma",
+    amountPaid: "Apmokėta suma",
     buyerEmail: "Pirkėjo el. paštas",
     buyerAddress: "Pirkėjo adresas",
     companyId: "Įmonės kodas",

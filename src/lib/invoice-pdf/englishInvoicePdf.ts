@@ -11,7 +11,7 @@ export function getEnglishInvoicePdfLabels(): InvoicePdfLabels {
     seller: "Seller",
     description: "Description",
     total: "Total",
-    amountDue: "Amount Due",
+    amountPaid: "Amount Paid",
     buyerEmail: "Buyer Email",
     buyerAddress: "Buyer Address",
     companyId: "Company ID",
