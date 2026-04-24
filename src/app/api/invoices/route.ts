@@ -30,6 +30,23 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const meResponse = await fetch(`${API_URL}/api/users/me`, {
+      cache: 'no-store',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!meResponse.ok) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const me = await meResponse.json().catch(() => null);
+    if (!me?.documentId || me.documentId !== userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // 1. Fetch all subscription document IDs belonging to the user
     const subsUrl = `${API_URL}/api/subscriptions?filters[users_permissions_user][documentId][$eq]=${userId}&fields[0]=documentId`;
     const subsResponse = await fetch(subsUrl, {

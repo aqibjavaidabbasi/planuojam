@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { randomBytes } from "crypto";
 import { logWebhookEvent } from "@/utils/subscriptionLogger";
 
 type WebhookSubscription = Stripe.Subscription & {
@@ -26,6 +27,91 @@ type InvoiceLineWithParent = Stripe.InvoiceLineItem & {
     };
   };
 };
+
+type InvoiceWithCustomerDetails = Stripe.Invoice & {
+  customer_name?: string | null;
+  customer_email?: string | null;
+  customer_address?: Stripe.Address | null;
+};
+
+type StrapiSubscriptionEntry = {
+  documentId: string;
+  listingDocId?: string;
+  users_permissions_user?: number | { id?: number; documentId?: string } | null;
+};
+
+type StrapiUserEntry = {
+  id?: number;
+  documentId?: string;
+  username?: string;
+  email?: string;
+};
+
+type StrapiListingEntry = {
+  title?: string;
+};
+
+type SellerInvoiceDetailEntry = {
+  companyName?: string;
+  address?: string;
+  companyId?: string;
+  vatNumber?: string;
+};
+
+const STRAPI_API_URL = process.env.NEXT_PUBLIC_API_URL!;
+const STRAPI_AUTH_HEADERS = {
+  Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+};
+
+function createPublicInvoiceToken() {
+  return randomBytes(24).toString("hex");
+}
+
+function getPublicAppUrl() {
+  return (
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "http://localhost:3000"
+  ).replace(/\/$/, "");
+}
+
+function buildPublicInvoiceUrl(publicToken: string) {
+  return `${getPublicAppUrl()}/en/invoice/${publicToken}`;
+}
+
+function formatStripeAddress(address?: Stripe.Address | null) {
+  if (!address) return null;
+
+  const parts = [
+    address.line1,
+    address.line2,
+    address.city,
+    address.state,
+    address.postal_code,
+    address.country,
+  ]
+    .map((part) => (typeof part === "string" ? part.trim() : ""))
+    .filter(Boolean);
+
+  return parts.length > 0 ? parts.join(", ") : null;
+}
+
+async function fetchStrapiJson<T>(url: string): Promise<T | null> {
+  try {
+    const response = await fetch(url, {
+      headers: STRAPI_AUTH_HEADERS,
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return (await response.json()) as T;
+  } catch {
+    return null;
+  }
+}
 
 function extractSubscriptionId(invoice: WebhookInvoice): string | null {
   console.log(`[extractSubscriptionId] Extracting for invoice: ${invoice.id}`);
@@ -167,9 +253,9 @@ export async function POST(req: NextRequest) {
         // Check if subscription already exists (idempotency)
         let subscriptionAlreadyExists = false;
         try {
-          const checkUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
+          const checkUrl = `${STRAPI_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
           const checkRes = await fetch(checkUrl, {
-            headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+            headers: STRAPI_AUTH_HEADERS,
           });
           const checkJson = await checkRes.json().catch(() => ({}));
           if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
@@ -183,11 +269,11 @@ export async function POST(req: NextRequest) {
         // Only create subscription if it doesn't exist, but always try to publish listing
         if (!subscriptionAlreadyExists) {
           // Create subscription record in Strapi
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions`, {
+          const res = await fetch(`${STRAPI_API_URL}/api/subscriptions`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+              ...STRAPI_AUTH_HEADERS,
             },
             body: JSON.stringify({
               data: {
@@ -229,12 +315,12 @@ export async function POST(req: NextRequest) {
             if (subscriptionDocId && session.amount_total) {
               try {
                 const transactionRes = await fetch(
-                  `${process.env.NEXT_PUBLIC_API_URL}/api/subscription-transactions`,
+                  `${STRAPI_API_URL}/api/subscription-transactions`,
                   {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
-                      Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+                      ...STRAPI_AUTH_HEADERS,
                     },
                     body: JSON.stringify({
                       data: {
@@ -287,13 +373,13 @@ export async function POST(req: NextRequest) {
         
         // ALWAYS try to publish the listing, regardless of whether subscription already existed
         try {
-          const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
+          const listingUrl = `${STRAPI_API_URL}/api/listings/${listingDocId}`;
           
           const updateRes = await fetch(listingUrl, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+              ...STRAPI_AUTH_HEADERS,
             },
             body: JSON.stringify({
               data: {
@@ -332,8 +418,8 @@ export async function POST(req: NextRequest) {
 
             // SEND EMAIL NOTIFICATION
             try {
-              const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`, {
-                headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+              const userRes = await fetch(`${STRAPI_API_URL}/api/users/${userId}`, {
+                headers: STRAPI_AUTH_HEADERS,
               });
               const user = await userRes.json();
               
@@ -379,9 +465,9 @@ export async function POST(req: NextRequest) {
         });
 
         // Find existing subscription in Strapi
-        const findUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
+        const findUrl = `${STRAPI_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
         const findRes = await fetch(findUrl, {
-          headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+          headers: STRAPI_AUTH_HEADERS,
         });
         const findJson = await findRes.json().catch(() => ({}));
 
@@ -395,12 +481,12 @@ export async function POST(req: NextRequest) {
 
         // Update subscription status
         const updateRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions/${documentId}`,
+          `${STRAPI_API_URL}/api/subscriptions/${documentId}`,
           {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+              ...STRAPI_AUTH_HEADERS,
             },
             body: JSON.stringify({
               data: {
@@ -441,12 +527,12 @@ export async function POST(req: NextRequest) {
           if (subscription.status === 'active' && !subscription.cancel_at_period_end) {
             try {
               const listingDocId = existingSubscription.listingDocId;
-              const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
+              const listingUrl = `${STRAPI_API_URL}/api/listings/${listingDocId}`;
               const publishRes = await fetch(listingUrl, {
                 method: "PUT",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+                  ...STRAPI_AUTH_HEADERS,
                 },
                 body: JSON.stringify({
                   data: {
@@ -492,9 +578,9 @@ export async function POST(req: NextRequest) {
         });
 
         // Find and update subscription status to canceled
-        const findUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
+        const findUrl = `${STRAPI_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
         const findRes = await fetch(findUrl, {
-          headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+          headers: STRAPI_AUTH_HEADERS,
         });
         const findJson = await findRes.json().catch(() => ({}));
 
@@ -507,12 +593,12 @@ export async function POST(req: NextRequest) {
         const documentId = existingSubscription.documentId;
 
         const updateRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions/${documentId}`,
+          `${STRAPI_API_URL}/api/subscriptions/${documentId}`,
           {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+              ...STRAPI_AUTH_HEADERS,
             },
             body: JSON.stringify({
               data: {
@@ -545,12 +631,12 @@ export async function POST(req: NextRequest) {
           
           // Set listing back to draft when subscription is actually canceled
           try {
-            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
+            const listingUrl = `${STRAPI_API_URL}/api/listings/${listingDocId}`;
             const draftRes = await fetch(listingUrl, {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+                ...STRAPI_AUTH_HEADERS,
               },
               body: JSON.stringify({
                 data: {
@@ -605,9 +691,9 @@ export async function POST(req: NextRequest) {
 
         // Idempotency check: see if invoice already exists
         try {
-          const checkUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/invoices?filters[stripeInvoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
+          const checkUrl = `${STRAPI_API_URL}/api/invoices?filters[stripeInvoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
           const checkRes = await fetch(checkUrl, {
-            headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+            headers: STRAPI_AUTH_HEADERS,
           });
           const checkJson = await checkRes.json().catch(() => ({}));
           if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
@@ -619,25 +705,59 @@ export async function POST(req: NextRequest) {
         }
 
         // Find subscription in Strapi to link
-        const findSubUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
+        const findSubUrl = `${STRAPI_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
         const findSubRes = await fetch(findSubUrl, {
-          headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+          headers: STRAPI_AUTH_HEADERS,
         });
-        const findSubJson = await findSubRes.json().catch(() => ({}));
+        const findSubJson = await findSubRes.json().catch(() => ({} as { data?: StrapiSubscriptionEntry[] }));
 
         if (!Array.isArray(findSubJson?.data) || findSubJson.data.length === 0) {
           console.warn("Subscription not found for finalized invoice:", subscriptionId);
           break;
         }
 
-        const subscriptionDocId = findSubJson.data[0].documentId;
+        const subscriptionEntry = findSubJson.data[0] as StrapiSubscriptionEntry;
+        const subscriptionDocId = subscriptionEntry.documentId;
+        const listingDocId = subscriptionEntry.listingDocId || null;
+        const userId =
+          typeof subscriptionEntry.users_permissions_user === "object"
+            ? subscriptionEntry.users_permissions_user?.id
+            : subscriptionEntry.users_permissions_user;
+
+        const invoiceWithCustomerDetails = invoice as InvoiceWithCustomerDetails;
+        const publicToken = createPublicInvoiceToken();
+        const hostedUrl = buildPublicInvoiceUrl(publicToken);
+
+        const [sellerInvoiceDetail, listingResponse, userResponse] = await Promise.all([
+          fetchStrapiJson<{ data?: SellerInvoiceDetailEntry }>(
+            `${STRAPI_API_URL}/api/seller-invoice-detail`
+          ),
+          listingDocId
+            ? fetchStrapiJson<{ data?: StrapiListingEntry }>(
+                `${STRAPI_API_URL}/api/listings/${listingDocId}?populate=*`
+              )
+            : Promise.resolve(null),
+          userId
+            ? fetchStrapiJson<StrapiUserEntry>(`${STRAPI_API_URL}/api/users/${userId}`)
+            : Promise.resolve(null),
+        ]);
+
+        const sellerSnapshot = sellerInvoiceDetail?.data || {};
+        const listingTitle = listingResponse?.data?.title || null;
+        const buyerName =
+          userResponse?.username || invoiceWithCustomerDetails.customer_name || null;
+        const buyerEmail =
+          userResponse?.email || invoiceWithCustomerDetails.customer_email || null;
+        const buyerAddress = formatStripeAddress(invoiceWithCustomerDetails.customer_address);
+        const subscriptionTitle =
+          invoice.lines?.data?.[0]?.description || listingTitle || "Subscription";
 
         // Create invoice in Strapi
-        const createInvoiceRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/invoices`, {
+        const createInvoiceRes = await fetch(`${STRAPI_API_URL}/api/invoices`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+            ...STRAPI_AUTH_HEADERS,
           },
           body: JSON.stringify({
             data: {
@@ -647,9 +767,21 @@ export async function POST(req: NextRequest) {
               amount: parseFloat((invoice.total / 100).toFixed(2)),
               currency: invoice.currency,
               invoiceStatus: invoice.status || "open",
-              hostedUrl: invoice.hosted_invoice_url || null,
+              hostedUrl,
               periodStart: new Date(invoice.period_start * 1000).toISOString(),
               periodEnd: new Date(invoice.period_end * 1000).toISOString(),
+              publicToken,
+              buyerName,
+              buyerEmail,
+              buyerAddress,
+              listingTitle,
+              SubscriptionTitle: subscriptionTitle,
+              sellerCompanyName: sellerSnapshot.companyName || null,
+              sellerAddress: sellerSnapshot.address || null,
+              sellerCompanyId: sellerSnapshot.companyId || null,
+              sellerVatNumber: sellerSnapshot.vatNumber || null,
+              userDocumentId: userResponse?.documentId || null,
+              listingDocId,
             },
           }),
         });
@@ -684,9 +816,9 @@ export async function POST(req: NextRequest) {
         }
         
         // Find subscription in Strapi
-        const findUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
+        const findUrl = `${STRAPI_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
         const findRes = await fetch(findUrl, {
-          headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+          headers: STRAPI_AUTH_HEADERS,
         });
         const findJson = await findRes.json().catch(() => ({}));
 
@@ -706,9 +838,9 @@ export async function POST(req: NextRequest) {
         if (shouldCreateTransaction) {
           // Check if transaction already exists (idempotency)
           try {
-            const checkUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/subscription-transactions?filters[invoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
+            const checkUrl = `${STRAPI_API_URL}/api/subscription-transactions?filters[invoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
             const checkRes = await fetch(checkUrl, {
-              headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+              headers: STRAPI_AUTH_HEADERS,
             });
             const checkJson = await checkRes.json().catch(() => ({}));
             if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
@@ -723,12 +855,12 @@ export async function POST(req: NextRequest) {
         if (shouldCreateTransaction) {
           // Create transaction record
           const transactionRes = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/subscription-transactions`,
+            `${STRAPI_API_URL}/api/subscription-transactions`,
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+                ...STRAPI_AUTH_HEADERS,
               },
               body: JSON.stringify({
                 data: {
@@ -774,12 +906,12 @@ export async function POST(req: NextRequest) {
 
         // Always ensure listing stays published (important for reactivations) and Invoice is marked paid
         try {
-          const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
+          const listingUrl = `${STRAPI_API_URL}/api/listings/${listingDocId}`;
           const publishRes = await fetch(listingUrl, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+              ...STRAPI_AUTH_HEADERS,
             },
             body: JSON.stringify({
               data: {
@@ -804,19 +936,19 @@ export async function POST(req: NextRequest) {
 
         // In addition to transaction, update the actual Invoice status to paid
         try {
-          const checkUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/invoices?filters[stripeInvoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
+          const checkUrl = `${STRAPI_API_URL}/api/invoices?filters[stripeInvoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
           const checkRes = await fetch(checkUrl, {
-            headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+            headers: STRAPI_AUTH_HEADERS,
           });
           const checkJson = await checkRes.json().catch(() => ({}));
           
           if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
             const invoiceDocId = checkJson.data[0].documentId;
-            await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/invoices/${invoiceDocId}`, {
+            await fetch(`${STRAPI_API_URL}/api/invoices/${invoiceDocId}`, {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+                ...STRAPI_AUTH_HEADERS,
               },
               body: JSON.stringify({
                 data: {
@@ -850,9 +982,9 @@ export async function POST(req: NextRequest) {
 
         // Check if failed transaction already exists
         try {
-          const checkUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/subscription-transactions?filters[invoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
+          const checkUrl = `${STRAPI_API_URL}/api/subscription-transactions?filters[invoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
           const checkRes = await fetch(checkUrl, {
-            headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+            headers: STRAPI_AUTH_HEADERS,
           });
           const checkJson = await checkRes.json().catch(() => ({}));
           if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
@@ -864,9 +996,9 @@ export async function POST(req: NextRequest) {
         }
 
         // Find subscription in Strapi
-        const findUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
+        const findUrl = `${STRAPI_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
         const findRes = await fetch(findUrl, {
-          headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+          headers: STRAPI_AUTH_HEADERS,
         });
         const findJson = await findRes.json().catch(() => ({}));
 
@@ -880,12 +1012,12 @@ export async function POST(req: NextRequest) {
 
         // Create failed transaction record
         const transactionRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/subscription-transactions`,
+          `${STRAPI_API_URL}/api/subscription-transactions`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+              ...STRAPI_AUTH_HEADERS,
             },
             body: JSON.stringify({
               data: {
@@ -936,12 +1068,12 @@ export async function POST(req: NextRequest) {
           
           // Set listing to draft on payment failure
           try {
-            const listingUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/listings/${listingDocId}`;
+            const listingUrl = `${STRAPI_API_URL}/api/listings/${listingDocId}`;
             const draftRes = await fetch(listingUrl, {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+                ...STRAPI_AUTH_HEADERS,
               },
               body: JSON.stringify({
                 data: {
@@ -976,19 +1108,19 @@ export async function POST(req: NextRequest) {
           
           // In addition to transaction, update the actual Invoice status to failed
           try {
-            const checkUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/invoices?filters[stripeInvoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
+            const checkUrl = `${STRAPI_API_URL}/api/invoices?filters[stripeInvoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
             const checkRes = await fetch(checkUrl, {
-              headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
+              headers: STRAPI_AUTH_HEADERS,
             });
             const checkJson = await checkRes.json().catch(() => ({}));
             
             if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
               const invoiceDocId = checkJson.data[0].documentId;
-              await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/invoices/${invoiceDocId}`, {
+              await fetch(`${STRAPI_API_URL}/api/invoices/${invoiceDocId}`, {
                 method: "PUT",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+                  ...STRAPI_AUTH_HEADERS,
                 },
                 body: JSON.stringify({
                   data: {
