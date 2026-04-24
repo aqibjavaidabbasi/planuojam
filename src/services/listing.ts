@@ -1,4 +1,8 @@
-import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
+import {
+    LISTING_CARD_MAP_POP_STRUCTURE,
+    LISTING_CARD_POP_STRUCTURE,
+    LISTING_DETAIL_POP_STRUCTURE,
+} from "@/utils/listingPopulates";
 import { createQuery, deleteAPI, fetchAPI, fetchAPIWithMeta, postAPIWithToken, putAPI, API_URL } from "./api";
 import { fetchTagsByIds } from "./tags";
 import type { ListingItem } from "@/types/pagesTypes";
@@ -22,7 +26,7 @@ export async function fetchPromotedListingsWithMeta(
     pagination?: { page?: number; pageSize?: number },
     extraFilters: Record<string, unknown> = {}
 ) {
-    const populate = LISTING_ITEM_POP_STRUCTURE;
+    const populate = LISTING_CARD_POP_STRUCTURE;
     const baseFilters: Record<string, unknown> = {
         filters: {
             ...extraFilters,
@@ -43,61 +47,7 @@ export async function fetchPromotedListingsPerEventsWithMeta(
     pagination?: { page?: number; pageSize?: number },
     extraFilters: Record<string, unknown> = {}
 ) {
-    const populate = {
-        categories: {
-            populate: '*',
-        },
-        listingItem: {
-            on: {
-                'dynamic-blocks.vendor': {
-                    populate: {
-                        'serviceArea': {
-                            populate: {
-                                'city': {
-                                    populate: true,
-                                },
-                                'state': {
-                                    populate: true,
-                                }
-                            }
-                        }
-                    }
-                },
-                'dynamic-blocks.venue': {
-                    populate: {
-                        location: {
-                            populate: '*'
-                        },
-                        amneties: {
-                            populate: '*'
-                        }
-                    }
-                }
-            }
-        },
-        portfolio: {
-            populate: '*'
-        },
-        videos: {
-            populate: '*'
-        },
-        reviews: {
-            populate: '*'
-        },
-        user: {
-            populate: '*'
-        },
-        eventTypes: {
-            populate: '*'
-        },
-        hotDeal: {
-            populate: {
-                discount: {
-                    populate: '*'
-                }
-            }
-        },
-    } 
+    const populate = LISTING_CARD_POP_STRUCTURE;
     const baseFilters: Record<string, unknown> = {
         filters: {
             eventTypes: { documentId: eventTypeDocId },
@@ -118,7 +68,7 @@ export async function fetchPromotedHotDealsWithMeta(
     pagination?: { page?: number; pageSize?: number },
     extraFilters: Record<string, unknown> = {}
 ) {
-    const populate = LISTING_ITEM_POP_STRUCTURE;
+    const populate = LISTING_CARD_POP_STRUCTURE;
     const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
     const baseFilters: Record<string, unknown> = {
         filters: {
@@ -139,7 +89,7 @@ export async function fetchPromotedHotDealsWithMeta(
 
 // Promoted-first listings filtered by event type documentId
 export async function fetchPromotedListingsPerEvents(eventTypeDocId: string, locale?: string) {
-    const populate = LISTING_ITEM_POP_STRUCTURE;
+    const populate = LISTING_CARD_POP_STRUCTURE;
     const baseFilters = {
         filters: {
             eventTypes: {
@@ -215,7 +165,7 @@ export async function deleteListing(id: string) {
 }
 
 export async function fetchListingBySlug(slug: string, locale?: string) {
-    const populate = LISTING_ITEM_POP_STRUCTURE;
+    const populate = LISTING_DETAIL_POP_STRUCTURE;
     const filters = {
         filters: {
             slug: { $eq: slug }
@@ -507,7 +457,7 @@ export async function fetchListingsByUserLeastPopulated(documentId: string, stat
 export async function fetchListingsByDocumentIds(documentIds: string[], locale?: string): Promise<ListingItem[]> {
     if (!documentIds.length) return [];
 
-    const populate = LISTING_ITEM_POP_STRUCTURE;
+    const populate = LISTING_CARD_POP_STRUCTURE;
     const filters = {
         filters: {
             documentId: { $in: documentIds }
@@ -571,7 +521,7 @@ export async function fetchSortedListingsWithMeta(
     locale?: string,
     pagination?: { page: number; pageSize: number }
 ) {
-    const populate = LISTING_ITEM_POP_STRUCTURE;
+    const populate = LISTING_CARD_MAP_POP_STRUCTURE;
     const baseFilters: Record<string, unknown> = {
         filters: {
             // Only add type filter if serviceType is provided

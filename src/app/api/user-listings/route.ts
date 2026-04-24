@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import QueryString from 'qs';
 import { createQuery } from '@/services/api';
+import { LISTING_CARD_POP_STRUCTURE } from '@/utils/listingPopulates';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337';
 
@@ -36,58 +37,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-        const populate = {
-        categories: {
-            populate: '*',
-        },
-        listingItem: {
-            on: {
-                'dynamic-blocks.vendor': {
-                    populate: {
-                        'serviceArea': {
-                            populate: {
-                                'city': {
-                                    populate: true,
-                                },
-                                'state': {
-                                    populate: true,
-                                }
-                            }
-                        }
-                    }
-                },
-                'dynamic-blocks.venue': {
-                    populate: {
-                        location: {
-                            populate: '*'
-                        },
-                        amneties: {
-                            populate: '*'
-                        }
-                    }
-                }
-            }
-        },
-        portfolio: {
-            populate: '*'
-        },
-        videos: {
-            populate: '*'
-        },
-        user: {
-            populate: '*'
-        },
-        eventTypes: {
-            populate: '*'
-        },
-        hotDeal: {
-            populate: {
-                discount: {
-                    populate: '*'
-                }
-            }
-        },
-    };
+    const populate = LISTING_CARD_POP_STRUCTURE;
 
 
     const baseFilters: Record<string, unknown> = {

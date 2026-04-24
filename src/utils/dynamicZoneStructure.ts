@@ -1,3 +1,5 @@
+import { LISTING_CARD_POP_STRUCTURE } from './listingPopulates';
+
 export const PAGES_DYNAMIC_ZONE = {
     blocks: {
         on: {
@@ -171,35 +173,7 @@ export const PAGES_DYNAMIC_ZONE = {
                     'topListings': {
                         populate: {
                             'listings': {
-                                populate: {
-                                    'listingItem': {
-                                        populate: '*'
-                                    },
-                                    'contact': {
-                                        populate: '*'
-                                    },
-                                    'socialLinks': {
-                                        populate: '*'
-                                    },
-                                    'pricingPackages': {
-                                        populate: '*'
-                                    },
-                                    'FAQs': {
-                                        populate: '*'
-                                    },
-                                    'hotDeal': {
-                                        populate: '*'
-                                    },
-                                    'localizations': {
-                                        populate: '*'
-                                    },
-                                    'portfolio': {
-                                        populate: '*'
-                                    },
-                                    'videos': {
-                                        populate: '*'
-                                    }
-                                }
+                                populate: LISTING_CARD_POP_STRUCTURE
                             }
                         }
                     }

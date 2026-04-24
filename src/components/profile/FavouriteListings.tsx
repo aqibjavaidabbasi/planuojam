@@ -104,15 +104,6 @@ function FavouriteListings() {
           const likedItem = items.find(item => item.listing === listing.documentId);
           if (!likedItem) return null;
 
-          if (listing.locale === 'en' && locale === 'en') {
-            return <ListingCard key={likedItem.documentId} item={listing} />
-          }
-
-          const entry = listing.localizations?.find(loc => loc.locale === locale);
-          if (entry) {
-            return <ListingCard key={likedItem.documentId} item={entry} />
-          }
-          // Fallback to original listing if no localization found
           return <ListingCard key={likedItem.documentId} item={listing} />
         })
         : <div className="col-span-3">

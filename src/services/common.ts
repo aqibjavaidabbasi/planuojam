@@ -1,4 +1,7 @@
-import { LISTING_ITEM_POP_STRUCTURE } from '@/utils/ListingItemStructure';
+import {
+  LISTING_CARD_MAP_POP_STRUCTURE,
+  LISTING_CARD_POP_STRUCTURE,
+} from '@/utils/listingPopulates';
 import { createQuery, fetchAPI } from './api';
 import { DEFAULT_LOCALE } from '@/config/i18n';
 
@@ -155,7 +158,7 @@ export async function fetchListings(
   appliedFilters = {},
   locale?: string,
 ) {
-  const populate = LISTING_ITEM_POP_STRUCTURE;
+  const populate = LISTING_CARD_MAP_POP_STRUCTURE;
   const filters = {
     filters: {
       // Only add type filter if provided
@@ -257,7 +260,7 @@ export async function fetchListingSuggestions(
 }
 
 export async function fetchHotDealListings(filter = {}) {
-  const populate = LISTING_ITEM_POP_STRUCTURE;
+  const populate = LISTING_CARD_POP_STRUCTURE;
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const filters = {
     filters: {
