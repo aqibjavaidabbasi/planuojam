@@ -77,7 +77,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
 
   return (
     <div
-      className="rounded-lg bg-white relative w-full max-w-[300px] overflow-hidden border border-border"
+      className="rounded-lg bg-white relative w-full max-w-75 overflow-hidden border border-border"
       style={{
         boxShadow:
           '2px 0px 4px rgba(0,0,0,0.1), 0px 2px 4px rgba(0,0,0,0.1), 0px -2px 4px rgba(0,0,0,0.1), -2px 0px 4px rgba(0,0,0,0.1)'
@@ -119,18 +119,26 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
 
             return (
               <SwiperSlide key={`image-${idx}`}>
-                <div className="relative w-full aspect-4/3 bg-black">
-                  <Image
-                    src={mediaUrl}
-                    alt={t('imageAlt', { index: idx + 1 })}
-                    fill
-                    className='object-cover object-center'
-                    sizes="(max-width: 768px) 100vw, 400px"
-                    priority={idx === 0 && !!highPriority}
-                    fetchPriority={idx === 0 && highPriority ? 'high' : 'auto'}
-                    loading={idx === 0 && highPriority ? 'eager' : 'lazy'}
-                  />
-                </div>
+                <Link
+                  href={viewPath}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                  title={item.title}
+                >
+                  <div className="relative w-full aspect-4/3 bg-black">
+                    <Image
+                      src={mediaUrl}
+                      alt={t('imageAlt', { index: idx + 1 })}
+                      fill
+                      className='object-cover object-center'
+                      sizes="(max-width: 768px) 100vw, 400px"
+                      priority={idx === 0 && !!highPriority}
+                      fetchPriority={idx === 0 && highPriority ? 'high' : 'auto'}
+                      loading={idx === 0 && highPriority ? 'eager' : 'lazy'}
+                    />
+                  </div>
+                </Link>
               </SwiperSlide>
             );
           })}
@@ -251,7 +259,15 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
         )}
         {/* Title and Rating */}
         <div className="flex justify-between items-center gap-2">
-          <strong className="text-base md:text-lg truncate max-w-[180px]">{item.title}</strong>
+          <Link
+            href={viewPath}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="min-w-0 max-w-45"
+            title={item.title}
+          >
+            <strong className="block truncate text-base md:text-lg hover:text-primary transition-colors">{item.title}</strong>
+          </Link>
           <div className="flex gap-1 text-primary items-center text-sm shrink-0">
             <span>{item.averageRating ?? t('unrated')}</span>
             <span>({item.ratingsCount ?? 0})</span>
@@ -259,11 +275,11 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
         </div>
 
         {/* Location, Category, Event Type */}
-        <div className="min-h-[40px] max-h-[48px] overflow-hidden">
+        <div className="min-h-10 max-h-12 overflow-hidden">
           <ul className="space-y-1 text-sm text-secondary">
             {item.listingItem?.length > 0 && (
               <li className="flex items-start ml-3">
-                <span className="truncate block max-w-[210px]">
+                <span className="truncate block max-w-52.5`">
                   {item.listingItem[0].__component === 'dynamic-blocks.vendor' && (
                     <>
                       {item.listingItem[0].serviceArea?.length > 0
@@ -294,7 +310,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
             )}
             {item.categories && item.categories.length > 0 && (
               <li className="flex items-start ml-3">
-                <span className="truncate block max-w-[210px]">{item.categories[0]?.name}</span>
+                <span className="truncate block max-w-52.5">{item.categories[0]?.name}</span>
               </li>
             )}
           </ul>
