@@ -29,6 +29,8 @@ export default function InvoicePdfTemplate({
 }: InvoicePdfTemplateProps) {
   const description = invoice.SubscriptionTitle || invoice.listingTitle || labels.subscriptionLabel;
   const amountSummaryLabel = labels.amountPaid || labels.amountDue || "-";
+  const buyerDisplayName = invoice.buyerCompanyName || invoice.buyerName || "-";
+  const buyerAddress = invoice.buyerCompanyAddress || invoice.buyerAddress || "-";
 
   return (
     <div
@@ -94,12 +96,21 @@ export default function InvoicePdfTemplate({
           >
             {labels.billedTo}
           </p>
-          <p className="mb-1 text-lg font-semibold">{invoice.buyerName || "-"}</p>
+          <p className="mb-1 text-lg font-semibold">{buyerDisplayName}</p>
+          <p className="mb-1 text-sm" style={{ color: "#475569" }}>
+            {labels.companyId}: {invoice.buyerCompanyId || "-"}
+          </p>
+          <p className="mb-1 text-sm" style={{ color: "#475569" }}>
+            {labels.vatNumber}: {invoice.buyerCompanyVAT || "-"}
+          </p>
+          <p className="mb-1 text-sm" style={{ color: "#475569" }}>
+            {labels.companyAddress}: {buyerAddress}
+          </p>
+          <p className="mb-1 text-sm" style={{ color: "#475569" }}>
+            {labels.contactPerson}: {invoice.buyerContactPerson || invoice.buyerName || "-"}
+          </p>
           <p className="mb-1 text-sm" style={{ color: "#475569" }}>
             {labels.buyerEmail}: {invoice.buyerEmail || "-"}
-          </p>
-          <p className="m-0 text-sm leading-6" style={{ color: "#475569" }}>
-            {labels.buyerAddress}: {invoice.buyerAddress || "-"}
           </p>
         </div>
 

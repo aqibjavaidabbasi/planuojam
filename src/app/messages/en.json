@@ -478,6 +478,34 @@
         "button": "Delete Account"
       }
     },
+    "InvoiceInformation": {
+      "title": "Set Invoice Information",
+      "description": "Existing listings are fine. For further listing creations, please save this invoice information first.",
+      "incompleteNotice": "Complete this section to enable new listing creation.",
+      "types": {
+        "individual": "Individual",
+        "company": "Company"
+      },
+      "fields": {
+        "companyName": "Company name",
+        "companyId": "Company ID",
+        "companyVAT": "Company VAT",
+        "companyAddress": "Company address",
+        "contactPerson": "Contact person"
+      },
+      "actions": {
+        "save": "Save Invoice Information",
+        "saving": "Saving..."
+      },
+      "validation": {
+        "companyRequired": "Company name, company ID, address, and contact person are required.",
+        "individualRequired": "Billing address and contact person are required."
+      },
+      "toasts": {
+        "saved": "Invoice information saved.",
+        "saveFailed": "Failed to save invoice information."
+      }
+    },
     "promotions": {
       "title": "Promotions",
       "selectListing": "Select Listing",
@@ -542,6 +570,7 @@
       "filterLabel": "Filter by status",
       "allStatuses": "All statuses",
       "create": "Create Listing",
+      "invoiceInfoRequired": "Your existing listings are fine. For further listing creations, please fill in Set Invoice Information in your profile tab.",
       "empty": "No Listings to show. Start by creating your first listing",
       "status": {
         "draft": "Draft",
@@ -826,7 +855,8 @@
         "bookingDurationTypeRequired": "Booking duration type is required",
         "bookingDurationInvalid": "Booking duration must be greater than 0",
         "minimumDurationInvalid": "Minimum duration must be a valid number",
-        "slugGenerationFailed": "Failed to generate URL slug from title"
+        "slugGenerationFailed": "Failed to generate URL slug from title",
+        "invoiceInfoRequired": "Please fill in Set Invoice Information in your profile tab before creating a new listing."
       },
       "toasts": {
         "created": "Listing Created Successfully",

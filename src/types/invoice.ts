@@ -9,6 +9,11 @@ export interface PublicInvoiceData {
   buyerName?: string | null;
   buyerEmail?: string | null;
   buyerAddress?: string | null;
+  buyerCompanyName?: string | null;
+  buyerCompanyId?: string | null;
+  buyerCompanyVAT?: string | null;
+  buyerCompanyAddress?: string | null;
+  buyerContactPerson?: string | null;
   listingTitle?: string | null;
   SubscriptionTitle?: string | null;
   sellerCompanyName?: string | null;
@@ -34,6 +39,9 @@ export interface InvoicePdfLabels {
   amountDue?: string;
   buyerEmail: string;
   buyerAddress: string;
+  companyName: string;
+  companyAddress: string;
+  contactPerson: string;
   companyId: string;
   vatNumber: string;
   subscriptionLabel: string;

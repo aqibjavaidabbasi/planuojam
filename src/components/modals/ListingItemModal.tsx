@@ -58,6 +58,7 @@ interface ListingItemModalProps {
   onClose: () => void;
   onSaved?: (newListing?: ListingItem) => void;
   setShowSubscriptionModal: (show: boolean) => void;
+  canCreateListing?: boolean;
 }
 
 const ErrorMessage = ({
@@ -145,6 +146,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
   onClose,
   onSaved,
   setShowSubscriptionModal,
+  canCreateListing = true,
 }) => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -614,6 +616,13 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
   };
 
   const onSubmit = async () => {
+    if (!canCreateListing) {
+      setError(
+        t('errors.invoiceInfoRequired'),
+      );
+      return;
+    }
+
     setSubmitting(true);
     setError(null);
     setIsLoading(true);

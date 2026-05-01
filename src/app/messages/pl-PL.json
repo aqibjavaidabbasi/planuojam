@@ -536,7 +536,8 @@
         "published": "Opublikowane",
         "pending": "Oczekuje na weryfikację",
         "archived": "Zarchiwizowane"
-      }
+      },
+      "invoiceInfoRequired": "Twoje istniejące ogłoszenia pozostają bez zmian. Aby tworzyć kolejne ogłoszenia, uzupełnij sekcję „Ustaw dane do faktury” w zakładce profilu."
     },
     "Messages": {
       "title": "Wiadomości",
@@ -621,6 +622,34 @@
       "toasts": {
         "updating": "Aktualizowanie zapytania...",
         "updated": "Status zapytania został zaktualizowany."
+      }
+    },
+    "InvoiceInformation": {
+      "title": "Ustaw dane do faktury",
+      "description": "Istniejące ogłoszenia pozostają bez zmian. Aby tworzyć kolejne ogłoszenia, najpierw zapisz te dane do faktury.",
+      "incompleteNotice": "Uzupełnij tę sekcję, aby włączyć tworzenie nowych ogłoszeń.",
+      "types": {
+        "individual": "Osoba prywatna",
+        "company": "Firma"
+      },
+      "fields": {
+        "companyName": "Nazwa firmy",
+        "companyId": "Numer firmy",
+        "companyVAT": "NIP / VAT",
+        "companyAddress": "Adres firmy",
+        "contactPerson": "Osoba kontaktowa"
+      },
+      "actions": {
+        "save": "Zapisz dane do faktury",
+        "saving": "Zapisywanie..."
+      },
+      "validation": {
+        "companyRequired": "Nazwa firmy, numer firmy, adres i osoba kontaktowa są wymagane.",
+        "individualRequired": "Adres do faktury i osoba kontaktowa są wymagane."
+      },
+      "toasts": {
+        "saved": "Dane do faktury zostały zapisane.",
+        "saveFailed": "Nie udało się zapisać danych do faktury."
       }
     }
   },
@@ -846,7 +875,8 @@
         "bookingDurationTypeRequired": "Typ czasu rezerwacji jest wymagany",
         "bookingDurationInvalid": "Czas trwania rezerwacji musi być większy niż 0",
         "minimumDurationInvalid": "Minimalny czas trwania musi być liczbą",
-        "slugGenerationFailed": "Nie udało się wygenerować adresu URL z tytułu"
+        "slugGenerationFailed": "Nie udało się wygenerować adresu URL z tytułu",
+        "invoiceInfoRequired": "Przed utworzeniem nowego ogłoszenia uzupełnij sekcję „Ustaw dane do faktury” w zakładce profilu."
       },
       "toasts": {
         "created": "Ogłoszenie zostało pomyślnie utworzone",

@@ -9,4 +9,5 @@ export interface User{
     totalStars?: number;
     stripeCustomerId?: string;
     preferredLanguage?: string;
+    invoiceCustomerType?: "individual" | "company" | null;
 }

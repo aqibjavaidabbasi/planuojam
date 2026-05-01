@@ -5,6 +5,11 @@ import ListingItemModal from "../modals/ListingItemModal";
 import { useAppSelector } from "@/store/hooks";
 import Select from "../custom/Select";
 import { fetchListingsByUserNoCacheFromApi } from "@/services/listing";
+import {
+  BuyerInvoiceInformation,
+  fetchBuyerInvoiceInformation,
+  isBuyerInvoiceInformationComplete,
+} from "@/services/buyerInvoiceInformation";
 import type { ListingItem } from "@/types/pagesTypes";
 import ListingCard from "@/components/Dynamic/ListingCard";
 import { useLocale, useTranslations } from "next-intl";
@@ -25,6 +30,7 @@ function Mylistings() {
   const [stripeProducts, setStripeProducts] = useState<StripeProductAttributes[]>([]);
   const [openSubscriptionModal, setOpenSubscriptionModal] = useState(false);
   const [selectedListingForSubscription, setSelectedListingForSubscription] = useState<ListingItem | null>(null);
+  const [buyerInvoiceInfo, setBuyerInvoiceInfo] = useState<BuyerInvoiceInformation | null>(null);
 
   const statusOptions = useMemo(
     () => [
@@ -68,15 +74,31 @@ function Mylistings() {
     }
   }, []);
 
+  const loadBuyerInvoiceInformation = useCallback(async () => {
+    if (!user?.documentId) return;
+    try {
+      const info = await fetchBuyerInvoiceInformation(user.documentId);
+      setBuyerInvoiceInfo(info);
+    } catch {
+      setBuyerInvoiceInfo(null);
+    }
+  }, [user?.documentId]);
+
   useEffect(() => {
     async function load(){
       setLoading(true);
       await loadListings();
       await loadStripeProducts();
+      await loadBuyerInvoiceInformation();
       setLoading(false);
     }
     load();
-  }, [user?.documentId, statusFilter, loadListings, loadStripeProducts]);
+  }, [user?.documentId, statusFilter, loadListings, loadStripeProducts, loadBuyerInvoiceInformation]);
+
+  const canCreateListing = isBuyerInvoiceInformationComplete(
+    user?.invoiceCustomerType,
+    buyerInvoiceInfo
+  );
 
   return (
     <div className="p-4 md:p-6 lg:p-8">
@@ -95,11 +117,23 @@ function Mylistings() {
               placeholder={t('allStatuses')}
             />
           </div>
-          <Button style="secondary" size="large" onClick={() => setOpen(true)} extraStyles="!whitespace-nowrap flex-shrink-0">
+          <Button
+            style="secondary"
+            size="large"
+            onClick={() => setOpen(true)}
+            extraStyles="!whitespace-nowrap flex-shrink-0"
+            disabled={!canCreateListing}
+          >
             {t('create')}
           </Button>
         </div>
       </div>
+
+      {!canCreateListing && (
+        <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {t('invoiceInfoRequired')}
+        </div>
+      )}
 
       {loading && <p className="text-sm md:text-base text-gray-600">{tCommon('loading')}</p>}
       {!loading && error && <p className="text-sm md:text-base text-red-600">{error}</p>}
@@ -120,6 +154,7 @@ function Mylistings() {
       <ListingItemModal
         isOpen={open}
         onClose={() => setOpen(false)}
+        canCreateListing={canCreateListing}
         onSaved={(newListing?: ListingItem) => {
           loadListings();
           setOpen(false);

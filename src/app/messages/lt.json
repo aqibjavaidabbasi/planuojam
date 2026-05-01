@@ -465,7 +465,6 @@
         "deleted": "Paskyra ištrinta sėkmingai"
       }
     },
-
     "ListingItem": {
       "subscriptionHint": "Jūsų skelbimas buvo išsaugotas kaip juodraštis, prenumeruokite, kad jį paskelbti",
       "later": "Vėliau",
@@ -493,7 +492,8 @@
         "bookingDurationTypeRequired": "Užsakymo trukmės tipas yra privalomas",
         "bookingDurationInvalid": "Užsakymo trukmė turi būti didesnė nei 0",
         "minimumDurationInvalid": "Minimali trukmė turi būti teigiamas skaičius",
-        "slugGenerationFailed": "Nepavyko sugeneruoti URL iš pavadinimo"
+        "slugGenerationFailed": "Nepavyko sugeneruoti URL iš pavadinimo",
+        "invoiceInfoRequired": "Prieš kurdami naują skelbimą, profilio kortelėje užpildykite skiltį „Nustatyti sąskaitos informaciją“."
       },
       "toasts": {
         "created": "Skelbimas sėkmingai sukurtas",
@@ -1131,7 +1131,8 @@
         "published": "Paskelbtas",
         "pending": "Laukia peržiūros",
         "archived": "Archyvuotas"
-      }
+      },
+      "invoiceInfoRequired": "Jūsų esami skelbimai lieka galioti. Norėdami kurti naujus skelbimus, užpildykite skiltį „Nustatyti sąskaitos informaciją“ profilio kortelėje."
     },
     "Messages": {
       "title": "Žinutės",
@@ -1185,6 +1186,34 @@
       "toasts": {
         "updating": "Atnaujinama užklausa...",
         "updated": "Užklausos būsena atnaujinta."
+      }
+    },
+    "InvoiceInformation": {
+      "title": "Nustatyti sąskaitos informaciją",
+      "description": "Esami skelbimai lieka galioti. Norėdami kurti naujus skelbimus, pirmiausia išsaugokite šią sąskaitos informaciją.",
+      "incompleteNotice": "Užpildykite šią skiltį, kad galėtumėte kurti naujus skelbimus.",
+      "types": {
+        "individual": "Fizinis asmuo",
+        "company": "Įmonė"
+      },
+      "fields": {
+        "companyName": "Įmonės pavadinimas",
+        "companyId": "Įmonės kodas",
+        "companyVAT": "PVM kodas",
+        "companyAddress": "Įmonės adresas",
+        "contactPerson": "Kontaktinis asmuo"
+      },
+      "actions": {
+        "save": "Išsaugoti sąskaitos informaciją",
+        "saving": "Išsaugoma..."
+      },
+      "validation": {
+        "companyRequired": "Būtina nurodyti įmonės pavadinimą, įmonės kodą, adresą ir kontaktinį asmenį.",
+        "individualRequired": "Būtina nurodyti sąskaitos adresą ir kontaktinį asmenį."
+      },
+      "toasts": {
+        "saved": "Sąskaitos informacija išsaugota.",
+        "saveFailed": "Nepavyko išsaugoti sąskaitos informacijos."
       }
     }
   },

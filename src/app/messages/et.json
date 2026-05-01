@@ -484,7 +484,7 @@
       "customStars": "Tärnid (kohandatud)",
       "customDays": "Päevad (kohandatud)",
       "total": "Kokku",
-      "priceHint": "Kohandatud hind arvutatakse: 'Hind täheks tärni kohta päevas' × 'tärnid' × 'päevad'.",      
+      "priceHint": "Kohandatud hind arvutatakse: 'Hind täheks tärni kohta päevas' × 'tärnid' × 'päevad'.",
       "created": "Reklaam on edukalt loodud",
       "failed": "Pakkumise loomine ebaõnnestus",
       "cancel": "Anulować",
@@ -534,7 +534,8 @@
         "published": "Avaldatud",
         "pending": "Läbivaatamisel",
         "archived": "Arhiveeritud"
-      }
+      },
+      "invoiceInfoRequired": "Olemasolevad kuulutused jäävad kehtima. Uute kuulutuste loomiseks täida profiili vahekaardil jaotis „Määra arve andmed”."
     },
     "Messages": {
       "title": "Sõnumid",
@@ -619,6 +620,34 @@
       "toasts": {
         "updating": "Päringu uuendamine...",
         "updated": "Päringu staatus on uuendatud."
+      }
+    },
+    "InvoiceInformation": {
+      "title": "Määra arve andmed",
+      "description": "Olemasolevad kuulutused jäävad kehtima. Uute kuulutuste loomiseks salvesta esmalt need arve andmed.",
+      "incompleteNotice": "Uute kuulutuste loomiseks täida see jaotis.",
+      "types": {
+        "individual": "Eraisik",
+        "company": "Ettevõte"
+      },
+      "fields": {
+        "companyName": "Ettevõtte nimi",
+        "companyId": "Ettevõtte registrikood",
+        "companyVAT": "KMKR number",
+        "companyAddress": "Ettevõtte aadress",
+        "contactPerson": "Kontaktisik"
+      },
+      "actions": {
+        "save": "Salvesta arve andmed",
+        "saving": "Salvestamine..."
+      },
+      "validation": {
+        "companyRequired": "Ettevõtte nimi, registrikood, aadress ja kontaktisik on kohustuslikud.",
+        "individualRequired": "Arve aadress ja kontaktisik on kohustuslikud."
+      },
+      "toasts": {
+        "saved": "Arve andmed on salvestatud.",
+        "saveFailed": "Arve andmete salvestamine ebaõnnestus."
       }
     }
   },
@@ -844,7 +873,8 @@
         "bookingDurationTypeRequired": "Nõutav on broneeringu kestuse tüüp",
         "bookingDurationInvalid": "Broneeringu kestus peab olema suurem kui 0",
         "minimumDurationInvalid": "Minimaalne kestus peab olema arv",
-        "slugGenerationFailed": "URL-i genereerimine pealkirjast ebaõnnestus"
+        "slugGenerationFailed": "URL-i genereerimine pealkirjast ebaõnnestus",
+        "invoiceInfoRequired": "Enne uue kuulutuse loomist täida profiili vahekaardil jaotis „Määra arve andmed”."
       },
       "toasts": {
         "created": "Kuulutus on edukalt loodud",

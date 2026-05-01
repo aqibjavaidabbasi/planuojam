@@ -16,6 +16,7 @@ import { checkUsernameAvailability } from "@/services/auth";
 import { customUpdatePassword, customUpdateProfile, customSetPasswordFirstTime } from "@/services/authCustom";
 import { useAppDispatch } from "@/store/hooks";
 import { setUser } from "@/store/slices/authSlice";
+import InvoiceInformationSection from "./InvoiceInformationSection";
 
 type PasswordForm = {
   currentPassword: string;
@@ -311,6 +312,7 @@ function ProfileTab({ user }: { user: User | null }) {
             ))}
           </div>
         )}
+        <InvoiceInformationSection user={user} />
         {/* Password Section (first-time vs normal) */}
         {isFirstTimePasswordSetup ? (
           <div className="mt-12 pt-8 border-t border-gray-200">
@@ -526,4 +528,3 @@ function ProfileTab({ user }: { user: User | null }) {
 }
 
 export default ProfileTab;
-

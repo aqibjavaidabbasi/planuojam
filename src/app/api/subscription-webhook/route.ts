@@ -58,6 +58,14 @@ type SellerInvoiceDetailEntry = {
   vatNumber?: string;
 };
 
+type BuyerInvoiceInformationEntry = {
+  companyName?: string;
+  companyId?: string;
+  companyVAT?: string;
+  companyAddress?: string;
+  contactPerson?: string;
+};
+
 const STRAPI_API_URL = process.env.NEXT_PUBLIC_API_URL!;
 const STRAPI_AUTH_HEADERS = {
   Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
@@ -705,7 +713,7 @@ export async function POST(req: NextRequest) {
         }
 
         // Find subscription in Strapi to link
-        const findSubUrl = `${STRAPI_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
+        const findSubUrl = `${STRAPI_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}&populate[users_permissions_user][fields][0]=id&populate[users_permissions_user][fields][1]=documentId`;
         const findSubRes = await fetch(findSubUrl, {
           headers: STRAPI_AUTH_HEADERS,
         });
@@ -728,7 +736,7 @@ export async function POST(req: NextRequest) {
         const publicToken = createPublicInvoiceToken();
         const hostedUrl = buildPublicInvoiceUrl(publicToken);
 
-        const [sellerInvoiceDetail, listingResponse, userResponse] = await Promise.all([
+        const [sellerInvoiceDetail, listingResponse, userResponse, buyerInvoiceInformation] = await Promise.all([
           fetchStrapiJson<{ data?: SellerInvoiceDetailEntry }>(
             `${STRAPI_API_URL}/api/seller-invoice-detail`
           ),
@@ -740,15 +748,26 @@ export async function POST(req: NextRequest) {
           userId
             ? fetchStrapiJson<StrapiUserEntry>(`${STRAPI_API_URL}/api/users/${userId}`)
             : Promise.resolve(null),
+          userId
+            ? fetchStrapiJson<{ data?: BuyerInvoiceInformationEntry[] }>(
+                `${STRAPI_API_URL}/api/buyer-invoice-informations?filters[users_permissions_user][id][$eq]=${encodeURIComponent(String(userId))}`
+              )
+            : Promise.resolve(null),
         ]);
 
         const sellerSnapshot = sellerInvoiceDetail?.data || {};
+        const buyerSnapshot = buyerInvoiceInformation?.data?.[0] || {};
         const listingTitle = listingResponse?.data?.title || null;
         const buyerName =
-          userResponse?.username || invoiceWithCustomerDetails.customer_name || null;
+          buyerSnapshot.contactPerson ||
+          userResponse?.username ||
+          invoiceWithCustomerDetails.customer_name ||
+          null;
         const buyerEmail =
           userResponse?.email || invoiceWithCustomerDetails.customer_email || null;
-        const buyerAddress = formatStripeAddress(invoiceWithCustomerDetails.customer_address);
+        const buyerAddress =
+          buyerSnapshot.companyAddress ||
+          formatStripeAddress(invoiceWithCustomerDetails.customer_address);
         const subscriptionTitle =
           invoice.lines?.data?.[0]?.description || listingTitle || "Subscription";
 
@@ -774,6 +793,11 @@ export async function POST(req: NextRequest) {
               buyerName,
               buyerEmail,
               buyerAddress,
+              buyerCompanyName: buyerSnapshot.companyName || null,
+              buyerCompanyId: buyerSnapshot.companyId || null,
+              buyerCompanyVAT: buyerSnapshot.companyVAT || null,
+              buyerCompanyAddress: buyerSnapshot.companyAddress || null,
+              buyerContactPerson: buyerSnapshot.contactPerson || null,
               listingTitle,
               SubscriptionTitle: subscriptionTitle,
               sellerCompanyName: sellerSnapshot.companyName || null,
