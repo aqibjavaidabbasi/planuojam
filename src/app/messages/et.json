@@ -624,7 +624,7 @@
     },
     "InvoiceInformation": {
       "title": "Määra arve andmed",
-      "description": "Olemasolevad kuulutused jäävad kehtima. Uute kuulutuste loomiseks salvesta esmalt need arve andmed.",
+      "description": "Olemasolevad kuulutused sobivad. Edasiste kuulutuste loomiseks salvestage palun esmalt see arve teave. Täitke see teave hoolikalt, kuna seda teavet kasutatakse arveldamiseks.",
       "incompleteNotice": "Uute kuulutuste loomiseks täida see jaotis.",
       "types": {
         "individual": "Eraisik",
@@ -635,7 +635,10 @@
         "companyId": "Ettevõtte registrikood",
         "companyVAT": "KMKR number",
         "companyAddress": "Ettevõtte aadress",
-        "contactPerson": "Kontaktisik"
+        "contactPerson": "Kontaktisik",
+        "individualName": "Eesnimi",
+        "individualSurname": "Perekonnanimi",
+        "registrationAddress": "Registreeritud aadress"
       },
       "actions": {
         "save": "Salvesta arve andmed",
@@ -643,7 +646,7 @@
       },
       "validation": {
         "companyRequired": "Ettevõtte nimi, registrikood, aadress ja kontaktisik on kohustuslikud.",
-        "individualRequired": "Arve aadress ja kontaktisik on kohustuslikud."
+        "individualRequired": "Eesnimi, perekonnanimi ja registreeritud aadress on kohustuslikud."
       },
       "toasts": {
         "saved": "Arve andmed on salvestatud.",

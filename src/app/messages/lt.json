@@ -1190,7 +1190,7 @@
     },
     "InvoiceInformation": {
       "title": "Nustatyti sąskaitos informaciją",
-      "description": "Esami skelbimai lieka galioti. Norėdami kurti naujus skelbimus, pirmiausia išsaugokite šią sąskaitos informaciją.",
+      "description": "Esami skelbimai tinka. Norėdami kurti tolesnius skelbimus, pirmiausia išsaugokite šią sąskaitos faktūros informaciją. Atidžiai užpildykite šią informaciją, nes ji bus naudojama sąskaitoms faktūroms išrašyti.",
       "incompleteNotice": "Užpildykite šią skiltį, kad galėtumėte kurti naujus skelbimus.",
       "types": {
         "individual": "Fizinis asmuo",
@@ -1201,7 +1201,10 @@
         "companyId": "Įmonės kodas",
         "companyVAT": "PVM kodas",
         "companyAddress": "Įmonės adresas",
-        "contactPerson": "Kontaktinis asmuo"
+        "contactPerson": "Kontaktinis asmuo",
+        "individualName": "Vardas",
+        "individualSurname": "Pavardė",
+        "registrationAddress": "Registracijos adresas"
       },
       "actions": {
         "save": "Išsaugoti sąskaitos informaciją",
@@ -1209,7 +1212,7 @@
       },
       "validation": {
         "companyRequired": "Būtina nurodyti įmonės pavadinimą, įmonės kodą, adresą ir kontaktinį asmenį.",
-        "individualRequired": "Būtina nurodyti sąskaitos adresą ir kontaktinį asmenį."
+        "individualRequired": "Būtina nurodyti vardą, pavardę ir registracijos adresą."
       },
       "toasts": {
         "saved": "Sąskaitos informacija išsaugota.",

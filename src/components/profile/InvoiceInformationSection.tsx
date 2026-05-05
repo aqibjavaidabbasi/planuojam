@@ -23,6 +23,9 @@ const emptyInfo: BuyerInvoiceInformation = {
   companyVAT: "",
   companyAddress: "",
   contactPerson: "",
+  individualName: "",
+  individualSurname: "",
+  registrationAddress: "",
 };
 
 export default function InvoiceInformationSection({ user }: { user: User | null }) {
@@ -73,7 +76,11 @@ export default function InvoiceInformationSection({ user }: { user: User | null 
 
   const validate = () => {
     if (customerType === "individual") {
-      return Boolean(info.contactPerson?.trim() && info.companyAddress?.trim());
+      return Boolean(
+        info.individualName?.trim() &&
+          info.individualSurname?.trim() &&
+          info.registrationAddress?.trim()
+      );
     }
 
     return Boolean(
@@ -118,6 +125,16 @@ export default function InvoiceInformationSection({ user }: { user: User | null 
   };
 
   const complete = isBuyerInvoiceInformationComplete(customerType, info);
+  const hasCompanyInformation = isBuyerInvoiceInformationComplete("company", info);
+  const hasIndividualInformation = isBuyerInvoiceInformationComplete("individual", info);
+  const lockedCustomerType =
+    isBuyerInvoiceInformationComplete(customerType, info)
+      ? customerType
+      : hasCompanyInformation
+        ? "company"
+        : hasIndividualInformation
+          ? "individual"
+          : null;
 
   return (
     <div className="mt-12 pt-8 border-t border-gray-200">
@@ -136,15 +153,25 @@ export default function InvoiceInformationSection({ user }: { user: User | null 
             <input
               type="radio"
               value={type}
-              className="sr-only"
+              className="sr-only disabled:cursor-not-allowed"
               checked={customerType === type}
               onChange={() => setCustomerType(type)}
-              disabled={saving || loading}
+              disabled={
+                saving ||
+                loading ||
+                Boolean(lockedCustomerType && lockedCustomerType !== type)
+              }
             />
             <div
               className={`border-2 border-gray-200 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:border-primary ${
                 customerType === type ? "border-primary bg-primary/15" : ""
-              } ${saving || loading ? "cursor-not-allowed opacity-60" : ""}`}
+              } ${
+                saving ||
+                loading ||
+                Boolean(lockedCustomerType && lockedCustomerType !== type)
+                  ? "cursor-not-allowed opacity-60"
+                  : ""
+              }`}
             >
               <div className="text-center">
                 <div className="font-medium text-gray-800">{t(`types.${type}`)}</div>
@@ -160,49 +187,80 @@ export default function InvoiceInformationSection({ user }: { user: User | null 
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Input
-          type="text"
-          label={t("fields.companyName")}
-          value={info.companyName || ""}
-          onChange={(event) => updateField("companyName", event.target.value)}
-          required={customerType === "company"}
-          disabled={saving || loading}
-        />
-        <Input
-          type="text"
-          label={t("fields.companyId")}
-          value={info.companyId || ""}
-          onChange={(event) => updateField("companyId", event.target.value)}
-          required={customerType === "company"}
-          disabled={saving || loading}
-        />
-        <Input
-          type="text"
-          label={t("fields.companyVAT")}
-          value={info.companyVAT || ""}
-          onChange={(event) => updateField("companyVAT", event.target.value)}
-          disabled={saving || loading}
-        />
-        <Input
-          type="text"
-          label={t("fields.contactPerson")}
-          value={info.contactPerson || ""}
-          onChange={(event) => updateField("contactPerson", event.target.value)}
-          required
-          disabled={saving || loading}
-        />
-        <div className="md:col-span-2">
-          <TextArea
-            label={t("fields.companyAddress")}
-            rows={3}
-            value={info.companyAddress || ""}
-            onChange={(event) => updateField("companyAddress", event.target.value)}
+      {customerType === "individual" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            type="text"
+            label={t("fields.individualName")}
+            value={info.individualName || ""}
+            onChange={(event) => updateField("individualName", event.target.value)}
             required
             disabled={saving || loading}
           />
+          <Input
+            type="text"
+            label={t("fields.individualSurname")}
+            value={info.individualSurname || ""}
+            onChange={(event) => updateField("individualSurname", event.target.value)}
+            required
+            disabled={saving || loading}
+          />
+          <div className="md:col-span-2">
+            <TextArea
+              label={t("fields.registrationAddress")}
+              rows={3}
+              value={info.registrationAddress || ""}
+              onChange={(event) => updateField("registrationAddress", event.target.value)}
+              required
+              disabled={saving || loading}
+            />
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            type="text"
+            label={t("fields.companyName")}
+            value={info.companyName || ""}
+            onChange={(event) => updateField("companyName", event.target.value)}
+            required
+            disabled={saving || loading}
+          />
+          <Input
+            type="text"
+            label={t("fields.companyId")}
+            value={info.companyId || ""}
+            onChange={(event) => updateField("companyId", event.target.value)}
+            required
+            disabled={saving || loading}
+          />
+          <Input
+            type="text"
+            label={t("fields.companyVAT")}
+            value={info.companyVAT || ""}
+            onChange={(event) => updateField("companyVAT", event.target.value)}
+            disabled={saving || loading}
+          />
+          <Input
+            type="text"
+            label={t("fields.contactPerson")}
+            value={info.contactPerson || ""}
+            onChange={(event) => updateField("contactPerson", event.target.value)}
+            required
+            disabled={saving || loading}
+          />
+          <div className="md:col-span-2">
+            <TextArea
+              label={t("fields.companyAddress")}
+              rows={3}
+              value={info.companyAddress || ""}
+              onChange={(event) => updateField("companyAddress", event.target.value)}
+              required
+              disabled={saving || loading}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="mt-5">
         <Button

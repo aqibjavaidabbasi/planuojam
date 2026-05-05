@@ -626,7 +626,7 @@
     },
     "InvoiceInformation": {
       "title": "Ustaw dane do faktury",
-      "description": "Istniejące ogłoszenia pozostają bez zmian. Aby tworzyć kolejne ogłoszenia, najpierw zapisz te dane do faktury.",
+      "description": "Istniejące oferty są w porządku. Aby utworzyć kolejne oferty, najpierw zapisz dane do faktury. Wypełnij je ostrożnie, ponieważ zostaną wykorzystane do wystawienia faktury.",
       "incompleteNotice": "Uzupełnij tę sekcję, aby włączyć tworzenie nowych ogłoszeń.",
       "types": {
         "individual": "Osoba prywatna",
@@ -637,7 +637,10 @@
         "companyId": "Numer firmy",
         "companyVAT": "NIP / VAT",
         "companyAddress": "Adres firmy",
-        "contactPerson": "Osoba kontaktowa"
+        "contactPerson": "Osoba kontaktowa",
+        "individualName": "Imię",
+        "individualSurname": "Nazwisko",
+        "registrationAddress": "Adres zameldowania"
       },
       "actions": {
         "save": "Zapisz dane do faktury",
@@ -645,7 +648,7 @@
       },
       "validation": {
         "companyRequired": "Nazwa firmy, numer firmy, adres i osoba kontaktowa są wymagane.",
-        "individualRequired": "Adres do faktury i osoba kontaktowa są wymagane."
+        "individualRequired": "Imię, nazwisko i adres zameldowania są wymagane."
       },
       "toasts": {
         "saved": "Dane do faktury zostały zapisane.",

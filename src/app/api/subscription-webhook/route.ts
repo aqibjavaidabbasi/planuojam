@@ -45,6 +45,7 @@ type StrapiUserEntry = {
   documentId?: string;
   username?: string;
   email?: string;
+  invoiceCustomerType?: "individual" | "company" | null;
 };
 
 type StrapiListingEntry = {
@@ -64,6 +65,9 @@ type BuyerInvoiceInformationEntry = {
   companyVAT?: string;
   companyAddress?: string;
   contactPerson?: string;
+  individualName?: string;
+  individualSurname?: string;
+  registrationAddress?: string;
 };
 
 const STRAPI_API_URL = process.env.NEXT_PUBLIC_API_URL!;
@@ -758,7 +762,16 @@ export async function POST(req: NextRequest) {
         const sellerSnapshot = sellerInvoiceDetail?.data || {};
         const buyerSnapshot = buyerInvoiceInformation?.data?.[0] || {};
         const listingTitle = listingResponse?.data?.title || null;
+        const buyerCustomerType = userResponse?.invoiceCustomerType || null;
+        const individualFullName = [
+          buyerSnapshot.individualName,
+          buyerSnapshot.individualSurname,
+        ]
+          .map((part) => (typeof part === "string" ? part.trim() : ""))
+          .filter(Boolean)
+          .join(" ");
         const buyerName =
+          individualFullName ||
           buyerSnapshot.contactPerson ||
           userResponse?.username ||
           invoiceWithCustomerDetails.customer_name ||
@@ -766,6 +779,7 @@ export async function POST(req: NextRequest) {
         const buyerEmail =
           userResponse?.email || invoiceWithCustomerDetails.customer_email || null;
         const buyerAddress =
+          buyerSnapshot.registrationAddress ||
           buyerSnapshot.companyAddress ||
           formatStripeAddress(invoiceWithCustomerDetails.customer_address);
         const subscriptionTitle =
@@ -793,6 +807,10 @@ export async function POST(req: NextRequest) {
               buyerName,
               buyerEmail,
               buyerAddress,
+              buyerCustomerType,
+              buyerIndividualName: buyerSnapshot.individualName || null,
+              buyerIndividualSurname: buyerSnapshot.individualSurname || null,
+              buyerRegistrationAddress: buyerSnapshot.registrationAddress || null,
               buyerCompanyName: buyerSnapshot.companyName || null,
               buyerCompanyId: buyerSnapshot.companyId || null,
               buyerCompanyVAT: buyerSnapshot.companyVAT || null,

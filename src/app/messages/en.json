@@ -480,7 +480,7 @@
     },
     "InvoiceInformation": {
       "title": "Set Invoice Information",
-      "description": "Existing listings are fine. For further listing creations, please save this invoice information first.",
+      "description": "Existing listings are fine. For further listing creations, please save this invoice information first. Fill this information carefully as this information will be used for invoicing.",
       "incompleteNotice": "Complete this section to enable new listing creation.",
       "types": {
         "individual": "Individual",
@@ -491,7 +491,10 @@
         "companyId": "Company ID",
         "companyVAT": "Company VAT",
         "companyAddress": "Company address",
-        "contactPerson": "Contact person"
+        "contactPerson": "Contact person",
+        "individualName": "Name",
+        "individualSurname": "Surname",
+        "registrationAddress": "Registration address"
       },
       "actions": {
         "save": "Save Invoice Information",
@@ -499,7 +502,7 @@
       },
       "validation": {
         "companyRequired": "Company name, company ID, address, and contact person are required.",
-        "individualRequired": "Billing address and contact person are required."
+        "individualRequired": "Name, surname, and registration address are required."
       },
       "toasts": {
         "saved": "Invoice information saved.",

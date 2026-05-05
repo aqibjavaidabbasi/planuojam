@@ -23,14 +23,45 @@ function formatDisplayAmount(amount?: number | null, currency?: string | null) {
   return `${amount.toFixed(2)} ${(currency || "").toUpperCase()}`.trim();
 }
 
+function hasText(value?: string | null) {
+  return Boolean(value?.trim());
+}
+
+function DetailRow({
+  label,
+  value,
+}: {
+  label: string;
+  value?: string | null;
+}) {
+  if (!hasText(value)) return null;
+
+  return (
+    <p className="mb-1 text-sm" style={{ color: "#475569" }}>
+      {label}: {value}
+    </p>
+  );
+}
+
 export default function InvoicePdfTemplate({
   invoice,
   labels,
 }: InvoicePdfTemplateProps) {
   const description = invoice.SubscriptionTitle || invoice.listingTitle || labels.subscriptionLabel;
   const amountSummaryLabel = labels.amountPaid || labels.amountDue || "-";
-  const buyerDisplayName = invoice.buyerCompanyName || invoice.buyerName || "-";
-  const buyerAddress = invoice.buyerCompanyAddress || invoice.buyerAddress || "-";
+  const buyerIsCompany =
+    invoice.buyerCustomerType === "company" ||
+    hasText(invoice.buyerCompanyName) ||
+    hasText(invoice.buyerCompanyId);
+  const individualName = invoice.buyerIndividualName || invoice.buyerName;
+  const individualSurname = invoice.buyerIndividualSurname;
+  const individualAddress = invoice.buyerRegistrationAddress || invoice.buyerAddress;
+  const buyerDisplayName = buyerIsCompany
+    ? invoice.buyerCompanyName
+    : [individualName, individualSurname].filter(Boolean).join(" ");
+  const buyerAddress = buyerIsCompany
+    ? invoice.buyerCompanyAddress || invoice.buyerAddress
+    : individualAddress;
 
   return (
     <div
@@ -49,19 +80,21 @@ export default function InvoicePdfTemplate({
           >
             {labels.seller}
           </p>
-          <h1 className="mb-2 text-2xl font-semibold">{invoice.sellerCompanyName || "-"}</h1>
-          <p
-            className="m-0 whitespace-pre-line text-sm leading-6"
-            style={{ color: "#475569" }}
-          >
-            {invoice.sellerAddress || "-"}
-          </p>
-          <p className="mt-3 text-sm" style={{ color: "#475569" }}>
-            {labels.companyId}: {invoice.sellerCompanyId || "-"}
-          </p>
-          <p className="mt-1 text-sm" style={{ color: "#475569" }}>
-            {labels.vatNumber}: {invoice.sellerVatNumber || "-"}
-          </p>
+          {hasText(invoice.sellerCompanyName) && (
+            <h1 className="mb-2 text-2xl font-semibold">{invoice.sellerCompanyName}</h1>
+          )}
+          {hasText(invoice.sellerAddress) && (
+            <p
+              className="m-0 whitespace-pre-line text-sm leading-6"
+              style={{ color: "#475569" }}
+            >
+              {invoice.sellerAddress}
+            </p>
+          )}
+          <div className="mt-3">
+            <DetailRow label={labels.companyId} value={invoice.sellerCompanyId} />
+            <DetailRow label={labels.vatNumber} value={invoice.sellerVatNumber} />
+          </div>
         </div>
 
         <div
@@ -96,22 +129,24 @@ export default function InvoicePdfTemplate({
           >
             {labels.billedTo}
           </p>
-          <p className="mb-1 text-lg font-semibold">{buyerDisplayName}</p>
-          <p className="mb-1 text-sm" style={{ color: "#475569" }}>
-            {labels.companyId}: {invoice.buyerCompanyId || "-"}
-          </p>
-          <p className="mb-1 text-sm" style={{ color: "#475569" }}>
-            {labels.vatNumber}: {invoice.buyerCompanyVAT || "-"}
-          </p>
-          <p className="mb-1 text-sm" style={{ color: "#475569" }}>
-            {labels.companyAddress}: {buyerAddress}
-          </p>
-          <p className="mb-1 text-sm" style={{ color: "#475569" }}>
-            {labels.contactPerson}: {invoice.buyerContactPerson || invoice.buyerName || "-"}
-          </p>
-          <p className="mb-1 text-sm" style={{ color: "#475569" }}>
-            {labels.buyerEmail}: {invoice.buyerEmail || "-"}
-          </p>
+          {hasText(buyerDisplayName) && (
+            <p className="mb-1 text-lg font-semibold">{buyerDisplayName}</p>
+          )}
+          {buyerIsCompany ? (
+            <>
+              <DetailRow label={labels.companyId} value={invoice.buyerCompanyId} />
+              <DetailRow label={labels.vatNumber} value={invoice.buyerCompanyVAT} />
+              <DetailRow label={labels.companyAddress} value={buyerAddress} />
+              <DetailRow label={labels.contactPerson} value={invoice.buyerContactPerson || invoice.buyerName} />
+            </>
+          ) : (
+            <>
+              <DetailRow label={labels.individualName} value={individualName} />
+              <DetailRow label={labels.individualSurname} value={individualSurname} />
+              <DetailRow label={labels.registrationAddress} value={buyerAddress} />
+            </>
+          )}
+          <DetailRow label={labels.buyerEmail} value={invoice.buyerEmail} />
         </div>
 
         <div className="rounded-3xl border px-6 py-5" style={{ borderColor: "#e2e8f0" }}>
@@ -141,7 +176,9 @@ export default function InvoicePdfTemplate({
         <div className="grid grid-cols-[1fr_180px] px-6 py-5 text-sm" style={{ color: "#334155" }}>
           <div>
             <p className="mb-1 font-medium" style={{ color: "#0f172a" }}>{description}</p>
-            <p className="m-0" style={{ color: "#64748b" }}>{invoice.listingTitle || "-"}</p>
+            {hasText(invoice.listingTitle) && (
+              <p className="m-0" style={{ color: "#64748b" }}>{invoice.listingTitle}</p>
+            )}
           </div>
           <p className="m-0 text-right font-medium" style={{ color: "#0f172a" }}>
             {formatDisplayAmount(invoice.amount, invoice.currency)}

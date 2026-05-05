@@ -10,6 +10,9 @@ export interface BuyerInvoiceInformation {
   companyVAT?: string | null;
   companyAddress?: string | null;
   contactPerson?: string | null;
+  individualName?: string | null;
+  individualSurname?: string | null;
+  registrationAddress?: string | null;
 }
 
 export type InvoiceCustomerType = "individual" | "company";
@@ -20,6 +23,9 @@ export interface BuyerInvoiceInformationPayload {
   companyVAT?: string | null;
   companyAddress?: string | null;
   contactPerson?: string | null;
+  individualName?: string | null;
+  individualSurname?: string | null;
+  registrationAddress?: string | null;
 }
 
 function getToken() {
@@ -52,6 +58,9 @@ export function normalizeBuyerInvoiceInformation(
     companyVAT: cleanValue(payload.companyVAT),
     companyAddress: cleanValue(payload.companyAddress),
     contactPerson: cleanValue(payload.contactPerson),
+    individualName: cleanValue(payload.individualName),
+    individualSurname: cleanValue(payload.individualSurname),
+    registrationAddress: cleanValue(payload.registrationAddress),
   };
 }
 
@@ -64,7 +73,11 @@ export function isBuyerInvoiceInformationComplete(
   const has = (value?: string | null) => Boolean(value?.trim());
 
   if (customerType === "individual") {
-    return has(info?.contactPerson) && has(info?.companyAddress);
+    return (
+      has(info?.individualName) &&
+      has(info?.individualSurname) &&
+      has(info?.registrationAddress)
+    );
   }
 
   return (

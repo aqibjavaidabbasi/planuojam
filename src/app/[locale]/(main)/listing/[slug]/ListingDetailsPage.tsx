@@ -102,7 +102,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
   
   return (
     <div className="min-h-screen bg-background px-4 sm:px-6 pt-10">
-      <div className="max-w-[1400px] mx-auto">
+      <div className="max-w-350 mx-auto">
 
         {/* Preview Banner */}
         {initialListing.listingStatus === 'draft' && user?.documentId === initialListing.user?.documentId && (
@@ -182,7 +182,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
             <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
               <h2 className="text-2xl font-semibold text-primary mb-4">{t("location")}</h2>
               {detailLocation ? (
-                <div className="h-[45vh] max-h-[400px] md:h-[50vh] md:max-h-[600px] lg:h-[60vh] lg:max-h-[800px]">
+                <div className="h-[45vh] max-h-100 md:h-[50vh] md:max-h-150 lg:h-[60vh] lg:max-h-200">
                   <MapboxMap locations={[detailLocation]} />
                 </div>
               ) : (

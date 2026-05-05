@@ -1,6 +1,6 @@
 'use client';
 import dynamic from "next/dynamic";
-import React, { useEffect, useState, useTransition } from 'react';
+import React, { useCallback, useEffect, useState, useTransition } from 'react';
 const MapboxMap = dynamic(() => import('./MapboxMap'), { ssr: false })
 import { Location } from './MapboxMap';
 import MultiSelect from '../custom/MultiSelect';
@@ -71,6 +71,18 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
 
     const cats = locale === 'en' ? parentCategories : parentCategories.map(cat => cat.localizations.find(loc => loc.locale === locale))
 
+    const toStringArray = useCallback((value: string | string[]): string[] =>
+        (Array.isArray(value) ? value : [value])
+            .map((v) => v.trim())
+            .filter(Boolean), []);
+
+    const normalizeTempFilterValues = useCallback((
+        vals: Record<string, string | string[]>
+    ): Record<string, string[]> =>
+        Object.fromEntries(
+            Object.entries(vals).map(([name, value]) => [name, toStringArray(value)])
+        ), [toStringArray]);
+
     // Create service dropdown options
     const serviceOptions = [
         { value: 'all', label: tHeader('allServices') },
@@ -103,18 +115,18 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
     };
 
     // Normalize simple initial filter values into Strapi filter object shape
-    const normalizeInitialFilters = (vals: Record<string, string[]>): FilterObject => {
+    const normalizeInitialFilters = useCallback((vals: Record<string, string | string[]>): FilterObject => {
         const out: FilterObject = {};
         Object.entries(vals).forEach(([name, value]) => {
             const lowName = name.toLowerCase();
-            const trimmedValues = value.map(v => v.trim()).filter(v => v);
+            const trimmedValues = toStringArray(value);
             
             if (trimmedValues.length === 0) return;
 
             if (lowName === 'categories' || lowName === 'category') {
-                out.categories = { documentId: { $in: trimmedValues } as FilterValue };
+                out.categories = { documentId: { $in: trimmedValues } };
             } else if (lowName === 'eventtype' || lowName === 'eventtypes') {
-                out.eventTypes = { eventName: { $in: trimmedValues } as FilterValue };
+                out.eventTypes = { eventName: { $in: trimmedValues } };
             } else if (lowName.includes('price')) {
                 const val = trimmedValues[0].toLowerCase();
                 if (val.includes('without')) {
@@ -127,16 +139,16 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
             }
         });
         return out;
-    };
+    }, [toStringArray]);
 
     useEffect(() => {
         if (initialFilterValues) {
-            const vals = initialFilterValues as Record<string, string[]>;
+            const vals = normalizeTempFilterValues(initialFilterValues);
             setTempFilterValues(vals);
-            const normalized = normalizeInitialFilters(vals);
+            const normalized = normalizeInitialFilters(initialFilterValues);
             setAppliedFilters(normalized);
         }
-    }, [initialFilterValues]);
+    }, [initialFilterValues, normalizeInitialFilters, normalizeTempFilterValues]);
 
     const handleFilterChange = (name: string, value: string[]) => {
         // Remove leading/trailing whitespace and check if empty
@@ -250,8 +262,9 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
         let res;
         setIsLoading(true);
         if (initialFilterValues) {
-            setTempFilterValues(initialFilterValues as Record<string, string[]>);
-            const normalized = normalizeInitialFilters(initialFilterValues as Record<string, string[]>);
+            const vals = normalizeTempFilterValues(initialFilterValues);
+            setTempFilterValues(vals);
+            const normalized = normalizeInitialFilters(initialFilterValues);
             setAppliedFilters(normalized);
             res = fetcher ? await fetcher(normalized) : await fetchListings(type, normalized);
         } else {
