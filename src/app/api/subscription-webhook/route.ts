@@ -86,6 +86,7 @@ type SubscriptionInvoiceResult = {
   invoiceNumber: string;
   hostedUrl: string;
   buyerEmail?: string | null;
+  userEmail?: string | null;   // registered account email — used for notifications
   username?: string | null;
   locale?: string | null;
   created: boolean;
@@ -377,6 +378,7 @@ async function createOrGetSubscriptionInvoice(
       invoiceNumber: existing.invoiceNumber || invoiceNumber,
       hostedUrl: existing.hostedUrl || buildPublicInvoiceUrl(createPublicInvoiceToken()),
       buyerEmail: userResponse?.email || null,
+      userEmail: userResponse?.email || null,
       username: userResponse?.username || userResponse?.email || null,
       locale: userResponse?.preferredLanguage || null,
       created: false,
@@ -483,6 +485,7 @@ async function createOrGetSubscriptionInvoice(
     invoiceNumber,
     hostedUrl,
     buyerEmail,
+    userEmail: userResponse?.email || null,
     username: userResponse?.username || userResponse?.email || buyerName,
     locale: userResponse?.preferredLanguage || null,
     created: true,
@@ -787,6 +790,7 @@ export async function POST(req: NextRequest) {
               rawMeta: { updateError, status: updateRes.status, statusText: updateRes.statusText },
             });
           } else {
+            console.log("Listing published successfully:", listingDocId);
             const responseData = await updateRes.json().catch(() => null);
             await logWebhookEvent("listing_published", `Listing published after subscription: ${listingDocId}`, {
               severity: "info",
@@ -798,11 +802,14 @@ export async function POST(req: NextRequest) {
 
             // SEND EMAIL NOTIFICATION
             try {
+              console.log("Fetching user for subscription email, userId:", userId);
               const userRes = await fetch(`${STRAPI_API_URL}/api/users/${userId}`, {
                 headers: STRAPI_AUTH_HEADERS,
               });
+              console.log("User fetch status:", userRes.status);
               const user = await userRes.json();
-              
+              console.log("User fetch result email:", user?.email, "username:", user?.username);
+
               if (user && user.email) {
                 const listingTitle = responseData?.data?.title || "Your Listing";
                 console.log("Sending subscription email to:", user.email, "listing:", listingTitle);
@@ -819,6 +826,8 @@ export async function POST(req: NextRequest) {
                     listingTitle,
                   },
                 });
+              } else {
+                console.warn("Subscription email skipped: user has no email. userId:", userId, "user:", JSON.stringify(user));
               }
             } catch (emailErr) {
               console.error("Subscription email trigger failed:", emailErr);
@@ -1070,16 +1079,16 @@ export async function POST(req: NextRequest) {
           "paid"
         );
 
-        if (createdInvoice?.created && createdInvoice.buyerEmail) {
+        if (createdInvoice?.created && createdInvoice.userEmail) {
           await sendAppNotification({
             type: "invoice",
-            to: createdInvoice.buyerEmail,
+            to: createdInvoice.userEmail!,
             subject: getInvoiceSubject(createdInvoice.invoiceNumber, createdInvoice.locale),
             locale: createdInvoice.locale || "en",
             stripeEventId: event.id,
             rawMeta: { invoiceId: invoice.id, subscriptionId },
             data: {
-              username: createdInvoice.username || createdInvoice.buyerEmail,
+              username: createdInvoice.username || createdInvoice.userEmail,
               invoiceNumber: createdInvoice.invoiceNumber,
               invoiceUrl: createdInvoice.hostedUrl,
             },
@@ -1107,16 +1116,16 @@ export async function POST(req: NextRequest) {
           event.id
         );
 
-        if (createdInvoice?.created && createdInvoice.buyerEmail) {
+        if (createdInvoice?.created && createdInvoice.userEmail) {
           await sendAppNotification({
             type: "invoice",
-            to: createdInvoice.buyerEmail,
+            to: createdInvoice.userEmail!,
             subject: getInvoiceSubject(createdInvoice.invoiceNumber, createdInvoice.locale),
             locale: createdInvoice.locale || "en",
             stripeEventId: event.id,
             rawMeta: { invoiceId: invoice.id, subscriptionId },
             data: {
-              username: createdInvoice.username || createdInvoice.buyerEmail,
+              username: createdInvoice.username || createdInvoice.userEmail,
               invoiceNumber: createdInvoice.invoiceNumber,
               invoiceUrl: createdInvoice.hostedUrl,
             },
@@ -1158,16 +1167,16 @@ export async function POST(req: NextRequest) {
         const userId = createdInvoice.userId;
         const listingDocId = createdInvoice.listingDocId;
 
-        if (createdInvoice.created && createdInvoice.buyerEmail) {
+        if (createdInvoice.created && createdInvoice.userEmail) {
           await sendAppNotification({
             type: "invoice",
-            to: createdInvoice.buyerEmail,
+            to: createdInvoice.userEmail!,
             subject: getInvoiceSubject(createdInvoice.invoiceNumber, createdInvoice.locale),
             locale: createdInvoice.locale || "en",
             stripeEventId: event.id,
             rawMeta: { invoiceId: invoice.id, subscriptionId },
             data: {
-              username: createdInvoice.username || createdInvoice.buyerEmail,
+              username: createdInvoice.username || createdInvoice.userEmail,
               invoiceNumber: createdInvoice.invoiceNumber,
               invoiceUrl: createdInvoice.hostedUrl,
             },
