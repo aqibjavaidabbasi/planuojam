@@ -89,6 +89,9 @@ type SubscriptionInvoiceResult = {
   username?: string | null;
   locale?: string | null;
   created: boolean;
+  subscriptionDocId?: string;
+  userId?: number | string | null;
+  listingDocId?: string | null;
 };
 
 const STRAPI_API_URL = process.env.NEXT_PUBLIC_API_URL!;
@@ -185,6 +188,7 @@ async function sendAppNotification({
   rawMeta,
 }: NotificationPayload) {
   const url = `${getPublicAppUrl()}/api/email/notification`;
+  console.log(`sendAppNotification: type=${type}, to=${to}, url=${url}`);
 
   try {
     const response = await fetch(url, {
@@ -245,17 +249,83 @@ async function createOrGetSubscriptionInvoice(
   });
   const findSubJson = await findSubRes.json().catch(() => ({} as { data?: StrapiSubscriptionEntry[] }));
 
-  if (!Array.isArray(findSubJson?.data) || findSubJson.data.length === 0) {
-    console.warn("Subscription not found for invoice:", subscriptionId);
-    await logWebhookEvent("error", `Subscription not found for invoice: ${invoice.id}`, {
-      severity: "warning",
-      stripeEventId,
-      rawMeta: { invoiceId: invoice.id, subscriptionId },
-    });
-    return null;
-  }
+  let subscriptionEntry: StrapiSubscriptionEntry;
 
-  const subscriptionEntry = findSubJson.data[0] as StrapiSubscriptionEntry;
+  if (!Array.isArray(findSubJson?.data) || findSubJson.data.length === 0) {
+    // Stripe invoice events often arrive before checkout.session.completed has been processed.
+    // Recover by fetching the subscription from Stripe and creating the Strapi record on the fly.
+    console.warn("Subscription not found in Strapi, recovering from Stripe:", subscriptionId);
+    try {
+      const stripeSub = await stripe.subscriptions.retrieve(subscriptionId) as WebhookSubscription;
+      const metaUserId = stripeSub.metadata?.userId;
+      const metaListingDocId = stripeSub.metadata?.listingDocId;
+
+      if (!metaUserId || !metaListingDocId) {
+        console.warn("Stripe subscription missing userId/listingDocId metadata:", subscriptionId);
+        await logWebhookEvent("error", `Subscription metadata missing for invoice: ${invoice.id}`, {
+          severity: "warning",
+          stripeEventId,
+          rawMeta: { invoiceId: invoice.id, subscriptionId },
+        });
+        return null;
+      }
+
+      const createSubRes = await fetch(`${STRAPI_API_URL}/api/subscriptions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...STRAPI_AUTH_HEADERS },
+        body: JSON.stringify({
+          data: {
+            listingDocId: metaListingDocId,
+            users_permissions_user: metaUserId,
+            stripeSubscriptionId: subscriptionId,
+            stripePriceId: stripeSub.items.data[0]?.price.id,
+            stripeCustomerId: stripeSub.customer as string,
+            subscriptionStatus: stripeSub.status,
+            currentPeriodEnd: stripeSub.current_period_end
+              ? new Date(stripeSub.current_period_end * 1000).toISOString()
+              : new Date().toISOString(),
+            autoRenew: !stripeSub.cancel_at_period_end,
+          },
+        }),
+      });
+
+      if (createSubRes.ok) {
+        const createSubJson = await createSubRes.json().catch(() => ({}));
+        console.log("Recovered: created Strapi subscription on-the-fly:", subscriptionId);
+        subscriptionEntry = {
+          documentId: createSubJson?.data?.documentId ?? "",
+          listingDocId: metaListingDocId,
+          users_permissions_user: isNaN(Number(metaUserId)) ? (metaUserId as unknown as number) : Number(metaUserId),
+        } as StrapiSubscriptionEntry;
+      } else {
+        // Creation may have failed due to a concurrent duplicate — retry the fetch
+        const retryRes = await fetch(findSubUrl, { headers: STRAPI_AUTH_HEADERS });
+        const retryJson = await retryRes.json().catch(() => ({} as { data?: StrapiSubscriptionEntry[] }));
+        if (Array.isArray(retryJson?.data) && retryJson.data.length > 0) {
+          console.log("Found Strapi subscription on retry:", subscriptionId);
+          subscriptionEntry = retryJson.data[0] as StrapiSubscriptionEntry;
+        } else {
+          console.warn("Could not create or find Strapi subscription:", subscriptionId);
+          await logWebhookEvent("error", `Subscription not found for invoice: ${invoice.id}`, {
+            severity: "warning",
+            stripeEventId,
+            rawMeta: { invoiceId: invoice.id, subscriptionId },
+          });
+          return null;
+        }
+      }
+    } catch (recoverErr) {
+      console.warn("Failed to recover subscription from Stripe:", recoverErr);
+      await logWebhookEvent("error", `Subscription not found for invoice: ${invoice.id}`, {
+        severity: "warning",
+        stripeEventId,
+        rawMeta: { invoiceId: invoice.id, subscriptionId },
+      });
+      return null;
+    }
+  } else {
+    subscriptionEntry = findSubJson.data[0] as StrapiSubscriptionEntry;
+  }
   const subscriptionDocId = subscriptionEntry.documentId;
   const listingDocId = subscriptionEntry.listingDocId || null;
   const userId =
@@ -310,6 +380,9 @@ async function createOrGetSubscriptionInvoice(
       username: userResponse?.username || userResponse?.email || null,
       locale: userResponse?.preferredLanguage || null,
       created: false,
+      subscriptionDocId,
+      userId,
+      listingDocId,
     };
   }
 
@@ -413,6 +486,9 @@ async function createOrGetSubscriptionInvoice(
     username: userResponse?.username || userResponse?.email || buyerName,
     locale: userResponse?.preferredLanguage || null,
     created: true,
+    subscriptionDocId,
+    userId,
+    listingDocId,
   };
 }
 
@@ -524,6 +600,7 @@ export async function POST(req: NextRequest) {
 
         const session = event.data.object as Stripe.Checkout.Session;
         
+        console.log("checkout.session.completed received:", session.id, "mode:", session.mode);
         await logWebhookEvent("webhook_received", `Received checkout.session.completed webhook`, {
           severity: "info",
           stripeEventId: event.id,
@@ -728,6 +805,7 @@ export async function POST(req: NextRequest) {
               
               if (user && user.email) {
                 const listingTitle = responseData?.data?.title || "Your Listing";
+                console.log("Sending subscription email to:", user.email, "listing:", listingTitle);
 
                 await sendAppNotification({
                   type: "subscription",
@@ -1063,23 +1141,10 @@ export async function POST(req: NextRequest) {
         if (!subscriptionId) {
           break;
         }
-        
-        // Find subscription in Strapi
-        const findUrl = `${STRAPI_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}`;
-        const findRes = await fetch(findUrl, {
-          headers: STRAPI_AUTH_HEADERS,
-        });
-        const findJson = await findRes.json().catch(() => ({}));
 
-        if (!Array.isArray(findJson?.data) || findJson.data.length === 0) {
-          console.warn("Subscription not found for invoice:", subscriptionId);
-          break;
-        }
-
-        const subscription = findJson.data[0];
-        const subscriptionDocId = subscription.documentId;
-        const userId = subscription.users_permissions_user?.id || subscription.users_permissions_user;
-        const listingDocId = subscription.listingDocId;
+        // createOrGetSubscriptionInvoice handles the case where the subscription
+        // isn't in Strapi yet (race with checkout.session.completed) by recovering
+        // directly from Stripe and creating the record on the fly.
         const createdInvoice = await createOrGetSubscriptionInvoice(
           invoice,
           subscriptionId,
@@ -1087,7 +1152,13 @@ export async function POST(req: NextRequest) {
           "paid"
         );
 
-        if (createdInvoice?.created && createdInvoice.buyerEmail) {
+        if (!createdInvoice) break;
+
+        const subscriptionDocId = createdInvoice.subscriptionDocId;
+        const userId = createdInvoice.userId;
+        const listingDocId = createdInvoice.listingDocId;
+
+        if (createdInvoice.created && createdInvoice.buyerEmail) {
           await sendAppNotification({
             type: "invoice",
             to: createdInvoice.buyerEmail,
@@ -1162,10 +1233,10 @@ export async function POST(req: NextRequest) {
             console.log("Subscription transaction created:", invoice.id);
             await logWebhookEvent("payment_succeeded", `Payment succeeded for invoice: ${invoice.id}`, {
               severity: "info",
-              userId,
-              listingDocId,
+              userId: userId ?? undefined,
+              listingDocId: listingDocId ?? undefined,
               stripeEventId: event.id,
-              rawMeta: { 
+              rawMeta: {
                 invoiceId: invoice.id,
                 subscriptionId,
                 amount: (invoice.amount_paid / 100).toFixed(2),
@@ -1195,8 +1266,8 @@ export async function POST(req: NextRequest) {
             console.log("Listing kept published after successful payment:", listingDocId);
             await logWebhookEvent("listing_published", `Listing kept published after successful payment: ${listingDocId}`, {
               severity: "info",
-              userId,
-              listingDocId,
+              userId: userId ?? undefined,
+              listingDocId: listingDocId ?? undefined,
               stripeEventId: event.id,
               rawMeta: { subscriptionId, invoiceId: invoice.id },
             });

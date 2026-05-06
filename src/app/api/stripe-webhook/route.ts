@@ -196,6 +196,32 @@ async function createPromotionInvoice(params: {
   if (!createInvoiceRes.ok) {
     const err = await createInvoiceRes.json().catch(() => ({}));
     console.warn("Failed to create promotion invoice:", err);
+    return;
+  }
+
+  const recipientEmail = userResponse?.email;
+  const invoiceNumber = buildPromotionInvoiceNumber(intent.id);
+  if (recipientEmail) {
+    try {
+      console.log("Sending promotion invoice email to:", recipientEmail);
+      await fetch(`${getPublicAppUrl()}/api/email/notification`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "invoice",
+          to: recipientEmail,
+          subject: `Your invoice ${invoiceNumber} is ready`,
+          locale: "en",
+          data: {
+            username: buyerName || recipientEmail,
+            invoiceNumber,
+            invoiceUrl: hostedUrl,
+          },
+        }),
+      });
+    } catch (emailErr) {
+      console.warn("Failed to send promotion invoice email:", emailErr);
+    }
   }
 }
 
