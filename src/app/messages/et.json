@@ -1307,7 +1307,8 @@
       "startsTomorrow": "Eripakkumine algab homme!",
       "startsInDays": "Eripakkumine algab {days} päeva pärast!",
       "startsOn": "Eripakkumine!",
-      "videoNotSupported": "Teie brauser ei toeta video silti."
+      "videoNotSupported": "Teie brauser ei toeta video silti.",
+      "promoted": "Esile tõstetud"
     },
     "SelectedCategories": {
       "noCategoriesFound": "Kategooriaid ei leitud"

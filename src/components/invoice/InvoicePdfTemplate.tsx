@@ -3,19 +3,21 @@ import type { InvoicePdfLabels, PublicInvoiceData } from "@/types/invoice";
 interface InvoicePdfTemplateProps {
   invoice: PublicInvoiceData;
   labels: InvoicePdfLabels;
+  logoUrl?: string;
+  locale?: string;
 }
 
-function formatDisplayDate(value?: string | null) {
+function formatDisplayDate(value?: string | null, locale = "en-GB") {
   if (!value) return "-";
 
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "-";
 
-  return date.toLocaleDateString("en-GB", {
+  return new Intl.DateTimeFormat(locale, {
     year: "numeric",
     month: "short",
     day: "numeric",
-  });
+  }).format(date);
 }
 
 function formatDisplayAmount(amount?: number | null, currency?: string | null) {
@@ -25,6 +27,13 @@ function formatDisplayAmount(amount?: number | null, currency?: string | null) {
 
 function hasText(value?: string | null) {
   return Boolean(value?.trim());
+}
+
+function interpolate(template: string, values: Record<string, string | number>) {
+  return Object.entries(values).reduce(
+    (acc, [key, value]) => acc.replaceAll(`{${key}}`, String(value)),
+    template,
+  );
 }
 
 function DetailRow({
@@ -46,8 +55,16 @@ function DetailRow({
 export default function InvoicePdfTemplate({
   invoice,
   labels,
+  logoUrl,
+  locale = "en-GB",
 }: InvoicePdfTemplateProps) {
-  const description = invoice.SubscriptionTitle || invoice.listingTitle || labels.subscriptionLabel;
+  const isPromotionInvoice = invoice.invoiceType === "promotion";
+  const description = isPromotionInvoice
+    ? interpolate(labels.promotionDescription, {
+        stars: invoice.promotionStars ?? "-",
+        days: invoice.promotionDays ?? "-",
+      })
+    : invoice.SubscriptionTitle || invoice.listingTitle || labels.subscriptionLabel;
   const amountSummaryLabel = labels.amountPaid || labels.amountDue || "-";
   const buyerIsCompany =
     invoice.buyerCustomerType === "company" ||
@@ -74,6 +91,14 @@ export default function InvoicePdfTemplate({
     >
       <div className="mb-10 flex items-start justify-between gap-10">
         <div className="max-w-[380px]">
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt=""
+              className="mb-6 h-auto max-h-[72px] w-auto max-w-[190px] object-contain"
+              crossOrigin="anonymous"
+            />
+          ) : null}
           <p
             className="mb-2 text-xs font-semibold uppercase tracking-[0.24em]"
             style={{ color: "#64748b" }}
@@ -109,7 +134,7 @@ export default function InvoicePdfTemplate({
             </div>
             <div className="flex justify-between gap-4">
               <span style={{ color: "#64748b" }}>{labels.issueDate}</span>
-              <span className="font-medium">{formatDisplayDate(invoice.periodStart)}</span>
+              <span className="font-medium">{formatDisplayDate(invoice.periodStart, locale)}</span>
             </div>
             <div className="flex justify-between gap-4">
               <span style={{ color: "#64748b" }}>{amountSummaryLabel}</span>
@@ -157,7 +182,7 @@ export default function InvoicePdfTemplate({
             {labels.billingPeriod}
           </p>
           <p className="mb-1 text-sm" style={{ color: "#334155" }}>
-            {formatDisplayDate(invoice.periodStart)} - {formatDisplayDate(invoice.periodEnd)}
+            {formatDisplayDate(invoice.periodStart, locale)} - {formatDisplayDate(invoice.periodEnd, locale)}
           </p>
           <p className="m-0 text-sm" style={{ color: "#475569" }}>
             {labels.description}: {description}
@@ -177,7 +202,10 @@ export default function InvoicePdfTemplate({
           <div>
             <p className="mb-1 font-medium" style={{ color: "#0f172a" }}>{description}</p>
             {hasText(invoice.listingTitle) && (
-              <p className="m-0" style={{ color: "#64748b" }}>{invoice.listingTitle}</p>
+              <p className="m-0" style={{ color: "#64748b" }}>
+                {isPromotionInvoice ? labels.promotionLabel : invoice.listingTitle}
+                {isPromotionInvoice && invoice.listingTitle ? ` - ${invoice.listingTitle}` : ""}
+              </p>
             )}
           </div>
           <p className="m-0 text-right font-medium" style={{ color: "#0f172a" }}>

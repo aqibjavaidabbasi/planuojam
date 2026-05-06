@@ -1304,7 +1304,8 @@
       "startsTomorrow": "Special Offer starts tomorrow!",
       "startsInDays": "Special Offer starts in {days} days!",
       "startsOn": "Special Offer!",
-      "videoNotSupported": "Your browser does not support the video tag."
+      "videoNotSupported": "Your browser does not support the video tag.",
+      "promoted": "Promoted"
     },
     "SelectedCategories": {
       "noCategoriesFound": "No Categories Found"

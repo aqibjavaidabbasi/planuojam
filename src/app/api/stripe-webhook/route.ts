@@ -1,7 +1,203 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { randomBytes } from "crypto";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const STRAPI_API_URL = process.env.NEXT_PUBLIC_API_URL!;
+const STRAPI_AUTH_HEADERS = {
+  Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+};
+
+type SellerInvoiceDetailEntry = {
+  companyName?: string;
+  address?: string;
+  companyId?: string;
+  vatNumber?: string;
+};
+
+type BuyerInvoiceInformationEntry = {
+  companyName?: string;
+  companyId?: string;
+  companyVAT?: string;
+  companyAddress?: string;
+  contactPerson?: string;
+  individualName?: string;
+  individualSurname?: string;
+  registrationAddress?: string;
+};
+
+type StrapiUserEntry = {
+  id?: number;
+  documentId?: string;
+  username?: string;
+  email?: string;
+  invoiceCustomerType?: "individual" | "company" | null;
+};
+
+type StrapiListingEntry = {
+  title?: string;
+};
+
+function createPublicInvoiceToken() {
+  return randomBytes(24).toString("hex");
+}
+
+function getPublicAppUrl() {
+  return (
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "http://localhost:3000"
+  ).replace(/\/$/, "");
+}
+
+function buildPublicInvoiceUrl(publicToken: string) {
+  return `${getPublicAppUrl()}/en/invoice/${publicToken}`;
+}
+
+async function fetchStrapiJson<T>(url: string): Promise<T | null> {
+  try {
+    const response = await fetch(url, {
+      headers: STRAPI_AUTH_HEADERS,
+      cache: "no-store",
+    });
+
+    if (!response.ok) return null;
+    return (await response.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
+function buildPromotionInvoiceNumber(paymentIntentId: string) {
+  return `PROMO-${paymentIntentId.slice(-8).toUpperCase()}`;
+}
+
+async function createPromotionInvoice(params: {
+  intent: Stripe.PaymentIntent;
+  userId: string;
+  listingDocumentId: string;
+  listingTitle?: string;
+  promotionStars: string;
+  promotionDays: string;
+  amount: number;
+}) {
+  const {
+    intent,
+    userId,
+    listingDocumentId,
+    listingTitle,
+    promotionStars,
+    promotionDays,
+    amount,
+  } = params;
+
+  const invoiceId = `promotion_${intent.id}`;
+
+  const existingInvoice = await fetchStrapiJson<{ data?: Array<{ id: number }> }>(
+    `${STRAPI_API_URL}/api/invoices?filters[stripeInvoiceId][$eq]=${encodeURIComponent(invoiceId)}`,
+  );
+
+  if (Array.isArray(existingInvoice?.data) && existingInvoice.data.length > 0) {
+    console.warn("Promotion invoice already exists:", invoiceId);
+    return;
+  }
+
+  const paymentDate = new Date();
+  const daysInt = Math.max(1, parseInt(String(promotionDays), 10) || 1);
+  const starsInt = Math.max(0, parseInt(String(promotionStars), 10) || 0);
+  const periodEnd = new Date(Date.UTC(
+    paymentDate.getUTCFullYear(),
+    paymentDate.getUTCMonth(),
+    paymentDate.getUTCDate(),
+  ));
+  periodEnd.setUTCDate(periodEnd.getUTCDate() + daysInt - 1);
+
+  const [sellerInvoiceDetail, listingResponse, userResponse, buyerInvoiceInformation] = await Promise.all([
+    fetchStrapiJson<{ data?: SellerInvoiceDetailEntry }>(
+      `${STRAPI_API_URL}/api/seller-invoice-detail`,
+    ),
+    fetchStrapiJson<{ data?: StrapiListingEntry }>(
+      `${STRAPI_API_URL}/api/listings/${listingDocumentId}?populate=*`,
+    ),
+    fetchStrapiJson<StrapiUserEntry>(`${STRAPI_API_URL}/api/users/${encodeURIComponent(String(userId))}`),
+    fetchStrapiJson<{ data?: BuyerInvoiceInformationEntry[] }>(
+      `${STRAPI_API_URL}/api/buyer-invoice-informations?filters[users_permissions_user][id][$eq]=${encodeURIComponent(String(userId))}`,
+    ),
+  ]);
+
+  const sellerSnapshot = sellerInvoiceDetail?.data || {};
+  const buyerSnapshot = buyerInvoiceInformation?.data?.[0] || {};
+  const resolvedListingTitle = listingResponse?.data?.title || listingTitle || null;
+  const buyerCustomerType = userResponse?.invoiceCustomerType || null;
+  const individualFullName = [
+    buyerSnapshot.individualName,
+    buyerSnapshot.individualSurname,
+  ]
+    .map((part) => (typeof part === "string" ? part.trim() : ""))
+    .filter(Boolean)
+    .join(" ");
+  const buyerName =
+    individualFullName ||
+    buyerSnapshot.contactPerson ||
+    userResponse?.username ||
+    null;
+  const buyerAddress =
+    buyerSnapshot.registrationAddress ||
+    buyerSnapshot.companyAddress ||
+    null;
+
+  const publicToken = createPublicInvoiceToken();
+  const hostedUrl = buildPublicInvoiceUrl(publicToken);
+
+  const createInvoiceRes = await fetch(`${STRAPI_API_URL}/api/invoices`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...STRAPI_AUTH_HEADERS,
+    },
+    body: JSON.stringify({
+      data: {
+        stripeInvoiceId: invoiceId,
+        invoiceNumber: buildPromotionInvoiceNumber(intent.id),
+        invoiceType: "promotion",
+        promotionStars: starsInt,
+        promotionDays: daysInt,
+        amount,
+        currency: intent.currency,
+        invoiceStatus: "paid",
+        hostedUrl,
+        periodStart: paymentDate.toISOString(),
+        periodEnd: periodEnd.toISOString(),
+        publicToken,
+        buyerName,
+        buyerEmail: userResponse?.email || null,
+        buyerAddress,
+        buyerCustomerType,
+        buyerIndividualName: buyerSnapshot.individualName || null,
+        buyerIndividualSurname: buyerSnapshot.individualSurname || null,
+        buyerRegistrationAddress: buyerSnapshot.registrationAddress || null,
+        buyerCompanyName: buyerSnapshot.companyName || null,
+        buyerCompanyId: buyerSnapshot.companyId || null,
+        buyerCompanyVAT: buyerSnapshot.companyVAT || null,
+        buyerCompanyAddress: buyerSnapshot.companyAddress || null,
+        buyerContactPerson: buyerSnapshot.contactPerson || null,
+        listingTitle: resolvedListingTitle,
+        SubscriptionTitle: null,
+        sellerCompanyName: sellerSnapshot.companyName || null,
+        sellerAddress: sellerSnapshot.address || null,
+        sellerCompanyId: sellerSnapshot.companyId || null,
+        sellerVatNumber: sellerSnapshot.vatNumber || null,
+        userDocumentId: userResponse?.documentId || null,
+        listingDocId: listingDocumentId,
+      },
+    }),
+  });
+
+  if (!createInvoiceRes.ok) {
+    const err = await createInvoiceRes.json().catch(() => ({}));
+    console.warn("Failed to create promotion invoice:", err);
+  }
+}
 
 // Ensure Node.js runtime for Stripe's SDK compatibility
 export const runtime = "nodejs";
@@ -51,16 +247,20 @@ export async function POST(req: NextRequest) {
         const promotionDays = intent.metadata?.promotion_days;
         const amount = intent.amount_received / 100;
 
-        // Idempotency: skip if transaction already exists
+        let transactionAlreadyRecorded = false;
+
+        // Idempotency: skip transaction create if it already exists, but still allow
+        // promotion invoice creation below in case an older webhook run created only
+        // the transaction.
         try {
-          const url = `${process.env.NEXT_PUBLIC_API_URL}/api/transactions?filters[transactionChargeId][$eq]=${encodeURIComponent(intent.id)}`;
+          const url = `${STRAPI_API_URL}/api/transactions?filters[transactionChargeId][$eq]=${encodeURIComponent(intent.id)}`;
           const checkRes = await fetch(url, {
             headers: { Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}` },
           });
           const checkJson = await checkRes.json().catch(() => ({}));
           if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
             console.warn("Transaction already recorded:", intent.id);
-            return NextResponse.json({ received: true });
+            transactionAlreadyRecorded = true;
           }
         } catch (e) {
           console.warn("Idempotency check errored, continuing:", e);
@@ -71,25 +271,27 @@ export async function POST(req: NextRequest) {
           ? parseInt(String(promotionStars))
           : 0;
 
-        // Save Transaction to Strapi (conform to schema)
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/transactions`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
-          },
-          body: JSON.stringify({
-            data: {
-              users_permissions_user: userId,
-              transactionChargeId: intent.id,
-              amount,
-              starsPurchased: starsPurchasedInt,
-              transactionStatus: "success",
-              transactionDate: new Date().toISOString(),
+        if (!transactionAlreadyRecorded) {
+          // Save Transaction to Strapi (conform to schema)
+          const res = await fetch(`${STRAPI_API_URL}/api/transactions`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
             },
-          }),
-        });
-        await res.json();
+            body: JSON.stringify({
+              data: {
+                users_permissions_user: userId,
+                transactionChargeId: intent.id,
+                amount,
+                starsPurchased: starsPurchasedInt,
+                transactionStatus: "success",
+                transactionDate: new Date().toISOString(),
+              },
+            }),
+          });
+          await res.json();
+        }
 
         // If this payment was for a promotion checkout, create the promotion now
         if (
@@ -109,7 +311,7 @@ export async function POST(req: NextRequest) {
             const endDateStr = end.toISOString().slice(0, 10); // YYYY-MM-DD
 
             // Create promotion in Strapi according to schema (use listingDocumentId)
-            const promoRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/promotions`, {
+            const promoRes = await fetch(`${STRAPI_API_URL}/api/promotions`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -141,7 +343,7 @@ export async function POST(req: NextRequest) {
 
             // Create a star-usage-log entry to credit stars for this promotion purchase (use listingDocumentId)
             try {
-              const starRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/star-usage-logs`, {
+              const starRes = await fetch(`${STRAPI_API_URL}/api/star-usage-logs`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -163,6 +365,16 @@ export async function POST(req: NextRequest) {
             } catch (e) {
               console.warn("Failed to create star-usage-log (promotion credit)", e);
             }
+
+            await createPromotionInvoice({
+              intent,
+              userId: String(userId),
+              listingDocumentId: String(listingDocumentId),
+              listingTitle: listingTitle ? String(listingTitle) : undefined,
+              promotionStars: String(promotionStars),
+              promotionDays: String(promotionDays),
+              amount,
+            });
           } catch (e) {
             console.warn("Promotion creation request failed:", e);
           }

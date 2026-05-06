@@ -259,21 +259,26 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
     };
 
     const handleClear = async () => {
-        let res;
         setIsLoading(true);
-        if (initialFilterValues) {
-            const vals = normalizeTempFilterValues(initialFilterValues);
-            setTempFilterValues(vals);
-            const normalized = normalizeInitialFilters(initialFilterValues);
-            setAppliedFilters(normalized);
-            res = fetcher ? await fetcher(normalized) : await fetchListings(type, normalized);
-        } else {
-            setTempFilterValues({});
-            setAppliedFilters({});
-            res = fetcher ? await fetcher({}) : await fetchListings(type);
+        try {
+            let res;
+            if (initialFilterValues) {
+                const vals = normalizeTempFilterValues(initialFilterValues);
+                setTempFilterValues(vals);
+                const normalized = normalizeInitialFilters(initialFilterValues);
+                setAppliedFilters(normalized);
+                res = fetcher ? await fetcher(normalized) : await fetchListings(type, normalized);
+            } else {
+                setTempFilterValues({});
+                setAppliedFilters({});
+                res = fetcher ? await fetcher({}) : await fetchListings(type);
+            }
+            startTransition(() => setList(res));
+        } catch (error) {
+            console.error('Error clearing filters:', error);
+        } finally {
+            setIsLoading(false);
         }
-        startTransition(() => setList(res));
-        setIsLoading(false);
     };
 
     const t = useTranslations("VenueInfo")
@@ -335,6 +340,14 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
             <div className="mb-4 text-center text-sm text-gray-600">
                 {tMap('helperText')}
             </div>
+            {(isLoading || isPending) && (
+                <div className="mb-4 flex min-h-12 items-center justify-center" role="status" aria-live="polite">
+                    <div className="flex items-center gap-3 rounded-full border border-primary/15 bg-white px-4 py-2 text-sm font-medium text-primary shadow-sm">
+                        <span className="h-5 w-5 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
+                        <span>{tMap('loading', { default: 'Updating results...' })}</span>
+                    </div>
+                </div>
+            )}
             <div className='h-[60vh] md:h-[90vh] lg:h-[calc(100vh-150px)]' style={{ contain: 'layout paint size' }}>
                 <MapboxMap locations={locations} />
             </div>

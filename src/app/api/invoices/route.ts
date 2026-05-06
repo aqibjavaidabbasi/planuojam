@@ -67,11 +67,6 @@ export async function GET(request: NextRequest) {
     const subsData = await subsResponse.json();
     const subIds: string[] = subsData.data?.map((s: { documentId: string }) => s.documentId) || [];
 
-    if (subIds.length === 0) {
-      // User has no subscriptions, therefore no invoices
-      return NextResponse.json({ data: [] });
-    }
-
     // 2. Fetch invoices that map to one of those subscriptions.
     // Try 'subscriptions' then fallback to 'subscription' if server uses a different schema.
     const fetchInvoices = async (relationKey: string) => {
@@ -90,27 +85,74 @@ export async function GET(request: NextRequest) {
       });
     };
 
-    let response = await fetchInvoices('subscriptions');
-    
-    // If the schema on remote is called 'subscription' instead, fallback to it
-    if (response.status === 400) {
-      response = await fetchInvoices('subscription');
+    let subscriptionInvoices: unknown[] = [];
+    if (subIds.length > 0) {
+      let response = await fetchInvoices('subscriptions');
+
+      // If the schema on remote is called 'subscription' instead, fallback to it
+      if (response.status === 400) {
+        response = await fetchInvoices('subscription');
+      }
+
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          return NextResponse.json({ error: 'Unauthorized' }, { status: response.status });
+        }
+        const err = await response.json().catch(() => ({}));
+        console.error('Strapi subscription invoices fetch error:', { status: response.status, err });
+        return NextResponse.json(
+          { error: 'Failed to fetch invoices', details: err },
+          { status: response.status }
+        );
+      }
+
+      const data = await response.json();
+      subscriptionInvoices = Array.isArray(data?.data) ? data.data : [];
     }
 
-    if (!response.ok) {
-      if (response.status === 401 || response.status === 403) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: response.status });
+    const directInvoiceQs = QueryString.stringify({
+      filters: { userDocumentId: { $eq: userId } },
+      sort: ['periodStart:desc'],
+    }, { encodeValuesOnly: true });
+
+    const directInvoiceResponse = await fetch(`${API_URL}/api/invoices?${directInvoiceQs}`, {
+      cache: 'no-store',
+      headers: {
+        Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!directInvoiceResponse.ok) {
+      if (directInvoiceResponse.status === 401 || directInvoiceResponse.status === 403) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: directInvoiceResponse.status });
       }
-      const err = await response.json().catch(() => ({}));
-      console.error('Strapi invoices fetch error:', { status: response.status, err });
+      const err = await directInvoiceResponse.json().catch(() => ({}));
+      console.error('Strapi direct invoices fetch error:', { status: directInvoiceResponse.status, err });
       return NextResponse.json(
         { error: 'Failed to fetch invoices', details: err },
-        { status: response.status }
+        { status: directInvoiceResponse.status }
       );
     }
 
-    const data = await response.json();
-    return NextResponse.json(data);
+    const directInvoiceData = await directInvoiceResponse.json();
+    const directInvoices = Array.isArray(directInvoiceData?.data) ? directInvoiceData.data : [];
+    const byDocumentId = new Map<string, unknown>();
+
+    [...subscriptionInvoices, ...directInvoices].forEach((invoice) => {
+      const key = typeof invoice === 'object' && invoice && 'documentId' in invoice
+        ? String((invoice as { documentId?: string }).documentId)
+        : '';
+      if (key) byDocumentId.set(key, invoice);
+    });
+
+    const mergedInvoices = Array.from(byDocumentId.values()).sort((a, b) => {
+      const aDate = typeof a === 'object' && a && 'periodStart' in a ? String((a as { periodStart?: string }).periodStart || '') : '';
+      const bDate = typeof b === 'object' && b && 'periodStart' in b ? String((b as { periodStart?: string }).periodStart || '') : '';
+      return new Date(bDate).getTime() - new Date(aDate).getTime();
+    });
+
+    return NextResponse.json({ data: mergedInvoices });
   } catch (e) {
     console.error('Error in invoices API route:', e);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

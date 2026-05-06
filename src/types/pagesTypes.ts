@@ -273,6 +273,7 @@ export interface ListingItem {
   documentId: string;
   id: number;
   listingStatus: string;
+  isPromoted?: boolean;
   statusBeforeArchive?: string;
   locale: string;
   price?: number;

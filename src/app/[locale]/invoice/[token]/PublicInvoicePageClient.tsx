@@ -4,12 +4,14 @@ import { useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import Button from "@/components/custom/Button";
 import InvoicePdfTemplate from "@/components/invoice/InvoicePdfTemplate";
+import { useSiteSettings } from "@/context/SiteSettingsContext";
 import { downloadEnglishInvoicePdf, getEnglishInvoicePdfLabels } from "@/lib/invoice-pdf/englishInvoicePdf";
 import {
   downloadLithuanianInvoicePdf,
   getLithuanianInvoicePdfLabels,
 } from "@/lib/invoice-pdf/lithuanianInvoicePdf";
 import type { PublicInvoiceData } from "@/types/invoice";
+import { getCompleteImageUrl } from "@/utils/helpers";
 
 interface PublicInvoicePageClientProps {
   invoice: PublicInvoiceData;
@@ -78,6 +80,10 @@ export default function PublicInvoicePageClient({
   const lithuanianTemplateRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState<"en" | "lt" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { siteSettings } = useSiteSettings();
+  const logoUrl = siteSettings?.siteLogo?.url
+    ? getCompleteImageUrl(siteSettings.siteLogo.url)
+    : undefined;
 
   const handleDownload = async (language: "en" | "lt") => {
     try {
@@ -172,12 +178,16 @@ export default function PublicInvoicePageClient({
           <InvoicePdfTemplate
             invoice={invoice}
             labels={getEnglishInvoicePdfLabels()}
+            logoUrl={logoUrl}
+            locale="en-GB"
           />
         </div>
         <div ref={lithuanianTemplateRef}>
           <InvoicePdfTemplate
             invoice={invoice}
             labels={getLithuanianInvoicePdfLabels()}
+            logoUrl={logoUrl}
+            locale="lt-LT"
           />
         </div>
       </div>

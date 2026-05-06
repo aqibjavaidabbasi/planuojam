@@ -2,7 +2,6 @@
 import React from 'react'
 import BasePhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
-import { isValidPhoneNumber } from 'react-phone-number-input'
 
 // Minimal input used by react-phone-number-input via inputComponent.
 // It renders a plain <input> with the same styling as our regular Input component.
@@ -48,10 +47,10 @@ const PhoneInputField: React.FC<PhoneInputFieldProps> = ({
         </label>
       )}
       <div className={`relative ${disabled ? 'pointer-events-none' : ''}`}>
-        {/** Only pass a valid E.164 value to the underlying input to prevent runtime errors */}
+        {/** BasePhoneInput expects controlled values in E.164 format. */}
         {(() => {
           const { value: rawValue, onChange, ...rest } = props as { value?: string; onChange?: (v?: string | null) => void }
-          const safeValue = typeof rawValue === 'string' && isValidPhoneNumber(rawValue) ? rawValue : undefined
+          const safeValue = typeof rawValue === 'string' && rawValue.trim().startsWith('+') ? rawValue.trim() : undefined
           return (
             <BasePhoneInput
               id={inputId}

@@ -9,7 +9,6 @@ import { updateListing } from "@/services/listing"
 import type { ListingItem } from "@/types/pagesTypes"
 import { useTranslations } from "next-intl"
 import PhoneInputField from "@/components/custom/PhoneInputField"
-import { isValidPhoneNumber } from "react-phone-number-input"
 
 export type ContactForm = {
   email: string
@@ -23,13 +22,21 @@ export default function ContactSection({ listing, onSaved }: { listing: ListingI
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm<ContactForm>({
     defaultValues: {
       email: (listing.contact)?.email || "",
-      phone: (listing.contact)?.phone && isValidPhoneNumber((listing.contact)?.phone) ? (listing.contact)?.phone : "",
+      phone: (listing.contact)?.phone || "",
     },
   })
+
+  React.useEffect(() => {
+    reset({
+      email: (listing.contact)?.email || "",
+      phone: (listing.contact)?.phone || "",
+    })
+  }, [listing.contact?.email, listing.contact?.phone, reset])
 
   const onSubmit = async (values: ContactForm) => {
     setSubmitting(true)

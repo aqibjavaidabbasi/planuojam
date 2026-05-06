@@ -9,7 +9,6 @@ const Faqitem = dynamic(() => import("@/components/Dynamic/Faqitem"), { ssr: fal
 const VenueCard = dynamic(() => import("@/components/custom/VenueCard"), { ssr: false });
 const VendorCard = dynamic(() => import("@/components/custom/VendorCard"), { ssr: false });
 const StarRating = dynamic(() => import("@/components/global/StarRating"), { ssr: false });
-const SocialIcon = dynamic(() => import("@/components/global/SocialIcon"), { ssr: false });
 const ListingReviews = dynamic(() => import("@/components/custom/ListingReviews"), { ssr: false });
 const NoDataCard = dynamic(() => import("@/components/custom/NoDataCard"), { ssr: false });
 const PricingPlans = dynamic(() => import("@/components/custom/PricingPlans"), { ssr: false });
@@ -222,13 +221,13 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
               </div>
               {initialListing.listingItem.map((item, index) => (
                 <div key={index} className="my-4">
-                  {initialListing.type === "venue" &&
-                    item.__component === "dynamic-blocks.venue" && (
-                      <VenueCard item={item} />
-                    )}
                   {initialListing.type === "vendor" &&
                     item.__component === "dynamic-blocks.vendor" && (
-                      <VendorCard item={item} />
+                      <VendorCard item={item} socialLink={initialListing.socialLinks?.socialLink || []} />
+                    )}
+                  {initialListing.type === "venue" &&
+                    item.__component === "dynamic-blocks.venue" && (
+                      <VenueCard item={item} socialLink={initialListing.socialLinks?.socialLink || []} />
                     )}
                 </div>
               ))}
@@ -257,17 +256,6 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
                 </div>
               </section>
             )}
-
-            {/* Social Links Section */}
-            {initialListing.socialLinks &&
-              initialListing.socialLinks.socialLink.length > 0 && (
-                <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
-                  {/* <h2 className="text-base font-semibold text-black mb-2 capitalize">
-                    {initialListing.socialLinks.optionalSectionTitle}
-                  </h2> */}
-                  <SocialIcon socialLink={initialListing.socialLinks.socialLink} />
-                </section>
-              )}
 
             {/* Working Schedule Section */}
             {initialListing.workingSchedule && initialListing.workingSchedule.length > 0 && (

@@ -26,6 +26,9 @@ export interface PublicInvoiceData {
   sellerVatNumber?: string | null;
   userDocumentId?: string | null;
   listingDocId?: string | null;
+  invoiceType?: "subscription" | "promotion" | null;
+  promotionStars?: number | null;
+  promotionDays?: number | null;
   hostedUrl?: string | null;
   publicToken?: string | null;
 }
@@ -52,5 +55,7 @@ export interface InvoicePdfLabels {
   companyId: string;
   vatNumber: string;
   subscriptionLabel: string;
+  promotionLabel: string;
+  promotionDescription: string;
   generatedNote: string;
 }

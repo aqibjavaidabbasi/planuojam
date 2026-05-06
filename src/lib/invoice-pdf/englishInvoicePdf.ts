@@ -23,6 +23,8 @@ export function getEnglishInvoicePdfLabels(): InvoicePdfLabels {
     companyId: "Company ID",
     vatNumber: "VAT Number",
     subscriptionLabel: "Subscription",
+    promotionLabel: "Promotion",
+    promotionDescription: "Promotion stars: {stars} for {days} days",
     generatedNote: "This invoice was generated from your saved billing details.",
   };
 }

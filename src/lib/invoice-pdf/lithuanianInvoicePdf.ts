@@ -23,6 +23,8 @@ export function getLithuanianInvoicePdfLabels(): InvoicePdfLabels {
     companyId: "Įmonės kodas",
     vatNumber: "PVM kodas",
     subscriptionLabel: "Prenumerata",
+    promotionLabel: "Reklama",
+    promotionDescription: "Reklamos žvaigždės: {stars}, laikotarpis: {days} d.",
     generatedNote: "Ši sąskaita sugeneruota iš išsaugotų atsiskaitymo duomenų.",
   };
 }

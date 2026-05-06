@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Button from "@/components/custom/Button";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store";
 import { FaExternalLinkAlt } from "react-icons/fa";
@@ -22,6 +22,8 @@ interface InvoiceData {
 
 export default function InvoicesTab() {
   const t = useTranslations("Profile");
+  const tInvoiceStatus = useTranslations("InvoicePublic.status");
+  const locale = useLocale();
   const user = useAppSelector((state: RootState) => state.auth.user);
   const [invoices, setInvoices] = useState<InvoiceData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -77,6 +79,18 @@ export default function InvoicesTab() {
         return "bg-gray-100 text-gray-800 border-gray-200";
       default:
         return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
+  const getStatusLabel = (invoiceStatus?: string) => {
+    switch (invoiceStatus) {
+      case "paid":
+      case "open":
+      case "failed":
+      case "void":
+        return tInvoiceStatus(invoiceStatus);
+      default:
+        return invoiceStatus || "-";
     }
   };
 
@@ -146,14 +160,14 @@ export default function InvoicesTab() {
                     {invoice.invoiceNumber || "-"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {invoice.periodStart ? new Date(invoice.periodStart).toLocaleDateString() : "-"}
+                    {invoice.periodStart ? new Date(invoice.periodStart).toLocaleDateString(locale) : "-"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {invoice.amount?.toFixed(2)} {invoice.currency?.toUpperCase()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span className={`px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getStatusClasses(invoice.invoiceStatus)}`}>
-                      {invoice.invoiceStatus ? invoice.invoiceStatus.charAt(0).toUpperCase() + invoice.invoiceStatus.slice(1) : "-"}
+                      {getStatusLabel(invoice.invoiceStatus)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right flex justify-end gap-2">

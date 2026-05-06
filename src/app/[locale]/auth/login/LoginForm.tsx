@@ -77,7 +77,7 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
           if (u?.serviceType === null) {
             router.push('/profile?tab=bookings');
           } else {
-            router.push('/profile?tab=my-listings');
+            router.push('/profile?tab=profile');
           }
         }),
       {

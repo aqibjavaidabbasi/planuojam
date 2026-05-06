@@ -1307,7 +1307,8 @@
       "startsToday": "Sodyba prasideda šiandien!",
       "startsTomorrow": "Specialus pasiūlymas prasideda jau rytoj!",
       "startsInDays": "Specialus pasiūlymas startuoja po {days} dienų!",
-      "startsOn": "Specialus pasiūlymas!"
+      "startsOn": "Specialus pasiūlymas!",
+      "promoted": "Reklamuojama"
     },
     "SelectedCategories": {
       "noCategoriesFound": "Kategorijų nerasta"

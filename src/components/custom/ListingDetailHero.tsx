@@ -56,7 +56,7 @@ function ListingDetailHero({
   const isDealActive = isHotDealActive(hotDeal as HotDeal);
 
   return (
-    <div className="rounded-2xl overflow-hidden mb-8 relative bg-gradient-to-r from-amber-500 to-pink-500">
+    <div className="rounded-2xl overflow-hidden mb-8 relative bg-linear-to-r from-amber-500 to-pink-500">
       <div className="absolute inset-0 bg-black/20"></div>
       <div className="relative z-10 p-2.5 md:p-4 text-white">
         <div className="flex flex-col gap-2">
@@ -69,11 +69,6 @@ function ListingDetailHero({
               )}
             </div>}
           <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2">{title}</h1>
-          <div className="flex-1">
-            <p className="text-base sm:text-lg text-white text-opacity-80 mb-3">
-              {username}
-            </p>
-          </div>
           <div className="flex flex-wrap gap-4 text-sm">
             {contact?.email && <div className="flex items-center">
               <MdOutlineEmail className="mr-2" size={24} />
@@ -89,11 +84,16 @@ function ListingDetailHero({
             {(() => {
               const formatted = formatPhoneDisplay(contact?.phone)
               const telHref = getTelHref(contact?.phone)
-              if (!formatted || !telHref) return null
-              return (
+              return  !formatted || !telHref ? 
+              (<div className="flex items-center">
+                  <MdOutlineLocalPhone className="mr-2" size={24} />
+                  <a href={telHref} rel="noopener noreferrer" className="hover:underline">{formatted ?? contact?.phone}</a>
+                </div>)
+                :
+              (
                 <div className="flex items-center">
                   <MdOutlineLocalPhone className="mr-2" size={24} />
-                  <a href={telHref} rel="noopener noreferrer" className="hover:underline">{formatted}</a>
+                  <p className="hover:underline">{formatted ?? contact?.phone}</p>
                 </div>
               )
             })()}

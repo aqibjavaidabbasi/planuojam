@@ -9,7 +9,7 @@ import { Swiper as SwiperClass } from 'swiper/types'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
-import { FaHeart, FaSpinner, FaInfoCircle } from 'react-icons/fa'
+import { FaHeart, FaSpinner, FaInfoCircle, FaStar } from 'react-icons/fa'
 import Button from '../custom/Button'
 import { IoNavigateOutline } from 'react-icons/io5'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
@@ -260,15 +260,23 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           </div>
         )}
         {/* Title and Rating */}
-        <div className="flex justify-between items-center gap-2">
+        <div className="flex justify-between items-start gap-2">
           <Link
             href={viewPath}
             target="_blank"
             rel="noopener noreferrer"
-            className="min-w-0 max-w-45"
+            className="min-w-0 flex-1"
             title={item.title}
           >
-            <strong className="block truncate text-base md:text-lg hover:text-primary transition-colors">{item.title}</strong>
+            <span className="flex min-w-0 items-center gap-1.5">
+              <strong className="block truncate text-base md:text-lg hover:text-primary transition-colors">{item.title}</strong>
+              {item.isPromoted && (
+                <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase leading-none text-primary">
+                  <FaStar size={10} />
+                  {/* {t('promoted')} */}
+                </span>
+              )}
+            </span>
           </Link>
           <div className="flex gap-1 text-primary items-center text-sm shrink-0">
             <span>{item.averageRating ?? t('unrated')}</span>

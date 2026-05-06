@@ -1318,7 +1318,8 @@
       "startsTomorrow": "Oferta specjalna zaczyna się jutro!",
       "startsInDays": "Oferta specjalna zaczyna się za {days} dni!",
       "startsOn": "Oferta specjalna!",
-      "videoNotSupported": "Twoja przeglądarka nie obsługuje znacznika wideo."
+      "videoNotSupported": "Twoja przeglądarka nie obsługuje znacznika wideo.",
+      "promoted": "Promowane"
     },
     "SelectedCategories": {
       "noCategoriesFound": "Nie znaleziono kategorii"

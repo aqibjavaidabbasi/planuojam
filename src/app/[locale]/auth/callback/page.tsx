@@ -102,7 +102,7 @@ export default function AuthCallbackPage() {
           if (user?.serviceType === null) {
             router.replace(`/profile?tab=bookings`);
           } else {
-            router.replace(`/profile?tab=my-listings`);
+            router.replace(`/profile?tab=profile`);
           }
         }
       } catch (e) {

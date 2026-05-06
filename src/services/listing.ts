@@ -538,6 +538,15 @@ export async function fetchSortedListingsWithMeta(
     if (pagination) additional.pagination = pagination;
 
     const query = createQuery(populate, additional);
-    const res = await fetchAPIWithMeta('listings/promoted', query, baseFilters, ['listings']);
+    const filterString = QueryString.stringify(baseFilters, { encodeValuesOnly: true });
+    const url = `${API_URL}/api/listings/promoted?${query}${filterString ? `&${filterString}` : ''}`;
+    const response = await fetch(url, { cache: 'no-store' });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `Strapi API error! status: ${response.status}`);
+    }
+
+    const res = await response.json();
     return res as { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } };
 }

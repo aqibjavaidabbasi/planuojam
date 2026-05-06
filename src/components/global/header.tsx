@@ -205,7 +205,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
   return (
     <header className="sticky top-0 z-30">
       <div className="w-full bg-white shadow-sm px-2.5 md:px-4 py-2 ">
-        <div className="max-w-screen lg:max-w-[1700px] mx-auto flex items-center justify-between">
+        <div className="max-w-screen lg:max-w-425 mx-auto flex items-center justify-between">
           {/* Left: Logo and Nav */}
           <div className="flex items-center gap-3 md:w-auto">
             <Logo
@@ -261,7 +261,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
               }))}
             />
             {/* Search: hidden on xs, visible from sm */}
-            <div className="hidden sm:block max-w-[140px] md:max-w-[200px] lg:max-w-full">
+            <div className="hidden sm:block max-w-35 md:max-w-50 lg:max-w-full">
               <Search />
             </div>
 
@@ -425,7 +425,7 @@ function Header({ headerData }: { headerData: HeaderType }) {
       {Array.isArray(headerData?.eventTypes) &&
         headerData.eventTypes?.filter(({ eventType }) => Boolean(eventType)).length > 0 && (
           <div className="hidden md:block w-full bg-gray-50 border-t border-b border-border px-2.5 md:px-4 py-2 z-20 overflow-x-auto">
-            <div className="max-w-screen lg:max-w-[1700px] mx-auto flex flex-wrap items-center gap-1 md:gap-2">
+            <div className="max-w-screen lg:max-w-425 mx-auto flex flex-wrap items-center gap-1 md:gap-2">
               {headerData.eventTypes?.filter(({ eventType }) => Boolean(eventType)).map(({ id, eventType }) => {
                 const isActive = isEventTypeActive(eventType.documentId);
                 return (
