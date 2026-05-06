@@ -4,6 +4,7 @@ import BookingEmail from '@/emails/BookingEmail';
 import MessageEmail from '@/emails/MessageEmail';
 import SubscriptionEmail from '@/emails/SubscriptionEmail';
 import InquiryEmail from '@/emails/InquiryEmail';
+import InvoiceEmail from '@/emails/InvoiceEmail';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -28,6 +29,8 @@ export async function POST(req: Request) {
 
     let reactElement;
 
+    console.log("sending email:", type)
+
     switch (type) {
       case 'booking_provider':
         reactElement = BookingEmail({ 
@@ -49,6 +52,14 @@ export async function POST(req: Request) {
         reactElement = SubscriptionEmail({ 
           username: data.username, 
           listingTitle: data.listingTitle,
+          locale,
+        });
+        break;
+      case 'invoice':
+        reactElement = InvoiceEmail({
+          username: data.username,
+          invoiceNumber: data.invoiceNumber,
+          invoiceUrl: data.invoiceUrl,
           locale,
         });
         break;

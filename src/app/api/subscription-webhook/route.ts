@@ -45,6 +45,7 @@ type StrapiUserEntry = {
   documentId?: string;
   username?: string;
   email?: string;
+  preferredLanguage?: string | null;
   invoiceCustomerType?: "individual" | "company" | null;
 };
 
@@ -70,6 +71,26 @@ type BuyerInvoiceInformationEntry = {
   registrationAddress?: string;
 };
 
+type NotificationPayload = {
+  type: "subscription" | "invoice";
+  to: string;
+  subject: string;
+  locale?: string | null;
+  data: Record<string, unknown>;
+  stripeEventId?: string;
+  rawMeta?: Record<string, unknown>;
+};
+
+type SubscriptionInvoiceResult = {
+  invoiceDocumentId?: string;
+  invoiceNumber: string;
+  hostedUrl: string;
+  buyerEmail?: string | null;
+  username?: string | null;
+  locale?: string | null;
+  created: boolean;
+};
+
 const STRAPI_API_URL = process.env.NEXT_PUBLIC_API_URL!;
 const STRAPI_AUTH_HEADERS = {
   Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
@@ -83,7 +104,7 @@ function getPublicAppUrl() {
   return (
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
-    "http://localhost:3000"
+    "https://planuojam.lt"
   ).replace(/\/$/, "");
 }
 
@@ -123,6 +144,276 @@ async function fetchStrapiJson<T>(url: string): Promise<T | null> {
   } catch {
     return null;
   }
+}
+
+function normalizeEmailLocale(locale?: string | null) {
+  const normalized = (locale || "en").toLowerCase().split("-")[0];
+  return ["en", "lt", "ru", "pl", "et"].includes(normalized) ? normalized : "en";
+}
+
+function getSubscriptionSubject(locale?: string | null) {
+  const subjects: Record<string, string> = {
+    en: "Your listing is now active!",
+    lt: "J\u016bs\u0173 skelbimas dabar aktyvus!",
+    ru: "\u0412\u0430\u0448\u0435 \u043e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u0438\u0435 \u0442\u0435\u043f\u0435\u0440\u044c \u0430\u043a\u0442\u0438\u0432\u043d\u043e!",
+    pl: "Twoje og\u0142oszenie jest ju\u017c aktywne!",
+    et: "Teie kuulutus on n\u00fc\u00fcd aktiivne!",
+  };
+
+  return subjects[normalizeEmailLocale(locale)];
+}
+
+function getInvoiceSubject(invoiceNumber: string, locale?: string | null) {
+  const subjects: Record<string, string> = {
+    en: `Your invoice ${invoiceNumber} is ready`,
+    lt: `J\u016bs\u0173 s\u0105skaita ${invoiceNumber} paruo\u0161ta`,
+    ru: `\u0412\u0430\u0448 \u0441\u0447\u0435\u0442 ${invoiceNumber} \u0433\u043e\u0442\u043e\u0432`,
+    pl: `Twoja faktura ${invoiceNumber} jest gotowa`,
+    et: `Teie arve ${invoiceNumber} on valmis`,
+  };
+
+  return subjects[normalizeEmailLocale(locale)];
+}
+
+async function sendAppNotification({
+  type,
+  to,
+  subject,
+  locale,
+  data,
+  stripeEventId,
+  rawMeta,
+}: NotificationPayload) {
+  const url = `${getPublicAppUrl()}/api/email/notification`;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type,
+        to,
+        subject,
+        locale: normalizeEmailLocale(locale),
+        data,
+      }),
+    });
+    const responseBody = await response.text().catch(() => "");
+
+    if (!response.ok) {
+      console.error(`Failed to send ${type} email:`, response.status, responseBody);
+      await logWebhookEvent("error", `Failed to send ${type} email`, {
+        severity: "error",
+        stripeEventId,
+        rawMeta: {
+          to,
+          url,
+          status: response.status,
+          responseBody,
+          ...rawMeta,
+        },
+      });
+      return false;
+    }
+
+    await logWebhookEvent("webhook_received", `${type} email sent`, {
+      severity: "info",
+      stripeEventId,
+      rawMeta: { to, responseBody, ...rawMeta },
+    });
+    return true;
+  } catch (error) {
+    console.error(`Error sending ${type} email:`, error);
+    await logWebhookEvent("error", `Error sending ${type} email`, {
+      severity: "error",
+      stripeEventId,
+      rawMeta: { to, url, error: String(error), ...rawMeta },
+    });
+    return false;
+  }
+}
+
+async function createOrGetSubscriptionInvoice(
+  invoice: WebhookInvoice,
+  subscriptionId: string,
+  stripeEventId: string,
+  statusOverride?: string
+): Promise<SubscriptionInvoiceResult | null> {
+  const findSubUrl = `${STRAPI_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}&populate[users_permissions_user][fields][0]=id&populate[users_permissions_user][fields][1]=documentId`;
+  const findSubRes = await fetch(findSubUrl, {
+    headers: STRAPI_AUTH_HEADERS,
+  });
+  const findSubJson = await findSubRes.json().catch(() => ({} as { data?: StrapiSubscriptionEntry[] }));
+
+  if (!Array.isArray(findSubJson?.data) || findSubJson.data.length === 0) {
+    console.warn("Subscription not found for invoice:", subscriptionId);
+    await logWebhookEvent("error", `Subscription not found for invoice: ${invoice.id}`, {
+      severity: "warning",
+      stripeEventId,
+      rawMeta: { invoiceId: invoice.id, subscriptionId },
+    });
+    return null;
+  }
+
+  const subscriptionEntry = findSubJson.data[0] as StrapiSubscriptionEntry;
+  const subscriptionDocId = subscriptionEntry.documentId;
+  const listingDocId = subscriptionEntry.listingDocId || null;
+  const userId =
+    typeof subscriptionEntry.users_permissions_user === "object"
+      ? subscriptionEntry.users_permissions_user?.id
+      : subscriptionEntry.users_permissions_user;
+
+  const [existingInvoice, listingResponse, userResponse, buyerInvoiceInformation, sellerInvoiceDetail] = await Promise.all([
+    fetchStrapiJson<{ data?: Array<{ documentId?: string; invoiceNumber?: string | null; hostedUrl?: string | null }> }>(
+      `${STRAPI_API_URL}/api/invoices?filters[stripeInvoiceId][$eq]=${encodeURIComponent(invoice.id)}`
+    ),
+    listingDocId
+      ? fetchStrapiJson<{ data?: StrapiListingEntry }>(
+          `${STRAPI_API_URL}/api/listings/${listingDocId}?populate=*`
+        )
+      : Promise.resolve(null),
+    userId
+      ? fetchStrapiJson<StrapiUserEntry>(`${STRAPI_API_URL}/api/users/${userId}`)
+      : Promise.resolve(null),
+    userId
+      ? fetchStrapiJson<{ data?: BuyerInvoiceInformationEntry[] }>(
+          `${STRAPI_API_URL}/api/buyer-invoice-informations?filters[users_permissions_user][id][$eq]=${encodeURIComponent(String(userId))}`
+        )
+      : Promise.resolve(null),
+    fetchStrapiJson<{ data?: SellerInvoiceDetailEntry }>(
+      `${STRAPI_API_URL}/api/seller-invoice-detail`
+    ),
+  ]);
+
+  const invoiceNumber = invoice.number || invoice.id;
+  const existing = existingInvoice?.data?.[0];
+
+  if (existing?.documentId) {
+    if (statusOverride && statusOverride !== invoice.status) {
+      await fetch(`${STRAPI_API_URL}/api/invoices/${existing.documentId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...STRAPI_AUTH_HEADERS,
+        },
+        body: JSON.stringify({
+          data: { invoiceStatus: statusOverride },
+        }),
+      });
+    }
+
+    return {
+      invoiceDocumentId: existing.documentId,
+      invoiceNumber: existing.invoiceNumber || invoiceNumber,
+      hostedUrl: existing.hostedUrl || buildPublicInvoiceUrl(createPublicInvoiceToken()),
+      buyerEmail: userResponse?.email || null,
+      username: userResponse?.username || userResponse?.email || null,
+      locale: userResponse?.preferredLanguage || null,
+      created: false,
+    };
+  }
+
+  const invoiceWithCustomerDetails = invoice as InvoiceWithCustomerDetails;
+  const publicToken = createPublicInvoiceToken();
+  const hostedUrl = buildPublicInvoiceUrl(publicToken);
+  const sellerSnapshot = sellerInvoiceDetail?.data || {};
+  const buyerSnapshot = buyerInvoiceInformation?.data?.[0] || {};
+  const listingTitle = listingResponse?.data?.title || null;
+  const buyerCustomerType = userResponse?.invoiceCustomerType || null;
+  const individualFullName = [
+    buyerSnapshot.individualName,
+    buyerSnapshot.individualSurname,
+  ]
+    .map((part) => (typeof part === "string" ? part.trim() : ""))
+    .filter(Boolean)
+    .join(" ");
+  const buyerName =
+    individualFullName ||
+    buyerSnapshot.contactPerson ||
+    userResponse?.username ||
+    invoiceWithCustomerDetails.customer_name ||
+    null;
+  const buyerEmail =
+    userResponse?.email || invoiceWithCustomerDetails.customer_email || null;
+  const buyerAddress =
+    buyerSnapshot.registrationAddress ||
+    buyerSnapshot.companyAddress ||
+    formatStripeAddress(invoiceWithCustomerDetails.customer_address);
+  const subscriptionTitle =
+    invoice.lines?.data?.[0]?.description || listingTitle || "Subscription";
+  const periodStart = invoice.period_start || invoice.created;
+  const periodEnd = invoice.period_end || invoice.created;
+
+  const createInvoiceRes = await fetch(`${STRAPI_API_URL}/api/invoices`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...STRAPI_AUTH_HEADERS,
+    },
+    body: JSON.stringify({
+      data: {
+        stripeInvoiceId: invoice.id,
+        invoiceNumber,
+        invoiceType: "subscription",
+        subscriptions: [subscriptionDocId],
+        amount: parseFloat(((invoice.total || invoice.amount_paid || 0) / 100).toFixed(2)),
+        currency: invoice.currency,
+        invoiceStatus: statusOverride || invoice.status || "open",
+        hostedUrl,
+        periodStart: new Date(periodStart * 1000).toISOString(),
+        periodEnd: new Date(periodEnd * 1000).toISOString(),
+        publicToken,
+        buyerName,
+        buyerEmail,
+        buyerAddress,
+        buyerCustomerType,
+        buyerIndividualName: buyerSnapshot.individualName || null,
+        buyerIndividualSurname: buyerSnapshot.individualSurname || null,
+        buyerRegistrationAddress: buyerSnapshot.registrationAddress || null,
+        buyerCompanyName: buyerSnapshot.companyName || null,
+        buyerCompanyId: buyerSnapshot.companyId || null,
+        buyerCompanyVAT: buyerSnapshot.companyVAT || null,
+        buyerCompanyAddress: buyerSnapshot.companyAddress || null,
+        buyerContactPerson: buyerSnapshot.contactPerson || null,
+        listingTitle,
+        SubscriptionTitle: subscriptionTitle,
+        sellerCompanyName: sellerSnapshot.companyName || null,
+        sellerAddress: sellerSnapshot.address || null,
+        sellerCompanyId: sellerSnapshot.companyId || null,
+        sellerVatNumber: sellerSnapshot.vatNumber || null,
+        userDocumentId: userResponse?.documentId || null,
+        listingDocId,
+      },
+    }),
+  });
+
+  if (!createInvoiceRes.ok) {
+    const errData = await createInvoiceRes.json().catch(() => ({}));
+    console.error("Failed to create Invoice in Strapi:", errData);
+    await logWebhookEvent("error", `Failed to create Invoice: ${invoice.id}`, {
+      severity: "error",
+      stripeEventId,
+      rawMeta: { invoiceId: invoice.id, subscriptionId, error: errData },
+    });
+    return null;
+  }
+
+  const createInvoiceJson = await createInvoiceRes.json().catch(() => ({}));
+  await logWebhookEvent("payment_succeeded", `Invoice created: ${invoice.id}`, {
+    severity: "info",
+    stripeEventId,
+    rawMeta: { invoiceId: invoice.id, subscriptionId, invoiceNumber },
+  });
+
+  return {
+    invoiceDocumentId: createInvoiceJson?.data?.documentId,
+    invoiceNumber,
+    hostedUrl,
+    buyerEmail,
+    username: userResponse?.username || userResponse?.email || buyerName,
+    locale: userResponse?.preferredLanguage || null,
+    created: true,
+  };
 }
 
 function extractSubscriptionId(invoice: WebhookInvoice): string | null {
@@ -437,21 +728,18 @@ export async function POST(req: NextRequest) {
               
               if (user && user.email) {
                 const listingTitle = responseData?.data?.title || "Your Listing";
-                const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://planuojam.lt';
-                
-                await fetch(`${appUrl}/api/email/notification`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    type: 'subscription',
-                    to: user.email,
-                    subject: 'Your listing is now active!',
-                    locale: user.preferredLanguage || 'en',
-                    data: {
-                      username: user.username || user.email,
-                      listingTitle,
-                    }
-                  })
+
+                await sendAppNotification({
+                  type: "subscription",
+                  to: user.email,
+                  subject: getSubscriptionSubject(user.preferredLanguage),
+                  locale: user.preferredLanguage || "en",
+                  stripeEventId: event.id,
+                  rawMeta: { subscriptionId, listingDocId },
+                  data: {
+                    username: user.username || user.email,
+                    listingTitle,
+                  },
                 });
               }
             } catch (emailErr) {
@@ -685,7 +973,41 @@ export async function POST(req: NextRequest) {
       }
 
       case "invoice.payment_succeeded": {
-        console.log("Ignored invoice.payment_succeeded (handled by invoice.paid)");
+        const invoice = event.data.object as WebhookInvoice;
+        const subscriptionId = extractSubscriptionId(invoice);
+        const billingReason = invoice.billing_reason;
+
+        await logWebhookEvent("webhook_received", `Received invoice.payment_succeeded webhook`, {
+          severity: "info",
+          stripeEventId: event.id,
+          rawMeta: { invoiceId: invoice.id, subscriptionId, billingReason },
+        });
+
+        if (!subscriptionId) break;
+
+        const createdInvoice = await createOrGetSubscriptionInvoice(
+          invoice,
+          subscriptionId,
+          event.id,
+          "paid"
+        );
+
+        if (createdInvoice?.created && createdInvoice.buyerEmail) {
+          await sendAppNotification({
+            type: "invoice",
+            to: createdInvoice.buyerEmail,
+            subject: getInvoiceSubject(createdInvoice.invoiceNumber, createdInvoice.locale),
+            locale: createdInvoice.locale || "en",
+            stripeEventId: event.id,
+            rawMeta: { invoiceId: invoice.id, subscriptionId },
+            data: {
+              username: createdInvoice.username || createdInvoice.buyerEmail,
+              invoiceNumber: createdInvoice.invoiceNumber,
+              invoiceUrl: createdInvoice.hostedUrl,
+            },
+          });
+        }
+
         break;
       }
 
@@ -701,140 +1023,25 @@ export async function POST(req: NextRequest) {
 
         if (!subscriptionId) break;
 
-        // Idempotency check: see if invoice already exists
-        try {
-          const checkUrl = `${STRAPI_API_URL}/api/invoices?filters[stripeInvoiceId][$eq]=${encodeURIComponent(invoice.id)}`;
-          const checkRes = await fetch(checkUrl, {
-            headers: STRAPI_AUTH_HEADERS,
-          });
-          const checkJson = await checkRes.json().catch(() => ({}));
-          if (Array.isArray(checkJson?.data) && checkJson.data.length > 0) {
-            console.warn("Invoice already exists in Strapi:", invoice.id);
-            break; // Skip creation
-          }
-        } catch (e) {
-          console.warn("Invoice idempotency check failed:", e);
-        }
+        const createdInvoice = await createOrGetSubscriptionInvoice(
+          invoice,
+          subscriptionId,
+          event.id
+        );
 
-        // Find subscription in Strapi to link
-        const findSubUrl = `${STRAPI_API_URL}/api/subscriptions?filters[stripeSubscriptionId][$eq]=${encodeURIComponent(subscriptionId)}&populate[users_permissions_user][fields][0]=id&populate[users_permissions_user][fields][1]=documentId`;
-        const findSubRes = await fetch(findSubUrl, {
-          headers: STRAPI_AUTH_HEADERS,
-        });
-        const findSubJson = await findSubRes.json().catch(() => ({} as { data?: StrapiSubscriptionEntry[] }));
-
-        if (!Array.isArray(findSubJson?.data) || findSubJson.data.length === 0) {
-          console.warn("Subscription not found for finalized invoice:", subscriptionId);
-          break;
-        }
-
-        const subscriptionEntry = findSubJson.data[0] as StrapiSubscriptionEntry;
-        const subscriptionDocId = subscriptionEntry.documentId;
-        const listingDocId = subscriptionEntry.listingDocId || null;
-        const userId =
-          typeof subscriptionEntry.users_permissions_user === "object"
-            ? subscriptionEntry.users_permissions_user?.id
-            : subscriptionEntry.users_permissions_user;
-
-        const invoiceWithCustomerDetails = invoice as InvoiceWithCustomerDetails;
-        const publicToken = createPublicInvoiceToken();
-        const hostedUrl = buildPublicInvoiceUrl(publicToken);
-
-        const [sellerInvoiceDetail, listingResponse, userResponse, buyerInvoiceInformation] = await Promise.all([
-          fetchStrapiJson<{ data?: SellerInvoiceDetailEntry }>(
-            `${STRAPI_API_URL}/api/seller-invoice-detail`
-          ),
-          listingDocId
-            ? fetchStrapiJson<{ data?: StrapiListingEntry }>(
-                `${STRAPI_API_URL}/api/listings/${listingDocId}?populate=*`
-              )
-            : Promise.resolve(null),
-          userId
-            ? fetchStrapiJson<StrapiUserEntry>(`${STRAPI_API_URL}/api/users/${userId}`)
-            : Promise.resolve(null),
-          userId
-            ? fetchStrapiJson<{ data?: BuyerInvoiceInformationEntry[] }>(
-                `${STRAPI_API_URL}/api/buyer-invoice-informations?filters[users_permissions_user][id][$eq]=${encodeURIComponent(String(userId))}`
-              )
-            : Promise.resolve(null),
-        ]);
-
-        const sellerSnapshot = sellerInvoiceDetail?.data || {};
-        const buyerSnapshot = buyerInvoiceInformation?.data?.[0] || {};
-        const listingTitle = listingResponse?.data?.title || null;
-        const buyerCustomerType = userResponse?.invoiceCustomerType || null;
-        const individualFullName = [
-          buyerSnapshot.individualName,
-          buyerSnapshot.individualSurname,
-        ]
-          .map((part) => (typeof part === "string" ? part.trim() : ""))
-          .filter(Boolean)
-          .join(" ");
-        const buyerName =
-          individualFullName ||
-          buyerSnapshot.contactPerson ||
-          userResponse?.username ||
-          invoiceWithCustomerDetails.customer_name ||
-          null;
-        const buyerEmail =
-          userResponse?.email || invoiceWithCustomerDetails.customer_email || null;
-        const buyerAddress =
-          buyerSnapshot.registrationAddress ||
-          buyerSnapshot.companyAddress ||
-          formatStripeAddress(invoiceWithCustomerDetails.customer_address);
-        const subscriptionTitle =
-          invoice.lines?.data?.[0]?.description || listingTitle || "Subscription";
-
-        // Create invoice in Strapi
-        const createInvoiceRes = await fetch(`${STRAPI_API_URL}/api/invoices`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...STRAPI_AUTH_HEADERS,
-          },
-          body: JSON.stringify({
-            data: {
-              stripeInvoiceId: invoice.id,
-              invoiceNumber: invoice.number || null,
-              subscriptions: [subscriptionDocId],
-              amount: parseFloat((invoice.total / 100).toFixed(2)),
-              currency: invoice.currency,
-              invoiceStatus: invoice.status || "open",
-              hostedUrl,
-              periodStart: new Date(invoice.period_start * 1000).toISOString(),
-              periodEnd: new Date(invoice.period_end * 1000).toISOString(),
-              publicToken,
-              buyerName,
-              buyerEmail,
-              buyerAddress,
-              buyerCustomerType,
-              buyerIndividualName: buyerSnapshot.individualName || null,
-              buyerIndividualSurname: buyerSnapshot.individualSurname || null,
-              buyerRegistrationAddress: buyerSnapshot.registrationAddress || null,
-              buyerCompanyName: buyerSnapshot.companyName || null,
-              buyerCompanyId: buyerSnapshot.companyId || null,
-              buyerCompanyVAT: buyerSnapshot.companyVAT || null,
-              buyerCompanyAddress: buyerSnapshot.companyAddress || null,
-              buyerContactPerson: buyerSnapshot.contactPerson || null,
-              listingTitle,
-              SubscriptionTitle: subscriptionTitle,
-              sellerCompanyName: sellerSnapshot.companyName || null,
-              sellerAddress: sellerSnapshot.address || null,
-              sellerCompanyId: sellerSnapshot.companyId || null,
-              sellerVatNumber: sellerSnapshot.vatNumber || null,
-              userDocumentId: userResponse?.documentId || null,
-              listingDocId,
-            },
-          }),
-        });
-
-        if (!createInvoiceRes.ok) {
-          const errData = await createInvoiceRes.json().catch(() => ({}));
-          console.error("Failed to create Invoice in Strapi:", errData);
-          await logWebhookEvent("error", `Failed to create Invoice: ${invoice.id}`, {
-            severity: "error",
+        if (createdInvoice?.created && createdInvoice.buyerEmail) {
+          await sendAppNotification({
+            type: "invoice",
+            to: createdInvoice.buyerEmail,
+            subject: getInvoiceSubject(createdInvoice.invoiceNumber, createdInvoice.locale),
+            locale: createdInvoice.locale || "en",
             stripeEventId: event.id,
-            rawMeta: { invoiceId: invoice.id, error: errData },
+            rawMeta: { invoiceId: invoice.id, subscriptionId },
+            data: {
+              username: createdInvoice.username || createdInvoice.buyerEmail,
+              invoiceNumber: createdInvoice.invoiceNumber,
+              invoiceUrl: createdInvoice.hostedUrl,
+            },
           });
         }
 
@@ -873,6 +1080,28 @@ export async function POST(req: NextRequest) {
         const subscriptionDocId = subscription.documentId;
         const userId = subscription.users_permissions_user?.id || subscription.users_permissions_user;
         const listingDocId = subscription.listingDocId;
+        const createdInvoice = await createOrGetSubscriptionInvoice(
+          invoice,
+          subscriptionId,
+          event.id,
+          "paid"
+        );
+
+        if (createdInvoice?.created && createdInvoice.buyerEmail) {
+          await sendAppNotification({
+            type: "invoice",
+            to: createdInvoice.buyerEmail,
+            subject: getInvoiceSubject(createdInvoice.invoiceNumber, createdInvoice.locale),
+            locale: createdInvoice.locale || "en",
+            stripeEventId: event.id,
+            rawMeta: { invoiceId: invoice.id, subscriptionId },
+            data: {
+              username: createdInvoice.username || createdInvoice.buyerEmail,
+              invoiceNumber: createdInvoice.invoiceNumber,
+              invoiceUrl: createdInvoice.hostedUrl,
+            },
+          });
+        }
 
         // Skip initial subscription creation invoices for transaction - those are handled by checkout.session.completed
         let shouldCreateTransaction = billingReason !== 'subscription_create';
