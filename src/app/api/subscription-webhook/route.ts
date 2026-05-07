@@ -28,6 +28,14 @@ type InvoiceLineWithParent = Stripe.InvoiceLineItem & {
   };
 };
 
+type InvoiceLineWithPrice = Stripe.InvoiceLineItem & {
+  price?: {
+    recurring?: {
+      interval?: string | null;
+    } | null;
+  } | null;
+};
+
 type InvoiceWithCustomerDetails = Stripe.Invoice & {
   customer_name?: string | null;
   customer_email?: string | null;
@@ -420,10 +428,11 @@ async function createOrGetSubscriptionInvoice(
     buyerSnapshot.registrationAddress ||
     buyerSnapshot.companyAddress ||
     formatStripeAddress(invoiceWithCustomerDetails.customer_address);
+  const firstInvoiceLine = invoice.lines?.data?.[0] as InvoiceLineWithPrice | undefined;
   const subscriptionTitle =
-    invoice.lines?.data?.[0]?.description || listingTitle || "Subscription";
+    firstInvoiceLine?.description || listingTitle || "Subscription";
   const subscriptionInterval = normalizeSubscriptionInterval(
-    invoice.lines?.data?.[0]?.price?.recurring?.interval,
+    firstInvoiceLine?.price?.recurring?.interval,
   );
   const periodStart = invoice.period_start || invoice.created;
   const periodEnd = invoice.period_end || invoice.created;
