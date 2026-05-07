@@ -1,5 +1,5 @@
 import {
-    LISTING_CARD_MAP_POP_STRUCTURE,
+    LISTING_MAP_LOCATION_POP_STRUCTURE,
     LISTING_CARD_POP_STRUCTURE,
     LISTING_DETAIL_POP_STRUCTURE,
 } from "@/utils/listingPopulates";
@@ -336,63 +336,6 @@ export async function fetchListingsByUser(documentId: string, status?: string, l
                 }
             }
         },
-        localizations: {
-            populate: {
-                categories: {
-                    populate: '*'
-                },
-                listingItem: {
-                    on: {
-                        'dynamic-blocks.vendor': {
-                            populate: {
-                                'serviceArea': {
-                                    populate: {
-                                        'city': {
-                                            populate: true,
-                                        },
-                                        'state': {
-                                            populate: true,
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        'dynamic-blocks.venue': {
-                            populate: {
-                                location: {
-                                    populate: '*'
-                                },
-                                amneties: {
-                                    populate: '*'
-                                }
-                            }
-                        }
-                    }
-                },
-                portfolio: {
-                    populate: '*'
-                },
-                FAQs: {
-                    populate: '*'
-                },
-                reviews: {
-                    populate: '*'
-                },
-                user: {
-                    populate: '*'
-                },
-                eventTypes: {
-                    populate: '*'
-                },
-                hotDeal: {
-                    populate: {
-                        discount: {
-                            populate: '*'
-                        }
-                    }
-                },
-            }
-        }
     };
     const baseFilters: Record<string, unknown> = {
         filters: {
@@ -521,7 +464,7 @@ export async function fetchSortedListingsWithMeta(
     locale?: string,
     pagination?: { page: number; pageSize: number }
 ) {
-    const populate = LISTING_CARD_MAP_POP_STRUCTURE;
+    const populate = LISTING_CARD_POP_STRUCTURE;
     const baseFilters: Record<string, unknown> = {
         filters: {
             // Only add type filter if serviceType is provided
@@ -531,6 +474,16 @@ export async function fetchSortedListingsWithMeta(
     };
 
     const additional: Record<string, unknown> = {
+        fields: [
+            'documentId',
+            'listingStatus',
+            'price',
+            'slug',
+            'title',
+            'type',
+            'averageRating',
+            'ratingsCount',
+        ],
         sort: ['createdAt:desc']
     };
 
@@ -549,4 +502,70 @@ export async function fetchSortedListingsWithMeta(
 
     const res = await response.json();
     return res as { data: ListingItem[]; meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } } };
+}
+
+export async function fetchAllSortedListings(
+    serviceType?: 'vendor' | 'venue',
+    appliedFilters: Record<string, unknown> = {},
+    locale?: string,
+    pageSize = 100
+) {
+    const fetchMapPage = async (page: number) => {
+        const baseFilters: Record<string, unknown> = {
+            filters: {
+                ...(serviceType && { type: { $eq: serviceType } }),
+                ...appliedFilters,
+            },
+        };
+        const additional: Record<string, unknown> = {
+            fields: [
+                'documentId',
+                'description',
+                'id',
+                'price',
+                'slug',
+                'title',
+                'type',
+                'averageRating',
+            ],
+            sort: ['createdAt:desc'],
+            pagination: { page, pageSize },
+        };
+
+        if (locale) additional.locale = locale;
+
+        const query = createQuery(LISTING_MAP_LOCATION_POP_STRUCTURE, additional);
+        const filterString = QueryString.stringify(baseFilters, { encodeValuesOnly: true });
+        const url = `${API_URL}/api/listings/promoted?${query}${filterString ? `&${filterString}` : ''}`;
+        const response = await fetch(url, { cache: 'no-store' });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error?.message || `Strapi API error! status: ${response.status}`);
+        }
+
+        return await response.json() as {
+            data: ListingItem[];
+            meta?: { pagination?: { page: number; pageSize: number; pageCount: number; total: number } };
+        };
+    };
+
+    const firstPage = await fetchMapPage(1);
+    const all = Array.isArray(firstPage.data) ? [...firstPage.data] : [];
+    const pageCount = firstPage.meta?.pagination?.pageCount || 1;
+
+    for (let page = 2; page <= pageCount; page += 1) {
+        const response = await fetchMapPage(page);
+        if (Array.isArray(response.data)) {
+            all.push(...response.data);
+        }
+    }
+
+    const seen = new Set<string>();
+    return all.filter((listing) => {
+        const key = String(listing.documentId || listing.id);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
 }

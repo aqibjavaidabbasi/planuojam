@@ -146,7 +146,7 @@ function ListingDetailHero({
                 >
                   <span className="text-white">
                     {username
-                      ? `${t('messageVendor')} ${username.split(' ')[0]}`
+                      ? `${t('messageVendor')}`
                       : t('sendMessage')}
                   </span>
                 </div>

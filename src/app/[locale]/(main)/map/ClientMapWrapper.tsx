@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 const MapboxMap = dynamic(()=>import("@/components/global/MapboxMap"),{ssr:false})
 import { Location } from '@/components/global/MapboxMap'
-import { fetchListings } from '@/services/common'
+import { fetchAllSortedListings } from '@/services/listing'
 import { createLocationFromListing } from '@/utils/locationFactory'
 import React, { useEffect, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
@@ -21,8 +21,8 @@ function ClientMapWrapper() {
       try {
         // Fetch vendors and venues concurrently
         const [vendors, venues] = await Promise.all([
-          fetchListings('vendor'),
-          fetchListings('venue'),
+          fetchAllSortedListings('vendor', {}, locale),
+          fetchAllSortedListings('venue', {}, locale),
         ])
 
         // Process all listings using the factory

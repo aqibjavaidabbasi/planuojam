@@ -21,7 +21,7 @@ import { useSearchParams } from 'next/navigation';
 import { Location } from '@/components/global/MapboxMap';
 import { useLocale, useTranslations } from 'next-intl';
 import { createLocationFromListing } from '@/utils/locationFactory';
-import { fetchSortedListingsWithMeta } from '@/services/listing';
+import { fetchAllSortedListings, fetchSortedListingsWithMeta } from '@/services/listing';
 import LoadMoreButton from '@/components/custom/LoadMoreButton';
 import { useParentCategories } from '@/context/ParentCategoriesContext';
 
@@ -30,6 +30,7 @@ export type ListingWrapperProps = {
   serviceType?: 'vendor' | 'venue';
   initialList?: ListingItem[];
   initialFilters?: Record<string, string | string[]>;
+  initialAppliedFilters?: Record<string, unknown>;
   initialCategories?: { name: string; documentId: string }[];
   initialPagination?: {
     page: number;
@@ -44,6 +45,7 @@ function ClientListingWrapper({
   serviceType,
   initialList,
   initialFilters: initialFiltersFromServer,
+  initialAppliedFilters = {},
   initialCategories,
   initialPagination,
 }: ListingWrapperProps) {
@@ -73,9 +75,9 @@ function ClientListingWrapper({
       (Array.isArray(initialList) ? initialList.length : 0),
   );
   const [currentFilters, setCurrentFilters] = useState<Record<string, unknown>>(
-    {},
+    initialAppliedFilters,
   );
-  const currentFiltersRef = useRef<Record<string, unknown>>({});
+  const currentFiltersRef = useRef<Record<string, unknown>>(initialAppliedFilters);
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const [newIds, setNewIds] = useState<Set<string>>(new Set());
 
@@ -310,9 +312,14 @@ function ClientListingWrapper({
     let mounted = true;
     const run = async () => {
       try {
+        const listingsForMap = await fetchAllSortedListings(
+          serviceType,
+          currentFilters,
+          locale,
+        );
         const allLocations: Location[] = [];
 
-        for (const listing of list) {
+        for (const listing of listingsForMap) {
           const locations = createLocationFromListing({ listing, locale });
           allLocations.push(...locations);
         }
@@ -327,7 +334,7 @@ function ClientListingWrapper({
     return () => {
       mounted = false;
     };
-  }, [list, locale]);
+  }, [serviceType, currentFilters, locale]);
 
   return (
     <div className='py-2'>

@@ -26,12 +26,12 @@ type NestedFilter = {
 };
 
 type FilterObject = {
-    [key: string]: FilterValue | NestedFilter | NestedFilter[] | undefined;
+    [key: string]: FilterValue | NestedFilter | FilterObject[] | undefined;
     categories?: NestedFilter;
     eventTypes?: NestedFilter;
     price?: FilterValue;
-    $or?: NestedFilter[];
-    $and?: NestedFilter[];
+    $or?: FilterObject[];
+    $and?: FilterObject[];
 };
 
 
@@ -141,6 +141,32 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
         return out;
     }, [toStringArray]);
 
+    const withKeywordSearch = useCallback((filters: FilterObject): FilterObject => {
+        const searchTerm = keyword.trim();
+        if (!searchTerm) return filters;
+
+        const searchFilter: FilterObject = {
+            $or: [
+                { title: { $containsi: searchTerm } },
+                { description: { $containsi: searchTerm } },
+            ],
+        };
+
+        if (filters.$or || filters.$and) {
+            return {
+                $and: [
+                    filters,
+                    searchFilter,
+                ],
+            };
+        }
+
+        return {
+            ...filters,
+            ...searchFilter,
+        };
+    }, [keyword]);
+
     useEffect(() => {
         if (initialFilterValues) {
             const vals = normalizeTempFilterValues(initialFilterValues);
@@ -231,17 +257,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
 
     const handleApply = async () => {
         setIsLoading(true);
-        // Compose keyword search with existing filters
-        let finalFilters: Record<string, unknown> = { ...appliedFilters };
-        if (keyword.trim()) {
-            finalFilters = {
-                ...finalFilters,
-                $or: [
-                    { name: { $containsi: keyword.trim() } },
-                    { description: { $containsi: keyword.trim() } }
-                ]
-            };
-        }
+        const finalFilters = withKeywordSearch(appliedFilters);
 
         try {
             const res = fetcher 
@@ -261,6 +277,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
     const handleClear = async () => {
         setIsLoading(true);
         try {
+            setKeyword('');
             let res;
             if (initialFilterValues) {
                 const vals = normalizeTempFilterValues(initialFilterValues);

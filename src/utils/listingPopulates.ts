@@ -23,6 +23,25 @@ const LISTING_CARD_MAP_VENUE_POPULATE = {
   },
 };
 
+const LISTING_MAP_VENDOR_POPULATE = {
+  serviceArea: {
+    fields: ['latitude', 'longitude'],
+    populate: {
+      city: {
+        fields: ['name'],
+      },
+      state: {
+        fields: ['name'],
+      },
+    },
+  },
+};
+
+const LISTING_MAP_VENUE_POPULATE = {
+  fields: ['capacity'],
+  populate: LISTING_CARD_MAP_VENUE_POPULATE,
+};
+
 const LISTING_CARD_SHARED_POPULATE = {
   listingItem: {
     on: {
@@ -85,6 +104,37 @@ export const LISTING_CARD_MAP_POP_STRUCTURE = {
   },
   user: {
     fields: ['documentId', 'username'],
+  },
+};
+
+export const LISTING_MAP_LOCATION_POP_STRUCTURE = {
+  categories: {
+    fields: ['name'],
+    populate: {
+      image: {
+        fields: ['url', 'mime'],
+      },
+    },
+  },
+  listingItem: {
+    on: {
+      'dynamic-blocks.vendor': {
+        populate: LISTING_MAP_VENDOR_POPULATE,
+      },
+      'dynamic-blocks.venue': LISTING_MAP_VENUE_POPULATE,
+    },
+  },
+  portfolio: {
+    fields: ['url', 'mime'],
+  },
+  videos: {
+    fields: ['url'],
+  },
+  hotDeal: {
+    fields: ['enableHotDeal', 'startDate', 'lastDate'],
+  },
+  user: {
+    fields: ['username'],
   },
 };
 

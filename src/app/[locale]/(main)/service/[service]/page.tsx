@@ -89,6 +89,7 @@ export default async function ServicePage({
       serviceType={serviceType}
       initialList={finalInitialResp?.data || []}
       initialFilters={initialFilters}
+      initialAppliedFilters={appliedFilters}
       initialCategories={initialCategories}
       initialPagination={finalInitialResp?.meta?.pagination}
     />
