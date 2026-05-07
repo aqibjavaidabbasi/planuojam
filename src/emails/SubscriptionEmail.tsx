@@ -11,6 +11,7 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 import { getEmailStrings } from "./emailI18n";
+import { getEmailUrl } from "./emailUrl";
 
 interface SubscriptionEmailProps {
   username: string;
@@ -39,7 +40,7 @@ export const SubscriptionEmail = ({
             <Text style={paragraph}>{t.body2}</Text>
 
             <Section style={btnContainer}>
-              <Button style={button} href="https://planuojam.lt/profile/my-listings">
+              <Button style={button} href={getEmailUrl("/profile/my-listings")}>
                 {t.cta}
               </Button>
             </Section>

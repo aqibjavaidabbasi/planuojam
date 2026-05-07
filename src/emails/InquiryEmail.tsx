@@ -12,6 +12,7 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 import { getEmailStrings } from "./emailI18n";
+import { getEmailUrl } from "./emailUrl";
 
 interface InquiryEmailProps {
   name: string;
@@ -66,7 +67,7 @@ export const InquiryEmail = ({
             </Text>
 
             <Section style={btnContainer}>
-              <Button style={button} href="https://planuojam.lt/profile/availability-inquiries">
+              <Button style={button} href={getEmailUrl("/profile/availability-inquiries")}>
                 {t.cta}
               </Button>
             </Section>

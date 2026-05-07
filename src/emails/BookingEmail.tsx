@@ -12,6 +12,7 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 import { getEmailStrings } from "./emailI18n";
+import { getEmailUrl } from "./emailUrl";
 
 interface BookingEmailProps {
   username: string;
@@ -50,7 +51,7 @@ export const BookingEmail = ({
             </Section>
 
             <Section style={btnContainer}>
-              <Button style={button} href="https://planuojam.lt/profile/bookings">
+              <Button style={button} href={getEmailUrl("/profile/bookings")}>
                 {t.cta}
               </Button>
             </Section>

@@ -11,6 +11,7 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 import { getEmailStrings } from "./emailI18n";
+import { getEmailUrl } from "./emailUrl";
 
 interface MessageEmailProps {
   senderName: string;
@@ -46,7 +47,7 @@ export const MessageEmail = ({
             </Section>
 
             <Section style={btnContainer}>
-              <Button style={button} href="https://planuojam.lt/profile/messages">
+              <Button style={button} href={getEmailUrl("/profile/messages")}>
                 {t.cta}
               </Button>
             </Section>
