@@ -35,6 +35,7 @@ export async function fetchPublicInvoiceByToken(
         "buyerRegistrationAddress",
         "listingTitle",
         "SubscriptionTitle",
+        "subscriptionInterval",
         "sellerCompanyName",
         "sellerAddress",
         "sellerCompanyId",

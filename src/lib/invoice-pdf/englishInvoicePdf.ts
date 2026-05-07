@@ -24,6 +24,11 @@ export function getEnglishInvoicePdfLabels(): InvoicePdfLabels {
     vatNumber: "VAT Number",
     subscriptionLabel: "Subscription",
     promotionLabel: "Promotion",
+    subscriptionIntervalLabels: {
+      month: "month",
+      year: "year",
+      one_time: "one-time",
+    },
     promotionDescription: "Promotion stars: {stars} for {days} days",
     generatedNote: "This invoice was generated from your saved billing details.",
   };

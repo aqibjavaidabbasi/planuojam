@@ -18,6 +18,11 @@ interface InvoiceData {
   hostedUrl?: string;
   periodStart?: string;
   periodEnd?: string;
+  listingTitle?: string | null;
+  SubscriptionTitle?: string | null;
+  subscriptionInterval?: string | null;
+  invoiceType?: string | null;
+  publicToken?: string | null;
 }
 
 export default function InvoicesTab() {
@@ -51,6 +56,7 @@ export default function InvoicesTab() {
         }
 
         const data = await res.json();
+
         if (data && Array.isArray(data.data)) {
           setInvoices(data.data);
         } else {

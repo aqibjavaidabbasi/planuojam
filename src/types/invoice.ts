@@ -20,6 +20,7 @@ export interface PublicInvoiceData {
   buyerRegistrationAddress?: string | null;
   listingTitle?: string | null;
   SubscriptionTitle?: string | null;
+  subscriptionInterval?: "month" | "year" | "one_time" | null;
   sellerCompanyName?: string | null;
   sellerAddress?: string | null;
   sellerCompanyId?: string | null;
@@ -56,6 +57,11 @@ export interface InvoicePdfLabels {
   vatNumber: string;
   subscriptionLabel: string;
   promotionLabel: string;
+  subscriptionIntervalLabels: {
+    month: string;
+    year: string;
+    one_time: string;
+  };
   promotionDescription: string;
   generatedNote: string;
 }

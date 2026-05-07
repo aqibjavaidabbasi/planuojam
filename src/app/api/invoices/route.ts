@@ -3,6 +3,25 @@ import QueryString from 'qs';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337';
 
+const invoiceFields = [
+  'documentId',
+  'stripeInvoiceId',
+  'invoiceNumber',
+  'amount',
+  'currency',
+  'invoiceStatus',
+  'hostedUrl',
+  'periodStart',
+  'periodEnd',
+  'listingTitle',
+  'SubscriptionTitle',
+  'subscriptionInterval',
+  'invoiceType',
+  'publicToken',
+  'userDocumentId',
+  'listingDocId',
+];
+
 /**
  * GET /api/invoices
  * Query params:
@@ -73,6 +92,7 @@ export async function GET(request: NextRequest) {
       const qs = QueryString.stringify({
         populate: { [relationKey]: { populate: '*' } },
         filters: { [relationKey]: { documentId: { $in: subIds } } },
+        fields: invoiceFields,
         sort: ['periodStart:desc'],
       }, { encodeValuesOnly: true });
 
@@ -112,6 +132,7 @@ export async function GET(request: NextRequest) {
 
     const directInvoiceQs = QueryString.stringify({
       filters: { userDocumentId: { $eq: userId } },
+      fields: invoiceFields,
       sort: ['periodStart:desc'],
     }, { encodeValuesOnly: true });
 

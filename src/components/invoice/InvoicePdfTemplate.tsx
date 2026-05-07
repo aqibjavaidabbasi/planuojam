@@ -36,6 +36,29 @@ function interpolate(template: string, values: Record<string, string | number>) 
   );
 }
 
+function localizeSubscriptionInterval(
+  description: string,
+  labels: InvoicePdfLabels,
+  interval?: PublicInvoiceData["subscriptionInterval"]
+) {
+  const fallbackPattern = /(\s*\/\s*)(month|year|one_time)\b/gi;
+
+  if (interval && labels.subscriptionIntervalLabels[interval]) {
+    const exactPattern = new RegExp(`(\\s*\\/\\s*)${interval}\\b`, "gi");
+    const localized = description.replace(
+      exactPattern,
+      `$1${labels.subscriptionIntervalLabels[interval]}`,
+    );
+
+    if (localized !== description) return localized;
+  }
+
+  return description.replace(fallbackPattern, (match, separator: string, matchedInterval: string) => {
+    const key = matchedInterval.toLowerCase() as keyof InvoicePdfLabels["subscriptionIntervalLabels"];
+    return `${separator}${labels.subscriptionIntervalLabels[key] || matchedInterval}`;
+  });
+}
+
 function DetailRow({
   label,
   value,
@@ -64,7 +87,11 @@ export default function InvoicePdfTemplate({
         stars: invoice.promotionStars ?? "-",
         days: invoice.promotionDays ?? "-",
       })
-    : invoice.SubscriptionTitle || invoice.listingTitle || labels.subscriptionLabel;
+    : localizeSubscriptionInterval(
+        invoice.SubscriptionTitle || invoice.listingTitle || labels.subscriptionLabel,
+        labels,
+        invoice.subscriptionInterval,
+      );
   const amountSummaryLabel = labels.amountPaid || labels.amountDue || "-";
   const buyerIsCompany =
     invoice.buyerCustomerType === "company" ||

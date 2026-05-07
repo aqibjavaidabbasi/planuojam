@@ -155,6 +155,12 @@ function normalizeEmailLocale(locale?: string | null) {
   return ["en", "lt", "ru", "pl", "et"].includes(normalized) ? normalized : "en";
 }
 
+function normalizeSubscriptionInterval(interval?: string | null) {
+  return interval === "month" || interval === "year" || interval === "one_time"
+    ? interval
+    : null;
+}
+
 function getSubscriptionSubject(locale?: string | null) {
   const subjects: Record<string, string> = {
     en: "Your listing is now active!",
@@ -416,6 +422,9 @@ async function createOrGetSubscriptionInvoice(
     formatStripeAddress(invoiceWithCustomerDetails.customer_address);
   const subscriptionTitle =
     invoice.lines?.data?.[0]?.description || listingTitle || "Subscription";
+  const subscriptionInterval = normalizeSubscriptionInterval(
+    invoice.lines?.data?.[0]?.price?.recurring?.interval,
+  );
   const periodStart = invoice.period_start || invoice.created;
   const periodEnd = invoice.period_end || invoice.created;
 
@@ -452,6 +461,7 @@ async function createOrGetSubscriptionInvoice(
         buyerContactPerson: buyerSnapshot.contactPerson || null,
         listingTitle,
         SubscriptionTitle: subscriptionTitle,
+        subscriptionInterval,
         sellerCompanyName: sellerSnapshot.companyName || null,
         sellerAddress: sellerSnapshot.address || null,
         sellerCompanyId: sellerSnapshot.companyId || null,
