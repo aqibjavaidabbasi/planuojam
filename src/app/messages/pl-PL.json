@@ -1335,8 +1335,8 @@
     "noHotDealsFound": "Nie znaleziono gorących ofert"
   },
   "hotdealstatic": {
-    "HotDeal": "gorąca oferta",
-    "Map": "mapa"
+    "HotDeal": "Gorąca oferta",
+    "Map": "Mapa"
   },
   "Login": {
     "login": "Login"

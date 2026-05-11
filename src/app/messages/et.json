@@ -1324,8 +1324,8 @@
     "noHotDealsFound": "Kuumehinguid ei leitud"
   },
   "hotdealstatic": {
-    "HotDeal": "kuum tehing",
-    "Map": "kaart"
+    "HotDeal": "Kuum tehing",
+    "Map": "Kaart"
   },
   "Login": {
     "login": "Logi sisse"

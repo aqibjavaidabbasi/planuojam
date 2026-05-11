@@ -11,37 +11,38 @@ export default function CardComponent({ card }: { card: CardComponentBlock }) {
   const isTop = imagePosition === 'top';
 
   const containerClasses = [
-    'p-6',
-    'rounded-lg',
-    'shadow-md',
-    'bg-white',
+    'w-full',
     'overflow-hidden',
-    'bg-background',
-    isTop ? 'flex flex-col' : 'flex items-center gap-6',
-    isRight ? 'flex row-reverse' : '',
+    isTop ? 'flex flex-col gap-5' : 'grid grid-cols-1 md:grid-cols-2 items-center gap-5 md:gap-8',
   ].join(' ');
 
   const imageWrapperClasses = isTop
     ? 'w-full h-72 relative'
-    : 'w-1/2 h-72 relative';
+    : `${isRight ? 'md:order-2' : ''} w-full h-64 md:h-72 relative`;
 
-  const contentWrapperClasses = isTop ? 'mt-4' : 'w-1/2';
+  const contentWrapperClasses = [
+    isTop ? '' : isRight ? 'md:order-1' : '',
+    'w-full',
+  ].join(' ');
 
   return (
-    <div className={containerClasses}>
-      <div className={imageWrapperClasses}>
-        <Image
-          src={imageUrl}
-          alt="card image"
-          fill
-          className="object-cover rounded-md"
-        />
-      </div>
+    <section className="w-full max-w-[1400px] mx-auto px-4 md:px-6 py-5 md:py-8">
+      <div className={containerClasses}>
+        <div className={imageWrapperClasses}>
+          <Image
+            src={imageUrl}
+            alt="card image"
+            fill
+            className="object-cover rounded-md"
+            sizes={isTop ? "(max-width: 1400px) 100vw, 1400px" : "(max-width: 768px) 100vw, 50vw"}
+          />
+        </div>
 
-      <div className={contentWrapperClasses}>
-        <h3 className="text-primary font-semibold text-xl mb-2">{card.heading}</h3>
-        <p>{card.blockContent}</p>
+        <div className={contentWrapperClasses}>
+          <h3 className="text-primary font-semibold text-xl mb-2">{card.heading}</h3>
+          <p className="text-secondary">{card.blockContent}</p>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

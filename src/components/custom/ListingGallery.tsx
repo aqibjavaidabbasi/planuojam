@@ -86,6 +86,19 @@ function ListingGallery({
   const extraCount = Math.max(0, restItems.length - 4);
   const hasRightItems = rightItems.length > 0;
   const isSingle = allMedia.length === 1;
+  const rightGridClass =
+    rightItems.length === 1
+      ? "grid grid-cols-1 gap-4 h-[500px]"
+      : rightItems.length === 2
+        ? "grid grid-cols-1 grid-rows-2 gap-4 h-[500px]"
+        : "grid grid-cols-2 grid-rows-2 gap-4 h-[500px]";
+
+  const getRightItemClass = (idx: number) => {
+    if (rightItems.length === 3 && idx === 0) {
+      return "relative bg-black rounded-lg w-full h-full row-span-2";
+    }
+    return "relative bg-black rounded-lg w-full h-full";
+  };
 
   const renderMediaItem = (item: MediaItem, index: number, isMain: boolean) => { 
       const setIndex = () => handlePreview(index);
@@ -168,12 +181,12 @@ function ListingGallery({
 
               {/* Right: Up to 4 items in a 2x2 grid */}
               {hasRightItems && (
-                <div className="grid grid-cols-2 grid-rows-2 gap-4 h-[500px]">
+                <div className={rightGridClass}>
                   {rightItems.map((item: MediaItem, idx: number) => {
                     const globalIndex = idx + 1; // because 0 is main item
                     const isLastCell = idx === rightItems.length - 1 && extraCount > 0 && rightItems.length === 4;
                     return (
-                      <div key={idx} className="relative bg-black rounded-lg w-full h-full">
+                      <div key={idx} className={getRightItemClass(idx)}>
                          {renderMediaItem(item, globalIndex, false)}
                         {isLastCell && (
                           <button

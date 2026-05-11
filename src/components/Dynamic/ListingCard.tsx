@@ -2,7 +2,7 @@
 import { ListingItem } from '@/types/pagesTypes'
 import { getCompleteImageUrl } from '@/utils/helpers'
 import Image from 'next/image'
-import { useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Swiper as SwiperClass } from 'swiper/types'
@@ -36,6 +36,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [showListingSubscriptionModal, setShowListingSubscriptionModal] = useState(false);
   const [heartLoading, setHeartLoading] = useState(false);
+  const [openListingsInNewTab, setOpenListingsInNewTab] = useState(false);
   const t = useTranslations('Dynamic.ListingCard');
   const locale = useLocale();
   const swiperRef = useRef<{ swiper: SwiperClass }>(null);
@@ -74,10 +75,23 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
   // Paths derived from centralized helpers
   const viewPath = getListingPath(item.slug, locale);
   const editPath = getListingEditPath(item.slug, locale);
+  const listingLinkProps = openListingsInNewTab
+    ? { target: "_blank", rel: "noopener noreferrer" }
+    : {};
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+    const updateLinkTarget = () => setOpenListingsInNewTab(mediaQuery.matches);
+
+    updateLinkTarget();
+    mediaQuery.addEventListener("change", updateLinkTarget);
+
+    return () => mediaQuery.removeEventListener("change", updateLinkTarget);
+  }, []);
 
   return (
     <div
-      className="rounded-lg bg-white relative w-full max-w-75 overflow-hidden border border-border"
+      className="rounded-lg bg-white relative w-full max-w-85 overflow-hidden border border-border"
       style={{
         boxShadow:
           '2px 0px 4px rgba(0,0,0,0.1), 0px 2px 4px rgba(0,0,0,0.1), 0px -2px 4px rgba(0,0,0,0.1), -2px 0px 4px rgba(0,0,0,0.1)'
@@ -121,8 +135,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
               <SwiperSlide key={`image-${idx}`}>
                 <Link
                   href={viewPath}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  {...listingLinkProps}
                   className="block"
                   title={item.title}
                 >
@@ -132,7 +145,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                       alt={t('imageAlt', { index: idx + 1 })}
                       fill
                       className='object-cover object-center'
-                      sizes="(max-width: 768px) 100vw, 400px"
+                      sizes="(max-width: 768px) 100vw, 340px"
                       priority={idx === 0 && !!highPriority}
                       fetchPriority={idx === 0 && highPriority ? 'high' : 'auto'}
                       loading={idx === 0 && highPriority ? 'eager' : 'lazy'}
@@ -263,8 +276,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
         <div className="flex justify-between items-start gap-2">
           <Link
             href={viewPath}
-            target="_blank"
-            rel="noopener noreferrer"
+            {...listingLinkProps}
             className="min-w-0 flex-1"
             title={item.title}
           >
@@ -289,7 +301,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           <ul className="space-y-1 text-sm text-secondary">
             {item.listingItem?.length > 0 && (
               <li className="flex items-start ml-3">
-                <span className="truncate block max-w-52.5`">
+                <span className="block max-w-full truncate">
                   {item.listingItem[0].__component === 'dynamic-blocks.vendor' && (
                     <>
                       {item.listingItem[0].serviceArea?.length > 0
@@ -320,26 +332,26 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
             )}
             {item.categories && item.categories.length > 0 && (
               <li className="flex items-start ml-3">
-                <span className="truncate block max-w-52.5">{item.categories[0]?.name}</span>
+                <span className="block max-w-full truncate">{item.categories[0]?.name}</span>
               </li>
             )}
           </ul>
         </div>
 
         {/* Pricing and Button */}
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2 text-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2 text-sm">
             {item.price ? (
               <>
                 <span className="font-medium">{t('price')}</span>
-                <span className="font-semibold text-primary">{siteSettings.currency ? siteSettings.currency.symbol : '$'}{item.price.toLocaleString()}</span>
+                <span className="truncate font-semibold text-primary">{siteSettings.currency ? siteSettings.currency.symbol : '$'}{item.price.toLocaleString()}</span>
               </>
             ) : (
               <span>{t('contactForPricing')}</span>
             )}
           </div>
 
-          <div className="flex gap-2.5 items-center justify-center">
+          <div className="flex shrink-0 gap-2.5 items-center justify-center">
             {/* Heart icon */}
             <div className="">
               {heartLoading ? (
@@ -388,8 +400,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                   </Link>
                   <Link
                     href={viewPath}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    {...listingLinkProps}
                     className="flex items-center capitalize justify-center gap-1.5 font-medium rounded-md bg-black text-white hover:bg-primary py-1 px-3 text-sm cursor-pointer"
                     title={t('viewListing')}
                   >
@@ -399,8 +410,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
               ) : (
                 <Link
                   href={viewPath}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  {...listingLinkProps}
                   className="flex items-center capitalize justify-center gap-1.5 font-medium rounded-md bg-black text-white hover:bg-primary py-1 px-3 text-sm cursor-pointer"
                 >
                   {t('view')} <IoNavigateOutline />
