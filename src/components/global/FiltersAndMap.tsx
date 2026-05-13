@@ -69,7 +69,10 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
     const tHeader = useTranslations('Global.Header');
     const locale = useLocale();
 
-    const cats = locale === 'en' ? parentCategories : parentCategories.map(cat => cat.localizations.find(loc => loc.locale === locale))
+    const getLocalizedCategoryName = (cat: typeof parentCategories[number]) => {
+        if (locale === 'en') return cat.name;
+        return cat.localizations?.find(loc => loc.locale === locale)?.name || cat.name;
+    };
 
     const toStringArray = useCallback((value: string | string[]): string[] =>
         (Array.isArray(value) ? value : [value])
@@ -86,9 +89,9 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
     // Create service dropdown options
     const serviceOptions = [
         { value: 'all', label: tHeader('allServices') },
-        ...cats.map(cat => ({
-            value: cat?.slug ?? '',
-            label: cat?.name ?? ''
+        ...parentCategories.map(cat => ({
+            value: cat.slug,
+            label: getLocalizedCategoryName(cat)
         }))
     ];
 

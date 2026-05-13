@@ -17,7 +17,6 @@ type Props = {
   onSelect: (userId: number, listingDocumentId: string | null, conversationId: string) => void;
   emptyText: string;
   listError?: string | null;
-  refreshButton?: React.ReactNode;
 };
 
 const ConversationList: React.FC<Props> = ({
@@ -29,7 +28,6 @@ const ConversationList: React.FC<Props> = ({
   onSelect,
   emptyText,
   listError,
-  refreshButton,
 }) => {
   return (
     <div className="flex-1 overflow-auto">
@@ -52,7 +50,7 @@ const ConversationList: React.FC<Props> = ({
                 onClick={() => onSelect(counterpart.id, listingDocumentId || null, conversationId)}
               >
                 <div className="flex items-start gap-2 min-w-0">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-md overflow-hidden bg-gray-100">
+                  <div className="shrink-0 w-10 h-10 rounded-md overflow-hidden bg-gray-100">
                     {listingInfo?.mainImage ? (
                       <Image 
                         src={listingInfo.mainImage.startsWith('http') ? listingInfo.mainImage : `${API_URL}${listingInfo.mainImage}`}
@@ -71,7 +69,7 @@ const ConversationList: React.FC<Props> = ({
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-medium truncate">{counterpart.username || "Deleted User"}</span>
                       {unread > 0 && (
-                        <span className="inline-flex items-center justify-center min-w-5 h-5 px-1 text-xs rounded-full bg-red-600 text-white flex-shrink-0">
+                        <span className="inline-flex items-center justify-center min-w-5 h-5 px-1 text-xs rounded-full bg-red-600 text-white shrink-0">
                           {unread}
                         </span>
                       )}
@@ -86,7 +84,6 @@ const ConversationList: React.FC<Props> = ({
           })}
         </ul>
       )}
-      {refreshButton}
     </div>
   );
 };

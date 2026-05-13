@@ -760,7 +760,7 @@
       "error": "Subscription failed. Please try again."
     },
     "CityList": {
-      "title": "Find venues and cities"
+      "title": "Venues by city"
     },
     "Locales": {
       "title": "Preferred Language",

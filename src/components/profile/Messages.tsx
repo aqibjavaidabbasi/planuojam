@@ -17,13 +17,12 @@ import { getUsersByDocumentIds, type MinimalUserInfo } from "@/services/auth";
 import { websocketService } from "@/services/websocket";
 import Button from "../custom/Button";
 import { MdAttachFile } from "react-icons/md";
-import { IoNavigateOutline } from "react-icons/io5";
-import { useLocale } from "next-intl";
 import Image from "next/image";
 import TypingIndicator from "./TypingIndicator";
 import ConversationList from "./ConversationList";
 import Composer from "./Composer";
 import ThreadView from "./ThreadView";
+import { useRouter } from "@/i18n/navigation";
 
 type MessagesProps = {
   initialUserId?: number;
@@ -35,7 +34,7 @@ type MessagesProps = {
 
 function Messages({ initialUserId, initialUserName, initialUserDocumentId, initialListingDocumentId, onUnreadChange }: MessagesProps) {
   const t = useTranslations("Profile.Messages");
-  const locale = useLocale();
+  const router = useRouter();
   const user = useAppSelector((s) => s.auth.user);
 
   const [list, setList] = useState<Message[]>([]);
@@ -796,7 +795,7 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
 
       return (
         <div key={`${m.documentId}-${m.id}-${m.createdAt}`} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-          <div className={`${normalizedAtt.length > 0 && !caption ? 'inline-block' : 'max-w-[90%] sm:max-w-[75%] md:max-w-[70%]'} rounded-lg px-3 py-2 text-sm break-words ${mine ? "bg-[#cc922f] text-white" : "bg-gray-100 text-gray-800"}`}>
+          <div className={`${normalizedAtt.length > 0 && !caption ? 'inline-block' : 'max-w-[90%] sm:max-w-[75%] md:max-w-[70%]'} rounded-lg px-3 py-2 text-sm wrap-break-word ${mine ? "bg-primary text-white" : "bg-gray-100 text-gray-800"}`}>
             {caption && <div className="whitespace-pre-wrap">{caption}</div>}
             {normalizedAtt.length > 0 && (
               <div className="mt-2 flex flex-col gap-2">
@@ -806,7 +805,7 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
                       <Image src={a.url} alt={a.name || "attachment"} width={320} height={240} className="rounded-md object-cover h-auto" />
                     ) : (
                       <div className={`px-3 py-2 bg-white/80 rounded text-xs flex items-center gap-2 min-w-0 ${mine ? "text-gray-800" : "text-gray-800"}`}>
-                        <MdAttachFile size={16} className="flex-shrink-0" />
+                        <MdAttachFile size={16} className="shrink-0" />
                         <span className="underline truncate" title={a.name || a.url}>{a.name || a.url}</span>
                       </div>
                     )}
@@ -826,7 +825,7 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
             {normalizedAtt.length === 0 && legacyFileUrls.length > 0 && (
               <div className="mt-2 space-y-1">
                 {legacyFileUrls.map((u, idx) => (
-                  <a key={`${u}-${idx}`} href={u} target="_blank" rel="noreferrer noopener" className={`${mine ? "text-orange-100" : "text-blue-600"} underline break-words`}>
+                  <a key={`${u}-${idx}`} href={u} target="_blank" rel="noreferrer noopener" className={`${mine ? "text-orange-100" : "text-blue-600"} underline wrap-break-word`}>
                     {u}
                   </a>
                 ))}
@@ -1128,7 +1127,6 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
             onSelect={(uid, lid, cid) => { setSelectedUserId(uid); setSelectedListingDocumentId(lid); clearConversationUnread(cid); }}
             emptyText={t("noMessages")}
             listError={listError}
-            refreshButton={(<Button onClick={() => loadList({ silent: false })} disabled={listLoading} style="secondary" extraStyles="!whitespace-nowrap flex-shrink-0">{listLoading ? t("loading") : t("refresh")}</Button>)}
           />
         </div>
 
@@ -1150,7 +1148,7 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
                     setSelectedUserId(null);
                     setSelectedListingDocumentId(null);
                   }}
-                  className="md:hidden flex-shrink-0 text-gray-500 hover:text-gray-700 text-lg"
+                  className="md:hidden shrink-0 text-gray-500 hover:text-gray-700 text-lg"
                   aria-label="close"
                 >
                   ×
@@ -1159,9 +1157,9 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
 
               {/* Listing Details Header - only shown when listing is selected */}
               {selectedListingDocumentId && listingsInfo[selectedListingDocumentId] && (
-                <div className="px-3 sm:px-4 py-2.5 bg-white flex items-center justify-between gap-2" style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.08)' }}>
+                <div className="px-3 sm:px-4 py-2.5 bg-white flex items-center justify-between gap-2 cursor-pointer" style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.08)' }} onClick={()=>router.push(`/listing/${listingsInfo[selectedListingDocumentId].slug}`)}>
                   <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="relative w-12 h-12 rounded-md overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200">
+                    <div className="relative w-12 h-12 rounded-md overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
                       {listingsInfo[selectedListingDocumentId].mainImage ? (
                         <Image 
                           src={listingsInfo[selectedListingDocumentId].mainImage!.startsWith('http') ? listingsInfo[selectedListingDocumentId].mainImage! : `${API_URL}${listingsInfo[selectedListingDocumentId].mainImage}`}
@@ -1192,15 +1190,6 @@ function Messages({ initialUserId, initialUserName, initialUserDocumentId, initi
                       </div>
                     </div>
                   </div>
-                  
-                  <a 
-                    href={`/${locale}/listing/${listingsInfo[selectedListingDocumentId].slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hidden sm:flex items-center gap-1 px-3 py-1.5 bg-black text-white text-xs sm:text-sm font-medium rounded-md hover:bg-gray-800 transition-colors flex-shrink-0"
-                  >
-                    {t('view', { default: 'View' })} <IoNavigateOutline />
-                  </a>
                 </div>
               )}
               <ThreadView
