@@ -94,7 +94,7 @@ function Search() {
             <input
                 type="search"
                 className="bg-white w-full p-1 border border-border rounded-lg h-9 pl-8 focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder={t('searchListings') || t('search')}
+                placeholder={t('searchListings')}
                 value={query}
                 onChange={(e) => {
                     const val = e.target.value;

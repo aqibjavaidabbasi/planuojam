@@ -1397,7 +1397,7 @@
   },
   "Search": {
     "search": "Поиск здесь",
-    "searchListings": "Поиск объявлений",
+    "searchListings": "Поиск",
     "loading": "Загрузка...",
     "error": "Что-то пошло не так",
     "noResults": "Ничего не найдено"

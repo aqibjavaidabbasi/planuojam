@@ -1380,7 +1380,7 @@
   },
   "Search": {
     "search": "Search Here",
-    "searchListings": "Search listings",
+    "searchListings": "Search",
     "loading": "Loading...",
     "error": "Something went wrong",
     "noResults": "No results"
