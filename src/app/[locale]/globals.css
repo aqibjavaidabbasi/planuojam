@@ -57,6 +57,10 @@ html, body {
   background: #cc922f; /* active */
 }
 
+.custom-swiper .swiper-pagination {
+  white-space: nowrap;
+}
+
 .custom-prev {
   left: 0;
   transform: translate(-50%, -50%);

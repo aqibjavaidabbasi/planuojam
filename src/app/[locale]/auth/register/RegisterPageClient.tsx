@@ -480,11 +480,11 @@ export default function RegisterPageClient() {
                 label={
                   <>
                     <span className="mr-1">{t("agreePrefix", { default: "I agree to the" })}</span>
-                    <Link href="/terms-of-service" className="text-primary hover:underline">
+                    <Link href="/terms-of-service" target="_blank" className="text-primary hover:underline">
                       {t("termsOfService", { default: "Terms of Service" })}
                     </Link>
                     <span className="mx-1">{t("and", { default: "and" })}</span>
-                    <Link href="/privacy-policy" className="text-primary hover:underline">
+                    <Link href="/privacy-policy" target="_blank" className="text-primary hover:underline">
                       {t("privacyPolicy", { default: "Privacy Policy" })}
                     </Link>
                   </>

@@ -9,7 +9,7 @@ import { Swiper as SwiperClass } from 'swiper/types'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
-import { FaHeart, FaSpinner, FaInfoCircle, FaStar } from 'react-icons/fa'
+import { FaHeart, FaSpinner, FaInfoCircle, FaStar, FaRegImages } from 'react-icons/fa'
 import Button from '../custom/Button'
 import { IoNavigateOutline } from 'react-icons/io5'
 import { useSiteSettings } from '@/context/SiteSettingsContext'
@@ -40,6 +40,8 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
   const t = useTranslations('Dynamic.ListingCard');
   const locale = useLocale();
   const swiperRef = useRef<{ swiper: SwiperClass }>(null);
+  const portfolioImages = item.portfolio?.filter(media => !media.mime?.startsWith('video/')) || [];
+  const imageCount = portfolioImages.length;
 
   const isLiked = Array.isArray(likedListings) && likedListings.some(listing => listing.listing === item.documentId);
 
@@ -115,7 +117,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
       )}
 
       {/* Combine images from portfolio and YouTube videos */}
-      {((item.portfolio?.filter(media => !media.mime?.startsWith('video/')) || [])?.length > 0 || (item.videos?.length || 0) > 0) && (
+      {(imageCount > 0 || (item.videos?.length || 0) > 0) && (
         <Swiper
           ref={swiperRef}
           modules={[Navigation, Pagination, Autoplay]}
@@ -123,12 +125,12 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           spaceBetween={30}
           slidesPerView={1}
           navigation
-          pagination={{ clickable: true }}
+          pagination={{ clickable: true, dynamicBullets: true, dynamicMainBullets: 3 }}
           loop={true}
           autoplay={{ delay: 3000, disableOnInteraction: false }}
         >
           {/* Images from portfolio (filtered to exclude videos) */}
-          {item.portfolio?.filter(media => !media.mime?.startsWith('video/')).map((media, idx) => {
+          {portfolioImages.map((media, idx) => {
             const mediaUrl = getCompleteImageUrl(media.url);
 
             return (
@@ -150,6 +152,12 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                       fetchPriority={idx === 0 && highPriority ? 'high' : 'auto'}
                       loading={idx === 0 && highPriority ? 'eager' : 'lazy'}
                     />
+                    {imageCount > 1 && (
+                      <div className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-black/65 px-2.5 py-1 text-xs font-semibold leading-none text-white shadow-md backdrop-blur-sm">
+                        <FaRegImages size={13} aria-hidden="true" />
+                        <span>{idx + 1}/{imageCount}</span>
+                      </div>
+                    )}
                   </div>
                 </Link>
               </SwiperSlide>
@@ -347,7 +355,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                 <span className="truncate font-semibold text-primary">{siteSettings.currency ? siteSettings.currency.symbol : '$'}{item.price.toLocaleString()}</span>
               </>
             ) : (
-              <span>{t('contactForPricing')}</span>
+              <span className='text-xs'>{t('contactForPricing')}</span>
             )}
           </div>
 
