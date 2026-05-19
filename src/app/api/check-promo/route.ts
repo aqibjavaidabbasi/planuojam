@@ -5,6 +5,13 @@ import { logApiEvent } from '@/utils/subscriptionLogger';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 type PromotionCodeWithCoupon = Stripe.PromotionCode & { coupon?: string | Stripe.Coupon };
 
+function getStripeKeyMode() {
+  const key = process.env.STRIPE_SECRET_KEY || '';
+  if (key.startsWith('sk_live_')) return 'live';
+  if (key.startsWith('sk_test_')) return 'test';
+  return key ? 'unknown' : 'missing';
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { code } = await request.json();
@@ -23,7 +30,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Look up promotion code by code
+    let stripeAccountId = '';
+    try {
+      const account = await stripe.accounts.retrieve();
+      stripeAccountId = account.id;
+    } catch (accountError) {
+      console.warn('[check-promo] unable to retrieve Stripe account for diagnostics', {
+        keyMode: getStripeKeyMode(),
+        error: accountError instanceof Error ? accountError.message : String(accountError),
+      });
+    }
+
+    console.log('[check-promo] Stripe diagnostics', {
+      keyMode: getStripeKeyMode(),
+      accountId: stripeAccountId,
+    });
+
+    // Look up active promotion code by customer-facing code.
     const promo = await stripe.promotionCodes.list({
       code: normalizedCode,
       active: true,
@@ -45,10 +68,51 @@ export async function POST(request: NextRequest) {
     });
 
     if (promo.data.length === 0) {
+      const inactiveOrRestrictedPromo = await stripe.promotionCodes.list({
+        code: normalizedCode,
+        limit: 10,
+      });
+      const inactiveOrRestrictedFirst = inactiveOrRestrictedPromo.data[0] as PromotionCodeWithCoupon | undefined;
+
+      console.log('[check-promo] Stripe promotion code lookup without active filter completed', {
+        code: normalizedCode,
+        resultCount: inactiveOrRestrictedPromo.data.length,
+        firstPromoId: inactiveOrRestrictedFirst?.id || '',
+        firstPromoActive: inactiveOrRestrictedFirst?.active,
+        firstCouponId: inactiveOrRestrictedFirst?.coupon
+          ? typeof inactiveOrRestrictedFirst.coupon === 'string'
+            ? inactiveOrRestrictedFirst.coupon
+            : inactiveOrRestrictedFirst.coupon.id
+          : '',
+        keyMode: getStripeKeyMode(),
+        accountId: stripeAccountId,
+      });
+
+      if (inactiveOrRestrictedPromo.data.length > 0) {
+        return NextResponse.json({
+          valid: false,
+          error: 'Promotion code exists but is not active'
+        });
+      }
+
+      console.warn('[check-promo] promotion code not found in configured Stripe account', {
+        code: normalizedCode,
+        keyMode: getStripeKeyMode(),
+        accountId: stripeAccountId,
+        hint: 'Compare this account/mode with the Stripe Dashboard where the promotion code is visible.',
+      });
+
       await logApiEvent(
         "error",
         `Invalid promo code: ${normalizedCode}`,
-        { severity: "info", rawMeta: { code: normalizedCode } }
+        {
+          severity: "info",
+          rawMeta: {
+            code: normalizedCode,
+            keyMode: getStripeKeyMode(),
+            accountId: stripeAccountId,
+          }
+        }
       );
       
       return NextResponse.json({
@@ -83,6 +147,7 @@ export async function POST(request: NextRequest) {
       details: {
         id: promotionCode.id,
         code: promotionCode.code,
+        discountType: 'promotion_code',
         coupon: couponDetails,
         maxRedemptions: promotionCode.max_redemptions,
         timesRedeemed: promotionCode.times_redeemed,
