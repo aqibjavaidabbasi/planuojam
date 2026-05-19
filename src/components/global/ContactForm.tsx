@@ -3,12 +3,13 @@ import Input from '@/components/custom/Input';
 import TextArea from '@/components/custom/TextArea';
 import Button from '@/components/custom/Button';
 import React from 'react'
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
 import PhoneInputField from '@/components/custom/PhoneInputField';
 
 const ContactForm = () => {
     const t = useTranslations('Contact.Form');
+    const locale = useLocale();
     const [firstName, setFirstName] = React.useState('');
     const [lastName, setLastName] = React.useState('');
     const [email, setEmail] = React.useState('');
@@ -31,7 +32,8 @@ const ContactForm = () => {
             email,
             country,
             phone,
-            message
+            message,
+            locale,
         }
         try {
             const res = await fetch('/api/contact/send', {

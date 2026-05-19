@@ -2,6 +2,7 @@ import { LISTING_ITEM_POP_STRUCTURE } from "@/utils/ListingItemStructure";
 import { createQuery, deleteAPI, fetchAPI, fetchAPIWithToken, postAPIWithToken, putAPI } from "./api";
 import { getUsersByDocumentIds, MinimalUserInfo } from "./auth";
 import { triggerNotificationEmail } from "@/utils/emailTrigger";
+import { getNotificationEmailSubject } from "@/utils/emailSubjects";
 import { ListingItem } from "@/types/pagesTypes";
 
 // Types for booking entities kept minimal to avoid tight coupling
@@ -174,11 +175,15 @@ export async function createBooking(data: BookingPayload, locale?: string) {
       const providerEmail = created.listing.user?.email;
 
       if (providerEmail) {
-        triggerNotificationEmail('booking_provider', providerEmail, {
+        const providerLocale = created.listing.user?.preferredLanguage || 'en';
+        const emailData = {
           username: created.listing.user?.username || "Service Provider",
           listingTitle,
           bookingDate: new Date(data.startDateTime).toLocaleString(),
-        }, `New Booking Received: ${listingTitle}`, created.listing.user?.preferredLanguage || 'en');
+        };
+        triggerNotificationEmail('booking_provider', providerEmail, {
+          ...emailData,
+        }, getNotificationEmailSubject('booking_provider', providerLocale, emailData), providerLocale);
       }
     }
 
@@ -298,4 +303,3 @@ export async function deleteBooking(id: string) {
     throw new Error("Errors.Booking.deleteFailed");
   }
 }
-

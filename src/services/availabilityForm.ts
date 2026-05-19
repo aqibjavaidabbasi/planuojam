@@ -1,5 +1,6 @@
 import { createQuery, fetchAPIWithToken, postAPI, putAPI } from "./api";
 import { triggerNotificationEmail } from "@/utils/emailTrigger";
+import { getNotificationEmailSubject } from "@/utils/emailSubjects";
 import { getUsersByDocumentIds } from "./auth";
 
 export interface AvailabilityInquiryPayload {
@@ -49,13 +50,17 @@ export async function createAvailabilityInquiry(data: AvailabilityInquiryPayload
       const listingTitle = listingRes?.data?.title || "Your Listing";
 
       if (provider && provider.email) {
-        triggerNotificationEmail('inquiry', provider.email, {
+        const providerLocale = provider.preferredLanguage || 'en';
+        const emailData = {
           name: data.name,
           email: data.email,
           phone: data.phone,
           message: data.message,
           listingTitle,
-        }, `New Availability Inquiry: ${listingTitle}`, provider.preferredLanguage || 'en');
+        };
+        triggerNotificationEmail('inquiry', provider.email, {
+          ...emailData,
+        }, getNotificationEmailSubject('inquiry', providerLocale, emailData), providerLocale);
       }
     } catch (triggerErr) {
       console.error("Failed to trigger inquiry email:", triggerErr);

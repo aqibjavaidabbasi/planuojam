@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { randomBytes } from "crypto";
+import { getNotificationEmailSubject, normalizeEmailSubjectLocale } from "@/utils/emailSubjects";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const STRAPI_API_URL = process.env.NEXT_PUBLIC_API_URL!;
@@ -31,6 +32,7 @@ type StrapiUserEntry = {
   documentId?: string;
   username?: string;
   email?: string;
+  preferredLanguage?: string | null;
   invoiceCustomerType?: "individual" | "company" | null;
 };
 
@@ -203,6 +205,7 @@ async function createPromotionInvoice(params: {
   const invoiceNumber = buildPromotionInvoiceNumber(intent.id);
   if (recipientEmail) {
     try {
+      const locale = normalizeEmailSubjectLocale(userResponse?.preferredLanguage);
       console.log("Sending promotion invoice email to:", recipientEmail);
       await fetch(`${getPublicAppUrl()}/api/email/notification`, {
         method: "POST",
@@ -210,8 +213,8 @@ async function createPromotionInvoice(params: {
         body: JSON.stringify({
           type: "invoice",
           to: recipientEmail,
-          subject: `Your invoice ${invoiceNumber} is ready`,
-          locale: "en",
+          subject: getNotificationEmailSubject("invoice", locale, { invoiceNumber }),
+          locale,
           data: {
             username: buyerName || recipientEmail,
             invoiceNumber,

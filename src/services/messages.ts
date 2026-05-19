@@ -1,5 +1,6 @@
 import { createQuery, fetchAPIWithToken, postAPIWithToken, putAPI } from "./api";
 import { triggerNotificationEmail } from "@/utils/emailTrigger";
+import { getNotificationEmailSubject } from "@/utils/emailSubjects";
 import QueryString from "qs";
 
 export type UserLite = {
@@ -132,11 +133,15 @@ export async function sendMessage(senderId: number, receiverId: number, body: st
   // Send Email Notification
   const created = res?.data;
   if (created && created.receiver?.email) {
-    triggerNotificationEmail('message', created.receiver.email, {
+    const receiverLocale = created.receiver?.preferredLanguage || 'en';
+    const emailData = {
       senderName: created.sender?.username || "Someone",
       recipientName: created.receiver?.username || "there",
       messageSnippet: body.slice(0, 100) + (body.length > 100 ? "..." : ""),
-    }, `New message from ${created.sender?.username || "Planuojam user"}`, created.receiver?.preferredLanguage || 'en');
+    };
+    triggerNotificationEmail('message', created.receiver.email, {
+      ...emailData,
+    }, getNotificationEmailSubject('message', receiverLocale, emailData), receiverLocale);
   }
 
   if (res?.data) return res.data;

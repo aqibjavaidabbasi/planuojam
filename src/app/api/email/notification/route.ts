@@ -5,6 +5,7 @@ import MessageEmail from '@/emails/MessageEmail';
 import SubscriptionEmail from '@/emails/SubscriptionEmail';
 import InquiryEmail from '@/emails/InquiryEmail';
 import InvoiceEmail from '@/emails/InvoiceEmail';
+import { getNotificationEmailSubject, NotificationEmailType } from '@/utils/emailSubjects';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -80,7 +81,7 @@ export async function POST(req: Request) {
     const result = await resend.emails.send({
       from: `Planuojam <${from}>`,
       to: [to],
-      subject: subject || 'New Notification from Planuojam',
+      subject: subject || getNotificationEmailSubject(type as NotificationEmailType, locale, data),
       react: reactElement,
     });
 

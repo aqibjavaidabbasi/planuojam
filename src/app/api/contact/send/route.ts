@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import ContactEmail from '@/emails/ContactEmail';
+import { getNotificationEmailSubject } from '@/utils/emailSubjects';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:1337';
@@ -10,7 +11,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
-    const { firstName, lastName, email, country, phone, message } = await req.json();
+    const { firstName, lastName, email, country, phone, message, locale } = await req.json();
 
     if (!firstName || !email || !message) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
     const { data, error } = await resend.emails.send({
       from: `Planuojam <${from}>`,
       to: [to],
-      subject: `New contact message from ${firstName} ${lastName || ''}`.trim(),
+      subject: getNotificationEmailSubject('contact', locale, { firstName, lastName }),
       replyTo: email,
       react: ContactEmail({
         firstName,
@@ -55,6 +56,7 @@ export async function POST(req: Request) {
         phone,
         country,
         message,
+        locale,
       }),
     });
 

@@ -94,6 +94,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
   const [showListingSubscriptionModal, setShowListingSubscriptionModal] = useState(false);
   const [heartLoading, setHeartLoading] = useState(false);
   const [openListingsInNewTab, setOpenListingsInNewTab] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const t = useTranslations('Dynamic.ListingCard');
   const locale = useLocale();
   const swiperRef = useRef<{ swiper: SwiperClass }>(null);
@@ -180,24 +181,25 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
 
       {/* Combine images from portfolio and YouTube videos */}
       {(imageCount > 0 || (item.videos?.length || 0) > 0) && (
-        <Swiper
-          ref={swiperRef}
-          modules={[Navigation, Pagination, Autoplay]}
-          className="custom-swiper"
-          spaceBetween={30}
-          slidesPerView={1}
-          navigation
-          pagination={{ clickable: true, dynamicBullets: true, dynamicMainBullets: 3 }}
-          loop={true}
-          autoplay={{ delay: 3000, disableOnInteraction: false }}
-        >
-          {/* Images from portfolio (filtered to exclude videos) */}
-          {portfolioImages.map((media, idx) => {
-            const mediaUrl = getCompleteImageUrl(media.url);
+        <div className="relative">
+          <Swiper
+            ref={swiperRef}
+            modules={[Navigation, Pagination, Autoplay]}
+            className="custom-swiper"
+            spaceBetween={30}
+            slidesPerView={1}
+            navigation
+            pagination={{ clickable: true, dynamicBullets: true, dynamicMainBullets: 3 }}
+            loop={true}
+            autoplay={{ delay: 3000, disableOnInteraction: false }}
+            onSlideChange={(swiper) => setActiveImageIndex(swiper.realIndex)}
+          >
+            {/* Images from portfolio (filtered to exclude videos) */}
+            {portfolioImages.map((media, idx) => {
+              const mediaUrl = getCompleteImageUrl(media.url);
 
-            return (
-              <SwiperSlide key={`image-${idx}`}>
-                <div className="relative">
+              return (
+                <SwiperSlide key={`image-${idx}`}>
                   <Link
                     href={viewPath}
                     {...listingLinkProps}
@@ -205,35 +207,21 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                     title={item.title}
                   >
                     <div className="relative w-full aspect-4/3 bg-black">
-                    <Image
-                      src={mediaUrl}
-                      alt={t('imageAlt', { index: idx + 1 })}
-                      fill
-                      className='object-cover object-center'
-                      sizes="(max-width: 768px) 100vw, 340px"
-                      priority={idx === 0 && !!highPriority}
-                      fetchPriority={idx === 0 && highPriority ? 'high' : 'auto'}
-                      loading={idx === 0 && highPriority ? 'eager' : 'lazy'}
-                    />
+                      <Image
+                        src={mediaUrl}
+                        alt={t('imageAlt', { index: idx + 1 })}
+                        fill
+                        className='object-cover object-center'
+                        sizes="(max-width: 768px) 100vw, 340px"
+                        priority={idx === 0 && !!highPriority}
+                        fetchPriority={idx === 0 && highPriority ? 'high' : 'auto'}
+                        loading={idx === 0 && highPriority ? 'eager' : 'lazy'}
+                      />
                     </div>
                   </Link>
-                  {(hasCardSocialLinks || imageCount > 1) && (
-                    <div className="pointer-events-none absolute bottom-3 right-3 z-10 flex items-center gap-1.5">
-                      <div className="pointer-events-auto">
-                        <ListingCardSocialLogos socialLinks={cardSocialLinks} />
-                      </div>
-                      {imageCount > 1 && (
-                      <div className="inline-flex items-center gap-1.5 rounded-full bg-black/65 px-2.5 py-1 text-xs font-semibold leading-none text-white shadow-md backdrop-blur-sm">
-                        <FaRegImages size={13} aria-hidden="true" />
-                        <span>{idx + 1}/{imageCount}</span>
-                      </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </SwiperSlide>
-            );
-          })}
+                </SwiperSlide>
+              );
+            })}
 
           {/* YouTube videos */}
           {
@@ -331,7 +319,21 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           //   );
           // })
           }
-        </Swiper>
+          </Swiper>
+          {(hasCardSocialLinks || imageCount > 1) && (
+            <div className="pointer-events-none absolute bottom-3 right-3 z-20 flex items-center gap-1.5">
+              <div className="pointer-events-auto">
+                <ListingCardSocialLogos socialLinks={cardSocialLinks} />
+              </div>
+              {imageCount > 1 && (
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-black/65 px-2.5 py-1 text-xs font-semibold leading-none text-white shadow-md backdrop-blur-sm">
+                  <FaRegImages size={13} aria-hidden="true" />
+                  <span>{activeImageIndex + 1}/{imageCount}</span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       )}
 
       {/* Content */}
