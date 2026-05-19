@@ -23,6 +23,15 @@ const LISTING_CARD_MAP_VENUE_POPULATE = {
   },
 };
 
+const LISTING_CARD_SOCIAL_LINKS_POPULATE = {
+  fields: ['optionalSectionTitle'],
+  populate: {
+    socialLink: {
+      fields: ['platform', 'link', 'visible'],
+    },
+  },
+};
+
 const LISTING_MAP_VENDOR_POPULATE = {
   serviceArea: {
     fields: ['latitude', 'longitude'],
@@ -59,6 +68,7 @@ const LISTING_CARD_SHARED_POPULATE = {
   videos: {
     fields: ['url'],
   },
+  socialLinks: LISTING_CARD_SOCIAL_LINKS_POPULATE,
   hotDeal: {
     fields: ['enableHotDeal', 'startDate', 'lastDate'],
   },
@@ -99,6 +109,7 @@ export const LISTING_CARD_MAP_POP_STRUCTURE = {
   videos: {
     fields: ['url'],
   },
+  socialLinks: LISTING_CARD_SOCIAL_LINKS_POPULATE,
   hotDeal: {
     fields: ['enableHotDeal', 'startDate', 'lastDate'],
   },
@@ -130,6 +141,7 @@ export const LISTING_MAP_LOCATION_POP_STRUCTURE = {
   videos: {
     fields: ['url'],
   },
+  socialLinks: LISTING_CARD_SOCIAL_LINKS_POPULATE,
   hotDeal: {
     fields: ['enableHotDeal', 'startDate', 'lastDate'],
   },

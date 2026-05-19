@@ -94,7 +94,7 @@ function ClientHotDealWrapper({
                 }
             }}
         />
-        <div className='flex items-center justify-center gap-3 mt-10 flex-wrap'>
+        <div className='grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),340px))] justify-center gap-6 lg:gap-8 mt-10'>
             {
                 isInitialLoad ? (
                     <div className="flex items-center justify-center py-8">

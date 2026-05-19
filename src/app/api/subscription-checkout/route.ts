@@ -5,6 +5,7 @@ import { logApiEvent } from '@/utils/subscriptionLogger';
 export const runtime = 'nodejs';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+type PromotionCodeWithCoupon = Stripe.PromotionCode & { coupon?: string | Stripe.Coupon };
 
 export async function POST(req: Request) {
   try {
@@ -16,6 +17,7 @@ export async function POST(req: Request) {
       successUrl,
       cancelUrl,
       promoCode,
+      promoCodeId,
     } = await req.json();
 
     if (!userId || !stripePriceId || !listingDocId) {
@@ -25,54 +27,127 @@ export async function POST(req: Request) {
       );
     }
 
-    // Validate promotion code (proper Stripe usage)
-    let discount;
+    console.log('[subscription-checkout] request received', {
+      userId,
+      listingDocId,
+      stripePriceId,
+      hasPromoCode: Boolean(promoCode),
+      promoCode: promoCode || '',
+      promoCodeId: promoCodeId || '',
+    });
+
+    // Resolve promotion code. If it cannot be resolved, checkout continues at full price.
+    let discount: Stripe.Checkout.SessionCreateParams.Discount[] | undefined;
     let promoCodeValid = false;
+    let resolvedPromoCodeId = '';
 
-    if (promoCode) {
+    if (promoCodeId || promoCode) {
       try {
-        const promo = await stripe.promotionCodes.list({
-          code: promoCode,
-          active: true,
-          limit: 1,
-        });
+        if (promoCodeId) {
+          const promo = await stripe.promotionCodes.retrieve(String(promoCodeId)) as PromotionCodeWithCoupon;
+          console.log('[subscription-checkout] promotion code retrieved by id', {
+            promoCodeId: promo.id,
+            code: promo.code,
+            active: promo.active,
+            couponId: typeof promo.coupon === 'string' ? promo.coupon : promo.coupon?.id,
+          });
 
-        if (promo.data.length > 0) {
-          discount = [{ promotion_code: promo.data[0].id }];
-          promoCodeValid = true;
+          if (promo.active) {
+            discount = [{ promotion_code: promo.id }];
+            resolvedPromoCodeId = promo.id;
+            promoCodeValid = true;
+          }
         }
-      } catch {
+
+        if (!promoCodeValid && promoCode) {
+          const promo = await stripe.promotionCodes.list({
+            code: String(promoCode).trim(),
+            active: true,
+            limit: 1,
+          });
+
+          console.log('[subscription-checkout] promotion code lookup by code', {
+            promoCode,
+            resultCount: promo.data.length,
+            firstPromoId: promo.data[0]?.id || '',
+            firstPromoActive: promo.data[0]?.active,
+          });
+
+          if (promo.data.length > 0) {
+            discount = [{ promotion_code: promo.data[0].id }];
+            resolvedPromoCodeId = promo.data[0].id;
+            promoCodeValid = true;
+          }
+        }
+      } catch (promoError) {
+        console.warn('[subscription-checkout] promo resolution failed; continuing without discount', {
+          promoCode: promoCode || '',
+          promoCodeId: promoCodeId || '',
+          error: promoError instanceof Error ? promoError.message : String(promoError),
+        });
         promoCodeValid = false;
+        discount = undefined;
       }
     }
 
-    // Create Checkout Session
-    const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price: stripePriceId,
-          quantity: 1,
-        },
-      ],
-      discounts: discount,
-      metadata: {
-        userId: String(userId),
-        listingDocId: String(listingDocId),
-        listingTitle: listingTitle ? String(listingTitle) : '',
-        promoCode: promoCode || '',
-      },
-      subscription_data: {
+    const createSession = async (sessionDiscounts?: Stripe.Checkout.SessionCreateParams.Discount[]) => {
+      return stripe.checkout.sessions.create({
+        mode: 'subscription',
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: stripePriceId,
+            quantity: 1,
+          },
+        ],
+        discounts: sessionDiscounts,
         metadata: {
           userId: String(userId),
           listingDocId: String(listingDocId),
           listingTitle: listingTitle ? String(listingTitle) : '',
           promoCode: promoCode || '',
+          promoCodeId: resolvedPromoCodeId,
         },
-      },
-      success_url: successUrl || `${process.env.NEXT_PUBLIC_SITE_URL}/profile?tab=my-listings`,
-      cancel_url: cancelUrl || `${process.env.NEXT_PUBLIC_SITE_URL}/profile?tab=my-listings`,
+        subscription_data: {
+          metadata: {
+            userId: String(userId),
+            listingDocId: String(listingDocId),
+            listingTitle: listingTitle ? String(listingTitle) : '',
+            promoCode: promoCode || '',
+            promoCodeId: resolvedPromoCodeId,
+          },
+        },
+        success_url: successUrl || `${process.env.NEXT_PUBLIC_SITE_URL}/profile?tab=my-listings`,
+        cancel_url: cancelUrl || `${process.env.NEXT_PUBLIC_SITE_URL}/profile?tab=my-listings`,
+      });
+    };
+
+    // Create Checkout Session. If Stripe rejects the resolved discount, retry silently without it.
+    let session: Stripe.Checkout.Session;
+    try {
+      session = await createSession(discount);
+    } catch (checkoutError) {
+      if (discount) {
+        console.warn('[subscription-checkout] checkout rejected discount; retrying without discount', {
+          promoCode: promoCode || '',
+          promoCodeId: resolvedPromoCodeId,
+          error: checkoutError instanceof Error ? checkoutError.message : String(checkoutError),
+        });
+        discount = undefined;
+        promoCodeValid = false;
+        session = await createSession(undefined);
+      } else {
+        throw checkoutError;
+      }
+    }
+
+    console.log('[subscription-checkout] checkout session created', {
+      sessionId: session.id,
+      listingDocId,
+      promoCode: promoCode || '',
+      promoCodeId: resolvedPromoCodeId,
+      promoCodeApplied: promoCodeValid,
+      discountsRequested: discount?.length || 0,
     });
 
     // Logging
@@ -88,6 +163,8 @@ export async function POST(req: Request) {
           stripePriceId,
           listingTitle,
           promoCode: promoCode || '',
+          promoCodeId: resolvedPromoCodeId,
+          promoCodeApplied: promoCodeValid,
         },
       }
     );

@@ -346,7 +346,7 @@ function ClientListingWrapper({
         locations={locations}
         fetcher={fetcher}
       />
-      <div className='flex justify-center gap-5 my-10 flex-wrap lg:max-w-425 mx-auto px-4'>
+      <div className='grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),340px))] justify-center gap-6 lg:gap-8 my-10 lg:max-w-425 mx-auto px-4'>
         {list.length === 0 ? (
           <NoDataCard>{getTranslation(placeholders.emptyList)}</NoDataCard>
         ) : (

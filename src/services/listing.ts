@@ -179,7 +179,7 @@ export async function fetchListingBySlug(slug: string, locale?: string) {
         
         // Populate tags if they exist
         if (listing?.tagDocumentIds?.length) {
-            listing.tags = await fetchTagsByIds(listing.tagDocumentIds as string[]);
+            listing.tags = await fetchTagsByIds(listing.tagDocumentIds as string[], locale);
         }
         
 
@@ -192,8 +192,8 @@ export async function fetchListingBySlug(slug: string, locale?: string) {
     const listing = dataBase[0];
     
     // Populate tags if they exist
-    if (listing?.tags?.length) {
-        listing.tags = await fetchTagsByIds(listing.tags as string[]);
+    if (listing?.tagDocumentIds?.length) {
+        listing.tags = await fetchTagsByIds(listing.tagDocumentIds as string[], locale);
     }
     
     return listing;
@@ -319,6 +319,13 @@ export async function fetchListingsByUser(documentId: string, status?: string, l
         },
         videos: {
             populate: '*'
+        },
+        socialLinks: {
+            populate: {
+                socialLink: {
+                    fields: ['platform', 'link', 'visible']
+                }
+            }
         },
         reviews: {
             populate: '*'

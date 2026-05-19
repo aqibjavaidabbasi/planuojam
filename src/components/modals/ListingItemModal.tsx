@@ -1585,6 +1585,11 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                         </Button>
                       </div>
                     </div>
+                    <div className='mb-3 rounded-md border border-blue-100 bg-blue-50 px-3 py-2'>
+                      <p className='text-sm text-blue-800'>
+                        {t('fields.capacity.helperText')}
+                      </p>
+                    </div>
                     <div className='grid grid-cols-1 md:grid-cols-4 gap-3 items-end mb-3'>
                       <div className='col-span-2'>
                         <Input

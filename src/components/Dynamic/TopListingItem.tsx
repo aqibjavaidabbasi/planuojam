@@ -29,7 +29,7 @@ function TopListingItem({ data }: { data: topListingItemsBlock }) {
                 <p className='text-center max-w-prose'>{data.sectionheader.sectionDescription}</p>
             </div>
             <div className='flex items-center justify-center'>
-                <div className='flex flex-wrap items-center justify-center gap-4'>
+                <div className='grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),340px))] justify-center gap-6 lg:gap-8 w-full'>
                     {filteredListings.map(item => (
                         <ListingCard key={item.documentId} item={item} />
                     ))}

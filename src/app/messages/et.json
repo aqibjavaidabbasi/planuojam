@@ -996,7 +996,8 @@
         },
         "capacity": {
           "label": "Mahutavus",
-          "placeholder": "nt 100 inimest"
+          "placeholder": "nt 100 inimest",
+          "helperText": "Mahutavus näitab, kui palju külalisi teie ürituse toimumiskoht mahutab. See aitab ostjatel mõista, kas ruum sobib nende ürituse suurusega."
         },
         "bookingDurationType": {
           "label": "Broneeringu kestuse tüüp",

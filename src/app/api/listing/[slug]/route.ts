@@ -67,7 +67,17 @@ export async function GET(
     // Fetch tags if needed
     if (listing?.tagDocumentIds?.length) {
       try {
-        const tagsUrl = `${API_URL}/api/tags?filters[documentId][$in]=${listing.tagDocumentIds.join(',')}`;
+        const tagsQuery = QueryString.stringify(
+          {
+            filters: {
+              documentId: { $in: listing.tagDocumentIds },
+            },
+            populate: '*',
+            locale,
+          },
+          { encodeValuesOnly: true },
+        );
+        const tagsUrl = `${API_URL}/api/tags?${tagsQuery}`;
         const tagsResponse = await fetch(tagsUrl, { cache: 'no-store' });
         if (tagsResponse.ok) {
           const tagsData = await tagsResponse.json();

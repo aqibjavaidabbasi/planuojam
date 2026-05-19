@@ -986,7 +986,8 @@
         },
         "capacity": {
           "label": "Capacity",
-          "placeholder": "e.g. 100 people"
+          "placeholder": "e.g. 100 people",
+          "helperText": "Capacity shows how many guests your venue can host. It helps buyers understand whether the space fits their event size."
         },
         "bookingDurationType": {
           "label": "Booking Duration Type",

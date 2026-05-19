@@ -172,7 +172,7 @@ function ClientEventTypeWrapper({
             <p className="text-center">{venueTitleBlock.sectionDescription}</p>
           )}
         </div>
-        <div className="flex items-center justify-center gap-3 mt-10 flex-wrap">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),340px))] justify-center gap-6 lg:gap-8 mt-10">
           {venueListings.length > 0 ? (
             venueListings.map((listing) => {
               return (
@@ -204,7 +204,7 @@ function ClientEventTypeWrapper({
             <p className="text-center">{vendorTitleBlock.sectionDescription}</p>
           )}
         </div>
-        <div className="flex items-center justify-center gap-3 mt-10 flex-wrap">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),340px))] justify-center gap-6 lg:gap-8 mt-10">
           {vendorListings.length > 0 ? (
             vendorListings.map((listing) => {
               return (

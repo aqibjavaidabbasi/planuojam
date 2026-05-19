@@ -1,5 +1,5 @@
 'use client'
-import { ListingItem } from '@/types/pagesTypes'
+import { ListingItem, SocialLink } from '@/types/pagesTypes'
 import { getCompleteImageUrl } from '@/utils/helpers'
 import Image from 'next/image'
 import { useEffect, useState, useRef } from 'react'
@@ -27,6 +27,63 @@ import { getHotDealInfo, getUpcomingHotDealMessage } from '@/utils/hotDealHelper
 import { getListingEditPath, getListingPath } from '@/utils/routes';
 import { Link } from '@/i18n/navigation'
 
+const LISTING_CARD_SOCIAL_LOGOS: Record<'facebook' | 'instagram', { src: string; label: string }> = {
+  facebook: {
+    src: '/social/facebook.svg',
+    label: 'Facebook',
+  },
+  instagram: {
+    src: '/social/instagram.svg',
+    label: 'Instagram',
+  },
+};
+
+function normalizeSocialHref(link: string) {
+  return /^https?:\/\//i.test(link) ? link : `https://${link}`;
+}
+
+function ListingCardSocialLogos({ socialLinks }: { socialLinks: SocialLink[] }) {
+  const visibleSocialLinks = socialLinks.filter((link) => {
+    const platform = link.platform?.toLowerCase();
+    return (
+      link.visible !== false &&
+      !!link.link &&
+      (platform === 'facebook' || platform === 'instagram')
+    );
+  });
+
+  if (!visibleSocialLinks.length) return null;
+
+  return (
+    <div className="inline-flex items-center gap-1.5 rounded-full shadow-md backdrop-blur-sm">
+      {visibleSocialLinks.map((link) => {
+        const platform = link.platform.toLowerCase() as 'facebook' | 'instagram';
+        const logo = LISTING_CARD_SOCIAL_LOGOS[platform];
+
+        return (
+          <a
+            key={`${platform}-${link.id ?? link.link}`}
+            href={normalizeSocialHref(link.link)}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open ${logo.label}`}
+            title={logo.label}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/30"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <Image
+              src={logo.src}
+              alt=""
+              width={40}
+              height={40}
+            />
+          </a>
+        );
+      })}
+    </div>
+  );
+}
+
 function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem; highPriority?: boolean; stripeProducts?: StripeProductAttributes[] }) {
   const { siteSettings } = useSiteSettings();
   const { user } = useAppSelector((state: RootState) => state.auth);
@@ -42,6 +99,11 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
   const swiperRef = useRef<{ swiper: SwiperClass }>(null);
   const portfolioImages = item.portfolio?.filter(media => !media.mime?.startsWith('video/')) || [];
   const imageCount = portfolioImages.length;
+  const cardSocialLinks = item.socialLinks?.socialLink || [];
+  const hasCardSocialLinks = cardSocialLinks.some((link) => {
+    const platform = link.platform?.toLowerCase();
+    return link.visible !== false && !!link.link && (platform === 'facebook' || platform === 'instagram');
+  });
 
   const isLiked = Array.isArray(likedListings) && likedListings.some(listing => listing.listing === item.documentId);
 
@@ -135,13 +197,14 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
 
             return (
               <SwiperSlide key={`image-${idx}`}>
-                <Link
-                  href={viewPath}
-                  {...listingLinkProps}
-                  className="block"
-                  title={item.title}
-                >
-                  <div className="relative w-full aspect-4/3 bg-black">
+                <div className="relative">
+                  <Link
+                    href={viewPath}
+                    {...listingLinkProps}
+                    className="block"
+                    title={item.title}
+                  >
+                    <div className="relative w-full aspect-4/3 bg-black">
                     <Image
                       src={mediaUrl}
                       alt={t('imageAlt', { index: idx + 1 })}
@@ -152,14 +215,22 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                       fetchPriority={idx === 0 && highPriority ? 'high' : 'auto'}
                       loading={idx === 0 && highPriority ? 'eager' : 'lazy'}
                     />
-                    {imageCount > 1 && (
-                      <div className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-black/65 px-2.5 py-1 text-xs font-semibold leading-none text-white shadow-md backdrop-blur-sm">
+                    </div>
+                  </Link>
+                  {(hasCardSocialLinks || imageCount > 1) && (
+                    <div className="pointer-events-none absolute bottom-3 right-3 z-10 flex items-center gap-1.5">
+                      <div className="pointer-events-auto">
+                        <ListingCardSocialLogos socialLinks={cardSocialLinks} />
+                      </div>
+                      {imageCount > 1 && (
+                      <div className="inline-flex items-center gap-1.5 rounded-full bg-black/65 px-2.5 py-1 text-xs font-semibold leading-none text-white shadow-md backdrop-blur-sm">
                         <FaRegImages size={13} aria-hidden="true" />
                         <span>{idx + 1}/{imageCount}</span>
                       </div>
-                    )}
-                  </div>
-                </Link>
+                      )}
+                    </div>
+                  )}
+                </div>
               </SwiperSlide>
             );
           })}

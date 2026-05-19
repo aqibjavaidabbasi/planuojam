@@ -98,7 +98,7 @@ function FavouriteListings() {
         <p className="text-gray-600 mt-2">{t('subtitle')}</p>
       </div>
 
-      <div className="flex flex-wrap gap-6">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),340px))] justify-center gap-6 lg:gap-8">
         {listings.length > 0 ? listings.map((listing) => {
           // Create a mapping between listing and liked item for the key
           const likedItem = items.find(item => item.listing === listing.documentId);

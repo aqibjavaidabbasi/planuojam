@@ -621,7 +621,8 @@
         },
         "capacity": {
           "label": "Žmonių skaičius (talpa)",
-          "placeholder": "pvz. 100 žmonių"
+          "placeholder": "pvz. 100 žmonių",
+          "helperText": "Talpa rodo, kiek svečių gali priimti jūsų renginio vieta. Tai padeda pirkėjams suprasti, ar erdvė atitinka jų renginio dydį."
         },
         "bookingDurationType": {
           "label": "Užsakymo trukmės tipas",

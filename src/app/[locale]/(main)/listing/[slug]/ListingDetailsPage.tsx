@@ -165,7 +165,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
 
               {/* tags */}
               {initialListing.tags && initialListing.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2">
+                <div className="mt-5 flex flex-wrap gap-2 border-t border-gray-100 pt-4">
                   {initialListing.tags.map((tag) => (
                     <span
                       key={tag.documentId}
@@ -383,7 +383,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
         {(!loadingRecommended && Array.isArray(recommended) && recommended.length > 0) && (
           <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6 my-6">
             <h2 className="text-2xl font-semibold text-primary mb-4">{t("recommended", { default: "Recommended listings" })}</h2>
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,320px),1fr))] justify-items-center gap-4">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),340px))] justify-center gap-6 lg:gap-8">
               {recommended.slice(0, 5).map((item) => (
                 <div key={item.id} className="">
                   <ListingCard item={item} />

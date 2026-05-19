@@ -139,7 +139,7 @@ function Mylistings() {
       {!loading && error && <p className="text-sm md:text-base text-red-600">{error}</p>}
 
       {!loading && !error && listings.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 lg:gap-6 justify-items-center">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),340px))] justify-center gap-6 lg:gap-8">
           {listings.map((l) => (
             <ListingCard key={l.documentId} item={l} stripeProducts={stripeProducts} />
           ))}

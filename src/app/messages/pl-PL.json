@@ -1007,7 +1007,8 @@
         },
         "capacity": {
           "label": "Pojemność",
-          "placeholder": "np. 100 osób"
+          "placeholder": "np. 100 osób",
+          "helperText": "Pojemność pokazuje, ilu gości może pomieścić Twój obiekt. Pomaga kupującym ocenić, czy przestrzeń jest odpowiednia do rozmiaru ich wydarzenia."
         },
         "bookingDurationType": {
           "label": "Rodzaj czasu rezerwacji",

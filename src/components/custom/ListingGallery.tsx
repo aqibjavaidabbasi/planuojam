@@ -88,16 +88,16 @@ function ListingGallery({
   const isSingle = allMedia.length === 1;
   const rightGridClass =
     rightItems.length === 1
-      ? "grid grid-cols-1 gap-4 h-[500px]"
+      ? "grid grid-cols-1 gap-4 md:h-[500px]"
       : rightItems.length === 2
-        ? "grid grid-cols-1 grid-rows-2 gap-4 h-[500px]"
-        : "grid grid-cols-2 grid-rows-2 gap-4 h-[500px]";
+        ? "grid grid-cols-1 gap-4 md:grid-rows-2 md:h-[500px]"
+        : "grid grid-cols-1 sm:grid-cols-2 gap-4 md:grid-cols-2 md:grid-rows-2 md:h-[500px]";
 
   const getRightItemClass = (idx: number) => {
     if (rightItems.length === 3 && idx === 0) {
-      return "relative bg-black rounded-lg w-full h-full row-span-2";
+      return "relative bg-black rounded-lg w-full aspect-[4/3] md:aspect-auto md:h-full md:row-span-2 overflow-hidden";
     }
-    return "relative bg-black rounded-lg w-full h-full";
+    return "relative bg-black rounded-lg w-full aspect-[4/3] md:aspect-auto md:h-full overflow-hidden";
   };
 
   const renderMediaItem = (item: MediaItem, index: number, isMain: boolean) => { 
@@ -169,13 +169,13 @@ function ListingGallery({
       {firstItem && (
         <div className="mb-6 flex">
           {isSingle ? (
-            <div className="w-full h-[500px] bg-black rounded-lg">
+            <div className="w-full aspect-[4/3] md:h-[500px] md:aspect-auto bg-black rounded-lg overflow-hidden">
                 {renderMediaItem(firstItem, 0, true)}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
               {/* Left: Main item */}
-              <div className="w-full h-[500px] bg-black rounded-lg">
+              <div className="w-full aspect-[4/3] md:h-[500px] md:aspect-auto bg-black rounded-lg overflow-hidden">
                   {renderMediaItem(firstItem, 0, true)}
               </div>
 

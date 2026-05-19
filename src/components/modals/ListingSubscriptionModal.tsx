@@ -107,6 +107,7 @@ const [promoData, setPromoData] = useState<PromoData | null>(null)
                         ? `${window.location.origin}/${locale}/listing/${listingSlug}/edit`
                         : `${window.location.origin}/profile?tab=my-listings`,
                     promoCode: promoCode.trim() || undefined,
+                    promoCodeId: promoData?.id,
                 }),
             })
 
