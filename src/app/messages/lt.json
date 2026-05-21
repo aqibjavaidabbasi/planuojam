@@ -495,6 +495,10 @@
         "slugGenerationFailed": "Nepavyko sugeneruoti URL iš pavadinimo",
         "invoiceInfoRequired": "Prieš kurdami naują skelbimą, profilio kortelėje užpildykite skiltį „Nustatyti sąskaitos informaciją“."
       },
+      "validation": {
+        "fillFields": "Užpildykite šiuos laukus: {fields}",
+        "venueFieldsHint": "{capacity} nurodo, kiek svečių gali priimti jūsų vieta. {bookingDurationType} pirkėjams parodo, ar rezervacijos skaičiuojamos valandomis, ar dienomis. {bookingDuration} yra įprasta jūsų siūloma rezervacijos trukmė. {minimumDuration} yra trumpiausia rezervacija, kurią priimate."
+      },
       "toasts": {
         "created": "Skelbimas sėkmingai sukurtas",
         "failed": "Nepavyko sukurti skelbimo",

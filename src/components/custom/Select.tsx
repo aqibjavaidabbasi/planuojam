@@ -7,6 +7,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   disabled?: boolean;
   required?: boolean;
   label?: string;
+  error?: boolean;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -18,6 +19,7 @@ const Select: React.FC<SelectProps> = ({
   disabled = false,
   required = false,
   label = "",
+  error = false,
   ...props
 }) => {
   const isControlled = value !== undefined;
@@ -45,8 +47,8 @@ const Select: React.FC<SelectProps> = ({
           {label}{required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
-      <div className="flex items-center group border border-border rounded-md" onClick={()=>setIsOpen(!isOpen)}>
-        <select {...selectProps} className={`min-w-fit w-full py-1.5 md:py-2.5 px-2.5 md:px-5 text-base font-normal bg-white focus:outline-none focus:ring-2 focus:ring-primary appearance-none ${disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60' : 'cursor-pointer'} ${className}`} id={selectProps.id}>
+      <div className={`flex items-center group border rounded-md ${error ? 'border-red-500' : 'border-border'}`} onClick={()=>setIsOpen(!isOpen)}>
+        <select {...selectProps} aria-invalid={error || selectProps['aria-invalid'] ? true : undefined} className={`min-w-fit w-full py-1.5 md:py-2.5 px-2.5 md:px-5 text-base font-normal bg-white focus:outline-none focus:ring-2 ${error ? 'focus:ring-red-200' : 'focus:ring-primary'} appearance-none ${disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60' : 'cursor-pointer'} ${className}`} id={selectProps.id}>
           {placeholder && placeholder !== 'Choose an option' && placeholder !== '' && (
             <option value="">
               {placeholder}

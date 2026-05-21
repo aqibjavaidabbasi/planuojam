@@ -879,6 +879,10 @@
         "slugGenerationFailed": "URL-i genereerimine pealkirjast ebaõnnestus",
         "invoiceInfoRequired": "Enne uue kuulutuse loomist täida profiili vahekaardil jaotis „Määra arve andmed”."
       },
+      "validation": {
+        "fillFields": "Palun täitke need väljad: {fields}",
+        "venueFieldsHint": "{capacity} näitab, mitu külalist teie koht mahutab. {bookingDurationType} annab ostjatele teada, kas broneeringu hind on tunni või päeva kohta. {bookingDuration} on tavapärane broneeringu kestus, mida pakute. {minimumDuration} on lühim broneering, mida aktsepteerite."
+      },
       "toasts": {
         "created": "Kuulutus on edukalt loodud",
         "failed": "Kuulutuse loomine ebaõnnestus",

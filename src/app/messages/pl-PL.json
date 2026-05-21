@@ -881,6 +881,10 @@
         "slugGenerationFailed": "Nie udało się wygenerować adresu URL z tytułu",
         "invoiceInfoRequired": "Przed utworzeniem nowego ogłoszenia uzupełnij sekcję „Ustaw dane do faktury” w zakładce profilu."
       },
+      "validation": {
+        "fillFields": "Wypełnij te pola: {fields}",
+        "venueFieldsHint": "{capacity} określa, ilu gości może pomieścić Twoje miejsce. {bookingDurationType} informuje kupujących, czy rezerwacja jest liczona za godzinę czy za dzień. {bookingDuration} to standardowy czas rezerwacji, który oferujesz. {minimumDuration} to najkrótsza rezerwacja, którą akceptujesz."
+      },
       "toasts": {
         "created": "Ogłoszenie zostało pomyślnie utworzone",
         "failed": "Nie udało się utworzyć ogłoszenia",

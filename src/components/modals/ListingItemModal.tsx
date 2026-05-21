@@ -74,6 +74,14 @@ const ErrorMessage = ({
   );
 };
 
+type FrontendValidationIssue = {
+  field: string;
+  label: string;
+  message: string;
+};
+
+type FrontendValidationErrors = Record<string, string>;
+
 // Sortable Media Item Component
 function SortableMediaItem({
   id,
@@ -150,6 +158,10 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
 }) => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [frontendValidationErrors, setFrontendValidationErrors] =
+    useState<FrontendValidationErrors>({});
+  const [frontendValidationSummary, setFrontendValidationSummary] =
+    useState<string | null>(null);
   const t = useTranslations('Modals.ListingItem');
   const tImage = useTranslations('ImageSection');
   const locale = useLocale();
@@ -188,6 +200,36 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
   });
   const form = watch();
   const [mediaItems, setMediaItems] = useState<strapiImage[]>([]);
+
+  const clearFrontendValidationError = (field: string) => {
+    setFrontendValidationErrors((prev) => {
+      if (!prev[field]) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+    setFrontendValidationSummary(null);
+  };
+
+  const setFrontendValidationIssues = (issues: FrontendValidationIssue[]) => {
+    const nextErrors = issues.reduce<FrontendValidationErrors>((acc, issue) => {
+      acc[issue.field] = issue.message;
+      return acc;
+    }, {});
+    const uniqueLabels = Array.from(new Set(issues.map((issue) => issue.label)));
+
+    setFrontendValidationErrors(nextErrors);
+    setFrontendValidationSummary(
+      uniqueLabels.length > 0
+        ? t('validation.fillFields', { fields: uniqueLabels.join(', ') })
+        : null,
+    );
+  };
+
+  const clearFrontendValidation = () => {
+    setFrontendValidationErrors({});
+    setFrontendValidationSummary(null);
+  };
 
   const { eventTypes } = useEventTypes();
   const eventTypeOptions = {
@@ -261,6 +303,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
 
   const handleImageUploadSuccess = (uploadedImages: strapiImage[]) => {
     setMediaItems((prev) => [...prev, ...uploadedImages]);
+    clearFrontendValidationError('portfolio');
   };
 
   const handleOpenImageUpload = () => {
@@ -275,6 +318,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
     if (isOpen) {
       // Ensure errors cleared and defaults reset when opening
       setError(null);
+      clearFrontendValidation();
     }
   }, [isOpen, reset]);
 
@@ -397,69 +441,86 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
   };
 
   // Comprehensive validation function before submitting to Strapi
-  const validateBeforeSubmit = (): string | null => {
+  const validateBeforeSubmit = (): FrontendValidationIssue[] => {
     const payload = getValues();
+    const issues: FrontendValidationIssue[] = [];
+    const addIssue = (field: string, label: string, message: string) => {
+      issues.push({ field, label, message });
+    };
 
     // 1. Validate basic required fields
     if (!payload.title || payload.title.trim() === '') {
-      return t('fields.title.required');
+      addIssue('title', t('fields.title.label'), t('fields.title.required'));
     }
 
     if (!payload.description || payload.description.trim() === '') {
-      return t('fields.description.required');
+      addIssue(
+        'description',
+        t('fields.description.label'),
+        t('fields.description.required'),
+      );
     }
 
     if (
       payload.price === undefined ||
       payload.price === null ||
+      Number.isNaN(payload.price) ||
       payload.price < 0
     ) {
-      return t('fields.price.errors.min');
-    }
-
-    if (payload.price > 1000000) {
-      return t('fields.price.errors.max');
+      addIssue('price', t('fields.price.label'), t('fields.price.errors.min'));
+    } else if (payload.price > 1000000) {
+      addIssue('price', t('fields.price.label'), t('fields.price.errors.max'));
     }
 
     // 2. Validate contact fields
     if (!payload.contact?.email || payload.contact.email.trim() === '') {
-      return t('errors.emailRequired');
+      addIssue('contact.email', t('fields.email.label'), t('errors.emailRequired'));
     }
 
-    if (!payload.contact.phone || payload.contact.phone.trim() === '') {
-      return t('fields.phone.message');
+    if (!payload.contact?.phone || payload.contact.phone.trim() === '') {
+      addIssue('contact.phone', t('fields.phone.label'), t('fields.phone.message'));
     }
 
     // 3. Validate email format
     const emailRegex = /^\S+@\S+$/i;
-    if (!emailRegex.test(payload.contact.email)) {
-      return t('fields.email.message');
+    if (payload.contact?.email && !emailRegex.test(payload.contact.email)) {
+      addIssue('contact.email', t('fields.email.label'), t('fields.email.message'));
     }
 
     // 4. Validate categories
     if (selectedCategories.length === 0) {
-      return t('errors.categoryRequired');
+      addIssue('categories', t('sections.category'), t('errors.categoryRequired'));
     }
 
     // 5. Validate images
     if (mediaItems.length === 0) {
-      return t('errors.noImage');
+      addIssue('portfolio', t('portfolio.title'), t('errors.noImage'));
     }
 
     // 6. Validate videos if present
     if (Array.isArray(payload.videos) && payload.videos.length > 0) {
       const youtubeRegex =
         /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/;
-      for (const video of payload.videos) {
+      for (let i = 0; i < payload.videos.length; i++) {
+        const video = payload.videos[i];
         if (video.url && !youtubeRegex.test(video.url)) {
-          return t('fields.videos.errors.invalid');
+          addIssue(
+            `videos.${i}.url`,
+            `${t('fields.videos.label')} ${i + 1}`,
+            t('fields.videos.errors.invalid'),
+          );
         }
       }
     }
 
     // 7. Validate listing items (vendor/venue specific)
     if (!payload.listingItem || payload.listingItem.length === 0) {
-      return t('errors.listingDetailsRequired');
+      addIssue(
+        'listingItem',
+        isVendor ? t('sections.vendorDetails') : t('sections.venueDetails'),
+        t('errors.listingDetailsRequired'),
+      );
+      return issues;
     }
 
     const listingItem = payload.listingItem[0];
@@ -467,14 +528,23 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
     if (isVendor) {
       // Vendor-specific validation
       if (!listingItem.about || listingItem.about.trim() === '') {
-        return t('errors.aboutRequired');
+        addIssue(
+          'listingItem.about',
+          t('fields.about.label'),
+          t('errors.aboutRequired'),
+        );
       }
       if (
         listingItem.experienceYears === undefined ||
         listingItem.experienceYears === null ||
+        Number.isNaN(listingItem.experienceYears) ||
         listingItem.experienceYears < 0
       ) {
-        return t('errors.experienceYearsInvalid');
+        addIssue(
+          'listingItem.experienceYears',
+          t('fields.experienceYears.label'),
+          t('errors.experienceYearsInvalid'),
+        );
       }
       // Validate that each service area has coordinates set via the map picker
       if (
@@ -492,49 +562,78 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
             sa.longitude !== null &&
             sa.longitude !== '';
           if (!hasLat || !hasLng) {
-            return t('serviceArea.errors.locationRequired', { index: i + 1 });
+            addIssue(
+              `serviceArea.${i}.location`,
+              `${t('serviceArea.title')} ${i + 1}`,
+              t('serviceArea.errors.locationRequired', { index: i + 1 }),
+            );
           }
         }
       }
     } else {
       // Venue-specific validation
       if (!listingItem.location) {
-        return t('errors.addressRequired');
-      }
-
-      if (
+        addIssue(
+          'listingItem.location.address',
+          t('fields.address.label'),
+          t('errors.addressRequired'),
+        );
+      } else if (
         !listingItem.location.address ||
         listingItem.location.address.trim() === ''
       ) {
-        return t('errors.addressRequired');
+        addIssue(
+          'listingItem.location.address',
+          t('fields.address.label'),
+          t('errors.addressRequired'),
+        );
       }
 
       if (
         listingItem.capacity === undefined ||
         listingItem.capacity === null ||
+        Number.isNaN(listingItem.capacity) ||
         listingItem.capacity < 0
       ) {
-        return t('errors.capacityInvalid');
+        addIssue(
+          'listingItem.capacity',
+          t('fields.capacity.label'),
+          t('errors.capacityInvalid'),
+        );
       }
 
       if (!listingItem.bookingDurationType) {
-        return t('errors.bookingDurationTypeRequired');
+        addIssue(
+          'listingItem.bookingDurationType',
+          t('fields.bookingDurationType.label'),
+          t('errors.bookingDurationTypeRequired'),
+        );
       }
 
       if (
         listingItem.bookingDuration === undefined ||
         listingItem.bookingDuration === null ||
+        Number.isNaN(listingItem.bookingDuration) ||
         listingItem.bookingDuration <= 0
       ) {
-        return t('errors.bookingDurationInvalid');
+        addIssue(
+          'listingItem.bookingDuration',
+          t('fields.bookingDuration.label'),
+          t('errors.bookingDurationInvalid'),
+        );
       }
 
       if (
         listingItem.minimumDuration === undefined ||
         listingItem.minimumDuration === null ||
+        Number.isNaN(listingItem.minimumDuration) ||
         listingItem.minimumDuration < 0
       ) {
-        return t('errors.minimumDurationInvalid');
+        addIssue(
+          'listingItem.minimumDuration',
+          t('fields.minimumDuration.label'),
+          t('errors.minimumDurationInvalid'),
+        );
       }
     }
 
@@ -544,10 +643,16 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
       payload.workingSchedule.length > 0
     ) {
       const wsError = validateWorkingSchedule();
-      if (wsError) return wsError;
+      if (wsError) {
+        addIssue(
+          'workingSchedule',
+          t('workingSchedule.title'),
+          wsError,
+        );
+      }
     }
 
-    return null;
+    return issues;
   };
 
   // Working Schedule helpers
@@ -625,12 +730,13 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
 
     setSubmitting(true);
     setError(null);
+    clearFrontendValidation();
     setIsLoading(true);
     try {
       // Comprehensive validation before submitting to Strapi
-      const validationError = validateBeforeSubmit();
-      if (validationError) {
-        setError(validationError);
+      const validationIssues = validateBeforeSubmit();
+      if (validationIssues.length > 0) {
+        setFrontendValidationIssues(validationIssues);
         setSubmitting(false);
         setIsLoading(false);
         return;
@@ -672,7 +778,13 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
       }
       // Require at least 1 uploaded image
       if (mediaItems.length === 0) {
-        setError(t('errors.noImage'));
+        setFrontendValidationIssues([
+          {
+            field: 'portfolio',
+            label: t('portfolio.title'),
+            message: t('errors.noImage'),
+          },
+        ]);
         return;
       }
       // Add media items to portfolio if there are any
@@ -817,14 +929,26 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
 
       // Ensure contact has email and phone
       if (!payload?.contact?.email || payload.contact.email.trim() === '') {
-        setError(t('errors.emailRequired'));
+        setFrontendValidationIssues([
+          {
+            field: 'contact.email',
+            label: t('fields.email.label'),
+            message: t('errors.emailRequired'),
+          },
+        ]);
         setSubmitting(false);
         setIsLoading(false);
         return;
       }
 
       if (!payload.contact.phone || payload.contact.phone.trim() === '') {
-        setError(t('fields.phone.message'));
+        setFrontendValidationIssues([
+          {
+            field: 'contact.phone',
+            label: t('fields.phone.label'),
+            message: t('fields.phone.message'),
+          },
+        ]);
         setSubmitting(false);
         setIsLoading(false);
         return;
@@ -849,6 +973,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
       setSelectedCategories([]);
       setEventTypesIds([]);
       setError(null);
+      clearFrontendValidation();
       setMediaItems([]);
     } catch (e: unknown) {
       let message = t('toasts.failed');
@@ -879,6 +1004,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
   };
 
   const isWorking = submitting || isLoading;
+  const venueRequiredFieldsHint = t('validation.venueFieldsHint', {
+    capacity: t('fields.capacity.label'),
+    bookingDurationType: t('fields.bookingDurationType.label'),
+    bookingDuration: t('fields.bookingDuration.label'),
+    minimumDuration: t('fields.minimumDuration.label'),
+  });
 
   return (
     <>
@@ -893,6 +1024,11 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
               {error && (
                 <div className='p-3 mt-10 rounded bg-red-50 text-red-700 border border-red-200'>
                   {error}
+                </div>
+              )}
+              {frontendValidationSummary && (
+                <div className='lg:col-span-2 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700'>
+                  {frontendValidationSummary}
                 </div>
               )}
               <div className='ml-auto flex gap-2 w-fit'>
@@ -916,6 +1052,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
           <form
             id='listingForm'
             onSubmit={rhfHandleSubmit(onSubmit)}
+            noValidate
             className='grid grid-cols-1 lg:grid-cols-2 gap-6 mt-14'
           >
             {/* left side */}
@@ -934,11 +1071,19 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                     placeholder={t('fields.title.placeholder')}
                     disabled={isWorking}
                     required
+                    error={Boolean(frontendValidationErrors.title || errors.title)}
                     {...register('title', {
                       required: t('fields.title.required'),
+                      onChange: () => clearFrontendValidationError('title'),
                     })}
                   />
-                  <ErrorMessage error={errors.title} />
+                  <ErrorMessage
+                    error={
+                      frontendValidationErrors.title
+                        ? { message: frontendValidationErrors.title }
+                        : errors.title
+                    }
+                  />
                 </div>
                 <div className='col-span-2'>
                   <Input
@@ -948,6 +1093,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                     disabled={isWorking}
                     min={0}
                     required
+                    error={Boolean(frontendValidationErrors.price || errors.price)}
                     {...register('price', {
                       valueAsNumber: true,
                       min: { value: 0, message: t('fields.price.errors.min') },
@@ -955,9 +1101,16 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                         value: 1000000,
                         message: t('fields.price.errors.max'),
                       },
+                      onChange: () => clearFrontendValidationError('price'),
                     })}
                   />
-                  <ErrorMessage error={errors.price} />
+                  <ErrorMessage
+                    error={
+                      frontendValidationErrors.price
+                        ? { message: frontendValidationErrors.price }
+                        : errors.price
+                    }
+                  />
                 </div>
                 <div className='col-span-2'>
                   <TextArea
@@ -966,11 +1119,23 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                     disabled={isWorking}
                     required
                     rows={4}
+                    error={Boolean(
+                      frontendValidationErrors.description ||
+                        errors.description,
+                    )}
                     {...register('description', {
                       required: t('fields.description.required'),
+                      onChange: () =>
+                        clearFrontendValidationError('description'),
                     })}
                   />
-                  <ErrorMessage error={errors.description} />
+                  <ErrorMessage
+                    error={
+                      frontendValidationErrors.description
+                        ? { message: frontendValidationErrors.description }
+                        : errors.description
+                    }
+                  />
                 </div>
                 {/* Tags */}
                 <div className='col-span-2'>
@@ -994,36 +1159,61 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                   </label>
                   <div className='space-y-2'>
                     {watch('videos')?.map((video, idx) => (
-                      <div key={idx} className='flex gap-2'>
-                        <Input
-                          type='url'
-                          placeholder={
-                            t('fields.videos.placeholder') || 'YouTube URL...'
+                      <div key={idx}>
+                        <div className='flex gap-2'>
+                          <Input
+                            type='url'
+                            placeholder={
+                              t('fields.videos.placeholder') ||
+                              'YouTube URL...'
+                            }
+                            error={Boolean(
+                              frontendValidationErrors[`videos.${idx}.url`],
+                            )}
+                            {...register(`videos.${idx}.url`, {
+                              pattern: {
+                                value:
+                                  /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/,
+                                message:
+                                  t('fields.videos.errors.invalid') ||
+                                  'Invalid YouTube URL',
+                              },
+                              onChange: () =>
+                                clearFrontendValidationError(
+                                  `videos.${idx}.url`,
+                                ),
+                            })}
+                          />
+                          <Button
+                            type='button'
+                            style='secondary'
+                            onClick={() => {
+                              const currentVideos = getValues('videos') || [];
+                              setValue(
+                                'videos',
+                                currentVideos.filter((_, i) => i !== idx),
+                                { shouldDirty: true },
+                              );
+                              clearFrontendValidationError(
+                                `videos.${idx}.url`,
+                              );
+                            }}
+                          >
+                            {t('fields.videos.remove') || 'Remove'}
+                          </Button>
+                        </div>
+                        <ErrorMessage
+                          error={
+                            frontendValidationErrors[`videos.${idx}.url`]
+                              ? {
+                                  message:
+                                    frontendValidationErrors[
+                                      `videos.${idx}.url`
+                                    ],
+                                }
+                              : undefined
                           }
-                          {...register(`videos.${idx}.url`, {
-                            pattern: {
-                              value:
-                                /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/,
-                              message:
-                                t('fields.videos.errors.invalid') ||
-                                'Invalid YouTube URL',
-                            },
-                          })}
                         />
-                        <Button
-                          type='button'
-                          style='secondary'
-                          onClick={() => {
-                            const currentVideos = getValues('videos') || [];
-                            setValue(
-                              'videos',
-                              currentVideos.filter((_, i) => i !== idx),
-                              { shouldDirty: true },
-                            );
-                          }}
-                        >
-                          {t('fields.videos.remove') || 'Remove'}
-                        </Button>
                       </div>
                     ))}
                     {(watch('videos') || []).length < 5 && (
@@ -1209,9 +1399,24 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                       label={t('fields.about.label')}
                       placeholder={t('fields.about.placeholder')}
                       disabled={isWorking}
+                      required
+                      error={Boolean(
+                        frontendValidationErrors['listingItem.about'],
+                      )}
                       value={form.listingItem?.[0]?.about || ''}
-                      onChange={(e) =>
-                        updateListingItem('about', e.target.value)
+                      onChange={(e) => {
+                        updateListingItem('about', e.target.value);
+                        clearFrontendValidationError('listingItem.about');
+                      }}
+                    />
+                    <ErrorMessage
+                      error={
+                        frontendValidationErrors['listingItem.about']
+                          ? {
+                              message:
+                                frontendValidationErrors['listingItem.about'],
+                            }
+                          : undefined
                       }
                     />
                     <Input
@@ -1220,12 +1425,35 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                       placeholder={t('fields.experienceYears.placeholder')}
                       disabled={isWorking}
                       min={0}
+                      required
+                      error={Boolean(
+                        frontendValidationErrors[
+                          'listingItem.experienceYears'
+                        ],
+                      )}
                       value={form.listingItem?.[0]?.experienceYears || ''}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         updateListingItem(
                           'experienceYears',
                           Number(e.target.value),
-                        )
+                        );
+                        clearFrontendValidationError(
+                          'listingItem.experienceYears',
+                        );
+                      }}
+                    />
+                    <ErrorMessage
+                      error={
+                        frontendValidationErrors[
+                          'listingItem.experienceYears'
+                        ]
+                          ? {
+                              message:
+                                frontendValidationErrors[
+                                  'listingItem.experienceYears'
+                                ],
+                            }
+                          : undefined
                       }
                     />
                     <div>
@@ -1388,6 +1616,20 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                             </div>
                             <div className='col-span-2'>
                               <div className='flex flex-col gap-3'>
+                                <ErrorMessage
+                                  error={
+                                    frontendValidationErrors[
+                                      `serviceArea.${idx}.location`
+                                    ]
+                                      ? {
+                                          message:
+                                            frontendValidationErrors[
+                                              `serviceArea.${idx}.location`
+                                            ],
+                                        }
+                                      : undefined
+                                  }
+                                />
                                 {/* <Button
                             type="button"
                             style="secondary"
@@ -1420,7 +1662,19 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                                   type='button'
                                   style='secondary'
                                   disabled={isWorking}
-                                  onClick={() => setVendorPickerIndex(idx)}
+                                  extraStyles={
+                                    frontendValidationErrors[
+                                      `serviceArea.${idx}.location`
+                                    ]
+                                      ? 'border border-red-500'
+                                      : undefined
+                                  }
+                                  onClick={() => {
+                                    clearFrontendValidationError(
+                                      `serviceArea.${idx}.location`,
+                                    );
+                                    setVendorPickerIndex(idx);
+                                  }}
                                 >
                                   {t('buttons.pickOnMap')}
                                 </Button>
@@ -1450,12 +1704,34 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                           placeholder={t('fields.address.placeholder')}
                           disabled={isWorking}
                           required={!isVendor}
+                          error={Boolean(
+                            frontendValidationErrors[
+                              'listingItem.location.address'
+                            ],
+                          )}
                           value={form.listingItem?.[0]?.location?.address || ''}
-                          onChange={(e) =>
+                          onChange={(e) => {
                             updateListingItem(
                               'location.address',
                               e.target.value,
-                            )
+                            );
+                            clearFrontendValidationError(
+                              'listingItem.location.address',
+                            );
+                          }}
+                        />
+                        <ErrorMessage
+                          error={
+                            frontendValidationErrors[
+                              'listingItem.location.address'
+                            ]
+                              ? {
+                                  message:
+                                    frontendValidationErrors[
+                                      'listingItem.location.address'
+                                    ],
+                                }
+                              : undefined
                           }
                         />
                       </div>
@@ -1587,7 +1863,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                     </div>
                     <div className='mb-3 rounded-md border border-blue-100 bg-blue-50 px-3 py-2'>
                       <p className='text-sm text-blue-800'>
-                        {t('fields.capacity.helperText')}
+                        {venueRequiredFieldsHint}
                       </p>
                     </div>
                     <div className='grid grid-cols-1 md:grid-cols-4 gap-3 items-end mb-3'>
@@ -1598,12 +1874,31 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                           label={t('fields.capacity.label')}
                           placeholder={t('fields.capacity.placeholder')}
                           disabled={isWorking}
+                          required
+                          error={Boolean(
+                            frontendValidationErrors['listingItem.capacity'],
+                          )}
                           value={form.listingItem?.[0]?.capacity || ''}
-                          onChange={(e) =>
+                          onChange={(e) => {
                             updateListingItem(
                               'capacity',
                               Number(e.target.value),
-                            )
+                            );
+                            clearFrontendValidationError(
+                              'listingItem.capacity',
+                            );
+                          }}
+                        />
+                        <ErrorMessage
+                          error={
+                            frontendValidationErrors['listingItem.capacity']
+                              ? {
+                                  message:
+                                    frontendValidationErrors[
+                                      'listingItem.capacity'
+                                    ],
+                                }
+                              : undefined
                           }
                         />
                       </div>
@@ -1614,6 +1909,12 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                             'fields.bookingDurationType.placeholder',
                           )}
                           disabled={isWorking}
+                          required
+                          error={Boolean(
+                            frontendValidationErrors[
+                              'listingItem.bookingDurationType'
+                            ],
+                          )}
                           value={
                             form.listingItem?.[0]?.bookingDurationType || ''
                           }
@@ -1621,7 +1922,11 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                             updateListingItem(
                               'bookingDurationType',
                               e.target.value,
-                            )}
+                            );
+                            clearFrontendValidationError(
+                              'listingItem.bookingDurationType',
+                            );
+                          }
                           }
                           options={[
                             {
@@ -1638,6 +1943,20 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                             },
                           ]}
                         />
+                        <ErrorMessage
+                          error={
+                            frontendValidationErrors[
+                              'listingItem.bookingDurationType'
+                            ]
+                              ? {
+                                  message:
+                                    frontendValidationErrors[
+                                      'listingItem.bookingDurationType'
+                                    ],
+                                }
+                              : undefined
+                          }
+                        />
                       </div>
                     </div>
                     <div className='grid grid-cols-1 md:grid-cols-4 gap-3 items-end mb-3'>
@@ -1648,12 +1967,35 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                           disabled={isWorking}
                           label={t('fields.bookingDuration.label')}
                           placeholder={t('fields.bookingDuration.placeholder')}
+                          required
+                          error={Boolean(
+                            frontendValidationErrors[
+                              'listingItem.bookingDuration'
+                            ],
+                          )}
                           value={form.listingItem?.[0]?.bookingDuration || ''}
-                          onChange={(e) =>
+                          onChange={(e) => {
                             updateListingItem(
                               'bookingDuration',
                               Number(e.target.value),
-                            )
+                            );
+                            clearFrontendValidationError(
+                              'listingItem.bookingDuration',
+                            );
+                          }}
+                        />
+                        <ErrorMessage
+                          error={
+                            frontendValidationErrors[
+                              'listingItem.bookingDuration'
+                            ]
+                              ? {
+                                  message:
+                                    frontendValidationErrors[
+                                      'listingItem.bookingDuration'
+                                    ],
+                                }
+                              : undefined
                           }
                         />
                       </div>
@@ -1664,12 +2006,35 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                           disabled={isWorking}
                           label={t('fields.minimumDuration.label')}
                           placeholder={t('fields.minimumDuration.placeholder')}
+                          required
+                          error={Boolean(
+                            frontendValidationErrors[
+                              'listingItem.minimumDuration'
+                            ],
+                          )}
                           value={form.listingItem?.[0]?.minimumDuration || ''}
-                          onChange={(e) =>
+                          onChange={(e) => {
                             updateListingItem(
                               'minimumDuration',
                               Number(e.target.value),
-                            )
+                            );
+                            clearFrontendValidationError(
+                              'listingItem.minimumDuration',
+                            );
+                          }}
+                        />
+                        <ErrorMessage
+                          error={
+                            frontendValidationErrors[
+                              'listingItem.minimumDuration'
+                            ]
+                              ? {
+                                  message:
+                                    frontendValidationErrors[
+                                      'listingItem.minimumDuration'
+                                    ],
+                                }
+                              : undefined
                           }
                         />
                       </div>
@@ -1766,6 +2131,7 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
               <div className='flex flex-col border-b-2 border-t-2 border-primary/20 py-4'>
                 <h3 className='text-lg font-semibold mb-2'>
                   {t('portfolio.title')}{' '}
+                  <span className='text-red-500'>*</span>
                 </h3>
                 <p className='text-sm text-gray-600'>
                   {tImage('uploadHint', { size: '20MB' })}
@@ -1804,13 +2170,27 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                 {/* Image Uploader */}
                 <div className='mt-4'>
                   <Button
-                    onClick={handleOpenImageUpload}
+                    onClick={() => {
+                      clearFrontendValidationError('portfolio');
+                      handleOpenImageUpload();
+                    }}
                     disabled={isWorking}
                     style='secondary'
-                    extraStyles='w-full'
+                    extraStyles={`w-full ${
+                      frontendValidationErrors.portfolio
+                        ? 'border border-red-500'
+                        : ''
+                    }`}
                   >
                     {tImage('addportfolioimages')}
                   </Button>
+                  <ErrorMessage
+                    error={
+                      frontendValidationErrors.portfolio
+                        ? { message: frontendValidationErrors.portfolio }
+                        : undefined
+                    }
+                  />
                 </div>
               </div>
               {/* Contact */}
@@ -1826,15 +2206,30 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                       placeholder={t('fields.email.placeholder')}
                       disabled={isWorking}
                       required
+                      error={Boolean(
+                        frontendValidationErrors['contact.email'] ||
+                          errors.contact?.email,
+                      )}
                       {...register('contact.email', {
-                        required: 'Email is required',
+                        required: t('errors.emailRequired'),
                         pattern: {
                           value: /^\S+@\S+$/i,
                           message: t('fields.email.message'),
                         },
+                        onChange: () =>
+                          clearFrontendValidationError('contact.email'),
                       })}
                     />
-                    <ErrorMessage error={errors.contact?.email} />
+                    <ErrorMessage
+                      error={
+                        frontendValidationErrors['contact.email']
+                          ? {
+                              message:
+                                frontendValidationErrors['contact.email'],
+                            }
+                          : errors.contact?.email
+                      }
+                    />
                   </div>
                   <div>
                     <Input
@@ -1843,11 +2238,26 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
                       placeholder={t('fields.phone.placeholder')}
                       disabled={isWorking}
                       required
+                      error={Boolean(
+                        frontendValidationErrors['contact.phone'] ||
+                          errors.contact?.phone,
+                      )}
                       {...register('contact.phone', {
                         required: t('fields.phone.message'),
+                        onChange: () =>
+                          clearFrontendValidationError('contact.phone'),
                       })}
                     />
-                    <ErrorMessage error={errors.contact?.phone} />
+                    <ErrorMessage
+                      error={
+                        frontendValidationErrors['contact.phone']
+                          ? {
+                              message:
+                                frontendValidationErrors['contact.phone'],
+                            }
+                          : errors.contact?.phone
+                      }
+                    />
                   </div>
                 </div>
               </div>
@@ -1872,18 +2282,29 @@ const ListingItemModal: React.FC<ListingItemModalProps> = ({
               {/* Category (free text or id depending on your API) */}
               <div className='border-b-2 border-primary/20 py-4'>
                 <h3 className='text-lg font-semibold mb-2'>
-                  {t('sections.category')}
+                  {t('sections.category')}{' '}
+                  <span className='text-red-500'>*</span>
                 </h3>
                 <MultiSelect
                   options={childCategories
                     .sort((a, b) => b.priority - a.priority)
                     .map((c) => ({ label: c.name, value: c.documentId }))}
                   value={selectedCategories}
-                  onChange={setSelectedCategories}
+                  onChange={(value) => {
+                    setSelectedCategories(value);
+                    clearFrontendValidationError('categories');
+                  }}
                   placeholder={t('fields.chooseCategory.placeholder')}
                   disabled={isWorking}
+                  error={Boolean(frontendValidationErrors.categories)}
                 />
-                <ErrorMessage error={errors.categories} />
+                <ErrorMessage
+                  error={
+                    frontendValidationErrors.categories
+                      ? { message: frontendValidationErrors.categories }
+                      : errors.categories
+                  }
+                />
               </div>
             </div>
           </form>

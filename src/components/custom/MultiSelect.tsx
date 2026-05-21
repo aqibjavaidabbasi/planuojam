@@ -14,6 +14,7 @@ interface MultiSelectProps {
   onChange: (value: string[]) => void;
   placeholder?: string;
   disabled?: boolean;
+  error?: boolean;
 }
 
 export default function MultiSelect({
@@ -22,6 +23,7 @@ export default function MultiSelect({
   onChange,
   placeholder = "Select options...",
   disabled= false,
+  error = false,
 }: MultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -53,9 +55,10 @@ export default function MultiSelect({
     <div className="relative w-full" ref={dropdownRef}>
       {/* Input Box */}
       <div
-        className="flex flex-wrap items-center gap-1 rounded-md border border-gray-300 bg-white px-2 py-1 cursor-pointer"
+        className={`flex flex-wrap items-center gap-1 rounded-md border bg-white px-2 py-1 cursor-pointer ${error ? 'border-red-500 ring-2 ring-red-100' : 'border-gray-300'}`}
         onClick={() => setIsOpen((prev) => !prev)}
         style={{ pointerEvents: disabled ? 'none' : 'auto' }}
+        aria-invalid={error ? true : undefined}
       >
         {value.length > 0 ? (
           value.map((val) => {

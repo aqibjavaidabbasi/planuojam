@@ -861,6 +861,10 @@
         "slugGenerationFailed": "Failed to generate URL slug from title",
         "invoiceInfoRequired": "Please fill in Set Invoice Information in your profile tab before creating a new listing."
       },
+      "validation": {
+        "fillFields": "Please fill these fields: {fields}",
+        "venueFieldsHint": "{capacity} is how many guests your venue can host. {bookingDurationType} tells buyers whether bookings are priced by hour or day. {bookingDuration} is the standard booking length you offer. {minimumDuration} is the shortest booking you accept."
+      },
       "toasts": {
         "created": "Listing Created Successfully",
         "failed": "Failed to create listing",

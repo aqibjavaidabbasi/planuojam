@@ -7,6 +7,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   disabled?: boolean;
   required?: boolean;
+  error?: boolean;
 }
 
 function Input({
@@ -14,6 +15,8 @@ function Input({
   type,
   disabled = false,
   required = false,
+  error = false,
+  className = '',
   ...props
 }: InputProps) {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -39,7 +42,8 @@ function Input({
         id={inputId}
         type={isPassword ? (showPassword ? 'text' : 'password') : type}
         {...props}
-        className={`w-full py-1.5 md:py-2.5 px-2.5 md:px-5 border border-border rounded-md text-base font-normal bg-white focus:outline-none focus:border-transparent transition-all duration-200 outline-none focus:ring-2 focus:ring-primary ${disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60' : ''} ${isPassword ? 'pr-10' : ''}`}
+        aria-invalid={error || props['aria-invalid'] ? true : undefined}
+        className={`w-full py-1.5 md:py-2.5 px-2.5 md:px-5 border rounded-md text-base font-normal bg-white focus:outline-none focus:border-transparent transition-all duration-200 outline-none focus:ring-2 ${error ? 'border-red-500 focus:ring-red-200' : 'border-border focus:ring-primary'} ${disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60' : ''} ${isPassword ? 'pr-10' : ''} ${className}`}
         disabled={disabled}
         required={required}
       />
