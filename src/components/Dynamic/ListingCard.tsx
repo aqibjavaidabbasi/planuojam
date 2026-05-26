@@ -55,7 +55,7 @@ function ListingCardSocialLogos({ socialLinks }: { socialLinks: SocialLink[] }) 
   if (!visibleSocialLinks.length) return null;
 
   return (
-    <div className="inline-flex items-center gap-1.5 rounded-full shadow-md backdrop-blur-sm">
+    <div className="inline-flex items-center gap-1.5">
       {visibleSocialLinks.map((link) => {
         const platform = link.platform.toLowerCase() as 'facebook' | 'instagram';
         const logo = LISTING_CARD_SOCIAL_LOGOS[platform];
@@ -68,14 +68,15 @@ function ListingCardSocialLogos({ socialLinks }: { socialLinks: SocialLink[] }) 
             rel="noopener noreferrer"
             aria-label={`Open ${logo.label}`}
             title={logo.label}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg shadow-md transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/30"
             onClick={(event) => event.stopPropagation()}
           >
             <Image
               src={logo.src}
               alt=""
-              width={40}
-              height={40}
+              width={32}
+              height={32}
+              className="rounded-lg"
             />
           </a>
         );
@@ -321,8 +322,8 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
           }
           </Swiper>
           {(hasCardSocialLinks || imageCount > 1) && (
-            <div className="pointer-events-none absolute bottom-3 right-3 z-20 flex items-center gap-1.5">
-              <div className="pointer-events-auto">
+            <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 flex items-center justify-between gap-1.5">
+              <div className="pointer-events-auto flex min-w-0 items-center">
                 <ListingCardSocialLogos socialLinks={cardSocialLinks} />
               </div>
               {imageCount > 1 && (
