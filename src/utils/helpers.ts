@@ -9,7 +9,9 @@ export function getCompleteImageUrl(path: string) {
 
 
 export function filterUniqueCategoriesByParent(data: SelectedCategoriesList) {
-  // Deduplicate based on category.documentId and filter by parentCategory.parent.name
+  // Match on parent documentId, which is stable across locales, instead of the
+  // localized `name` (which differs per language and breaks the filter on switch).
+  const parentDocumentId = data.parentCategory?.parent?.documentId;
   return data.categoryListItem.filter(
     (item, index, self) =>
       // Keep first occurrence of documentId
@@ -17,8 +19,8 @@ export function filterUniqueCategoriesByParent(data: SelectedCategoriesList) {
         self.findIndex(
           (t) => t.category?.documentId === item.category?.documentId
         ) &&
-      // Match parent category name
-      item.category?.parentCategory?.name === data.parentCategory.parent.name
+      // Match parent category by locale-invariant documentId
+      item.category?.parentCategory?.documentId === parentDocumentId
   );
 }
 
