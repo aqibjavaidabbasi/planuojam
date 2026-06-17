@@ -251,15 +251,17 @@ function Header({ headerData }: { headerData: HeaderType }) {
 
           {/* Right: Language, Search, User, Mobile Toggle */}
           <div className="flex items-center gap-2 md:gap-4 lg:gap-5">
-            <Select
-              className="text-xs sm:text-sm md:text-base flex-1"
-              value={selectedLocale}
-              onChange={handleLocaleChange}
-              options={SUPPORTED_LOCALES.map((code: string) => ({
-                value: code,
-                label: tLocales.has(code) ? tLocales(code) : code.toUpperCase(),
-              }))}
-            />
+            {SUPPORTED_LOCALES.length > 1 && (
+              <Select
+                className="text-xs sm:text-sm md:text-base flex-1"
+                value={selectedLocale}
+                onChange={handleLocaleChange}
+                options={SUPPORTED_LOCALES.map((code: string) => ({
+                  value: code,
+                  label: tLocales.has(code) ? tLocales(code) : code.toUpperCase(),
+                }))}
+              />
+            )}
             {/* Search: hidden on xs, visible from sm */}
             <div className="hidden sm:block max-w-35 md:max-w-50 lg:max-w-full">
               <Search />
