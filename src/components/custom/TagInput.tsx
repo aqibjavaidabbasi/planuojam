@@ -138,27 +138,27 @@ export default function TagInput({
           body: JSON.stringify({ name: trimmedInput })
         })
         const result = await response.json()
-        
-        if (result.success) {
-          // Add the newly created tag
-          onTagsChange([...selectedTagIds, result.data.documentId])
-          
+
+        // The API resolves duplicates to the existing tag, so a success always
+        // carries a real documentId. Never store a raw name as an id — that
+        // produces tags that render in the editor but vanish on pages that
+        // resolve tags by documentId.
+        if (result.success && result.data?.documentId) {
+          const documentId = result.data.documentId as string
+          if (!selectedTagIds.includes(documentId)) {
+            onTagsChange([...selectedTagIds, documentId])
+          }
+
           // Update tag names cache to show the new tag immediately
           setTagNames(prev => ({
             ...prev,
-            [result.data.documentId]: trimmedInput
+            [documentId]: result.data.name || trimmedInput
           }))
         } else {
-          // If creation fails, add as string (will be handled by parent)
-          if (!selectedTagIds.includes(trimmedInput)) {
-            onTagsChange([...selectedTagIds, trimmedInput])
-          }
+          setError(t('errorLoading'))
         }
       } catch {
-        // If API fails, add as string (will be handled by parent)
-        if (!selectedTagIds.includes(trimmedInput)) {
-          onTagsChange([...selectedTagIds, trimmedInput])
-        }
+        setError(t('errorLoading'))
       }
     }
 
