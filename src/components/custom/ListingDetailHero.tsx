@@ -63,7 +63,7 @@ function ListingDetailHero({
           {categories &&
             <div className="flex items-center mb-2 flex-wrap">{
               categories.map(cat =>
-                <span key={cat.documentId} className="bg-white whitespace-nowrap bg-opacity-20 text-black px-3 py-1 rounded-full text-sm font-medium mr-2">
+                <span key={cat.documentId} className="bg-white whitespace-nowrap bg-opacity-20 text-black px-3 py-1 rounded-full text-sm font-medium m-2">
                   {cat.name}
                 </span>
               )}
