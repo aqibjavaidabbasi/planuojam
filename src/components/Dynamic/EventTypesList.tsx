@@ -14,6 +14,13 @@ function EventTypesList({ data }: { data: EventTypesBlock }) {
             index === self.findIndex((t) => t.eventType.documentId === item.eventType.documentId)
     );
 
+    // The service page filters by the English `eventName`, so always resolve the English
+    // name (falling back to localizations) regardless of the current locale.
+    const getEnglishEventName = (eventType: typeof data.eventTypeItem[number]['eventType']) =>
+        eventType.locale === 'en'
+            ? eventType.eventName
+            : eventType.localizations?.find(loc => loc.locale === 'en')?.eventName ?? eventType.eventName;
+
     return (
         <div className='w-screen max-w-screen lg:max-w-[1700px] mx-auto py-5 md:py-10 px-3 md:px-6'>
             <div className='flex flex-col items-center justify-center gap-2'>
@@ -28,7 +35,7 @@ function EventTypesList({ data }: { data: EventTypesBlock }) {
                             return (
                                 <div
                                     key={item.id}
-                                    onClick={()=>router.push(`/service/venue?eventType=${item.eventType.eventName}`)}
+                                    onClick={()=>router.push(`/service/venue?eventType=${encodeURIComponent(getEnglishEventName(item.eventType))}`)}
                                     className={`md:w-[300px] h-52 md:h-64 lg:h-72 rounded-lg flex p-4 overflow-hidden relative transition-all duration-300 ease-in hover:scale-105 cursor-pointer ${item.contentPlacement === 'center'
                                         ? 'items-center justify-center'
                                         : item.contentPlacement === 'top-left'

@@ -14,8 +14,10 @@ function CategoryCard({category}: {category: category}) {
      const cat = getServiceCategoryByDocId(category.parentCategory.documentId);
      function getUrlPath(){
         if(!cat) return '/';
-        // Use slug instead of name for more robust URL generation
-        return `/service/${encodeURIComponent(cat.slug)}?cat=${encodeURIComponent(category.name.trim())}`;
+        // Category filtering on the service page matches the child-category name in the
+        // current locale, so the localized name is correct here. The param must be `cats`
+        // (both the server page and ClientListingWrapper read `cats`).
+        return `/service/${encodeURIComponent(cat.slug)}?cats=${encodeURIComponent(category.name.trim())}`;
      }
   return (
     <div
