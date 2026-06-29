@@ -164,19 +164,40 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
       }}
     >
 
-      {/* Upcoming Hot Deal Banner */}
-      {hotDealInfo.status === 'upcoming' && (
-        <div className="absolute top-0 left-0 right-0 z-10 bg-linear-to-r from-orange-500 to-red-500 text-white text-center text-xs font-semibold py-1">
-          {getUpcomingHotDealMessage(item.hotDeal, t)}
-        </div>
-      )}
+      {/* Top overlay: hot-deal banner + owner status chip stacked in flow.
+          Using a flex column (not absolute offsets) means the chip always lands
+          directly below whichever banner is present, regardless of its height. */}
+      {(hotDealInfo.status === 'upcoming' ||
+        hotDealInfo.status === 'active' ||
+        (user?.documentId === item.user?.documentId &&
+          (item.listingStatus === 'draft' || item.listingStatus === 'archived'))) && (
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex flex-col items-stretch">
+          {/* Upcoming Hot Deal Banner */}
+          {hotDealInfo.status === 'upcoming' && (
+            <div className="bg-linear-to-r from-orange-500 to-red-500 text-white text-center text-xs font-semibold py-1">
+              {getUpcomingHotDealMessage(item.hotDeal, t)}
+            </div>
+          )}
 
-      {/* Hot Deal Badge (only when currently active) */}
-      {hotDealInfo.status === 'active' && (
-        <div className="absolute top-0 left-0 right-0 z-10 bg-primary text-white h-fit flex items-center justify-center ">
-          <div className="text-center py-2">
-            <div className="text-sm font-bold">{t('hot')} {" "} {t('deal')}</div>
-          </div>
+          {/* Hot Deal Badge (only when currently active) */}
+          {hotDealInfo.status === 'active' && (
+            <div className="bg-primary text-white flex items-center justify-center">
+              <div className="text-center py-2">
+                <div className="text-sm font-bold">{t('hot')} {" "} {t('deal')}</div>
+              </div>
+            </div>
+          )}
+
+          {/* Status Badge - Only visible to owner */}
+          {user?.documentId === item.user?.documentId && (item.listingStatus === 'draft' || item.listingStatus === 'archived') && (
+            <div className="px-2 pt-2">
+              <span
+                className={`${item.listingStatus === 'draft' ? 'bg-gray-500' : 'bg-yellow-500'} inline-block text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md`}
+              >
+                {item.listingStatus === 'draft' ? t('draft') : t('archived')}
+              </span>
+            </div>
+          )}
         </div>
       )}
 
@@ -339,21 +360,6 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
 
       {/* Content */}
       <div className="p-3 space-y-2 relative">
-        {/* Status Badge - Only visible to owner */}
-        {user?.documentId === item.user?.documentId && item.listingStatus === 'draft' && (
-          <div className="absolute -top-8 left-2 z-10">
-            <span className="bg-gray-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
-              {t('draft')}
-            </span>
-          </div>
-        )}
-        {user?.documentId === item.user?.documentId && item.listingStatus === 'archived' && (
-          <div className="absolute -top-8 left-2 z-10">
-            <span className="bg-yellow-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
-              {t('archived')}
-            </span>
-          </div>
-        )}
         {/* Title and Rating */}
         <div className="flex justify-between items-start gap-2">
           <Link
