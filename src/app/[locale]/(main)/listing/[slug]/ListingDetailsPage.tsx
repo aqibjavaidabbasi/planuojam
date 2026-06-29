@@ -65,7 +65,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
     setDetailLocation(location);
   }, [initialListing, locale]);
 
-  // Fetch recommended (promoted) listings: top 5
+  // Fetch recommended (promoted) listings: top 6
   useEffect(() => {
     let mounted = true;
     async function loadRecommended() {
@@ -73,7 +73,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
         setLoadingRecommended(true);
         const res = await fetchPromotedListingsWithMeta(
           locale,
-          { page: 1, pageSize: 5 },
+          { page: 1, pageSize: 6 },
           {
             listingStatus: 'published',
             documentId: { $ne: initialListing.documentId },
@@ -385,7 +385,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
           <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6 my-6">
             <h2 className="text-2xl font-semibold text-primary mb-4">{t("recommended", { default: "Recommended listings" })}</h2>
             <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),340px))] justify-center gap-6 lg:gap-8">
-              {recommended.slice(0, 5).map((item) => (
+              {recommended.slice(0, 6).map((item) => (
                 <div key={item.id} className="">
                   <ListingCard item={item} />
                 </div>
