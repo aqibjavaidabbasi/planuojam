@@ -12,9 +12,17 @@ type Props = {
 export default function LoadMoreButton({ onClick, disabled, loading, className }: Props) {
   const t = useTranslations("Pagination");
   const isDisabled = !!disabled || !!loading;
+
+  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.currentTarget.blur();
+    await onClick();
+  };
+
   return (
     <button
-      onClick={onClick}
+      type="button"
+      onClick={handleClick}
       disabled={isDisabled}
       className={`px-4 py-2 rounded border inline-flex cursor-pointer hover:bg-gray-100 items-center gap-2 disabled:opacity-50 ${className || ""}`}
    >
