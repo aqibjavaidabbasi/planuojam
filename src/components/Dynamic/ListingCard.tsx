@@ -398,7 +398,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                             .map(area => {
                               const city = area?.city?.name ?? '';
                               const state = area?.state?.name ?? '';
-                              return city || state ? `${city} ${state}`.trim() : '';
+                              return [city, state].filter(Boolean).join(', ');
                             })
                             .filter(Boolean);
                           return locations.length > 0 ? locations.join(', ') : t('noLocation');

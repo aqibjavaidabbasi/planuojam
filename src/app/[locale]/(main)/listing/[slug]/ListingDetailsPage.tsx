@@ -77,6 +77,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
           {
             listingStatus: 'published',
             documentId: { $ne: initialListing.documentId },
+            type: initialListing.type,
           }
         );
         if (!mounted) return;
@@ -91,7 +92,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
       loadRecommended();
     }
     return () => { mounted = false; };
-  }, [initialListing?.documentId, locale]);
+  }, [initialListing?.documentId, locale, initialListing?.type]);
 
 
   if (!initialListing) notFound();
