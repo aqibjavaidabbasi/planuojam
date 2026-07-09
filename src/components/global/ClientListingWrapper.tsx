@@ -14,7 +14,6 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -39,6 +38,31 @@ export type ListingWrapperProps = {
     total: number;
   };
 };
+
+function AnimatedListItem({
+  isNew,
+  children,
+}: {
+  isNew: boolean;
+  children: React.ReactNode;
+}) {
+  const [entered, setEntered] = useState(!isNew);
+
+  useEffect(() => {
+    if (!isNew) return;
+
+    const id = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(id);
+  }, [isNew]);
+
+  return (
+    <div
+      className={`transition-all duration-300 ease-out will-change-transform ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}
+    >
+      {children}
+    </div>
+  );
+}
 
 function ClientListingWrapper({
   service,
@@ -77,7 +101,6 @@ function ClientListingWrapper({
   const [currentFilters, setCurrentFilters] = useState<Record<string, unknown>>(
     initialAppliedFilters,
   );
-  const currentFiltersRef = useRef<Record<string, unknown>>(initialAppliedFilters);
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const [newIds, setNewIds] = useState<Set<string>>(new Set());
 
@@ -146,27 +169,6 @@ function ClientListingWrapper({
     [serviceType],
   );
 
-  // Small wrapper to animate items when they are newly appended
-  const AnimatedListItem: React.FC<{
-    isNew: boolean;
-    children: React.ReactNode;
-  }> = ({ isNew, children }) => {
-    const [entered, setEntered] = useState(!isNew);
-    useEffect(() => {
-      if (isNew) {
-        const id = requestAnimationFrame(() => setEntered(true));
-        return () => cancelAnimationFrame(id);
-      }
-    }, [isNew]);
-    return (
-      <div
-        className={`transition-all duration-300 ease-out will-change-transform ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}
-      >
-        {children}
-      </div>
-    );
-  };
-
   type PaginatedResp = {
     data: ListingItem[];
     meta?: {
@@ -180,29 +182,26 @@ function ClientListingWrapper({
   };
   const fetcher = useCallback(
     async (appliedFilters: Record<string, unknown>) => {
-      const filtersChanged =
-        JSON.stringify(appliedFilters || {}) !==
-        JSON.stringify(currentFiltersRef.current || {});
-      const usedPage = filtersChanged ? 1 : page;
       const usedPageSize = pageSize;
       const resp: PaginatedResp = await fetchSortedListingsWithMeta(
         serviceType,
         appliedFilters,
         locale,
-        { page: usedPage, pageSize: usedPageSize },
+        { page: 1, pageSize: usedPageSize },
       );
       const meta = resp.meta?.pagination;
       if (meta) {
         if (typeof meta.total === 'number') setTotal(meta.total);
         if (typeof meta.pageSize === 'number') setPageSize(meta.pageSize);
-        if (filtersChanged && typeof meta.page === 'number') setPage(meta.page);
+        if (typeof meta.page === 'number') setPage(meta.page);
+      } else {
+        setPage(1);
       }
       const nextFilters = appliedFilters || {};
       setCurrentFilters(nextFilters);
-      currentFiltersRef.current = nextFilters;
       return Array.isArray(resp.data) ? resp.data : [];
     },
-    [serviceType, locale, page, pageSize],
+    [serviceType, locale, pageSize],
   );
 
   const translatedPricingFilters = useMemo(
