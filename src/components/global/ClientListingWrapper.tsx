@@ -39,31 +39,6 @@ export type ListingWrapperProps = {
   };
 };
 
-function AnimatedListItem({
-  isNew,
-  children,
-}: {
-  isNew: boolean;
-  children: React.ReactNode;
-}) {
-  const [entered, setEntered] = useState(!isNew);
-
-  useEffect(() => {
-    if (!isNew) return;
-
-    const id = requestAnimationFrame(() => setEntered(true));
-    return () => cancelAnimationFrame(id);
-  }, [isNew]);
-
-  return (
-    <div
-      className={`transition-all duration-300 ease-out will-change-transform ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}
-    >
-      {children}
-    </div>
-  );
-}
-
 function ClientListingWrapper({
   service,
   serviceType,
@@ -102,7 +77,6 @@ function ClientListingWrapper({
     initialAppliedFilters,
   );
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
-  const [newIds, setNewIds] = useState<Set<string>>(new Set());
 
   //use effect for pagination
   useEffect(() => {
@@ -350,12 +324,7 @@ function ClientListingWrapper({
           <NoDataCard>{getTranslation(placeholders.emptyList)}</NoDataCard>
         ) : (
           list.map((item) => (
-            <AnimatedListItem
-              key={String(item.documentId)}
-              isNew={newIds.has(String(item.documentId))}
-            >
-              <ListingCard item={item} />
-            </AnimatedListItem>
+            <ListingCard key={String(item.documentId)} item={item} />
           ))
         )}
       </div>
@@ -381,20 +350,6 @@ function ClientListingWrapper({
                 if (meta && typeof meta.total === 'number')
                   setTotal(meta.total);
                 if (newItems.length) {
-                  // Determine which items are actually new compared to current list
-                  const existingIds = new Set(
-                    list.map((it) => String(it.documentId)),
-                  );
-                  const actuallyNew = newItems.filter(
-                    (it) => !existingIds.has(String(it.documentId)),
-                  );
-                  const addedIds = new Set(
-                    actuallyNew.map((it) => String(it.documentId)),
-                  );
-                  if (addedIds.size) {
-                    setNewIds(addedIds);
-                    setTimeout(() => setNewIds(new Set()), 600);
-                  }
                   setList((prev) => {
                     const combined = [...prev, ...newItems];
                     const seen = new Set<string>();

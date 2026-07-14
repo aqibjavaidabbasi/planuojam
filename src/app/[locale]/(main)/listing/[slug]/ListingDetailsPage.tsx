@@ -26,7 +26,7 @@ import { Location as MapLocation } from "@/components/global/MapboxMap";
 import { notFound } from "next/navigation";
 import { RootState } from "@/store";
 import { createSingleLocationFromListing } from "@/utils/locationFactory";
-import { fetchPromotedListingsWithMeta } from "@/services/listing";
+import { fetchSortedListingsWithMeta } from "@/services/listing";
 import { shouldShowHotDeal } from '@/utils/hotDealHelper';
 import ContactForAvailabilityBlock from "@/components/forms/ContactForAvailabilityBlock";
 
@@ -71,14 +71,14 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
     async function loadRecommended() {
       try {
         setLoadingRecommended(true);
-        const res = await fetchPromotedListingsWithMeta(
-          locale,
-          { page: 1, pageSize: 6 },
+        const res = await fetchSortedListingsWithMeta(
+          initialListing.type as 'vendor' | 'venue',
           {
             listingStatus: 'published',
             documentId: { $ne: initialListing.documentId },
-            type: initialListing.type,
-          }
+          },
+          locale,
+          { page: 1, pageSize: 6 }
         );
         if (!mounted) return;
         setRecommended(Array.isArray(res?.data) ? res.data : []);
@@ -354,7 +354,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
         {initialListing.FAQs && initialListing.FAQs.items.length > 0 && (
           <section className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6 my-6">
             <h2 className="text-2xl font-semibold text-primary mb-4 text-center">{t("faqs")}</h2>
-            <div className="max-w-xl mx-auto">
+            <div className="flex flex-col gap-4 w-full">
               {initialListing.FAQs.items.map((faq, i) => {
                 const isOpen = openIndexes.includes(i);
                 return (

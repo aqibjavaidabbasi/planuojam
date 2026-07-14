@@ -39,11 +39,12 @@ function Faqitem({ faq, idx, isOpen, setOpenIndexes }: FaqitemProps) {
         />
       </button>
       <div
-        className={`text-gray-700 text-sm md:text-base overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-[500px] opacity-100 px-6 pb-5 ' : 'max-h-0 opacity-0'
+        className={`grid transition-[grid-template-rows] duration-300 ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
           }`}
-        style={{ willChange: 'max-height, opacity' }}
       >
-        <div className="pt-2">{faq.answer}</div>
+        <div className="overflow-hidden">
+          <div className="text-gray-700 text-sm md:text-base px-6 pb-5 pt-2">{faq.answer}</div>
+        </div>
       </div>
     </div>
   )
