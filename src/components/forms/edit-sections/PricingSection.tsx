@@ -94,7 +94,26 @@ export default function PricingSection({
         }
       }
 
-      await updateListing(listing.documentId, { data: { pricingPackages: values } }, listing.locale)
+      // Strip Strapi metadata (id / __component) that comes back with loaded plans;
+      // Strapi v5's component validator rejects those keys on update ("Invalid key id").
+      const cleanPlans = values.plans.map((p) => ({
+        name: p.name,
+        price: Number(p.price),
+        isPopular: p.isPopular ?? false,
+        cta: {
+          bodyText: p.cta?.bodyText || t("cta.choose"),
+          buttonUrl: p.cta?.buttonUrl || "",
+          style: p.cta?.style || "primary",
+        },
+        featuresList: (p.featuresList || []).map((f) => ({ statement: f.statement })),
+        optionalAddons: (p.optionalAddons || []).map((a) => ({ statement: a.statement, price: Number(a.price) })),
+      }))
+
+      await updateListing(
+        listing.documentId,
+        { data: { pricingPackages: { sectionTitle: values.sectionTitle, plans: cleanPlans } } },
+        listing.locale,
+      )
       toast.success(t("toasts.updated"))
       onSaved?.()
     } catch (e: unknown) {
