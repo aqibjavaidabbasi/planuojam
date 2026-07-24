@@ -1,13 +1,15 @@
 import type { MetadataRoute } from "next";
+import { getSitemapBaseUrl } from "@/lib/sitemapXml";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://planuojam.lt").replace(/\/$/, "");
+  const baseUrl = getSitemapBaseUrl();
 
   return {
     rules: {
       userAgent: "*",
       allow: "/",
     },
-    host: baseUrl,
+    sitemap: baseUrl ? `${baseUrl}/sitemap_index.xml` : "/sitemap_index.xml",
+    host: baseUrl || undefined,
   };
 }
