@@ -1,5 +1,4 @@
 import {
-  SITEMAP_REVALIDATE_SECONDS,
   buildUrlSet,
   getSitemapBaseUrlFromRequest,
   isSupportedSitemapLocale,
@@ -7,7 +6,7 @@ import {
 } from "@/lib/sitemapXml";
 import { fetchPublishedListingSitemapEntries } from "@/services/sitemap";
 
-export const revalidate = SITEMAP_REVALIDATE_SECONDS;
+export const revalidate = 3600; // SITEMAP_REVALIDATE_SECONDS (must be a literal for Next route config)
 
 export async function GET(request: Request) {
   const baseUrl = getSitemapBaseUrlFromRequest(request);

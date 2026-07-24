@@ -1,5 +1,4 @@
 import {
-  SITEMAP_REVALIDATE_SECONDS,
   buildUrlSet,
   getStaticSitemapEntries,
   getSitemapBaseUrlFromRequest,
@@ -9,7 +8,7 @@ import type { StaticSitemapPage } from "@/lib/sitemapXml";
 import { fetchPageSitemapEntries } from "@/services/sitemap";
 import type { PageSitemapEntry } from "@/services/sitemap";
 
-export const revalidate = SITEMAP_REVALIDATE_SECONDS;
+export const revalidate = 3600; // SITEMAP_REVALIDATE_SECONDS (must be a literal for Next route config)
 
 function findPageLastmod(pages: PageSitemapEntry[], page: StaticSitemapPage, locale: string) {
   const match = pages.find((entry) => {

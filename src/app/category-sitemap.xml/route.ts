@@ -1,5 +1,4 @@
 import {
-  SITEMAP_REVALIDATE_SECONDS,
   buildUrlSet,
   getSitemapBaseUrlFromRequest,
   isSupportedSitemapLocale,
@@ -8,7 +7,7 @@ import {
 import { fetchCategoryFilterSitemapEntries } from "@/services/sitemap";
 import type { CategoryFilterSitemapEntry } from "@/services/sitemap";
 
-export const revalidate = SITEMAP_REVALIDATE_SECONDS;
+export const revalidate = 3600; // SITEMAP_REVALIDATE_SECONDS (must be a literal for Next route config)
 
 function getParentServiceSlug(category: CategoryFilterSitemapEntry) {
   const parent = category.parentCategory;
