@@ -5,13 +5,14 @@ const MapboxMap = dynamic(() => import("@/components/global/MapboxMap"), { ssr: 
 const ListingCalendar = dynamic(() => import("@/components/custom/ListingCalendar"), { ssr: false });
 const BookingModal = dynamic(() => import("@/components/modals/BookingModal"), { ssr: false });
 const ListingDetailHero = dynamic(() => import("@/components/custom/ListingDetailHero"))
-const Faqitem = dynamic(() => import("@/components/Dynamic/Faqitem"), { ssr: false });
-const VenueCard = dynamic(() => import("@/components/custom/VenueCard"), { ssr: false });
-const VendorCard = dynamic(() => import("@/components/custom/VendorCard"), { ssr: false });
+// SEO-critical blocks: SSR so listing content is in the initial HTML for crawlers.
+const Faqitem = dynamic(() => import("@/components/Dynamic/Faqitem"));
+const VenueCard = dynamic(() => import("@/components/custom/VenueCard"));
+const VendorCard = dynamic(() => import("@/components/custom/VendorCard"));
 const StarRating = dynamic(() => import("@/components/global/StarRating"), { ssr: false });
-const ListingReviews = dynamic(() => import("@/components/custom/ListingReviews"), { ssr: false });
+const ListingReviews = dynamic(() => import("@/components/custom/ListingReviews"));
 const NoDataCard = dynamic(() => import("@/components/custom/NoDataCard"), { ssr: false });
-const PricingPlans = dynamic(() => import("@/components/custom/PricingPlans"), { ssr: false });
+const PricingPlans = dynamic(() => import("@/components/custom/PricingPlans"));
 const ListingCard = dynamic(() => import("@/components/Dynamic/ListingCard"));
 
 import { useEffect, useState } from "react";

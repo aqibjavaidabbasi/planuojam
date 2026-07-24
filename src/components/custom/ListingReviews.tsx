@@ -13,6 +13,13 @@ function ListingReviews({ reviews }: { reviews: Review[] }) {
     (review: Review) => review.review.reviewStatus === "Approved"
   );
 
+  // Deterministic hue from username so server and client render the same color (no hydration mismatch).
+  const hueFor = (seed: string) => {
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) % 360;
+    return hash;
+  };
+
   return (
     <div className="w-full relative py-4">
       <Swiper
@@ -38,8 +45,8 @@ function ListingReviews({ reviews }: { reviews: Review[] }) {
                 <div
                   className="w-10 h-10 rounded-full flex items-center justify-center"
                   style={{
-                    backgroundColor: `hsl(${Math.floor(
-                      Math.random() * 360
+                    backgroundColor: `hsl(${hueFor(
+                      review.author?.username || "A"
                     )}, 70%, 60%)`,
                   }}
                 >

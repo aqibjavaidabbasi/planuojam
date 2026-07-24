@@ -98,27 +98,37 @@ export async function fetchFallbackSeo(): Promise<StrapiSeo | null> {
   return settings?.fallbackSeo?.seo || null;
 }
 
+// Build a minimal SEO object from a listing's own title/description so listings
+// without a manually-filled seo block still emit per-listing metadata (not the generic fallback).
+function seoFromListingFields(listing: { title?: string; description?: unknown } | null | undefined): StrapiSeo | null {
+  if (!listing?.title) return null;
+  const description = typeof listing.description === 'string' ? listing.description.slice(0, 160) : '';
+  return { metaTitle: listing.title, metaDescription: description } as StrapiSeo;
+}
+
 // Fetch SEO for a Listing by slug. Mirrors listing data fetch behavior (locale-first approach).
+// Prefers the manual `seo` block, then falls back to the listing's own title/description.
 export async function fetchListingSeoBySlug(slug: string, locale?: string): Promise<StrapiSeo | null> {
   const populate = {
     seo: { populate: '*' }
   } as const;
+  const additional = { fields: ['title', 'description'] } as const;
   const filters = { filters: { slug: { $eq: slug } } } as const;
 
   // 1) Try requested locale (since slug is global)
   if (locale) {
-    const queryWithLocale = createQuery(populate, { locale });
+    const queryWithLocale = createQuery(populate, { locale, ...additional });
     const resLocale = await fetchAPI('listings', queryWithLocale, filters);
     const listingLocale = Array.isArray(resLocale) ? resLocale[0] : resLocale?.[0];
-    const locSeo = listingLocale?.seo ?? null;
+    const locSeo = listingLocale?.seo ?? seoFromListingFields(listingLocale);
     if (locSeo) return locSeo;
   }
 
   // 2) Fallback: no locale constraint (base)
-  const queryBase = createQuery(populate);
+  const queryBase = createQuery(populate, additional);
   const resBase = await fetchAPI('listings', queryBase, filters);
   const listingBase = Array.isArray(resBase) ? resBase[0] : resBase?.[0];
-  return listingBase?.seo ?? null;
+  return listingBase?.seo ?? seoFromListingFields(listingBase);
 }
 
 // High-level resolver by page slug -> SEO collection (pageUrl) -> fallback

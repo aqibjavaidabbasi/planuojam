@@ -98,8 +98,8 @@ export default async function ServicePage({
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; service: string }> }): Promise<Metadata> {
   const { locale, service } = await params;
-  const pageUrl = `/service/${service}`;
-  const urlPath = pageUrl;
+  const pageUrl = `/service/${service}`; // SEO lookup key in Strapi (locale-agnostic) — do not change
+  const urlPath = `/${locale}/service/${service}`; // canonical/OG path (locale-correct)
 
   // Prefer slug-based EN-first SEO via Pages; fall back to SEO collection by relative URL
   const pageSeo = await fetchPageSeoBySlug(service, locale);
