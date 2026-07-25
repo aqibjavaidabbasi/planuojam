@@ -15,14 +15,13 @@ const NoDataCard = dynamic(() => import("@/components/custom/NoDataCard"), { ssr
 const PricingPlans = dynamic(() => import("@/components/custom/PricingPlans"));
 const ListingCard = dynamic(() => import("@/components/Dynamic/ListingCard"));
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { ListingItem, Venue } from "@/types/pagesTypes";
 import { useAppSelector } from "@/store/hooks";
 import { useTranslations } from "next-intl";
-import { ExpandableText } from "@/components/custom/ExpandableText";
 import { Location as MapLocation } from "@/components/global/MapboxMap";
 import { notFound } from "next/navigation";
 import { RootState } from "@/store";
@@ -31,7 +30,7 @@ import { fetchSortedListingsWithMeta } from "@/services/listing";
 import { shouldShowHotDeal } from '@/utils/hotDealHelper';
 import ContactForAvailabilityBlock from "@/components/forms/ContactForAvailabilityBlock";
 
-export default function ListingDetailsPage({ initialListing, locale }: { initialListing: ListingItem; locale: string }) {
+export default function ListingDetailsPage({ initialListing, locale, overview }: { initialListing: ListingItem; locale: string; overview: ReactNode }) {
   const [openIndexes, setOpenIndexes] = useState<number[]>([]);
   const t = useTranslations("Listing.Details");
   const [detailLocation, setDetailLocation] = useState<MapLocation | null>(null);
@@ -159,26 +158,7 @@ export default function ListingDetailsPage({ initialListing, locale }: { initial
               />
             </section>
             {/* overview aka description */}
-            <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
-              <h2 className="text-2xl font-semibold text-primary mb-4">
-                {t("overview")}
-              </h2>
-              <ExpandableText text={initialListing.description || ""} maxChars={1000} />
-
-              {/* tags */}
-              {initialListing.tags && initialListing.tags.length > 0 && (
-                <div className="mt-5 flex flex-wrap gap-2 border-t border-gray-100 pt-4">
-                  {initialListing.tags.map((tag) => (
-                    <span
-                      key={tag.documentId}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary border border-primary/20"
-                    >
-                      {tag.name}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
+            {overview}
             {/* location map */}
             <div className="bg-white rounded-xl shadow-sm p-3 md:p-4 lg:p-6">
               <h2 className="text-2xl font-semibold text-primary mb-4">{t("location")}</h2>
