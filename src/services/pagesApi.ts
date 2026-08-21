@@ -21,23 +21,29 @@ export async function fetchPageById(docId: string, locale?: string) {
 }
 
 export async function fetchHeader(locale?: string) {
+    // ponytail: explicit fields, not populate:'*'. On a relation, '*' also pulls its
+    // reverse relations (category.listings), which put ~900KB of listing rows in the
+    // SSR payload of every page on the site.
     const populate = {
         nav: {
             populate: {
                 'categories': {
-                    populate: '*'
+                    fields: ['name', 'slug', 'locale'],
+                    populate: {
+                        'localizations': {
+                            fields: ['slug', 'locale'],
+                        }
+                    }
                 }
             }
         },
         'eventTypes': {
             populate: {
                 'eventType': {
+                    fields: ['eventName', 'slug', 'locale'],
                     populate: {
-                        'page': {
-                            populate: '*'
-                        },
                         'localizations': {
-                            populate: '*'
+                            fields: ['eventName', 'slug', 'locale'],
                         }
                     },
                 }
@@ -57,24 +63,28 @@ export async function fetchHeader(locale?: string) {
 }
 
 export async function fetchFooter(locale?: string) {
+    // ponytail: same reverse-relation trap as fetchHeader — keep to rendered fields.
+    const localizedSlug = { fields: ['slug', 'locale'] };
     const populate = {
         footerlinkSection: {
             populate: {
                 categories: {
-                    populate: '*'
+                    fields: ['name', 'slug', 'locale'],
+                    populate: { localizations: localizedSlug }
                 },
                 event_types: {
-                    populate: '*'
+                    fields: ['eventName', 'slug', 'locale'],
+                    populate: { localizations: localizedSlug }
                 },
                 pages: {
-                    populate: '*'
+                    fields: ['title']
                 }
             }
         },
         extraLinks: {
             populate: {
                 pages: {
-                    populate: '*'
+                    fields: ['title']
                 }
             }
         },

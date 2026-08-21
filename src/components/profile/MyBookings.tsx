@@ -224,7 +224,7 @@ const MyBookings: React.FC = () => {
                       const startMs = new Date(b.startDateTime).getTime();
                       const endMs = new Date(b.endDateTime).getTime();
                       const hasEnded = endMs <= now;
-                      const canCancel = !hasEnded && b.bookingStatus !== "cancelled" && (startMs - now) >= siteSettings.bookingCancellationAllowedTime * 60 * 60 * 1000;
+                      const canCancel = !hasEnded && b.bookingStatus !== "cancelled" && (startMs - now) >= (siteSettings?.bookingCancellationAllowedTime ?? 0) * 60 * 60 * 1000;
 
                       // Show Review only when status is completed
                       if (b.bookingStatus === "completed") {

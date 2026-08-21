@@ -7,7 +7,7 @@ import Select from "@/components/custom/Select";
 import Button from "@/components/custom/Button";
 import toast from "react-hot-toast";
 import ListingCalendar from "@/components/custom/ListingCalendar";
-import { fetchListingsByUser } from "@/services/listing";
+import { fetchListingsByUserLeastPopulated } from "@/services/listing";
 import { createBooking, getListingBookings, BookingItem } from "@/services/booking";
 import Input from "@/components/custom/Input";
 
@@ -34,7 +34,7 @@ const ProviderCalendar: React.FC = () => {
       setFetchingListings(true);
       try {
         if (!user?.documentId) return;
-        const res = await fetchListingsByUser(user.documentId, undefined, locale);
+        const res = await fetchListingsByUserLeastPopulated(user.documentId, undefined, locale);
         setListings((res || []).map((l) => ({ documentId: l.documentId, title: l.title })));
       } catch {
         // ignore

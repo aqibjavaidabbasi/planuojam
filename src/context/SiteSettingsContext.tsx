@@ -5,28 +5,32 @@ import { SiteSettings } from "@/types/siteSettings";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react"
 
 interface SiteSettingsContextProps {
-    siteSettings: SiteSettings;
+    siteSettings: SiteSettings | undefined;
 }
 
 
 const SiteSettingsContext = createContext<SiteSettingsContextProps | undefined>(undefined);
 
-export const SiteSettingsProvider = ({ children }: { children: ReactNode }) => {
-    const [siteSettings, setSiteSettings] = useState<SiteSettings | undefined>();
+export const SiteSettingsProvider = ({
+    children,
+    initialSiteSettings,
+}: {
+    children: ReactNode;
+    initialSiteSettings?: SiteSettings;
+}) => {
+    const [siteSettings, setSiteSettings] = useState<SiteSettings | undefined>(initialSiteSettings);
 
+    // Only needed when the server render couldn't supply settings (e.g. Strapi unreachable).
     useEffect(function () {
-        async function fetchSettings() {
-            const res = await fetchSiteSettings();
-            setSiteSettings(res);
-        }
-        fetchSettings();
-    }, [])
+        if (siteSettings) return;
+        fetchSiteSettings()
+            .then(setSiteSettings)
+            .catch((error) => console.error('Failed to fetch site settings:', error));
+    }, [siteSettings])
 
-    if (!siteSettings) {
-        // Optionally, you can render a loading state or null
-        return null;
-    }
-
+    // This used to `return null` until a client-side fetch resolved. Because the provider
+    // wraps the whole app, every page's server-rendered <body> was empty — no headings, no
+    // links, no text for crawlers. Always render children; consumers handle undefined.
     return (
         <SiteSettingsContext.Provider value={{ siteSettings }}>
             {children}

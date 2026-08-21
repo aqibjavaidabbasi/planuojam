@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { fetchCities } from "@/services/common";
 
@@ -24,12 +25,14 @@ export const CitiesProvider: React.FC<React.PropsWithChildren<object>> = ({ chil
   const [cities, setCities] = useState<City[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Was pinned to 'lt'. Follows the active locale so a new NEXT_PUBLIC_SUPPORTED_LOCALES entry needs no code change.
+  const locale = useLocale();
 
   useEffect(() => {
     const run = async () => {
       setIsLoading(true);
       try {
-        const res = await fetchCities('lt');
+        const res = await fetchCities(locale);
         setCities(res);
       } catch (e: unknown) {
         const message = e && typeof e === 'object' && 'message' in e ? String((e as { message?: unknown }).message) : "Failed to load cities";
@@ -39,7 +42,7 @@ export const CitiesProvider: React.FC<React.PropsWithChildren<object>> = ({ chil
       }
     };
     run();
-  }, []);
+  }, [locale]);
 
   return (
     <CitiesContext.Provider value={{ cities, isLoading, error }}>

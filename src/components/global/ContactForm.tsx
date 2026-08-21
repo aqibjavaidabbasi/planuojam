@@ -60,7 +60,8 @@ const ContactForm = () => {
     };
     return (
         <div className="space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold">{t('title')}</h2>
+            {/* This is the contact page's main heading, so it's the <h1>. */}
+            <h1 className="text-3xl md:text-4xl font-bold">{t('title')}</h1>
             <p className="text-gray-600">{t('description')}</p>
             <form className="space-y-6" onSubmit={onSubmit} id='contact-form'>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

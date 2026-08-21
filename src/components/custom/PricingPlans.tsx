@@ -32,7 +32,7 @@ function PricingPlans({
       <div className="flex flex-col items-center justify-center">
         <h3 className="text-xl font-semibold text-black">{plan?.name}</h3>
         <p className="text-2xl text-primary font-semibold mb-4">
-          {siteSettings.currency.symbol}{" "}{plan.price.toLocaleString()}
+          {siteSettings?.currency?.symbol}{" "}{plan.price.toLocaleString()}
         </p>
       </div>
 
@@ -103,7 +103,7 @@ function PricingPlans({
                     <path d="M13.485 3.929a1 1 0 0 1 0 1.414l-6.364 6.364a1 1 0 0 1-1.414 0l-2.121-2.121a1 1 0 1 1 1.414-1.414l1.414 1.414 5.657-5.657a1 1 0 0 1 1.414 0z" />
                   </svg>
                 </span>
-                {addon?.statement} - {siteSettings.currency.symbol}{addon?.price?.toLocaleString()}
+                {addon?.statement} - {siteSettings?.currency?.symbol}{addon?.price?.toLocaleString()}
               </li>
             ))}
           </ul>

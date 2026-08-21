@@ -4,11 +4,16 @@ import React from 'react'
 import Heading from '../custom/heading';
 import { getCompleteImageUrl } from '@/utils/helpers';
 import NoDataCard from '../custom/NoDataCard';
-import { useRouter } from '@/i18n/navigation';
+import { Link } from '@/i18n/navigation';
+import { useParentCategories } from '@/context/ParentCategoriesContext';
 
 function EventTypesList({ data }: { data: EventTypesBlock }) {
 
-    const router = useRouter();
+    const { parentCategories } = useParentCategories();
+    // `/service/venue` matched no parent category (the venue parent's slug is generated,
+    // e.g. `places-w33h1g`), so every tile landed on an unfiltered service page with an
+    // empty category list. Resolve the slug from serviceType instead of hardcoding it.
+    const venueSlug = parentCategories.find((c) => c.serviceType === 'venue')?.slug;
     const uniqueEventTypeItems = data.eventTypeItem.filter(
         (item, index, self) =>
             index === self.findIndex((t) => t.eventType.documentId === item.eventType.documentId)
@@ -33,9 +38,10 @@ function EventTypesList({ data }: { data: EventTypesBlock }) {
                         ? uniqueEventTypeItems.map(item => {
                             const imageUrl = item.eventType.image?.url ? getCompleteImageUrl(item.eventType.image.url) : '/placeholder';
                             return (
-                                <div
+                                // Was a <div onClick>: crawlers follow <a href>, they don't click.
+                                <Link
                                     key={item.id}
-                                    onClick={()=>router.push(`/service/venue?eventType=${encodeURIComponent(getEnglishEventName(item.eventType))}`)}
+                                    href={`/service/${venueSlug ?? 'all'}?eventType=${encodeURIComponent(getEnglishEventName(item.eventType))}`}
                                     className={`md:w-[300px] h-52 md:h-64 lg:h-72 rounded-lg flex p-4 overflow-hidden relative transition-all duration-300 ease-in hover:scale-105 cursor-pointer ${item.contentPlacement === 'center'
                                         ? 'items-center justify-center'
                                         : item.contentPlacement === 'top-left'
@@ -56,7 +62,7 @@ function EventTypesList({ data }: { data: EventTypesBlock }) {
                                 >
                                     <div className="absolute inset-0 bg-black/10 z-0"></div>
                                     <h4 className="text-white text-lg md:text-xl lg:text-2xl font-semibold px-3 py-1 rounded z-10 relative">{item.eventType.eventName}</h4>
-                                </div>
+                                </Link>
                             )
                         })
                         : <NoDataCard>No Events Found</NoDataCard>

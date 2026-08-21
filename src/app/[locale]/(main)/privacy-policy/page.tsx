@@ -10,8 +10,14 @@ async function PrivacyPolicyPage({ params }: { params: Promise<{ locale: string 
     const { locale } = await params;
     const privacyPolicyPageData: page = await fetchPageById('fvrfcj6up74ua7y459jbxt6t', locale);
     if (!privacyPolicyPageData) return null;
+  // Legal pages had no <h1>; Strapi already returns the page title.
   return (
-    <DynamicZoneRenderer blocks={privacyPolicyPageData.blocks} />
+    <>
+      <h1 className="lg:max-w-425 mx-auto px-4 pt-6 text-2xl md:text-3xl font-semibold text-primary">
+        {privacyPolicyPageData.title}
+      </h1>
+      <DynamicZoneRenderer blocks={privacyPolicyPageData.blocks} />
+    </>
   )
 }
 

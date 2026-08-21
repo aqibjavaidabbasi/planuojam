@@ -2,7 +2,7 @@ import React from 'react'
 import ListingDetailsPage from './ListingDetailsPage'
 import ListingStatusHandler from './ListingStatusHandler'
 import type { Metadata } from 'next'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { getSeoMetadata } from '@/lib/getSeoMetadata'
 import { fetchFallbackSeo, resolveSeoForListing } from '@/services/seoApi'
 import { fetchListingBySlug } from '@/services/listing'
@@ -69,6 +69,7 @@ async function ListingOverview({
 
 async function ListingDetailPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
+  setRequestLocale(locale);
   // Preserve prior graceful behavior: on error -> null -> ListingStatusHandler renders "not found".
   const listing = await fetchListingBySlug(slug, locale).catch((error) => {
     console.error('Failed to fetch listing for SSR:', error);

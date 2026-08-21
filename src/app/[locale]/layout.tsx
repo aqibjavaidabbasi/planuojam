@@ -5,6 +5,7 @@ import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
 import { EventTypesProvider } from "@/context/EventTypesContext";
 import { StatesProvider } from "@/context/StatesContext";
 import { CitiesProvider } from "@/context/CitiesContext";
+import { fetchSiteSettings } from "@/services/siteSettings";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import ReduxProvider from "@/store/provider";
@@ -45,6 +46,12 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   // Rely on next-intl request config to provide messages
   const messages = await getMessages();
+  // Fetched here so the first HTML already has it; falls back to the provider's own
+  // client fetch if Strapi is unreachable at render time.
+  const siteSettings = await fetchSiteSettings().catch((error) => {
+    console.error('Failed to fetch site settings for SSR:', error);
+    return undefined;
+  });
 
   return (
     <html className={montserrat.className}>
@@ -53,7 +60,7 @@ export default async function LocaleLayout({
           <MapboxWrapper>
             <NextIntlClientProvider locale={locale} messages={messages}>
               <ParentCategoriesProvider>
-                <SiteSettingsProvider>
+                <SiteSettingsProvider initialSiteSettings={siteSettings}>
                   <EventTypesProvider>
                     <StatesProvider>
                       <CitiesProvider>

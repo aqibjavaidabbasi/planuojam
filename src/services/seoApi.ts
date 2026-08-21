@@ -98,16 +98,51 @@ export async function fetchFallbackSeo(): Promise<StrapiSeo | null> {
   return settings?.fallbackSeo?.seo || null;
 }
 
+// Google renders roughly 155-160 characters of a description. Cut on a word boundary so the
+// snippet doesn't end mid-word, and collapse the newlines listing descriptions are full of.
+const META_DESCRIPTION_MAX = 155;
+
+export function toMetaDescription(text: unknown): string {
+  if (typeof text !== 'string') return '';
+  const clean = text.replace(/\s+/g, ' ').trim();
+  if (clean.length <= META_DESCRIPTION_MAX) return clean;
+
+  const cut = clean.slice(0, META_DESCRIPTION_MAX);
+  const lastSpace = cut.lastIndexOf(' ');
+  // Only honour the word boundary if it doesn't throw away most of the snippet.
+  const trimmed = lastSpace > META_DESCRIPTION_MAX * 0.6 ? cut.slice(0, lastSpace) : cut;
+  return `${trimmed.replace(/[\s.,;:!?-]+$/, '')}…`;
+}
+
 // Build a minimal SEO object from a listing's own title/description so listings
 // without a manually-filled seo block still emit per-listing metadata (not the generic fallback).
 function seoFromListingFields(listing: { title?: string; description?: unknown } | null | undefined): StrapiSeo | null {
   if (!listing?.title) return null;
-  const description = typeof listing.description === 'string' ? listing.description.slice(0, 160) : '';
-  return { metaTitle: listing.title, metaDescription: description } as StrapiSeo;
+  return {
+    metaTitle: listing.title,
+    metaDescription: toMetaDescription(listing.description),
+  } as StrapiSeo;
+}
+
+// Merge per field rather than picking one source. A manual `seo` block that exists but has
+// an empty metaTitle/metaDescription used to win outright (`seo ?? derived`), dropping the
+// listing straight through to the generic site-wide SEO — the exact duplicate-title problem
+// the derived values exist to prevent.
+function resolveListingSeo(listing: { title?: string; description?: unknown; seo?: StrapiSeo } | null | undefined): StrapiSeo | null {
+  const derived = seoFromListingFields(listing);
+  const manual = listing?.seo ?? null;
+  if (!manual) return derived;
+  if (!derived) return manual;
+
+  return {
+    ...manual,
+    metaTitle: manual.metaTitle || derived.metaTitle,
+    metaDescription: manual.metaDescription || derived.metaDescription,
+  };
 }
 
 // Fetch SEO for a Listing by slug. Mirrors listing data fetch behavior (locale-first approach).
-// Prefers the manual `seo` block, then falls back to the listing's own title/description.
+// Prefers the manual `seo` block field by field, falling back to the listing's own title/description.
 export async function fetchListingSeoBySlug(slug: string, locale?: string): Promise<StrapiSeo | null> {
   const populate = {
     seo: { populate: '*' }
@@ -120,7 +155,7 @@ export async function fetchListingSeoBySlug(slug: string, locale?: string): Prom
     const queryWithLocale = createQuery(populate, { locale, ...additional });
     const resLocale = await fetchAPI('listings', queryWithLocale, filters);
     const listingLocale = Array.isArray(resLocale) ? resLocale[0] : resLocale?.[0];
-    const locSeo = listingLocale?.seo ?? seoFromListingFields(listingLocale);
+    const locSeo = resolveListingSeo(listingLocale);
     if (locSeo) return locSeo;
   }
 
@@ -128,7 +163,7 @@ export async function fetchListingSeoBySlug(slug: string, locale?: string): Prom
   const queryBase = createQuery(populate, additional);
   const resBase = await fetchAPI('listings', queryBase, filters);
   const listingBase = Array.isArray(resBase) ? resBase[0] : resBase?.[0];
-  return listingBase?.seo ?? seoFromListingFields(listingBase);
+  return resolveListingSeo(listingBase);
 }
 
 // High-level resolver by page slug -> SEO collection (pageUrl) -> fallback

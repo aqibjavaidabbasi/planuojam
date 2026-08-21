@@ -170,7 +170,7 @@ function ListingDetailHero({
                 {isDealActive &&
                   hotDeal.discount.discountType === "Flat Rate" && (
                     <div className="text-3xl font-bold mb-1">
-                      {siteSettings.currency.symbol}
+                      {siteSettings?.currency?.symbol}
                       {hotDeal.discount.flatRatePrice}
                     </div>
                   )}
@@ -179,7 +179,7 @@ function ListingDetailHero({
                   className={`text-base font-semibold opacity-80 ${isDealActive && "line-through"
                     } mb-2`}
                 >
-                  {siteSettings.currency.symbol}
+                  {siteSettings?.currency?.symbol}
                   {price}
                 </div>
 

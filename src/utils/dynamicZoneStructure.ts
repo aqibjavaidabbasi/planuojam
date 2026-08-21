@@ -183,8 +183,19 @@ export const PAGES_DYNAMIC_ZONE = {
                 populate: {
                     'categoryListItem': {
                         populate: {
+                            // ponytail: fields-only. `populate: '*'` on a category relation also
+                            // pulls category.listings (every listing in it) into the payload.
                             'category': {
-                                populate: '*',
+                                fields: ['name'],
+                                populate: {
+                                    'image': { fields: ['url'] },
+                                    // localizations carry the EN slug, which is what
+                                    // /service/[service] resolves against.
+                                    'parentCategory': {
+                                        fields: ['slug', 'locale'],
+                                        populate: { 'localizations': { fields: ['slug', 'locale'] } },
+                                    },
+                                },
                             }
                         }
                     },
@@ -201,8 +212,9 @@ export const PAGES_DYNAMIC_ZONE = {
                     },
                     'parentCategory': {
                         populate: {
+                            // Only the documentId is read (locale-invariant parent match).
                             'parent': {
-                                populate: '*'
+                                fields: ['slug']
                             }
                         }
                     }
@@ -223,8 +235,13 @@ export const PAGES_DYNAMIC_ZONE = {
                     },
                     'eventTypeItem': {
                         populate: {
+                            // ponytail: fields-only, same reverse-relation trap (eventType.listings).
                             'eventType': {
-                                populate: '*'
+                                fields: ['eventName', 'locale'],
+                                populate: {
+                                    'image': { fields: ['url'] },
+                                    'localizations': { fields: ['eventName', 'locale'] },
+                                },
                             }
                         }
                     }

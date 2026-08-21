@@ -101,6 +101,16 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
   const swiperRef = useRef<{ swiper: SwiperClass }>(null);
   const portfolioImages = item.portfolio?.filter(media => !media.mime?.startsWith('video/')) || [];
   const imageCount = portfolioImages.length;
+
+  // Every slide used to render a next/image, so a 12-card grid shipped ~470 <img> tags
+  // (434 KB of srcSet markup) to show 12 visible photos. `loading="lazy"` saved the bytes
+  // but not the markup. Mount only the slides adjacent to the active one — autoplay and
+  // swiping bring the rest in, so no image is dropped, just deferred.
+  const isNearActive = (idx: number) =>
+    Math.abs(idx - activeImageIndex) <= 1 ||
+    // loop={true} makes the first and last slides neighbours
+    (activeImageIndex === 0 && idx === imageCount - 1) ||
+    (activeImageIndex === imageCount - 1 && idx === 0);
   const cardSocialLinks = item.socialLinks?.socialLink || [];
   const hasCardSocialLinks = cardSocialLinks.some((link) => {
     const platform = link.platform?.toLowerCase();
@@ -229,16 +239,18 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
                     title={item.title}
                   >
                     <div className="relative w-full aspect-4/3 bg-black">
-                      <Image
-                        src={mediaUrl}
-                        alt={t('imageAlt', { index: idx + 1 })}
-                        fill
-                        className='object-cover object-center'
-                        sizes="(max-width: 768px) 100vw, 340px"
-                        priority={idx === 0 && !!highPriority}
-                        fetchPriority={idx === 0 && highPriority ? 'high' : 'auto'}
-                        loading={idx === 0 && highPriority ? 'eager' : 'lazy'}
-                      />
+                      {isNearActive(idx) && (
+                        <Image
+                          src={mediaUrl}
+                          alt={t('imageAlt', { index: idx + 1 })}
+                          fill
+                          className='object-cover object-center'
+                          sizes="(max-width: 768px) 100vw, 340px"
+                          priority={idx === 0 && !!highPriority}
+                          fetchPriority={idx === 0 && highPriority ? 'high' : 'auto'}
+                          loading={idx === 0 && highPriority ? 'eager' : 'lazy'}
+                        />
+                      )}
                     </div>
                   </Link>
                 </SwiperSlide>
@@ -432,7 +444,7 @@ function ListingCard({ item, highPriority, stripeProducts }: { item: ListingItem
             {item.price ? (
               <>
                 <span className="font-medium">{t('price')}</span>
-                <span className="truncate font-semibold text-primary">{siteSettings.currency ? siteSettings.currency.symbol : '$'}{item.price.toLocaleString()}</span>
+                <span className="truncate font-semibold text-primary">{siteSettings?.currency ? siteSettings.currency.symbol : '$'}{item.price.toLocaleString()}</span>
               </>
             ) : (
               <span className='text-xs'>{t('contactForPricing')}</span>

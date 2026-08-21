@@ -1,14 +1,16 @@
 import { CityListBlock } from '@/types/pagesTypes';
 import React from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 
 function CityList({ data }: { data: CityListBlock }) {
   const t = useTranslations('Global.CityList');
+  const locale = useLocale();
+  // Was pinned to 'lt'; follows the active locale and falls back to the entry as fetched.
   const ltList = data.Cities.map((city) =>
-    city.city.locale === 'lt'
+    city.city.locale === locale
       ? city.city
-      : city.city.localizations?.find((loc) => loc.locale === 'lt'),
+      : city.city.localizations?.find((loc) => loc.locale === locale) ?? city.city,
   );
   return (
     <div

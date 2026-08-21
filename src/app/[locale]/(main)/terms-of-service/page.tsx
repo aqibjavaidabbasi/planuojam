@@ -10,8 +10,14 @@ async function TermsOfServicePage({ params }: { params: Promise<{ locale: string
     const { locale } = await params;
     const TermsOfServicePageData: page = await fetchPageById('d1wrcza11cao15fm3mg2xibi', locale);
     if (!TermsOfServicePageData) return null;
+  // Legal pages had no <h1>; Strapi already returns the page title.
   return (
-    <DynamicZoneRenderer blocks={TermsOfServicePageData.blocks} />
+    <>
+      <h1 className="lg:max-w-425 mx-auto px-4 pt-6 text-2xl md:text-3xl font-semibold text-primary">
+        {TermsOfServicePageData.title}
+      </h1>
+      <DynamicZoneRenderer blocks={TermsOfServicePageData.blocks} />
+    </>
   )
 }
 

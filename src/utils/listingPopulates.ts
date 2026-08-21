@@ -150,9 +150,12 @@ export const LISTING_MAP_LOCATION_POP_STRUCTURE = {
   },
 };
 
+// ponytail: relations here are pinned to explicit `fields`. `populate: '*'` on a
+// relation also pulls its reverse relations (category.listings, user.listings),
+// which dragged ~1500 listing rows x 5 locales into the SSR payload (5.8MB HTML).
 export const LISTING_DETAIL_POP_STRUCTURE = {
   categories: {
-    populate: '*',
+    fields: ['name', 'slug', 'serviceType', 'locale'],
   },
   listingItem: {
     on: {
@@ -222,13 +225,20 @@ export const LISTING_DETAIL_POP_STRUCTURE = {
     populate: '*',
   },
   reviews: {
-    populate: '*',
+    populate: {
+      author: {
+        fields: ['username'],
+      },
+      review: {
+        populate: '*',
+      },
+    },
   },
   user: {
-    populate: '*',
+    fields: ['username'],
   },
   eventTypes: {
-    populate: '*',
+    fields: ['eventName', 'slug', 'locale'],
   },
   hotDeal: {
     populate: {
@@ -237,94 +247,9 @@ export const LISTING_DETAIL_POP_STRUCTURE = {
       },
     },
   },
+  // Only booking lists read this (localized listing title); no consumer needs the
+  // full localized listing, so keep it to the fields actually rendered.
   localizations: {
-    populate: {
-      categories: {
-        populate: '*',
-      },
-      listingItem: {
-        on: {
-          'dynamic-blocks.vendor': {
-            populate: {
-              serviceArea: {
-                populate: {
-                  city: {
-                    populate: true,
-                  },
-                  state: {
-                    populate: true,
-                  },
-                },
-              },
-            },
-          },
-          'dynamic-blocks.venue': {
-            populate: {
-              location: {
-                populate: '*',
-              },
-              amneties: {
-                populate: '*',
-              },
-            },
-          },
-        },
-      },
-      contact: {
-        populate: '*',
-      },
-      socialLinks: {
-        populate: {
-          socialLink: {
-            populate: '*',
-          },
-        },
-      },
-      workingSchedule: {
-        populate: '*',
-      },
-      pricingPackages: {
-        populate: {
-          plans: {
-            populate: {
-              cta: {
-                populate: '*',
-              },
-              featuresList: {
-                populate: '*',
-              },
-              optionalAddons: {
-                populate: '*',
-              },
-            },
-          },
-        },
-      },
-      portfolio: {
-        populate: '*',
-      },
-      videos: {
-        populate: '*',
-      },
-      FAQs: {
-        populate: '*',
-      },
-      reviews: {
-        populate: '*',
-      },
-      user: {
-        populate: '*',
-      },
-      eventTypes: {
-        populate: '*',
-      },
-      hotDeal: {
-        populate: {
-          discount: {
-            populate: '*',
-          },
-        },
-      },
-    },
+    fields: ['title', 'slug', 'locale'],
   },
 };

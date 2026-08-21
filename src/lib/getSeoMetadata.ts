@@ -1,10 +1,30 @@
 // lib/getSeoMetadata.ts
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/config/i18n";
 import { StrapiSeo } from "@/types/mediaTypes";
 import { getCompleteImageUrl } from "@/utils/helpers";
 import type { Metadata } from "next";
 
 interface ExtendedMetadata extends Metadata {
   metaImage?: { url: string, alt: string };
+}
+
+/**
+ * hreflang for every locale in NEXT_PUBLIC_SUPPORTED_LOCALES. Derived from env so adding a
+ * locale there is the only step needed — no page or config change. Returns undefined for a
+ * single-locale site, where hreflang carries no signal.
+ */
+function buildLanguageAlternates(urlPath: string, baseUrl: string) {
+  if (SUPPORTED_LOCALES.length < 2) return undefined;
+
+  // urlPath is `/<locale>/rest` (possibly with a query); swap the locale segment.
+  const pathWithoutLocale = urlPath.replace(/^\/[^/?#]+/, "");
+  const href = (locale: string) =>
+    baseUrl ? `${baseUrl}/${locale}${pathWithoutLocale}` : `/${locale}${pathWithoutLocale}`;
+
+  return {
+    ...Object.fromEntries(SUPPORTED_LOCALES.map((locale) => [locale, href(locale)])),
+    "x-default": href(DEFAULT_LOCALE),
+  };
 }
 
 export function getSeoMetadata(
@@ -17,7 +37,7 @@ export function getSeoMetadata(
   }
 ): Metadata {
   const baseUrl = (options?.baseUrl ?? process.env.NEXT_PUBLIC_APP_URL ?? "").replace(/\/$/, "");
-  const alternates = options?.alternates ?? {};
+  const alternates = options?.alternates ?? buildLanguageAlternates(urlPath, baseUrl);
 
   const data: StrapiSeo | null = seo ?? fallbackSeo ?? null;
   const title = data?.metaTitle || fallbackSeo?.metaTitle || process.env.NEXT_PUBLIC_SITE_NAME || "Planuojam";
@@ -62,8 +82,10 @@ export function getSeoMetadata(
       description: data?.twitterDescription || data?.ogDescription || description,
       images: twitterImageUrl ? [twitterImageUrl] : ogImageUrl ? [ogImageUrl] : [],
     },
-    // NOTE: JSON-LD is returned here for convenience; many people inject it manually in head.tsx/page
-    other: data?.schemaMarkup ? { "script:ld+json": JSON.stringify(data.schemaMarkup) } : {},
+    // NOTE: Strapi's `schemaMarkup` is deliberately NOT emitted here. Next's `other`
+    // renders <meta name="..."> — it cannot produce a <script type="application/ld+json">,
+    // so this produced an invalid meta tag rather than structured data. Real JSON-LD is
+    // rendered as a <script> in the page itself (see listing/[slug]/page.tsx).
   };
 
   return metadata;

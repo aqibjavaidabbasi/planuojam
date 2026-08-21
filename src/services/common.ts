@@ -59,9 +59,11 @@ export async function fetchChildCategories(
     },
   };
 
+  // ponytail: fields-only. `populate: '*'` on this relation also pulls
+  // parentCategory.listings (every listing under it) on each of up to 100 rows.
   const populate = {
     parentCategory: {
-        populate: '*'
+        fields: ['slug', 'serviceType']
     },
   };
 
@@ -97,7 +99,7 @@ export async function fetchAllChildCategories(
 
   const populate = {
     parentCategory: {
-      populate: '*',
+      fields: ['slug', 'serviceType'],
     },
   };
 
@@ -128,7 +130,7 @@ export async function fetchParentCategories(locale?: string) {
   };
   const populate = {
     localizations: {
-      populate: '*',
+      fields: ['name', 'slug', 'locale'],
     },
   };
   return await fetchWithLocaleFallback('categories', populate, filter, locale);
@@ -136,13 +138,13 @@ export async function fetchParentCategories(locale?: string) {
 export async function fetchEventTypes(locale?: string) {
   const populate = {
     image: {
-      populate: '*',
+      fields: ['url'],
     },
     page: {
-      populate: true,
+      fields: ['title'],
     },
     localizations: {
-      populate: '*',
+      fields: ['eventName', 'slug', 'locale'],
     },
   };
   return await fetchWithLocaleFallback(
