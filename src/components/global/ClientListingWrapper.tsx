@@ -63,7 +63,12 @@ function ClientListingWrapper({
   const venuesT = useTranslations('Venues');
   const allT = useTranslations('all');
 
-  const eventTypeNames: string[] = eventTypes.map((event) => event.eventName);
+  // Value is the locale-stable documentId (matches `?eventType=` and the backend filter);
+  // label is the localized name so the selected chip renders in the active locale.
+  const eventTypeOptions = useMemo(
+    () => eventTypes.map((event) => ({ label: event.eventName, value: event.documentId })),
+    [eventTypes],
+  );
 
   const categoryFromUrl = searchParams.get('cats'); // Support multiple categories
   const eventTypeFromUrl = searchParams.get('eventType');
@@ -200,13 +205,13 @@ function ClientListingWrapper({
       },
       {
         name: 'eventType',
-        options: eventTypeNames.map(opt => ({ label: opt, value: opt })),
+        options: eventTypeOptions,
         placeholder: getTranslation(placeholders.chooseEventType),
       },
     ],
     [
       categories,
-      eventTypeNames,
+      eventTypeOptions,
       translatedPricingFilters,
       getTranslation,
       placeholders,
@@ -251,7 +256,7 @@ function ClientListingWrapper({
         }
         if (eventTypeFromUrl) {
           filters.eventTypes = {
-            eventName: {
+            documentId: {
               $eq: eventTypeFromUrl,
             },
           };

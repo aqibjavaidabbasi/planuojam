@@ -129,7 +129,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
             if (lowName === 'categories' || lowName === 'category') {
                 out.categories = { documentId: { $in: trimmedValues } };
             } else if (lowName === 'eventtype' || lowName === 'eventtypes') {
-                out.eventTypes = { eventName: { $in: trimmedValues } };
+                out.eventTypes = { documentId: { $in: trimmedValues } };
             } else if (lowName.includes('price')) {
                 const val = trimmedValues[0].toLowerCase();
                 if (val.includes('without')) {
@@ -246,7 +246,7 @@ const FiltersAndMap: React.FC<FiltersAndMapProps> = ({
                 const next = {
                     ...prev,
                     eventTypes: {
-                        eventName: {
+                        documentId: {
                             $in: trimmedValues,
                         },
                     } as NestedFilter,

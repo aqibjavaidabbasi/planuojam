@@ -17,13 +17,11 @@ function EventHero({data}: {data: HeroBannerBlock}) {
     const { getEventTypeBySlug } = useEventTypes();
     const eventType = getEventTypeBySlug(slug as string);
 
-    // The service page filters by the English `eventName`, so always resolve the English
-    // name (falling back to localizations) regardless of the current locale.
-    const englishEventName = eventType
-        ? (eventType.locale === 'en'
-            ? eventType.eventName
-            : eventType.localizations?.find(loc => loc.locale === 'en')?.eventName ?? eventType.eventName)
-        : '';
+    // Filter by the locale-stable documentId — `eventName` is localized, so an English-name
+    // filter only matched in the `en` locale and returned nothing (and an unresolvable chip) elsewhere.
+    const serviceHref = eventType
+        ? `/service/all?eventType=${encodeURIComponent(eventType.documentId)}`
+        : '/service/all';
 
   return (
     <section className="relative w-screen h-screen md:h-[450px] flex items-center justify-start overflow-hidden max-w-screen">
@@ -55,7 +53,7 @@ function EventHero({data}: {data: HeroBannerBlock}) {
           <Button
             style={data.callToAction.style}
             size='large'
-            onClick={()=>router.push(`/service/all?eventType=${encodeURIComponent(englishEventName)}`)}
+            onClick={()=>router.push(serviceHref)}
             >
             {data.callToAction.bodyText}
           </Button>

@@ -26,8 +26,9 @@ export default async function ServicePage({
   const appliedFilters: Record<string, unknown> = {};
   const initialFilters: Record<string, string | string[]> = {};
   if (eventTypeFromUrl) {
+    // `?eventType=` carries the locale-stable event-type documentId (eventName is localized).
     initialFilters.eventType = eventTypeFromUrl;
-    appliedFilters.eventTypes = { eventName: { $eq: eventTypeFromUrl } };
+    appliedFilters.eventTypes = { documentId: { $eq: eventTypeFromUrl } };
   }
 
   // Fetch parent categories early to find the matching service type
