@@ -1,12 +1,12 @@
 import { NextRequest } from "next/server";
-import { getAppBaseUrl } from "@/lib/social";
+import { getAppBaseUrl, safeLocale } from "@/lib/social";
 
 export const runtime = 'nodejs';
 
 export async function GET(req: NextRequest) {
   const base = getAppBaseUrl(req as unknown as Request);
   const clientId = process.env.GOOGLE_CLIENT_ID;
-  const locale = req.nextUrl.searchParams.get("locale") || "en";
+  const locale = safeLocale(req.nextUrl.searchParams.get("locale"));
   const mode = req.nextUrl.searchParams.get("mode") || "login";
   const serviceType = req.nextUrl.searchParams.get("serviceType") || "";
   const phone = req.nextUrl.searchParams.get("phone") || "";

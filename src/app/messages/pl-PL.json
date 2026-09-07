@@ -18,7 +18,6 @@
       "loggedIn": "Pomyślnie zalogowano!",
       "loginFailed": "Logowanie nie powiodło się. Spróbuj ponownie.",
       "socialEmailRequired": "Email jest wymagany do logowania społecznościowego.",
-      "socialUserNotFound": "Nie znaleziono konta. Zarejestruj się lub skorzystaj z innej metody.",
       "socialInternalError": "Coś poszło nie tak podczas logowania społecznościowego. Spróbuj ponownie.",
       "emailLabel": "Email",
       "emailPlaceholder": "Wpisz swój email",
@@ -38,6 +37,8 @@
     "Register": {
       "title": "Utwórz swoje konto",
       "subtitle": "Dołącz do społeczności Planuojam i zacznij planować wydarzenia łatwiej",
+      "socialFinishSignup": "Nie znaleziono konta dla {email}. Wybierz, jak chcesz się zarejestrować, a następnie kontynuuj przez {provider}, aby dokończyć rejestrację.",
+      "socialSessionExpired": "Sesja rejestracji wygasła. Kontynuuj ponownie przez {provider}.",
       "registering": "Rejestrowanie danych...",
       "registered": "Pomyślnie zarejestrowano!",
       "registerFailed": "Rejestracja nie powiodła się. Spróbuj ponownie.",

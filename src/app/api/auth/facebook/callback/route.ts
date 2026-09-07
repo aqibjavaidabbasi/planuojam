@@ -1,5 +1,5 @@
-import { NextRequest } from "next/server";
-import { getAppBaseUrl } from "@/lib/social";
+import { NextRequest, NextResponse } from "next/server";
+import { getAppBaseUrl, safeLocale, signSocialTicket, socialAuthHeaders, SOCIAL_TICKET_COOKIE } from "@/lib/social";
 import { API_URL } from "@/services/api";
 
 export const runtime = 'nodejs';
@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     const code = req.nextUrl.searchParams.get("code");
     const stateRaw = req.nextUrl.searchParams.get("state");
     const state = stateRaw ? JSON.parse(decodeURIComponent(stateRaw)) : {};
-    const locale: string = state.locale || "en";
+    const locale: string = safeLocale(state.locale);
     const mode: 'login' | 'register' = state.mode || 'login';
     const serviceType: string | undefined = state.serviceType || undefined;
     const phone: string | undefined = state.phone || undefined;
@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Exchange code for token
-    const tokenUrl = new URL("https://graph.facebook.com/v18.0/oauth/access_token");
+    const tokenUrl = new URL("https://graph.facebook.com/v23.0/oauth/access_token");
     tokenUrl.searchParams.set("client_id", clientId);
     tokenUrl.searchParams.set("client_secret", clientSecret);
     tokenUrl.searchParams.set("redirect_uri", redirectUri);
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
     const accessToken = tokenJson.access_token as string;
 
     // Get user info
-    const userUrl = new URL("https://graph.facebook.com/me");
+    const userUrl = new URL("https://graph.facebook.com/v23.0/me");
     userUrl.searchParams.set("fields", "id,name,email,picture");
     userUrl.searchParams.set("access_token", accessToken);
     const userRes = await fetch(userUrl.toString());
@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
     // Call Strapi custom endpoint for passwordless social login/register
     const exchangeRes = await fetch(`${API_URL}/api/social-auth/exchange`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...socialAuthHeaders() },
       body: JSON.stringify({
         email,
         name,
@@ -90,6 +90,26 @@ export async function GET(req: NextRequest) {
         const parsed = JSON.parse(text);
         if (parsed?.error) code = String(parsed.error).toUpperCase();
       } catch {}
+      // First social login with no account yet. Carry the provider-verified identity
+      // forward in a signed, httpOnly cookie so /auth/register can finish the signup
+      // with one form submit -- no second trip through the provider.
+      if (code === 'USER_NOT_FOUND') {
+        const url = new URL(`${base}/${locale}/auth/register`);
+        url.searchParams.set("social", "facebook");
+        url.searchParams.set("email", email);
+        if (redirect) url.searchParams.set("redirect", redirect);
+        const res = NextResponse.redirect(url.toString(), 302);
+        res.cookies.set(SOCIAL_TICKET_COOKIE, signSocialTicket({
+          email, name, providerUserId, authProvider: 'facebook',
+        }), {
+          httpOnly: true,
+          sameSite: 'lax',
+          secure: base.startsWith('https'),
+          path: '/',
+          maxAge: 900,
+        });
+        return res;
+      }
       const finalRedirect = `${base}/${locale}/auth/callback`;
       const url = new URL(finalRedirect);
       url.searchParams.set("error", code);

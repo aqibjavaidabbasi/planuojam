@@ -70,6 +70,13 @@ export default function RegisterPageClient() {
   const params = useSearchParams();
   const redirectParam = params.get("redirect");
   const rp = normalizeRedirect(redirectParam);
+  // Set when a social login found no account: finish signing up here, then hit the
+  // same social button to create it.
+  const socialProvider = params.get("social");
+  const socialProviderLabel = socialProvider
+    ? socialProvider.charAt(0).toUpperCase() + socialProvider.slice(1)
+    : "";
+  const socialEmail = params.get("email") || "";
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const currentUsername = watch("username");
@@ -82,9 +89,12 @@ export default function RegisterPageClient() {
   }, [hasMinLen, hasUpper, hasDigit]);
   const isPasswordStrong = strengthScore === 3;
   const canRegister = useMemo(() => {
+    // Social signups have no username/password of their own -- identity is already
+    // proven by the provider, so only the terms checkbox gates the button.
+    if (socialProvider) return isChecked && !isSubmitting;
     // Require explicit availability confirmation and strong password
     return usernameStatus === "available" && isChecked && isPasswordStrong && !isSubmitting;
-  }, [usernameStatus, isChecked, isPasswordStrong, isSubmitting]);
+  }, [socialProvider, usernameStatus, isChecked, isPasswordStrong, isSubmitting]);
 
   // Automatic username availability check with debouncing
   useEffect(() => {
@@ -154,9 +164,56 @@ export default function RegisterPageClient() {
     };
   }, []);
 
+  // Finishes a social signup in one submit. The email/provider identity rides in the
+  // httpOnly cookie the OAuth callback set, so only the account type is sent here.
+  const submitSocialSignup = async (data: FormValues) => {
+    if (data.role === "provider" && !data.serviceType) {
+      toast.error(t("serviceRequired"));
+      return;
+    }
+    if (data.role === "provider" && !isValidPhoneNumber(data.phone || "")) {
+      toast.error(t("phoneInvalid"));
+      return;
+    }
+    await toast.promise(
+      (async () => {
+        const res = await fetch("/api/auth/social/complete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            role: data.role,
+            serviceType: data.serviceType,
+            phone: data.phone,
+            preferredLanguage: data.preferredLanguage,
+          }),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok || !json?.jwt) throw new Error(json?.error || "INTERNAL_ERROR");
+        // Hand off to the existing social callback page: it stores the token and
+        // loads the user exactly like a returning social login does.
+        const sp = new URLSearchParams({ jwt: json.jwt });
+        if (rp) sp.set("redirect", rp);
+        router.push(`/auth/callback?${sp.toString()}`);
+      })(),
+      {
+        loading: t("registering"),
+        success: t("registered"),
+        error: (err) => {
+          const code = (err as Error)?.message;
+          if (code === "SOCIAL_SESSION_EXPIRED") return t("socialSessionExpired", { provider: socialProviderLabel });
+          return t("registerFailed");
+        },
+      }
+    );
+  };
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (!isChecked) {
       toast.error(t("tosNotAccepted"));
+      return;
+    }
+    if (socialProvider) {
+      await submitSocialSignup(data);
       return;
     }
     if (usernameStatus !== "available") {
@@ -214,6 +271,11 @@ export default function RegisterPageClient() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-6">
+          {socialProvider && (
+            <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              {t("socialFinishSignup", { email: socialEmail, provider: socialProviderLabel })}
+            </div>
+          )}
           <form className="space-y-6" id="registerForm" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label
@@ -333,6 +395,7 @@ export default function RegisterPageClient() {
               </div>
             )}
 
+            {!socialProvider && (
             <div className="flex flex-col gap-2.5">
               <Input
                 type="text"
@@ -474,6 +537,7 @@ export default function RegisterPageClient() {
                 </p>
               )}
             </div>
+            )}
 
             <div className="">
               <Checkbox
@@ -506,6 +570,7 @@ export default function RegisterPageClient() {
             </Button>
           </form>
 
+          {!socialProvider && (
           <SocialAuthButtons
             className="mt-6"
             onGoogleClick={() => {
@@ -574,6 +639,7 @@ export default function RegisterPageClient() {
               window.location.href = `/api/auth/facebook?${sp.toString()}`;
             }}
           />
+          )}
 
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">

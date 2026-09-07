@@ -54,8 +54,6 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
       case "EMAIL_REQUIRED":
       case "MISSING_EMAIL":
         return t("socialEmailRequired");
-      case "USER_NOT_FOUND":
-        return t("socialUserNotFound");
       case "INTERNAL_ERROR":
         return t("socialInternalError");
       default:
@@ -224,6 +222,10 @@ function LoginForm({ setIsOpen }: LoginFormProps) {
             }
             const sp = new URLSearchParams({ locale, mode: "login" });
             if (rp) sp.set('redirect', rp);
+            // Coming back from a declined email permission: make Facebook ask again.
+            if (socialErrorCode === "MISSING_EMAIL" || socialErrorCode === "EMAIL_REQUIRED") {
+              sp.set('rerequest', '1');
+            }
             window.location.href = `/api/auth/facebook?${sp.toString()}`;
           } catch {
             toast.error(t("loginFailed"));

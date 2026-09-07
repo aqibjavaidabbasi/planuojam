@@ -17,7 +17,6 @@
       "loggedIn": "Sėkmingai prisijungėte!",
       "loginFailed": "Prisijungti nepavyko. Bandykite dar kartą.",
       "socialEmailRequired": "El. paštas būtinas socialiniam prisijungimui.",
-      "socialUserNotFound": "Nerasta paskyros. Prašome užsiregistruoti arba naudoti kitą būdą.",
       "socialInternalError": "Kažkas nepavyko prisijungiant per socialinius tinklus. Bandykite dar kartą.",
       "emailLabel": "El. paštas",
       "emailPlaceholder": "Įveskite el. paštą",
@@ -37,6 +36,8 @@
     "Register": {
       "title": "Susikurkite paskyrą",
       "subtitle": "Prisijunkite prie Planuojam bendruomenės ir pradėkite planuoti renginius lengviau",
+      "socialFinishSignup": "Paskyra su {email} nerasta. Pasirinkite, kaip norite registruotis, ir tęskite su {provider}, kad užbaigtumėte registraciją.",
+      "socialSessionExpired": "Registracijos sesija baigėsi. Bandykite tęsti su {provider} dar kartą.",
       "registering": "Registruojami jūsų duomenys...",
       "registered": "Sėkmingai užsiregistravote!",
       "registerFailed": "Registracija nepavyko. Bandykite dar kartą.",

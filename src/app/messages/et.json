@@ -17,7 +17,6 @@
       "loggedIn": "Sisselogimine õnnestus!",
       "loginFailed": "Sisselogimine ebaõnnestus. Palun proovi uuesti.",
       "socialEmailRequired": "E-post on sotsiaalseks sisselogimiseks vajalik.",
-      "socialUserNotFound": "Kontot ei leitud. Palun registreeru või kasuta mõnda muud meetodit.",
       "socialInternalError": "Midagi läks sotsiaalse sisselogimisega valesti. Palun proovi uuesti.",
       "emailLabel": "E-post",
       "emailPlaceholder": "Sisesta oma e-post",
@@ -37,6 +36,8 @@
     "Register": {
       "title": "Loo oma konto",
       "subtitle": "Liitu Planuojam kogukonnaga ja alga sündmusi lihtsamalt planeerima",
+      "socialFinishSignup": "Kontot aadressiga {email} ei leitud. Valige, kuidas soovite liituda, ja jätkake teenusega {provider}, et registreerimine lõpetada.",
+      "socialSessionExpired": "Registreerimise sessioon aegus. Palun jätkake uuesti teenusega {provider}.",
       "registering": "Registreerime sinu andmeid...",
       "registered": "Registreerimine õnnestus!",
       "registerFailed": "Registreerimine ebaõnnestus. Palun proovi uuesti.",
