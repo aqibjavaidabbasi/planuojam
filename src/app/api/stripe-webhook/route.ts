@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { randomBytes } from "crypto";
 import { getNotificationEmailSubject, normalizeEmailSubjectLocale } from "@/utils/emailSubjects";
+import { DEFAULT_LOCALE } from "@/config/i18n";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const STRAPI_API_URL = process.env.NEXT_PUBLIC_API_URL!;
@@ -53,7 +54,7 @@ function getPublicAppUrl() {
 }
 
 function buildPublicInvoiceUrl(publicToken: string) {
-  return `${getPublicAppUrl()}/en/invoice/${publicToken}`;
+  return `${getPublicAppUrl()}/${DEFAULT_LOCALE}/invoice/${publicToken}`;
 }
 
 async function fetchStrapiJson<T>(url: string): Promise<T | null> {

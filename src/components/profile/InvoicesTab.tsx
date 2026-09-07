@@ -177,8 +177,8 @@ export default function InvoicesTab() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-right flex justify-end gap-2">
-                    {invoice.hostedUrl && (
-                      <Button style="ghost" onClick={() => window.open(invoice.hostedUrl, "_blank")} tooltip={t("invoiceTable.view", { default: "View" })}>
+                    {(invoice.publicToken || invoice.hostedUrl) && (
+                      <Button style="ghost" onClick={() => window.open(invoice.publicToken ? `/${locale}/invoice/${invoice.publicToken}` : invoice.hostedUrl, "_blank")} tooltip={t("invoiceTable.view", { default: "View" })}>
                         <FaExternalLinkAlt className="text-gray-500 hover:text-primary" />
                       </Button>
                     )}

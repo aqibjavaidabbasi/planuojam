@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { randomBytes } from "crypto";
 import { logWebhookEvent } from "@/utils/subscriptionLogger";
+import { DEFAULT_LOCALE } from "@/config/i18n";
 
 type WebhookSubscription = Stripe.Subscription & {
   current_period_end?: number;
@@ -121,7 +122,7 @@ function getPublicAppUrl() {
 }
 
 function buildPublicInvoiceUrl(publicToken: string) {
-  return `${getPublicAppUrl()}/en/invoice/${publicToken}`;
+  return `${getPublicAppUrl()}/${DEFAULT_LOCALE}/invoice/${publicToken}`;
 }
 
 function formatStripeAddress(address?: Stripe.Address | null) {
