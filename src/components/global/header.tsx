@@ -28,7 +28,6 @@ function Header({ headerData }: { headerData: HeaderType }) {
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const isHotDealActive = () => pathname.endsWith("/hot-deal");
-  const isMapActive = () => pathname.endsWith("/map");
   const user = useAppSelector((state: RootState) => state.auth.user);
   const likedListings = useAppSelector((state: RootState) => state.likedListings);
   const [loading, setLoading] = useState(false);
@@ -382,21 +381,6 @@ function Header({ headerData }: { headerData: HeaderType }) {
                             {t('HotDeal')}
                           </Link>
 
-
-                          <Link onClick={() => {
-                            handleSelect("Map")
-                            //close mobile menu
-                            setMobileNavOpen(false)
-                          }}
-                            className={`cursor-pointer p-2.5 my-1 rounded-sm transition-colors text-primary bg-gray-100 hover:bg-primary hover:text-white ${selected == "Map" ? "bg-primary text-white" : ""
-                              }
-                             `}
-                            href="/map"
-                          >
-                            {t('Map')}
-                          </Link>
-
-
                         </>
                       )}
                   </nav>
@@ -452,15 +436,6 @@ function Header({ headerData }: { headerData: HeaderType }) {
                 href="/hot-deal"
               >
                 {t('HotDeal')}
-              </Link>
-              <Link
-                className={`cursor-pointer text-xs md:text-sm px-2 md:px-3 py-1 rounded-sm transition-colors whitespace-nowrap shrink-0 ${isMapActive()
-                  ? "bg-primary text-white"
-                  : "text-primary hover:bg-primary hover:text-white"
-                  }`}
-                href="/map"
-              >
-                {t('Map')}
               </Link>
             </div>
           </div>

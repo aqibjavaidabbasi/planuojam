@@ -42,6 +42,7 @@ function localizeSubscriptionInterval(
   interval?: PublicInvoiceData["subscriptionInterval"]
 ) {
   const fallbackPattern = /(\s*\/\s*)(month|year|one_time)\b/gi;
+  const polishPricePattern = /\(\s*przy\s+€\s*(\d+(?:[.,]\d{1,2})?)\s*\/\s*(mėn\.)\s*\)/gi;
 
   if (interval && labels.subscriptionIntervalLabels[interval]) {
     const exactPattern = new RegExp(`(\\s*\\/\\s*)${interval}\\b`, "gi");
@@ -50,13 +51,19 @@ function localizeSubscriptionInterval(
       `$1${labels.subscriptionIntervalLabels[interval]}`,
     );
 
-    if (localized !== description) return localized;
+    if (localized !== description) {
+      return localized.replace(polishPricePattern, (_, amount: string, intervalLabel: string) => (
+        `(už ${amount.replace(".", ",")} € / ${intervalLabel})`
+      ));
+    }
   }
 
   return description.replace(fallbackPattern, (match, separator: string, matchedInterval: string) => {
     const key = matchedInterval.toLowerCase() as keyof InvoicePdfLabels["subscriptionIntervalLabels"];
     return `${separator}${labels.subscriptionIntervalLabels[key] || matchedInterval}`;
-  });
+  }).replace(polishPricePattern, (_, amount: string, intervalLabel: string) => (
+    `(už ${amount.replace(".", ",")} € / ${intervalLabel})`
+  ));
 }
 
 function DetailRow({

@@ -113,9 +113,6 @@ export default function PublicInvoicePageClient({
           <h1 className="text-3xl font-semibold text-slate-900">
             {t("title", { invoiceNumber: invoice.invoiceNumber || invoice.documentId })}
           </h1>
-          <p className="mt-3 text-sm leading-6 text-slate-600">
-            {t("description")}
-          </p>
 
           <div className="mt-8 grid gap-4 rounded-[28px] bg-slate-50 p-5 text-sm text-slate-700 sm:grid-cols-2">
             <div>

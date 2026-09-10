@@ -42,11 +42,12 @@ async function ListingOverview({
         {rest && (
           <>
             ...
-            <details className="mt-2">
-              <summary className="cursor-pointer font-semibold text-primary hover:text-primary/90">
-                {tCommon('readMore')}
+            <details className="group mt-2 flex flex-col">
+              <summary className="order-2 cursor-pointer font-semibold text-primary hover:text-primary/90">
+                <span className="group-open:hidden">{tCommon('readMore')}</span>
+                <span className="hidden group-open:inline">{tCommon('readLess')}</span>
               </summary>
-              {rest}
+              <span className="order-1 block whitespace-pre-wrap">{rest}</span>
             </details>
           </>
         )}
