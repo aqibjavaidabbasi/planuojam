@@ -9,7 +9,8 @@ const mk = (city: unknown) => ({
   listingItem: [{ __component: "dynamic-blocks.venue", location: { address: "Upelio g. 26", city, latitude: 1, longitude: 2 } }],
 }) as never;
 
-const addr = (city: unknown) => (buildListingJsonLd(mk(city), "u")[0] as any).address;
+const addr = (city: unknown) =>
+  (buildListingJsonLd(mk(city), "u")[0] as { address?: Record<string, unknown> }).address ?? {};
 
 // Strapi relation object -> plain string
 assert.strictEqual(addr({ id: 515, name: "Vilnius", locale: "lt" }).addressLocality, "Vilnius");
