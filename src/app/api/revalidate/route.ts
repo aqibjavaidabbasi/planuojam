@@ -2,11 +2,6 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 import { SUPPORTED_LOCALES } from "../../../config/i18n";
 
-// Type declaration for global cache
-declare global {
-    var revalidationCache: Map<string, number> | undefined;
-}
-
 export async function POST(req: Request) {
     try {
         const contentType = req.headers.get("content-type") || "";
@@ -95,22 +90,6 @@ export async function POST(req: Request) {
         const bodyModal: string = body?.model as string ?? body?.entry?.model as string;
         let slugToValidate;
         const targets: string[] = []
-
-        // Simple deduplication to prevent multiple rapid revalidations from auto-translate
-        const deduplicationKey = `${bodyModal}-${body?.slug ?? body?.entry?.slug}`;
-        const now = Date.now();
-        
-        const lastRevalidation = global.revalidationCache?.get(deduplicationKey);
-        
-        if (lastRevalidation && now - lastRevalidation < 10000) {
-            return NextResponse.json({ revalidated: false, reason: 'recently_revalidated' });
-        }
-        
-        // Initialize cache if needed
-        if (!global.revalidationCache) {
-            global.revalidationCache = new Map();
-        }
-        global.revalidationCache.set(deduplicationKey, now);
 
         if (bodyLocale && typeof bodyLocale === 'string' && SUPPORTED_LOCALES.includes(bodyLocale)) {
             slugToValidate = body?.slug ?? body?.entry?.slug;

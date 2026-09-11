@@ -71,9 +71,12 @@ export default function PromotionsTab() {
       if (!listingDocId) continue;
 
       const hasEnded = (() => {
+        if (p.expiresAt) return Date.parse(p.expiresAt) <= now.getTime();
         if (!endDateStr) return false; // no end date means potentially ongoing
-        const end = new Date(endDateStr);
-        return isFinite(end.getTime()) && end < now;
+        const today = new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'Europe/Vilnius', year: 'numeric', month: '2-digit', day: '2-digit',
+        }).format(now);
+        return endDateStr < today;
       })();
 
       const isCompleted = status === 'completed' || status === 'ended' || status === 'finished';
@@ -122,4 +125,3 @@ export default function PromotionsTab() {
     </div>
   );
 }
-

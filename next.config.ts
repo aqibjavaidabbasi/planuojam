@@ -4,6 +4,14 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const nextConfig: NextConfig = {
   output: "standalone",
   assetPrefix: "/",
+  async redirects() {
+    return [{
+      source: '/:path*',
+      has: [{ type: 'host', value: 'www\\.planuojam\\.lt' }],
+      destination: 'https://planuojam.lt/:path*',
+      permanent: true,
+    }];
+  },
   images: {
     remotePatterns: [
       {

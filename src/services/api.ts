@@ -48,7 +48,9 @@ export async function fetchAPI(
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
 
-  const fetchConfig = tags ? { ...FETCH_OPTIONS, next: { ...FETCH_OPTIONS.next, tags } } : FETCH_OPTIONS;
+  const fetchConfig: RequestInit = endpoint === 'listings/promoted'
+    ? { cache: 'no-store' }
+    : tags ? { ...FETCH_OPTIONS, next: { ...FETCH_OPTIONS.next, tags } } : FETCH_OPTIONS;
 
   try {
     const response = await fetch(url, {
@@ -103,7 +105,9 @@ export async function fetchAPIWithMeta(
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
 
-  const fetchConfig = tags ? { ...FETCH_OPTIONS, next: { ...FETCH_OPTIONS.next, tags } } : FETCH_OPTIONS;
+  const fetchConfig: RequestInit = endpoint === 'listings/promoted'
+    ? { cache: 'no-store' }
+    : tags ? { ...FETCH_OPTIONS, next: { ...FETCH_OPTIONS.next, tags } } : FETCH_OPTIONS;
 
   try {
     const response = await fetch(url, {

@@ -1,4 +1,6 @@
 export interface Promotion {
+    startsAt?: string | null;
+    expiresAt?: string | null;
     promotionStatus: string;
     endDate?: string;
     startDate?: string;

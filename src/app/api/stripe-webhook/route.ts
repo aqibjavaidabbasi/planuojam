@@ -82,6 +82,8 @@ async function createPromotionInvoice(params: {
   listingTitle?: string;
   promotionStars: string;
   promotionDays: string;
+  startsAt: string;
+  expiresAt: string;
   amount: number;
 }) {
   const {
@@ -91,6 +93,8 @@ async function createPromotionInvoice(params: {
     listingTitle,
     promotionStars,
     promotionDays,
+    startsAt,
+    expiresAt,
     amount,
   } = params;
 
@@ -105,15 +109,8 @@ async function createPromotionInvoice(params: {
     return;
   }
 
-  const paymentDate = new Date();
   const daysInt = Math.max(1, parseInt(String(promotionDays), 10) || 1);
   const starsInt = Math.max(0, parseInt(String(promotionStars), 10) || 0);
-  const periodEnd = new Date(Date.UTC(
-    paymentDate.getUTCFullYear(),
-    paymentDate.getUTCMonth(),
-    paymentDate.getUTCDate(),
-  ));
-  periodEnd.setUTCDate(periodEnd.getUTCDate() + daysInt - 1);
 
   const [sellerInvoiceDetail, listingResponse, userResponse, buyerInvoiceInformation] = await Promise.all([
     fetchStrapiJson<{ data?: SellerInvoiceDetailEntry }>(
@@ -169,8 +166,8 @@ async function createPromotionInvoice(params: {
         currency: intent.currency,
         invoiceStatus: "paid",
         hostedUrl,
-        periodStart: paymentDate.toISOString(),
-        periodEnd: periodEnd.toISOString(),
+        periodStart: startsAt,
+        periodEnd: expiresAt,
         publicToken,
         buyerName,
         buyerEmail: userResponse?.email || null,
@@ -332,13 +329,12 @@ export async function POST(req: NextRequest) {
           promotionDays
         ) {
           try {
-            // Compute inclusive end date: startDate + (days - 1)
+            // Each purchased day is exactly 24 elapsed hours from activation.
             const startDate = new Date();
-            const startDateStr = startDate.toISOString().slice(0, 10); // YYYY-MM-DD
-            const daysInt = parseInt(String(promotionDays));
-            const end = new Date(Date.UTC(startDate.getUTCFullYear(), startDate.getUTCMonth(), startDate.getUTCDate()));
-            end.setUTCDate(end.getUTCDate() + Math.max(0, daysInt - 1));
-            const endDateStr = end.toISOString().slice(0, 10); // YYYY-MM-DD
+            const daysInt = Number(promotionDays);
+            if (!Number.isFinite(daysInt) || daysInt <= 0) throw new Error('Invalid promotion duration');
+            const startsAt = startDate.toISOString();
+            const expiresAt = new Date(startDate.getTime() + daysInt * 24 * 60 * 60 * 1000).toISOString();
 
             // Create promotion in Strapi according to schema (use listingDocumentId)
             const promoRes = await fetch(`${STRAPI_API_URL}/api/promotions`, {
@@ -349,8 +345,10 @@ export async function POST(req: NextRequest) {
               },
               body: JSON.stringify({
                 data: {
-                  startDate: startDateStr,
-                  endDate: endDateStr,
+                  startsAt,
+                  expiresAt,
+                  startDate: startsAt.slice(0, 10),
+                  endDate: expiresAt.slice(0, 10),
                   promotionStatus: "ongoing",
                   maxStarsLimit: parseInt(String(promotionStars)),
                   listingDocumentId: String(listingDocumentId),
@@ -403,6 +401,8 @@ export async function POST(req: NextRequest) {
               listingTitle: listingTitle ? String(listingTitle) : undefined,
               promotionStars: String(promotionStars),
               promotionDays: String(promotionDays),
+              startsAt,
+              expiresAt,
               amount,
             });
           } catch (e) {

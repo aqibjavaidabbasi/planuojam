@@ -27,7 +27,7 @@ export async function fetchEventTypeAggregateByEnSlug(slug: string, locale?: str
   const url = new URL(`${API_URL}/api/event-types/by-en-slug/${encodeURIComponent(slug)}`);
   if (locale) url.searchParams.set("locale", locale);
 
-  const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
+  const res = await fetch(url.toString(), { cache: 'no-store' });
   if (res.status === 404) {
     throw new HttpError('Not found', 404);
   }

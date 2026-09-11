@@ -13,7 +13,10 @@ function formatDayLabel(date: string | null | undefined, locale: string) {
   if (!date) return "-";
   try {
     const d = new Date(date);
-    return new Intl.DateTimeFormat(locale, { month: "long", day: "2-digit" }).format(d);
+    return new Intl.DateTimeFormat(locale, {
+      month: "long", day: "2-digit", timeZone: 'Europe/Vilnius',
+      ...(date.includes('T') ? { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' } as const : {}),
+    }).format(d);
   } catch {
     return date;
   }
@@ -22,15 +25,16 @@ function formatDayLabel(date: string | null | undefined, locale: string) {
 export default function PromotionCard({ promotion }: PromotionCardProps) {
   const t = useTranslations("Profile.promotions.card");
   const locale = useLocale();
-  const status = (promotion.promotionStatus || "ongoing").toUpperCase();
+  const statusKey = promotion.promotionStatus === 'ongoing' && promotion.expiresAt && Date.parse(promotion.expiresAt) <= Date.now()
+    ? 'completed' : (promotion.promotionStatus || 'ongoing').toLowerCase();
+  const status = statusKey.toUpperCase();
 
   const listingTitle = promotion.listingTitle;
 
-  const startLabel = formatDayLabel(promotion.startDate, locale);
-  const endLabel = formatDayLabel(promotion.endDate, locale);
+  const startLabel = formatDayLabel(promotion.startsAt || promotion.startDate, locale);
+  const endLabel = formatDayLabel(promotion.expiresAt || promotion.endDate, locale);
 
   const starsLimit = promotion.maxStarsLimit ?? 0;
-  const statusKey = (promotion.promotionStatus || 'ongoing').toString().toLowerCase();
   const statusLabel = t(`status.${statusKey}`);
 
   return (
@@ -60,7 +64,7 @@ export default function PromotionCard({ promotion }: PromotionCardProps) {
         <div className="font-semibold text-gray-900">{listingTitle}</div>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+      <div className="flex flex-col gap-2 mb-4">
         
         {/* Stars purchased */}
         <div className="flex gap-2.5 items-center">
@@ -69,7 +73,7 @@ export default function PromotionCard({ promotion }: PromotionCardProps) {
         </div>
 
         {/* Start / End */}
-        <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-1">
             <p className="font-semibold text-gray-800 whitespace-nowrap">{startLabel} {"-"}</p>
             <p className="font-semibold text-gray-800 whitespace-nowrap">{endLabel}</p>
         </div>
