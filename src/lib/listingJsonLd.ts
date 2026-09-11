@@ -32,11 +32,15 @@ export function buildListingJsonLd(listing: ListingItem | null | undefined, url:
   if (typeof listing.price === "number" && listing.price > 0) main.priceRange = String(listing.price);
 
   const loc = venueBlock?.location;
-  if (loc && (loc.address || loc.city || loc.country)) {
+  // ponytail: city is a Strapi relation object at runtime though the shared type says string
+  // (write paths send an id) — narrow here instead of churning the type across the edit forms.
+  const rawCity = loc?.city as unknown as string | { name?: string } | null | undefined;
+  const cityName = typeof rawCity === "string" ? rawCity : rawCity?.name;
+  if (loc && (loc.address || cityName || loc.country)) {
     main.address = {
       "@type": "PostalAddress",
       ...(loc.address ? { streetAddress: loc.address } : {}),
-      ...(loc.city ? { addressLocality: loc.city } : {}),
+      ...(cityName ? { addressLocality: cityName } : {}),
       ...(loc.country ? { addressCountry: loc.country } : {}),
     };
     if (typeof loc.latitude === "number" && typeof loc.longitude === "number") {
