@@ -27,6 +27,7 @@ import { getUnreadConversationCount } from "@/services/messages";
 import { RootState } from "@/store";
 import { fetchListingsByUserLeastPopulated } from "@/services/listing";
 import { fetchPromotionsByUser } from "@/services/promotion";
+import { isPromotionActive } from "@/lib/promotionWindow";
 import type { Promotion } from "@/types/promotion";
 import type { ListingItem } from "@/types/pagesTypes";
 import { useLocale } from "next-intl";
@@ -65,18 +66,9 @@ export default function ProfilePageClient() {
       const now = new Date();
       const activeByListingDocId = new Set<string>();
       for (const p of Array.isArray(promos) ? promos : []) {
-        const status = String(p?.promotionStatus || '').toLowerCase();
-        const endDateStr = p?.endDate as string | undefined;
         const listingDocId = String(p?.listingDocumentId || p?.listing?.documentId || '');
         if (!listingDocId) continue;
-        const hasEnded = (() => {
-          if (!endDateStr) return false;
-          const end = new Date(endDateStr);
-          return isFinite(end.getTime()) && end < now;
-        })();
-        const isCompleted = status === 'completed' || status === 'ended' || status === 'finished';
-        const isActive = !isCompleted && !hasEnded;
-        if (isActive) activeByListingDocId.add(listingDocId);
+        if (isPromotionActive(p, now)) activeByListingDocId.add(listingDocId);
       }
 
       // Find a listing that is new (not seen) and not actively promoted

@@ -3,6 +3,7 @@
 import React from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Promotion } from "@/types/promotion";
+import { hasPromotionEnded } from "@/lib/promotionWindow";
 
 interface PromotionCardProps {
   promotion: Promotion;
@@ -25,7 +26,7 @@ function formatDayLabel(date: string | null | undefined, locale: string) {
 export default function PromotionCard({ promotion }: PromotionCardProps) {
   const t = useTranslations("Profile.promotions.card");
   const locale = useLocale();
-  const statusKey = promotion.promotionStatus === 'ongoing' && promotion.expiresAt && Date.parse(promotion.expiresAt) <= Date.now()
+  const statusKey = promotion.promotionStatus === 'ongoing' && hasPromotionEnded(promotion)
     ? 'completed' : (promotion.promotionStatus || 'ongoing').toLowerCase();
   const status = statusKey.toUpperCase();
 

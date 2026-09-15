@@ -9,6 +9,7 @@ import Button from "../custom/Button";
 import { FaPlus } from "react-icons/fa";
 import NoDataCard from "@/components/custom/NoDataCard";
 import { fetchPromotionsByUser } from "@/services/promotion";
+import { isPromotionActive } from "@/lib/promotionWindow";
 import { RootState } from "@/store";
 import PromotionCard from "@/components/promotions/PromotionCard";
 import { Promotion, UserListingOption } from "@/types/promotion";
@@ -65,23 +66,9 @@ export default function PromotionsTab() {
     const activeByListingDocId = new Set<string>();
 
     for (const p of promotions) {
-      const status = String(p?.promotionStatus || '').toLowerCase();
-      const endDateStr = p?.endDate as string | undefined;
       const listingDocId = String(p?.listingDocumentId || p?.listing?.documentId || '');
       if (!listingDocId) continue;
-
-      const hasEnded = (() => {
-        if (p.expiresAt) return Date.parse(p.expiresAt) <= now.getTime();
-        if (!endDateStr) return false; // no end date means potentially ongoing
-        const today = new Intl.DateTimeFormat('en-CA', {
-          timeZone: 'Europe/Vilnius', year: 'numeric', month: '2-digit', day: '2-digit',
-        }).format(now);
-        return endDateStr < today;
-      })();
-
-      const isCompleted = status === 'completed' || status === 'ended' || status === 'finished';
-      const isActive = !isCompleted && !hasEnded;
-      if (isActive) activeByListingDocId.add(listingDocId);
+      if (isPromotionActive(p, now)) activeByListingDocId.add(listingDocId);
     }
 
     return listings.filter(l => !activeByListingDocId.has(String(l.documentId)) && !activeByListingDocId.has(String(l.id)));
