@@ -11,6 +11,7 @@ import { notFound } from "next/navigation";
 import ReduxProvider from "@/store/provider";
 import { Toaster } from "react-hot-toast";
 import dynamic from "next/dynamic";
+import Script from "next/script";
 import "./globals.css";
 import { Montserrat } from "next/font/google";
 
@@ -55,6 +56,20 @@ export default async function LocaleLayout({
 
   return (
     <html className={montserrat.className}>
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-F1L8DWQ46X"
+          strategy="beforeInteractive"
+        />
+        <Script id="google-analytics" strategy="beforeInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-F1L8DWQ46X');
+          `}
+        </Script>
+      </head>
       <body className="min-h-screen overflow-x-hidden">
         <ReduxProvider>
           <MapboxWrapper>
@@ -78,4 +93,3 @@ export default async function LocaleLayout({
     </html>
   );
 }
-
